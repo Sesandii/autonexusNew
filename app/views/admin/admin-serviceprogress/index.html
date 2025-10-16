@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Service Progress - AutoNexus</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="logo">AutoNexus</div>
+      <nav class="menu">
+        <a href="#" class="active">Dashboard</a>
+        <a href="#">Manage Users</a>
+        <a href="#">Register User</a>
+        <a href="#">Service Management</a>
+        <a href="#">Pricing Management</a>
+        <a href="#">Appointments</a>
+        <a href="#">Service Progress</a>
+        <a href="#">Feedback</a>
+        <a href="#">Notifications</a>
+        <a href="#">Reports</a>
+        <a href="#">Invoices</a>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <div class="top-bar">
+        <div class="page-title">Dashboard</div>
+        <div class="profile-icon">JD</div>
+      </div>
+
+      <section class="service-progress-section">
+        <h2>Service Tracking</h2>
+
+        <div class="filters">
+          <input
+            type="text"
+            placeholder="Search by service, customer, or mechanic..."
+            id="searchInput"
+          />
+          <select id="statusFilter">
+            <option value="All Status">All Status</option>
+            <option value="Received">Received</option>
+            <option value="In Service">In Service</option>
+            <option value="Completed">Completed</option>
+          </select>
+        </div>
+
+        <div class="cards-container" id="cardsContainer">
+          <!-- Card example -->
+          <div class="card" data-service="Oil Change & Filter Replacement" data-customer="John Smith" data-mechanic="Mike Johnson" data-status="In Service">
+            <div class="card-header">
+              <strong>Oil Change &amp; Filter Replacement</strong>
+              <span class="badge in-service">In Service</span>
+            </div>
+            <p><strong>Customer:</strong> John Smith</p>
+            <p><strong>Vehicle:</strong> 2019 Toyota Camry</p>
+            <p><strong>Mechanic:</strong> Mike Johnson</p>
+            <p><strong>Started:</strong> 09:30 AM</p>
+            <p><strong>Est. Time Remaining:</strong> 20 min</p>
+
+            <div class="progress-bar-wrapper">
+              <div class="progress-label">Progress <span>55%</span></div>
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: 55%;"></div>
+              </div>
+              <div class="progress-steps">
+                <span class="step active">Received</span>
+                <span class="step active">In Service</span>
+                <span class="step">Completed</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" data-service="Brake Pad Replacement" data-customer="Sarah Williams" data-mechanic="Dave Miller" data-status="In Service">
+            <div class="card-header">
+              <strong>Brake Pad Replacement</strong>
+              <span class="badge in-service">In Service</span>
+            </div>
+            <p><strong>Customer:</strong> Sarah Williams</p>
+            <p><strong>Vehicle:</strong> 2020 Honda Civic</p>
+            <p><strong>Mechanic:</strong> Dave Miller</p>
+            <p><strong>Started:</strong> 10:15 AM</p>
+            <p><strong>Est. Time Remaining:</strong> 90 min</p>
+
+            <div class="progress-bar-wrapper">
+              <div class="progress-label">Progress <span>25%</span></div>
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: 25%;"></div>
+              </div>
+              <div class="progress-steps">
+                <span class="step active">Received</span>
+                <span class="step active">In Service</span>
+                <span class="step">Completed</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" data-service="Tire Rotation & Alignment" data-customer="Michael Johnson" data-mechanic="Lisa Chen" data-status="In Service">
+            <div class="card-header">
+              <strong>Tire Rotation &amp; Alignment</strong>
+              <span class="badge in-service">In Service</span>
+            </div>
+            <p><strong>Customer:</strong> Michael Johnson</p>
+            <p><strong>Vehicle:</strong> 2018 Ford F-150</p>
+            <p><strong>Mechanic:</strong> Lisa Chen</p>
+            <p><strong>Started:</strong> 08:45 AM</p>
+            <p><strong>Est. Time Remaining:</strong> 10 min</p>
+
+            <div class="progress-bar-wrapper">
+              <div class="progress-label">Progress <span>85%</span></div>
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: 85%;"></div>
+              </div>
+              <div class="progress-steps">
+                <span class="step active">Received</span>
+                <span class="step active">In Service</span>
+                <span class="step">Completed</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" data-service="Engine Diagnostic" data-customer="Robert Brown" data-mechanic="Mike Johnson" data-status="Received">
+            <div class="card-header">
+              <strong>Engine Diagnostic</strong>
+              <span class="badge received">Received</span>
+            </div>
+            <p><strong>Customer:</strong> Robert Brown</p>
+            <p><strong>Vehicle:</strong> 2017 Chevrolet Malibu</p>
+            <p><strong>Mechanic:</strong> Mike Johnson</p>
+            <p><strong>Started:</strong> 11:00 AM</p>
+            <p><strong>Est. Time Remaining:</strong> 90 min</p>
+
+            <div class="progress-bar-wrapper">
+              <div class="progress-label">Progress <span>0%</span></div>
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: 0%;"></div>
+              </div>
+              <div class="progress-steps">
+                <span class="step active">Received</span>
+                <span class="step">In Service</span>
+                <span class="step">Completed</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" data-service="Transmission Fluid Change" data-customer="Emily Davis" data-mechanic="Dave Miller" data-status="Completed">
+            <div class="card-header">
+              <strong>Transmission Fluid Change</strong>
+              <span class="badge completed">Completed</span>
+            </div>
+            <p><strong>Customer:</strong> Emily Davis</p>
+            <p><strong>Vehicle:</strong> 2021 Nissan Altima</p>
+            <p><strong>Mechanic:</strong> Dave Miller</p>
+            <p><strong>Started:</strong> 08:00 AM</p>
+            <p><strong>Est. Time Remaining:</strong> 0 min</p>
+
+            <div class="progress-bar-wrapper">
+              <div class="progress-label">Progress <span>100%</span></div>
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: 100%;"></div>
+              </div>
+              <div class="progress-steps">
+                <span class="step active">Received</span>
+                <span class="step active">In Service</span>
+                <span class="step active">Completed</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="service-progress.js"></script>
+</body>
+</html>

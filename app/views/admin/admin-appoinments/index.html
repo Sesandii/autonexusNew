@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Appointments - AutoNexus</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="script.js"></script>
+
+</head>
+<body>
+  <div class="container">
+    <aside class="sidebar">
+      <h2 class="logo">AutoNexus</h2>
+      <nav class="menu">
+        <a class="active">Dashboard</a>
+        <a>Manage Users</a>
+        <a>Register User</a>
+        <a>Service Management</a>
+        <a>Pricing Management</a>
+        <a class="active">Appointments</a>
+        <a>Service Progress</a>
+        <a>Feedback</a>
+        <a>Notifications</a>
+        <a>Reports</a>
+        <a>Invoices</a>
+      </nav>
+    </aside>
+
+    <main class="main-content">
+      <header class="top-bar">
+        <h1>Dashboard</h1>
+        <div class="profile-icon">JD</div>
+      </header>
+
+      <section class="appointments-section">
+        <h2>Appointments</h2>
+
+        <div class="filters">
+          <input type="text" placeholder="Search by customer or service..." />
+          <select>
+            <option>All Status</option>
+            <option>Scheduled</option>
+            <option>In Progress</option>
+            <option>Completed</option>
+            <option>Cancelled</option>
+          </select>
+          <input type="date" />
+        </div>
+
+        <div class="cards-container">
+          <!-- Card Example -->
+          <div class="card">
+            <div class="card-header">
+              <strong>John Smith</strong>
+              <span class="badge scheduled">Scheduled</span>
+            </div>
+            <p>Service: Oil Change</p>
+            <p>Branch: Downtown Branch</p>
+            <p>Time: Nov 10, 9:00 AM</p>
+            <div class="card-actions">
+              <button class="edit-btn">Edit</button>
+              <button class="cancel-btn">Cancel</button>
+            </div>
+          </div>
+
+          <!-- Duplicate cards below for other customers -->
+          <div class="card">
+            <div class="card-header">
+              <strong>Sarah Williams</strong>
+              <span class="badge in-progress">In Progress</span>
+            </div>
+            <p>Service: Brake Inspection</p>
+            <p>Branch: Uptown Branch</p>
+            <p>Time: Nov 10, 10:30 AM</p>
+            <div class="card-actions">
+              <button class="edit-btn">Edit</button>
+              <button class="cancel-btn">Cancel</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <strong>Robert Brown</strong>
+              <span class="badge completed">Completed</span>
+            </div>
+            <p>Service: Tire Rotation</p>
+            <p>Branch: Midtown Branch</p>
+            <p>Time: Nov 10, 1:15 PM</p>
+            <div class="card-actions">
+              <button class="edit-btn">Edit</button>
+              <button class="cancel-btn">Cancel</button>
+            </div>
+          </div>
+
+        </div>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

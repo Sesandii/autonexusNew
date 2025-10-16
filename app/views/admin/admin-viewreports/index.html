@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AutoNexus Dashboard</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="sidebar">
+    <h2>AutoNexus</h2>
+    <ul>
+      <li class="active">Dashboard</li>
+      <li>Manage Users</li>
+      <li>Register User</li>
+      <li>Service Management</li>
+      <li>Pricing Management</li>
+      <li>Appointments</li>
+      <li>Service Progress</li>
+      <li>Feedback</li>
+      <li>Notifications</li>
+      <li>Reports</li>
+      <li>Invoices</li>
+    </ul>
+  </div>
+
+  <div class="main">
+    <div class="topbar">
+      <span>Dashboard</span>
+      <div class="profile">JD</div>
+    </div>
+
+    <div class="reports-container">
+      <h3>Reports</h3>
+      <div class="filter-bar">
+        <select>
+          <option>Service Report</option>
+          <option>Revenue Report</option>
+          <option>Service Distribution</option>
+        </select>
+        <select>
+          <option>Last 6 Months</option>
+          <option>Last 12 Months</option>
+        </select>
+        <button class="grey-btn">Refresh</button>
+        <button class="red-btn">Export</button>
+      </div>
+
+      <div class="tab-buttons">
+        <button class="tab-btn active" data-tab="service">Service Report</button>
+        <button class="tab-btn" data-tab="revenue">Revenue Report</button>
+        <button class="tab-btn" data-tab="distribution">Service Distribution</button>
+      </div>
+
+      <!-- Service Report Tab -->
+      <div id="service" class="tab-content active">
+        <h4>Service Trends</h4>
+        <img src="https://via.placeholder.com/700x300?text=Service+Trends+Chart" alt="Service Trends" />
+        <h4>Service Summary</h4>
+        <table>
+          <thead>
+            <tr><th>Service Type</th><th>Total</th><th>Avg. per Month</th><th>Growth</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Oil Changes</td><td>345</td><td>57.5</td><td class="green">+12%</td></tr>
+            <tr><td>Brake Service</td><td>172</td><td>28.7</td><td class="green">+8%</td></tr>
+            <tr><td>Tire Service</td><td>188</td><td>31.3</td><td class="red">-2%</td></tr>
+            <tr><td>Diagnostics</td><td>128</td><td>21.3</td><td class="green">+15%</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Revenue Report Tab -->
+      <div id="revenue" class="tab-content">
+        <h4>Revenue Trends</h4>
+        <img src="https://via.placeholder.com/700x300?text=Revenue+Chart" alt="Revenue Chart" />
+        <h4>Revenue Summary</h4>
+        <div class="summary-cards">
+          <div class="card">
+            <p>Total Revenue</p>
+            <h3>$140,000</h3>
+            <span class="green">+15% from last period</span>
+          </div>
+          <div class="card">
+            <p>Average Monthly</p>
+            <h3>$23,333</h3>
+            <span class="green">+8% from last period</span>
+          </div>
+          <div class="card">
+            <p>Projected Annual</p>
+            <h3>$280,000</h3>
+            <span class="green">+12% from last year</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Service Distribution Tab -->
+      <div id="distribution" class="tab-content">
+        <h4>Service Distribution</h4>
+        <img src="https://via.placeholder.com/400x300?text=Service+Pie+Chart" alt="Distribution Chart" />
+        <h4>Service Breakdown</h4>
+        <table>
+          <thead>
+            <tr><th>Service Type</th><th>Percentage</th><th>Count</th><th>Revenue</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Oil Changes</td><td>45%</td><td>345</td><td>$34,500</td></tr>
+            <tr><td>Brake Service</td><td>25%</td><td>172</td><td>$43,000</td></tr>
+            <tr><td>Tire Service</td><td>20%</td><td>188</td><td>$37,600</td></tr>
+            <tr><td>Diagnostics</td><td>10%</td><td>128</td><td>$25,600</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="bottom-button">
+        <button class="red-btn full">📄 Generate Monthly Report</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

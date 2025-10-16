@@ -1,0 +1,14 @@
+RewriteEngine On
+RewriteBase /autonexus/
+
+# Let real files/folders pass through
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# Send everything else to /public/index.php
+RewriteRule ^ public/index.php [QSA,L]
+
+# Block internal folders
+RewriteRule ^app/ - [R=404,L]
+RewriteRule ^config/ - [R=404,L]
