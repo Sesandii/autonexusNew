@@ -7,16 +7,18 @@
   <title>AutoNexus • Dashboard</title>
 
   <!-- Sidebar styles you already have -->
-  <link rel="stylesheet" href="../admin-sidebar/styles.css">
+   <link rel="stylesheet" href="app/views/layouts/admin-sidebar/styles.css">
 
   <!-- Dashboard page styles (new) -->
-  <link rel="stylesheet" href="dashboard.css">
+ <link rel="stylesheet" href="<?= rtrim(BASE_URL,'/') ?>/public/assets/css/admin-dashboard.css?v=1">
+
+
 
   <!-- Font Awesome for icons (optional) -->
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
-  <?php include(__DIR__ . '/../admin-sidebar/sidebar.php'); ?>
+  <?php include(__DIR__ . '/../../layouts/admin-sidebar/sidebar.php'); ?>
 
   <main class="main-content">
     <!-- Top bar -->

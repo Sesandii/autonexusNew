@@ -8,7 +8,7 @@ require_once CONFIG_PATH . '/config.php';
 
 function redirect_by_role(string $role): void {
     $map = [
-        'admin'           => '/admin/admin-dashboard/index.php',
+        'admin'           => '/admin-dashboard',
         'service_manager' => 'service_manager/dashboard.php',
         'supervisor'      => 'supervisor/dashboard.php',
         'mechanic'        => 'mechanic/dashboard.php',

@@ -75,6 +75,10 @@ $router->get('/admin/customers/{id}/edit',       [\app\controllers\Admin\Custome
 $router->post('/admin/customers/{id}',           [\app\controllers\Admin\CustomersController::class, 'update']);
 $router->post('/admin/customers/{id}/delete',    [\app\controllers\Admin\CustomersController::class, 'destroy']);
 
+// ADMIN: Dashboard
+use app\controllers\admin\DashboardController;
+$router->get('/admin-dashboard', [DashboardController::class, 'index']);
+
 
 /** Dev helper */
 $router->get('/test-managers', function () {
