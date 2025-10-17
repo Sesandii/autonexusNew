@@ -16,8 +16,8 @@ $base   = $base   ?? '';
 <head>
   <meta charset="UTF-8">
   <title>Service Managers</title>
-  <link rel="stylesheet" href="app/views/layouts/admin-shared/management.css">
-  <link rel="stylesheet" href="app/views/layouts/admin-sidebar/styles.css">
+  <link rel="stylesheet" href="../app/views/layouts/admin-shared/management.css">
+  <link rel="stylesheet" href="../app/views/layouts/admin-sidebar/styles.css">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <style>
     .sidebar { position: fixed; top:0; left:0; width:260px; height:100vh; overflow-y:auto; }
@@ -52,7 +52,7 @@ $base   = $base   ?? '';
         <button type="submit" class="btn btn-secondary">Filter</button>
 
         <!-- Optional: Link to a separate "create" page or open your modal page -->
-       <a href="<?= htmlspecialchars($base . '/service-managers/create', ENT_QUOTES, 'UTF-8') ?>" class="add-btn">+ Add New Manager</a>
+       <a href="<?= htmlspecialchars($base . '/admin/service-managers/create', ENT_QUOTES, 'UTF-8') ?>" class="add-btn">+ Add New Manager</a>
 
         
       </form>
@@ -87,23 +87,23 @@ $base   = $base   ?? '';
             <td><?= htmlspecialchars($r['created_at'] ?? '', ENT_QUOTES, 'UTF-8') ?></td>
             <td>
   <a class="icon-btn" title="View"
-     href="<?= htmlspecialchars($base . '/service-managers/' . urlencode((string)$r['manager_id']), ENT_QUOTES, 'UTF-8') ?>">
+     href="<?= htmlspecialchars($base . '/admin/service-managers/' . urlencode((string)$r['manager_id']), ENT_QUOTES, 'UTF-8') ?>">
     <i class="fas fa-eye"></i>
   </a>
 
   <a class="icon-btn" title="Edit"
-   href="<?= htmlspecialchars($base . '/service-managers/' . urlencode((string)$r['manager_id']) . '/edit', ENT_QUOTES, 'UTF-8') ?>">
+   href="<?= htmlspecialchars($base . '/admin/service-managers/' . urlencode((string)$r['manager_id']) . '/edit', ENT_QUOTES, 'UTF-8') ?>">
   <i class="fas fa-pen"></i>
 </a>
 
 
-  <form class="inline" method="post"
-        action="<?= htmlspecialchars($base . '/service-managers/' . urlencode((string)$r['manager_id']) . '/delete', ENT_QUOTES, 'UTF-8') ?>"
-        onsubmit="return confirm('Delete this manager?');" style="display:inline-block">
-    <button type="submit" class="icon-btn" title="Delete">
-      <i class="fas fa-trash"></i>
-    </button>
-  </form>
+<form method="post"
+      action="<?= htmlspecialchars($base . '/admin/service-managers/' . urlencode((string)$row['manager_id']) . '/delete', ENT_QUOTES, 'UTF-8') ?>"
+      onsubmit="return confirm('Delete this manager? This cannot be undone.');"
+      style="display:inline">
+  <button type="submit" class="btn-danger"><i class="fas fa-trash"></i></button>
+</form>
+
 </td>
 
           </tr>

@@ -1,5 +1,5 @@
 <?php
-namespace app\model;
+namespace app\model\admin;
 
 use PDO;
 use Exception;
@@ -27,8 +27,8 @@ class User
             ':email'         => $data['email'],
             ':password_hash' => password_hash($data['password'], PASSWORD_DEFAULT),
             ':phone'         => $data['phone'] ?? null,
-            ':role'          => 'manager',
-            ':status'        => 'active'
+            ':role'          => $data['role'] ?? 'manager',
+            ':status'        => $data['status'] ?? 'active'
         ]);
 
         if (!$ok) throw new Exception('Failed to create user');

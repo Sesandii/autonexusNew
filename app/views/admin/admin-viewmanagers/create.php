@@ -6,8 +6,8 @@
 <head>
   <meta charset="UTF-8">
   <title>Add Manager</title>
-   <link rel="stylesheet" href="../app/views/layouts/admin-shared/management.css">
-  <link rel="stylesheet" href="../app/views/layouts/admin-sidebar/styles.css">
+   <link rel="stylesheet" href="../../app/views/layouts/admin-shared/management.css">
+  <link rel="stylesheet" href="../../app/views/layouts/admin-sidebar/styles.css">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <style>
     .sidebar { position:fixed; top:0; left:0; width:260px; height:100vh; overflow-y:auto; }
@@ -33,7 +33,9 @@
       </div>
     <?php endif; ?>
 
-    <form class="form" method="post" action="<?= htmlspecialchars($base . '/service-managers', ENT_QUOTES, 'UTF-8') ?>">
+    <form class="form" method="post" action="<?= htmlspecialchars($base . '/admin/service-managers', ENT_QUOTES, 'UTF-8') ?>">
+
+
       <div class="row">
         <div>
           <div class="label">First name</div>
@@ -71,7 +73,7 @@
 
       <div class="btns">
         <button type="submit" class="btn-primary">Save</button>
-        <a href="<?= htmlspecialchars($base . '/service-managers', ENT_QUOTES, 'UTF-8') ?>" class="btn-secondary">Cancel</a>
+        <a href="<?= htmlspecialchars($base . '/admin/service-managers', ENT_QUOTES, 'UTF-8') ?>" class="btn-secondary">Cancel</a>
       </div>
     </form>
   </main>

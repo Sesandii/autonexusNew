@@ -9,8 +9,9 @@ $current = 'branches';
 <head>
   <meta charset="UTF-8">
   <title>Add New Branch</title>
-  <link rel="stylesheet" href="../app/views/layouts/admin-shared/management.css">
-  <link rel="stylesheet" href="../app/views/layouts/admin-sidebar/styles.css">
+  <link rel="stylesheet" href="<?= $base ?>/app/views/layouts/admin-shared/management.css">
+<link rel="stylesheet" href="<?= $base ?>/app/views/layouts/admin-sidebar/styles.css">
+
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <style>
     .sidebar { position:fixed; top:0; left:0; width:260px; height:100vh; overflow-y:auto; }
@@ -28,7 +29,7 @@ $current = 'branches';
   <main class="main-content">
     <h2>Add New Branch</h2>
 
-    <form class="form" method="post" action="<?= htmlspecialchars($base . '/branches', ENT_QUOTES, 'UTF-8') ?>">
+    <form class="form" method="post" action="<?= htmlspecialchars($base . '/admin/branches', ENT_QUOTES, 'UTF-8') ?>">
       <div class="grid">
         <div>
           <label class="label">Branch Code</label>
@@ -111,7 +112,7 @@ $current = 'branches';
         <button type="submit" class="btn-primary">
           <i class="fas fa-plus"></i> Create Branch
         </button>
-        <a href="<?= htmlspecialchars($base . '/branches', ENT_QUOTES, 'UTF-8') ?>" class="btn-secondary">
+        <a href="<?= htmlspecialchars($base . '/admin/branches', ENT_QUOTES, 'UTF-8') ?>" class="btn-secondary">
           Cancel
         </a>
       </div>

@@ -33,48 +33,57 @@ spl_autoload_register(function ($class) {
 
 use app\core\Router;
 
-/*
-|--------------------------------------------------------------------------|
-| Build router + routes
-|--------------------------------------------------------------------------|
-*/
 $router = new Router($config ?? []);
 
-/** Dashboard (matches sidebar “/”) */
-$router->get('/', [\app\controllers\HomeController::class, 'index']);
+/** ======================
+ *  ADMIN DASHBOARD
+ *  ====================== */
+$router->get('/',        [\app\controllers\Admin\HomeController::class, 'index']);  // root -> admin home
+$router->get('/admin',   [\app\controllers\Admin\HomeController::class, 'index']);  // explicit /admin
 
-/** Branches */
-$router->get('/branches',                    [\app\controllers\BranchesController::class, 'index']);
-$router->post('/branches',                   [\app\controllers\BranchesController::class, 'store']);
-$router->get('/branches/create', [\app\controllers\BranchesController::class, 'create']);
+/** ======================
+ *  ADMIN: Branches
+ *  ====================== */
+$router->get('/admin/branches',                 [\app\controllers\Admin\BranchesController::class, 'index']);
+$router->get('/admin/branches/create',          [\app\controllers\Admin\BranchesController::class, 'create']);
+$router->post('/admin/branches',                [\app\controllers\Admin\BranchesController::class, 'store']);
+$router->get('/admin/branches/{code}',          [\app\controllers\Admin\BranchesController::class, 'show']);
+$router->get('/admin/branches/{code}/edit',     [\app\controllers\Admin\BranchesController::class, 'edit']);
+$router->post('/admin/branches/{code}',         [\app\controllers\Admin\BranchesController::class, 'update']);
+$router->post('/admin/branches/{code}/delete',  [\app\controllers\Admin\BranchesController::class, 'destroy']);
 
-$router->get('/branches/{code}/edit',        [\app\controllers\BranchesController::class, 'edit']);  // ← added
-$router->get('/branches/{code}',             [\app\controllers\BranchesController::class, 'show']);  // ← added
-$router->post('/branches/update/{code}',     [\app\controllers\BranchesController::class, 'update']); // use {code}, not {id}
-$router->post('/branches/delete/{code}',     [\app\controllers\BranchesController::class, 'destroy']); // use {code}, not {id}
+/** ======================
+ *  ADMIN: Service Managers
+ *  ====================== */
+$router->get('/admin/service-managers',                 [\app\controllers\Admin\ServiceManagersController::class, 'index']);
+$router->get('/admin/service-managers/list',            [\app\controllers\Admin\ServiceManagersController::class, 'list']);
+$router->get('/admin/service-managers/create',          [\app\controllers\Admin\ServiceManagersController::class, 'create']);
+$router->post('/admin/service-managers',                [\app\controllers\Admin\ServiceManagersController::class, 'store']);
+$router->get('/admin/service-managers/{id}',            [\app\controllers\Admin\ServiceManagersController::class, 'show']);
+$router->get('/admin/service-managers/{id}/edit',       [\app\controllers\Admin\ServiceManagersController::class, 'edit']);
+$router->post('/admin/service-managers/{id}',           [\app\controllers\Admin\ServiceManagersController::class, 'update']);
+$router->post('/admin/service-managers/{id}/delete',    [\app\controllers\Admin\ServiceManagersController::class, 'destroy']);
 
-/**
- * Service Managers
- * IMPORTANT: specific routes BEFORE dynamic {id} route
- */
-$router->get('/service-managers',            [\app\controllers\ServiceManagersController::class, 'index']);
-$router->get('/service-managers/list',       [\app\controllers\ServiceManagersController::class, 'list']);
-$router->get('/service-managers/create',     [\app\controllers\ServiceManagersController::class, 'create']); // before {id}
-$router->post('/service-managers',           [\app\controllers\ServiceManagersController::class, 'store']);
-// $router->post('/service-managers/store',  [\app\controllers\ServiceManagersController::class, 'store']); // optional alt
+/** ======================
+ *  ADMIN: Customers
+ *  ====================== */
+$router->get('/admin/customers',                 [\app\controllers\Admin\CustomersController::class, 'index']);
+$router->get('/admin/customers/create',          [\app\controllers\Admin\CustomersController::class, 'create']);
+$router->post('/admin/customers',                [\app\controllers\Admin\CustomersController::class, 'store']);
+$router->get('/admin/customers/{id}',            [\app\controllers\Admin\CustomersController::class, 'show']);
+$router->get('/admin/customers/{id}/edit',       [\app\controllers\Admin\CustomersController::class, 'edit']);
+$router->post('/admin/customers/{id}',           [\app\controllers\Admin\CustomersController::class, 'update']);
+$router->post('/admin/customers/{id}/delete',    [\app\controllers\Admin\CustomersController::class, 'destroy']);
 
-$router->get('/service-managers/{id}/edit',  [\app\controllers\ServiceManagersController::class, 'edit']);   // before {id}
-$router->get('/service-managers/{id}',       [\app\controllers\ServiceManagersController::class, 'show']);   // dynamic
-$router->post('/service-managers/{id}',      [\app\controllers\ServiceManagersController::class, 'update']);
-$router->post('/service-managers/{id}/delete', [\app\controllers\ServiceManagersController::class, 'destroy']);
 
 /** Dev helper */
 $router->get('/test-managers', function () {
-    require_once __DIR__ . '/../app/model/Manager.php';
-    $m = new \app\model\Manager();
+    require_once __DIR__ . '/../app/model/admin/Manager.php';
+    $m = new \app\model\Admin\Manager();
     header('Content-Type: text/plain');
     print_r($m->all());
 });
+
 
 // Show the login form (GET /login)
 $router->get('/login', function () {
@@ -102,7 +111,7 @@ $router->post('/register', function () {
 | Add placeholders so links don't 404; replace with real controllers later.
 |--------------------------------------------------------------------------|
 */
-$router->get('/customers',         fn() => print 'TODO: Customers page');
+
 $router->get('/supervisors',       fn() => print 'TODO: Supervisors page');
 $router->get('/mechanics',         fn() => print 'TODO: Mechanics page');
 $router->get('/receptionists',     fn() => print 'TODO: Receptionists page');

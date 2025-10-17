@@ -18,26 +18,27 @@
 
       <ul class="submenu">
         <li class="<?php if($current=='customers') echo 'active'; ?>">
-          <a href="<?= $B ?>/customers"><span>Customers</span></a>
+          <a href="<?= BASE_URL ?>/admin/customers">Customers</a>
         </li>
         <li class="<?php if($current=='service-managers') echo 'active'; ?>">
-          <a href="<?= $B ?>/service-managers"><span>Service Managers</span></a>
+          <a href="<?= BASE_URL ?>/admin/service-managers">Service Managers</a>
+
         </li>
         <li class="<?php if($current=='supervisors') echo 'active'; ?>">
-          <a href="<?= $B ?>/supervisors"><span>Workshop Supervisors</span></a>
+         <a href="<?= BASE_URL ?>/admin/supervisors">Workshop Supervisors</a>
         </li>
         <li class="<?php if($current=='mechanics') echo 'active'; ?>">
-          <a href="<?= $B ?>/mechanics"><span>Mechanics</span></a>
+          <a href="<?= BASE_URL ?>/admin/mechanics">Mechanics</a>
         </li>
         <li class="<?php if($current=='receptionists') echo 'active'; ?>">
-          <a href="<?= $B ?>/receptionists"><span>Receptionists</span></a>
+          <a href="<?= BASE_URL ?>/admin/receptionists">Receptionists</a>
         </li>
       </ul>
     </li>
 
     <!-- Other menu items -->
     <li class="menu-item <?php if($current=='branches') echo 'active'; ?>">
-      <a href="<?= $B ?>/branches"><i class="fa-solid fa-diagram-project"></i><span>Manage Branches</span></a>
+      <a href="<?= $B ?>/admin/branches"><i class="fa-solid fa-diagram-project"></i><span>Manage Branches</span></a>
     </li>
 
     <li class="menu-item <?php if($current=='services') echo 'active'; ?>">

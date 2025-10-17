@@ -1,9 +1,9 @@
 <?php
-namespace app\controllers;
+namespace app\controllers\admin;
 
 use app\core\Controller;
-use app\model\Branch;
-use app\model\Manager;
+use app\model\admin\Branch;
+use app\model\admin\Manager;
 
 class BranchesController extends Controller
 {
@@ -12,56 +12,50 @@ class BranchesController extends Controller
     public function __construct(array $config)
     {
         parent::__construct($config);
-        $this->Branch = new Branch(); // uses your db() helper internally
+        $this->Branch = new Branch();
     }
 
- /** GET /branches/create */
+    /** GET /admin/branches/create */
     public function create()
     {
-        $managers = (new Manager())->all(); // id, code, first_name, last_name, etc.
+        $managers = (new Manager())->all();
         $this->view('admin/admin-viewbranches/create', [
             'base'      => BASE_URL,
             'managers'  => $managers,
         ]);
     }
 
+    /** GET /admin/branches */
+    public function index()
+    {
+        $branches = $this->Branch->all();
+        $q      = isset($_GET['q']) ? trim((string)$_GET['q']) : '';
+        $status = isset($_GET['status']) ? trim((string)$_GET['status']) : 'all';
 
-    /** GET /branches */
-  public function index()
-{
-    $branches = $this->Branch->all();
+        $this->view('admin/admin-viewbranches/index', [
+            'branches' => $branches,
+            'q'        => $q,
+            'status'   => $status,
+            'base'     => BASE_URL,
+        ]);
+    }
 
-    // read filter params (even if you don’t filter yet)
-    $q      = isset($_GET['q']) ? trim((string)$_GET['q']) : '';
-    $status = isset($_GET['status']) ? trim((string)$_GET['status']) : 'all';
+    /** GET /admin/branches/{code} */
+    public function show($code)
+    {
+        $row = $this->Branch->findByCode((string)$code);
+        if (!$row) { http_response_code(404); echo "Not found"; return; }
 
-    $this->view('admin/admin-viewbranches/index', [
-        'branches' => $branches,
-        'q'        => $q,
-        'status'   => $status,
-        'base'     => BASE_URL,
-    ]);
-}
+        $this->view('admin/admin-viewbranches/show', [
+            'row'  => $row,
+            'base' => BASE_URL,
+        ]);
+    }
 
-
-    /** GET /branches/{code} */
-public function show($code)
-{
-    $code = (string)$code;
-    $row = $this->Branch->findByCode($code);
-    if (!$row) { http_response_code(404); echo "Not found"; return; }
-
-    $this->view('admin/admin-viewbranches/show', [
-        'row'  => $row,
-        'base' => BASE_URL,
-    ]);
-}
-
-/** GET /branches/{code}/edit */
+    /** GET /admin/branches/{code}/edit */
     public function edit($code)
     {
-        $code = (string)$code;
-        $row = $this->Branch->findByCode($code);
+        $row = $this->Branch->findByCode((string)$code);
         if (!$row) { http_response_code(404); echo "Not found"; return; }
 
         $managers = (new Manager())->all();
@@ -73,57 +67,38 @@ public function show($code)
         ]);
     }
 
-    /** POST /branches (Create) — UI posts the "Add" form here */
+    /** POST /admin/branches */
     public function store()
     {
-        $data = $this->sanitize($_POST);
+        $data   = $this->sanitize($_POST);
         $errors = $this->validate($data, creating: true);
-        if ($errors) {
-            // keep it simple for now; ideally flash + redirect
-            http_response_code(422);
-            echo implode("\n", $errors);
-            return;
-        }
+        if ($errors) { http_response_code(422); echo implode("\n", $errors); return; }
 
         $this->Branch->create($data);
-        // For fetch() flows, you can just echo OK
-        header('Location: ' . BASE_URL . '/branches');
+        header('Location: ' . BASE_URL . '/admin/branches'); exit;
     }
 
-    /** POST /branches/update/{code} — UI sets code from first table cell (e.g., BR001) */
+    /** POST /admin/branches/{code} */
     public function update($code)
     {
         $code = (string)$code;
-        if (!$this->Branch->findByCode($code)) {
-            http_response_code(404);
-            echo "Not found";
-            return;
-        }
+        if (!$this->Branch->findByCode($code)) { http_response_code(404); echo "Not found"; return; }
 
-        $data = $this->sanitize($_POST);
+        $data   = $this->sanitize($_POST);
         $errors = $this->validate($data, creating: false);
-        if ($errors) {
-            http_response_code(422);
-            echo implode("\n", $errors);
-            return;
-        }
+        if ($errors) { http_response_code(422); echo implode("\n", $errors); return; }
 
         $this->Branch->updateByCode($code, $data);
-       header('Location: ' . BASE_URL . '/branches'); exit;
-
+        header('Location: ' . BASE_URL . '/admin/branches'); exit;
     }
 
-    /** POST /branches/delete/{code} */
+    /** POST /admin/branches/{code}/delete */
     public function destroy($code)
     {
         $code = (string)$code;
-        if (!$this->Branch->findByCode($code)) {
-            http_response_code(404);
-            echo "Not found";
-            return;
-        }
+        if (!$this->Branch->findByCode($code)) { http_response_code(404); echo "Not found"; return; }
         $this->Branch->deleteByCode($code);
-        echo "OK";
+         header('Location: ' . BASE_URL . '/admin/branches'); exit;;
     }
 
     /* ----------------- Helpers ----------------- */

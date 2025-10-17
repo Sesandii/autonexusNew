@@ -1,9 +1,9 @@
 <?php
-namespace app\controllers;
+namespace app\controllers\admin;
 
 use app\core\Controller;
-use app\model\Manager;
-use app\model\User;
+use app\model\admin\Manager;
+use app\model\admin\User;
 
 class ServiceManagersController extends Controller
 {
@@ -19,7 +19,6 @@ class ServiceManagersController extends Controller
 
     public function index()
     {
-        // SIMPLE GUARANTEED VERSION (loads all rows; no filters needed to see data)
         $rows   = $this->Manager->all();
         $q      = isset($_GET['q']) ? trim((string)$_GET['q']) : '';
         $status = isset($_GET['status']) ? trim((string)$_GET['status']) : 'all';
@@ -34,10 +33,8 @@ class ServiceManagersController extends Controller
 
     public function create()
     {
-        $this->view('admin/admin-viewmanagers/create'); // same folder as index
+        $this->view('admin/admin-viewmanagers/create');
     }
-
-    // You can later add a store() to handle form submissions
 
     public function list()
     {
@@ -45,24 +42,12 @@ class ServiceManagersController extends Controller
         echo json_encode($this->Manager->all(), JSON_UNESCAPED_UNICODE);
     }
 
-    /**
-     * FIXED: HTML view (no JSON). Joins manager + user details.
-     * Removed duplicate show() declaration.
-     */
     public function show($id)
     {
         $id = (int)$id;
         if ($id <= 0) { http_response_code(404); echo "Not found"; return; }
 
-        // Preferred: single join via model helper
         $row = $this->Manager->findWithUser($id);
-
-        // Fallback (if you haven't added findWithUser yet), keep commented:
-        // $m = $this->Manager->find($id);
-        // if (!$m) { http_response_code(404); echo "Not found"; return; }
-        // $u = $this->User->find((int)$m['user_id']);
-        // $row = array_merge($u ?? [], $m);
-
         if (!$row) { http_response_code(404); echo "Not found"; return; }
 
         $this->view('admin/admin-viewmanagers/show', [
@@ -87,9 +72,7 @@ class ServiceManagersController extends Controller
                 'phone'      => $d['phone'] ?? null,
             ], $d['manager_code']);
 
-            // Success: redirect back to the list/table view
-            header('Location: ' . BASE_URL . '/service-managers');
-            exit;
+            header('Location: ' . BASE_URL . '/admin/service-managers'); exit;
         } catch (\Throwable $e) {
             http_response_code(400);
             echo "Error: " . $e->getMessage();
@@ -97,20 +80,18 @@ class ServiceManagersController extends Controller
     }
 
     public function edit($id)
-{
-    $id = (int)$id;
-    if ($id <= 0) { http_response_code(404); echo "Not found"; return; }
+    {
+        $id = (int)$id;
+        if ($id <= 0) { http_response_code(404); echo "Not found"; return; }
 
-    // Load Manager + User joined record
-    $row = $this->Manager->findWithUser($id);
-    if (!$row) { http_response_code(404); echo "Not found"; return; }
+        $row = $this->Manager->findWithUser($id);
+        if (!$row) { http_response_code(404); echo "Not found"; return; }
 
-    $this->view('admin/admin-viewmanagers/edit', [
-        'row'  => $row,
-        'base' => BASE_URL,
-    ]);
-}
-
+        $this->view('admin/admin-viewmanagers/edit', [
+            'row'  => $row,
+            'base' => BASE_URL,
+        ]);
+    }
 
     public function update($id)
     {
@@ -138,9 +119,7 @@ class ServiceManagersController extends Controller
             $this->Manager->update((int)$id, ['manager_code' => $d['manager_code']]);
         }
 
-        // Success: redirect back to the list/table view
-            header('Location: ' . BASE_URL . '/service-managers');
-            exit;
+        header('Location: ' . BASE_URL . '/admin/service-managers'); exit;
     }
 
     public function destroy($id)
@@ -148,7 +127,7 @@ class ServiceManagersController extends Controller
         $row = $this->Manager->find((int)$id);
         if (!$row) { http_response_code(404); echo "Not found"; return; }
 
-        $this->User->delete((int)$row['user_id']); // ON DELETE CASCADE recommended
+        $this->User->delete((int)$row['user_id']);
         echo "OK";
     }
 

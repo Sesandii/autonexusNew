@@ -11,8 +11,8 @@ $curManagerId = (int)($row['manager_id'] ?? 0);
 <head>
   <meta charset="UTF-8">
   <title>Edit Branch <?= htmlspecialchars($row['branch_code'] ?? '') ?></title>
-  <link rel="stylesheet" href="../../app/views/layouts/admin-shared/management.css">
-  <link rel="stylesheet" href="../../app/views/layouts/admin-sidebar/styles.css">
+  <link rel="stylesheet" href="../../../app/views/layouts/admin-shared/management.css">
+  <link rel="stylesheet" href="../../../app/views/layouts/admin-sidebar/styles.css">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <style>
     .sidebar { position:fixed; top:0; left:0; width:260px; height:100vh; overflow-y:auto; }
@@ -30,7 +30,8 @@ $curManagerId = (int)($row['manager_id'] ?? 0);
   <main class="main-content">
     <h2>Edit Branch</h2>
 
-    <form class="form" method="post" action="<?= htmlspecialchars($base . '/branches/update/' . urlencode((string)$row['branch_code']), ENT_QUOTES, 'UTF-8') ?>">
+    <form class="form" method="post"
+      action="<?= htmlspecialchars($base . '/admin/branches/' . rawurlencode((string)$row['branch_code']), ENT_QUOTES, 'UTF-8') ?>">
       <div class="row">
         <div>
           <div class="label">Branch Code</div>
@@ -109,7 +110,8 @@ $curManagerId = (int)($row['manager_id'] ?? 0);
 
       <div class="btns">
         <button type="submit" class="btn-primary">Save Changes</button>
-        <a href="<?= htmlspecialchars($base . '/branches', ENT_QUOTES, 'UTF-8') ?>" class="btn-secondary">Cancel</a>
+       <!-- go back to that branch’s SHOW page (or to list if you prefer) -->
+        <a href="<?= htmlspecialchars($base . '/admin/branches/' . rawurlencode((string)$row['branch_code']), ENT_QUOTES, 'UTF-8') ?>" class="btn-secondary">Cancel</a>
       </div>
     </form>
   </main>
