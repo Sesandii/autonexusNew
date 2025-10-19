@@ -1,3 +1,4 @@
+<!-- app/controllers/register_handler.php -->
 <?php
 require_once CONFIG_PATH . '/config.php';
 require_once APP_ROOT . '/core/Database.php';
@@ -45,33 +46,38 @@ if ($username === '') $username = $email; // or: substr($email, 0, strpos($email
 
 try {
     $pdo = db();
+    $pdo->beginTransaction();
 
-    // unique email/username
+    // 1) Check uniqueness
     $check = $pdo->prepare(
         'SELECT user_id FROM users WHERE email = :email OR username = :username LIMIT 1'
     );
     $check->execute(['email' => $email, 'username' => $username]);
     if ($check->fetch()) {
+        $pdo->rollBack();
         $_SESSION['flash'] = 'Email or username already exists';
         header('Location: ' . $base . '/register');
         exit;
     }
 
-    $hash = password_hash($password, PASSWORD_DEFAULT);
+    // 2) Insert user
+    $hash   = password_hash($password, PASSWORD_DEFAULT);
     $role   = 'customer';
-    $status = 'pending'; // change to 'active' if you want immediate login
+    $status = 'active'; // <= change to 'pending' if you want approval flow
 
-    $insert = $pdo->prepare(
+    $insertUser = $pdo->prepare(
         'INSERT INTO users
-         (first_name, last_name, username, email, password_hash, phone, alt_phone, street_address, city, state, role, status, created_at)
+         (first_name, last_name, username, email, password_hash, phone, alt_phone,
+          street_address, city, state, role, status, created_at)
          VALUES
-         (:first_name, :last_name, :username, :email, :password_hash, :phone, :alt_phone, :street, :city, :state, :role, :status, NOW())'
+         (:first_name, :last_name, :username, :email, :password_hash, :phone, :alt_phone,
+          :street, :city, :state, :role, :status, NOW())'
     );
 
-    $insert->execute([
+    $insertUser->execute([
         'first_name'    => $first_name,
         'last_name'     => $last_name,
-        'username'      => $username,
+        'username'      => $username ?: $email,
         'email'         => $email,
         'password_hash' => $hash,
         'phone'         => $phone,
@@ -83,11 +89,35 @@ try {
         'status'        => $status,
     ]);
 
+    $userId = (int) $pdo->lastInsertId();
+
+    // 3) Insert customer row (linked to users.user_id)
+    //    Generate a simple code; adjust format as you like
+    $customerCode = 'CUS-' . str_pad((string)$userId, 6, '0', STR_PAD_LEFT);
+
+    $insertCustomer = $pdo->prepare(
+        'INSERT INTO customers (user_id, customer_code, created_at)
+         VALUES (:user_id, :customer_code, NOW())'
+    );
+    $insertCustomer->execute([
+        'user_id'       => $userId,
+        'customer_code' => $customerCode,
+    ]);
+
+    $pdo->commit();
+
     $_SESSION['flash'] = 'Account created. Please login.';
     header('Location: ' . $base . '/login');
     exit;
 
 } catch (Throwable $e) {
+    if ($pdo && $pdo->inTransaction()) $pdo->rollBack();
+    // error_log($e->getMessage());
+    $_SESSION['flash'] = 'Server error while creating the account. Please try again.';
+    header('Location: ' . $base . '/register');
+    exit;
+}
+ catch (Throwable $e) {
     // You can log $e->getMessage() to a file for debugging
     $_SESSION['flash'] = 'Server error while creating the account. Please try again.';
     header('Location: ' . $base . '/register');

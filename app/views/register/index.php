@@ -1,21 +1,29 @@
 <?php
- require_once CONFIG_PATH . '/config.php';
+require_once CONFIG_PATH . '/config.php';
 
+// Don't start session here if it's already started elsewhere.
+if (session_status() !== PHP_SESSION_ACTIVE) {
+    session_start();
+}
 
-  session_start();
-  if (isset($_SESSION['flash'])) {
+$base = rtrim(BASE_URL, '/');
+
+if (isset($_SESSION['flash'])) {
     echo '<script>alert(' . json_encode($_SESSION['flash']) . ');</script>';
     unset($_SESSION['flash']);
-  }
-?><!DOCTYPE html>
+}
+?>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>AutoNexus — Create Your Account</title>
-  <link rel="stylesheet" href="styles.css"/>
+  <!-- FIXED: assests → assets, and use $base -->
+  <link rel="stylesheet" href="<?= htmlspecialchars($base) ?>/app/views/register/assests/css/styles.css?v=1" />
 </head>
 <body>
+
   <!-- Left / Hero (fixed) -->
   <section class="hero">
     <div class="hero-inner">
@@ -40,9 +48,10 @@
     </div>
   </section>
 
-  <!-- Right / Form (scrollable and confined to the white side) -->
+  <!-- Right / Form -->
+  <!-- FIXED: post to /register (router), not register_handler.php -->
   <section class="panel">
-    <form class="card form" method="post" action="<?php echo BASE_URL; ?>register_handler.php">
+    <form class="card form" method="post" action="<?= htmlspecialchars($base) ?>/register">
       <div class="mini-brand" aria-hidden="true">
         <span class="brand-accent">AUTO</span><span class="brand-main">NEXUS</span>
       </div>
@@ -109,7 +118,10 @@
 
       <button class="btn primary" type="submit">Sign Up</button>
 
-      <p class="footnote">Already have an account? <a href="../Login/login.php">Login</a></p>
+      <!-- FIXED: login link to route -->
+      <p class="footnote">Already have an account?
+        <a href="<?= htmlspecialchars($base) ?>/login">Login</a>
+      </p>
     </form>
   </section>
 </body>

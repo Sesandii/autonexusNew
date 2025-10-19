@@ -7,7 +7,7 @@ define('APP_ROOT', BASE_PATH . '/app');             // C:\xampp\htdocs\autonexus
 define('CONFIG_PATH', BASE_PATH . '/config');       // C:\xampp\htdocs\autonexus\config
    // optional
 
-
+//for multi lang support
 // === i18n bootstrap ===
 require_once BASE_PATH . '/app/core/I18n.php';
 
@@ -195,34 +195,16 @@ $router->post('/login', function () {
 });
 
 // Registration form + submit
+// Registration form + submit
 $router->get('/register', function () {
-    require __DIR__ . '/../app/views/register/index.php'; // your form page
+    require APP_ROOT . '/views/register/index.php'; // form page
 });
+
 $router->post('/register', function () {
-    require __DIR__ . '/../register.php'; // the handler above
+    require APP_ROOT . '/controllers/register_handler.php'; // <-- correct handler file
 });
 
-/*
-|--------------------------------------------------------------------------|
-| CLEAN ROUTES to match your updated sidebar (Option A)
-| Add placeholders so links don't 404; replace with real controllers later.
-|--------------------------------------------------------------------------|
-*/
 
-
-$router->get('/mechanics',         fn() => print 'TODO: Mechanics page');
-$router->get('/receptionists',     fn() => print 'TODO: Receptionists page');
-
-$router->get('/services',          fn() => print 'TODO: Services page');
-$router->get('/pricing',           fn() => print 'TODO: Pricing page');
-$router->get('/service-approval',  fn() => print 'TODO: Service Approval page');
-$router->get('/appointments',      fn() => print 'TODO: Appointments page');
-$router->get('/service-progress',  fn() => print 'TODO: Service Progress page');
-$router->get('/service-history',   fn() => print 'TODO: Service History page');
-$router->get('/feedback',          fn() => print 'TODO: Feedback page');
-$router->get('/notifications',     fn() => print 'TODO: Notifications page');
-$router->get('/reports',           fn() => print 'TODO: Reports page');
-$router->get('/invoices',          fn() => print 'TODO: Invoices page');
 
 /*
 |--------------------------------------------------------------------------|
