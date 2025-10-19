@@ -8,6 +8,16 @@ define('CONFIG_PATH', BASE_PATH . '/config');       // C:\xampp\htdocs\autonexus
    // optional
 
 
+// === i18n bootstrap ===
+require_once BASE_PATH . '/app/core/I18n.php';
+
+$lang = $_GET['lang'] ?? ($_COOKIE['lang'] ?? ($_SESSION['lang'] ?? 'en'));
+$_SESSION['lang'] = $lang;
+setcookie('lang', $lang, time()+60*60*24*30, '/'); // 30 days site-wide
+
+I18n::boot(BASE_PATH, $lang);
+I18n::bufferStart();
+// ======================
 
 /*
 |--------------------------------------------------------------------------|

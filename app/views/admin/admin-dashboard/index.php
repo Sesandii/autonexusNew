@@ -26,12 +26,15 @@
         <div>
           <h1 class="page-title">Admin Dashboard</h1>
           <p class="subtitle">Overview of your AutoNexus service station</p>
+          <?php require APP_ROOT . '/views/partials/lang-switcher.php'; ?>
         </div>
+        
      
         <div class="user-chip">
           <div class="avatar"><i class="fa-solid fa-user"></i></div>
           <span>Admin User</span>
         </div>
+
      
     </header>
 
