@@ -1,31 +1,33 @@
-<?php /** @var array $branches */ ?>
-<?php $pageTitle = $title ?? 'AutoNexus'; ?>
+<?php
+$base = rtrim(BASE_URL,'/');
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title><?= htmlspecialchars($pageTitle, ENT_QUOTES) ?></title>
+  <title><?= htmlspecialchars($title ?? 'AutoNexus', ENT_QUOTES) ?></title>
 
-  <link rel="stylesheet" href="<?= rtrim(BASE_URL,'/') ?>/public/assets/css/home.css" />
+  <link rel="stylesheet" href="<?= $base ?>/public/assets/css/customer/registered-home.css" />
 </head>
 <body>
   <!-- NAVBAR -->
   <header class="site-header">
     <div class="container header-inner">
-      <a class="brand" href="<?= rtrim(BASE_URL,'/') ?>/">
-        <img src="<?= rtrim(BASE_URL,'/') ?>/public/assets/img/logo.jpg" alt="AutoNexus Logo" class="brand-logo" />
+      <a class="brand" href="<?= $base ?>/customer/home">
+        <img src="<?= $base ?>/public/assets/img/logo.jpg" alt="AutoNexus Logo" class="brand-logo" />
         <span class="brand-text">AutoNexus</span>
       </a>
 
       <nav class="main-nav" id="mainNav">
-        <a href="<?= rtrim(BASE_URL,'/') ?>/">Home</a>
+        <a href="<?= $base ?>/customer/home">Home</a>
         <a href="#services" id="servicesNavLink">Services</a>
         <a href="#how">How It Works</a>
         <a href="#benefits">Why Choose Us</a>
         <a href="#reviews">Reviews</a>
         <a href="#contact">Contact</a>
-        <a href="<?= rtrim(BASE_URL,'/') ?>/login" class="btn-outline">Login</a>
+        <a href="<?= $base ?>/customer/dashboard">Dashboard</a>
+        <a href="<?= $base ?>/logout" class="btn-outline">Log out</a>
       </nav>
     </div>
   </header>
@@ -37,8 +39,7 @@
       <h1>Simplify Your Vehicle Maintenance</h1>
       <p class="lead">Book, track, and manage your vehicle services with ease.</p>
       <div class="hero-cta">
-        <a href="<?= rtrim(BASE_URL,'/') ?>/login" class="btn-primary">Book a Service</a>
-        <a href="<?= rtrim(BASE_URL,'/') ?>/login" class="btn-secondary">Login</a>
+        <a href="<?= $base ?>/customer/book" class="btn-primary">Book a Service</a>
       </div>
     </div>
   </section>
@@ -48,10 +49,7 @@
     <div class="container">
       <h2 class="section-title2">Our Services</h2>
       <p class="section-sub">We offer a comprehensive range of services to keep your vehicle running at its best.</p>
-
-      <div class="services-grid" id="servicesGrid">
-        <!-- (Optional) You can populate with JS from /assets/js/home.js -->
-      </div>
+      <div class="services-grid" id="servicesGrid"></div>
     </div>
   </section>
 
@@ -67,13 +65,11 @@
           <h3>Sign Up / Login</h3>
           <p>Create an account or log in to access our services.</p>
         </div>
-
         <div class="how-card">
           <div class="icon-circle">📅</div>
           <h3>Book a Service</h3>
           <p>Choose the service you need and select a convenient time.</p>
         </div>
-
         <div class="how-card">
           <div class="icon-circle">🔧</div>
           <h3>Track Your Progress</h3>
@@ -90,22 +86,10 @@
       <p class="section-sub white">We’re committed to providing the best service experience for your vehicle.</p>
 
       <div class="benefits-grid">
-        <div class="benefit-card">
-          <h4>Certified Mechanics</h4>
-          <p>Our team consists of certified professionals with years of experience.</p>
-        </div>
-        <div class="benefit-card">
-          <h4>Transparent Pricing</h4>
-          <p>No hidden fees. We provide clear estimates before any work begins.</p>
-        </div>
-        <div class="benefit-card">
-          <h4>Real-time Updates</h4>
-          <p>Stay informed with instant updates about your service status.</p>
-        </div>
-        <div class="benefit-card">
-          <h4>Quality Assurance</h4>
-          <p>We guarantee the quality of our work with comprehensive checks.</p>
-        </div>
+        <div class="benefit-card"><h4>Certified Mechanics</h4><p>Our team consists of certified professionals with years of experience.</p></div>
+        <div class="benefit-card"><h4>Transparent Pricing</h4><p>No hidden fees. We provide clear estimates before any work begins.</p></div>
+        <div class="benefit-card"><h4>Real-time Updates</h4><p>Stay informed with instant updates about your service status.</p></div>
+        <div class="benefit-card"><h4>Quality Assurance</h4><p>We guarantee the quality of our work with comprehensive checks.</p></div>
       </div>
     </div>
   </section>
@@ -130,14 +114,14 @@
   <footer id="contact" class="site-footer">
     <div class="container footer-grid">
       <div class="footer-brand">
-        <img src="<?= rtrim(BASE_URL,'/') ?>/public/assets/img/logo.jpg" alt="AutoNexus" class="footer-logo" />
+        <img src="<?= $base ?>/assets/img/logo.jpg" alt="AutoNexus" class="footer-logo" />
         <p>Simplifying vehicle maintenance through technology and exceptional service.</p>
       </div>
 
       <div class="footer-col">
         <h4>Quick Links</h4>
         <ul>
-          <li><a href="<?= rtrim(BASE_URL,'/') ?>/">Home</a></li>
+          <li><a href="<?= $base ?>/customer/home">Home</a></li>
           <li><a href="#services" id="servicesFooterLink">Services</a></li>
           <li><a href="#how">How It Works</a></li>
           <li><a href="#contact">Contact</a></li>
@@ -157,7 +141,7 @@
     </div>
   </footer>
 
-  <!-- Modal -->
+  <!-- === Services Branch Picker Modal === -->
   <div id="servicesModal" class="modal" aria-hidden="true">
     <div class="modal-content">
       <button class="close-btn" aria-label="Close">&times;</button>
@@ -177,9 +161,7 @@
     </div>
   </div>
 
-  <script>
-    const BASE_URL = "<?= rtrim(BASE_URL,'/') ?>";
-  </script>
-  <script src="<?= rtrim(BASE_URL,'/') ?>/public/assets/js/home.js"></script>
+  <script>const BASE_URL = "<?= $base ?>";</script>
+  <script src="<?= $base ?>/public/assets/js/registered-home.js"></script>
 </body>
 </html>

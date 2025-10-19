@@ -45,11 +45,7 @@ use app\core\Router;
 
 $router = new Router($config ?? []);
 
-/** ======================
- *  ADMIN DASHBOARD
- *  ====================== */
-$router->get('/',        [\app\controllers\Admin\HomeController::class, 'index']);  // root -> admin home
-$router->get('/admin',   [\app\controllers\Admin\HomeController::class, 'index']);  // explicit /admin
+
 
 /** ======================
  *  ADMIN: Branches
@@ -86,8 +82,12 @@ $router->post('/admin/customers/{id}',           [\app\controllers\Admin\Custome
 $router->post('/admin/customers/{id}/delete',    [\app\controllers\Admin\CustomersController::class, 'destroy']);
 
 // ADMIN: Dashboard
-use app\controllers\admin\DashboardController;
-$router->get('/admin-dashboard', [DashboardController::class, 'index']);
+// use app\controllers\admin\DashboardController;
+// $router->get('/admin-dashboard', [DashboardController::class, 'index']);
+
+$router->get('/admin-dashboard',    [\app\controllers\Admin\DashboardController::class, 'index']);
+
+
 
 /** ======================
  *  ADMIN: Mechanics
@@ -204,7 +204,23 @@ $router->post('/register', function () {
     require APP_ROOT . '/controllers/register_handler.php'; // <-- correct handler file
 });
 
+//Home
+use app\controllers\HomeController;
 
+// Landing page (customer)
+$router->get('/',            [HomeController::class, 'index']);
+$router->get('/home',        [HomeController::class, 'index']); // optional alias
+
+// use app\controllers\customer\DashboardController;
+
+// // Customer dashboard
+// $router->get('/customer/dashboard', [DashboardController::class, 'index']);
+$router->get('/customer/dashboard', [\app\controllers\customer\DashboardController::class, 'index']);
+
+use app\controllers\customer\RegisteredHomeController;
+
+$router->get('/customer/home',     [RegisteredHomeController::class, 'index']);
+$router->get('/registeredhome',    [RegisteredHomeController::class, 'index']); // optional alias
 
 /*
 |--------------------------------------------------------------------------|
