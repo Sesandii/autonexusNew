@@ -9,7 +9,7 @@ class Branch
 
     public function __construct()
     {
-        $this->pdo = db();
+        $this->pdo = db(); // your global db() function
     }
 
     public function all(): array
@@ -55,5 +55,19 @@ class Branch
     {
         $stmt = $this->pdo->prepare("DELETE FROM branches WHERE branch_code = :c");
         $stmt->execute(['c' => $code]);
+    }
+
+    /** ✅ Return branches + manager info */
+    public function allWithManager(): array
+    {
+        $sql = "SELECT 
+                    b.branch_id, b.branch_code, b.name, b.city,
+                    b.manager_id,
+                    u.first_name AS m_first, u.last_name AS m_last
+                FROM branches b
+                LEFT JOIN managers m ON m.manager_id = b.manager_id
+                LEFT JOIN users u     ON u.user_id     = m.user_id
+                ORDER BY b.name ASC";
+        return $this->pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
     }
 }

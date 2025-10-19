@@ -79,6 +79,89 @@ $router->post('/admin/customers/{id}/delete',    [\app\controllers\Admin\Custome
 use app\controllers\admin\DashboardController;
 $router->get('/admin-dashboard', [DashboardController::class, 'index']);
 
+/** ======================
+ *  ADMIN: Mechanics
+ *  ====================== */
+
+
+use app\controllers\admin\MechanicsController;
+
+// List page
+$router->get('/admin/mechanics', [MechanicsController::class, 'index']);  // <-- add this
+
+// Already present
+$router->get('/admin/mechanics/create', [MechanicsController::class, 'create']);
+$router->post('/admin/mechanics',       [MechanicsController::class, 'store']);
+$router->get('/admin/mechanics/{id}',        [MechanicsController::class, 'show']);
+$router->get('/admin/mechanics/{id}/edit',   [MechanicsController::class, 'edit']);
+$router->post('/admin/mechanics/{id}',       [MechanicsController::class, 'update']);
+$router->post('/admin/mechanics/{id}/delete',[MechanicsController::class, 'destroy']);
+
+/** ======================
+ *  ADMIN: Supervisors (route by code)
+ *  ====================== */
+use app\controllers\admin\SupervisorsController;
+
+$router->get ('/admin/supervisors',               [SupervisorsController::class, 'index']);
+$router->get ('/admin/supervisors/create',        [SupervisorsController::class, 'create']);
+$router->post('/admin/supervisors',               [SupervisorsController::class, 'store']);
+$router->get ('/admin/supervisors/{code}',        [SupervisorsController::class, 'show']);
+$router->get ('/admin/supervisors/{code}/edit',   [SupervisorsController::class, 'edit']);
+$router->post('/admin/supervisors/{code}',        [SupervisorsController::class, 'update']);
+$router->post('/admin/supervisors/{code}/delete', [SupervisorsController::class, 'destroy']);
+
+
+/** ======================
+ *  ADMIN: Appointments (route by code)
+ *  ====================== */
+// public/index.php or wherever you register routes
+use app\controllers\admin\AppointmentsController;
+
+$router->get('/admin/admin-appointments', [AppointmentsController::class, 'index']);
+
+use app\controllers\admin\ServicesController;
+
+/** ======================
+ *  ADMIN: View Services (route by code)
+ *  ====================== */
+$router->get('/admin/admin-viewservices', [ServicesController::class, 'index']);
+
+use app\controllers\admin\PricingController;
+
+$router->get('/admin/admin-updateserviceprice', [PricingController::class, 'index']);
+
+use app\controllers\admin\ApprovalController;
+
+// ...
+$router->get('/admin/admin-serviceapproval', [ApprovalController::class, 'index']);
+
+use app\controllers\admin\OngoingServicesController;
+
+$router->get('/admin/admin-ongoingservices', [OngoingServicesController::class, 'index']);
+
+use app\controllers\admin\ServiceHistoryController;
+
+$router->get('/admin/admin-servicehistory', [ServiceHistoryController::class, 'index']);
+
+use app\controllers\admin\FeedbackController;
+
+$router->get('/admin/admin-viewfeedback', [FeedbackController::class, 'index']);
+
+use app\controllers\admin\NotificationsController;
+
+$router->get('/admin/admin-notifications', [NotificationsController::class, 'index']);
+
+use app\controllers\admin\InvoicesController;
+
+$router->get('/admin/admin-viewinvoices', [InvoicesController::class, 'index']);
+
+use app\controllers\admin\ReportsController;
+
+$router->get('/admin/admin-viewreports', [ReportsController::class, 'index']);
+
+use app\controllers\admin\ReceptionistsController;
+
+$router->get('/admin/viewreceptionist', [ReceptionistsController::class, 'index']);
 
 /** Dev helper */
 $router->get('/test-managers', function () {
@@ -116,7 +199,7 @@ $router->post('/register', function () {
 |--------------------------------------------------------------------------|
 */
 
-$router->get('/supervisors',       fn() => print 'TODO: Supervisors page');
+
 $router->get('/mechanics',         fn() => print 'TODO: Mechanics page');
 $router->get('/receptionists',     fn() => print 'TODO: Receptionists page');
 

@@ -1,3 +1,4 @@
+<!-- admin/admin-viewreports -->
 <?php $current = 'reports'; // highlights “Service Progress” in sidebar ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -6,14 +7,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>AutoNexus Dashboard</title>
 
-   <link rel="stylesheet" href="../admin-sidebar/styles.css">   <!-- fixed sidebar styles -->
-  <link rel="stylesheet" href="style.css">                    <!-- this page’s styles -->
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <!-- in <head> -->
+<link rel="stylesheet" href="<?= rtrim(BASE_URL,'/') ?>/app/views/layouts/admin-sidebar/styles.css">
+<link rel="stylesheet" href="<?= rtrim(BASE_URL,'/') ?>/public/assets/css/admin/reports/style.css">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+
+  
 
 </head>
 <body>
-
- <?php include(__DIR__ . '/../admin-sidebar/sidebar.php'); ?>
+<?php include APP_ROOT . '/views/layouts/admin-sidebar/sidebar.php'; ?>
   <div class="main">
     
     <div class="reports-container">
@@ -40,8 +48,9 @@
 
       <!-- Service Report Tab -->
       <div id="service" class="tab-content active">
-        <h4>Service Trends</h4>
-        <img src="https://via.placeholder.com/700x300?text=Service+Trends+Chart" alt="Service Trends" />
+  <h4>Service Trends</h4>
+  <canvas id="serviceChart" width="700" height="300"></canvas>
+        
         <h4>Service Summary</h4>
         <table>
           <thead>
@@ -58,8 +67,9 @@
 
       <!-- Revenue Report Tab -->
       <div id="revenue" class="tab-content">
-        <h4>Revenue Trends</h4>
-        <img src="https://via.placeholder.com/700x300?text=Revenue+Chart" alt="Revenue Chart" />
+  <h4>Revenue Trends</h4>
+  <canvas id="revenueChart" width="700" height="300"></canvas>
+        
         <h4>Revenue Summary</h4>
         <div class="summary-cards">
           <div class="card">
@@ -82,8 +92,10 @@
 
       <!-- Service Distribution Tab -->
       <div id="distribution" class="tab-content">
-        <h4>Service Distribution</h4>
-        <img src="https://via.placeholder.com/400x300?text=Service+Pie+Chart" alt="Distribution Chart" />
+  <h4>Service Distribution</h4>
+  <canvas id="distributionChart" width="400" height="300"></canvas>
+
+        
         <h4>Service Breakdown</h4>
         <table>
           <thead>
@@ -103,7 +115,7 @@
       </div>
     </div>
   </div>
-
-  <script src="script.js"></script>
+<!-- at end of <body>, BEFORE closing body -->
+<script src="<?= rtrim(BASE_URL,'/') ?>/public/assets/js/admin/reports/script.js"></script>
 </body>
 </html>

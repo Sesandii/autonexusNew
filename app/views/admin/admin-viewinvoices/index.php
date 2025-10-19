@@ -1,3 +1,4 @@
+<!-- admin/admin-viewinvoices -->
 <?php $current = 'invoices'; ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -7,9 +8,10 @@
   <title>AutoNexus - Invoices</title>
 
    <!-- Shared neutral styles -->
-  <link rel="stylesheet" href="../admin-shared/management.css">
+  <link rel="stylesheet" href="<?= rtrim(BASE_URL,'/') ?>/app/views/layouts/admin-shared/management.css">
   <!-- Sidebar styles -->
-  <link rel="stylesheet" href="../admin-sidebar/styles.css">
+<link rel="stylesheet" href="<?= rtrim(BASE_URL,'/') ?>/app/views/layouts/admin-sidebar/styles.css">
+<link rel="stylesheet" href="<?= rtrim(BASE_URL,'/') ?>/public/assets/css/admin/invoices/style.css">
   <!-- Icons (optional) -->
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 
@@ -22,7 +24,7 @@
   </head>
 <body>
   
-<?php include(__DIR__ . '/../admin-sidebar/sidebar.php'); ?>
+<?php include APP_ROOT . '/views/layouts/admin-sidebar/sidebar.php'; ?>
   <main class="main-content">
     
 

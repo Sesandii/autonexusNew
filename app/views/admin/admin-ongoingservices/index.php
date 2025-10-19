@@ -1,3 +1,4 @@
+<!-- admin/admin-ongoingservices -->
 <?php $current = 'progress'; // highlights “Service Progress” in sidebar ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -8,13 +9,13 @@
 
 
 
-  <link rel="stylesheet" href="../admin-sidebar/styles.css">   <!-- fixed sidebar styles -->
-  <link rel="stylesheet" href="styles.css">                    <!-- this page’s styles -->
+<link rel="stylesheet" href="<?= rtrim(BASE_URL,'/') ?>/app/views/layouts/admin-sidebar/styles.css">
+<link rel="stylesheet" href="<?= rtrim(BASE_URL,'/') ?>/public/assets/css/admin/ongoingservices/styles.css">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
 
-  <?php include(__DIR__ . '/../admin-sidebar/sidebar.php'); ?>
+  <?php include APP_ROOT . '/views/layouts/admin-sidebar/sidebar.php'; ?>
 
   <main class="main-content">
     <h2>Ongoing Services</h2>

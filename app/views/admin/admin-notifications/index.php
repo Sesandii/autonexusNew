@@ -1,3 +1,4 @@
+<!-- admin/admin-notifications -->
 <?php $current = 'notifications'; ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -6,10 +7,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>AutoNexus - Notifications</title>
 
-  <!-- Shared neutral styles -->
-  <link rel="stylesheet" href="../admin-shared/management.css">
-  <!-- Sidebar styles -->
-  <link rel="stylesheet" href="../admin-sidebar/styles.css">
+  <link rel="stylesheet" href="<?= rtrim(BASE_URL,'/') ?>/app/views/layouts/admin-sidebar/styles.css">
+<link rel="stylesheet" href="<?= rtrim(BASE_URL,'/') ?>/public/assets/css/admin/notifications/style.css">
   <!-- Icons -->
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 
@@ -18,7 +17,7 @@
 </head>
 <body>
 
-<?php include(__DIR__ . '/../admin-sidebar/sidebar.php'); ?>
+<?php include APP_ROOT . '/views/layouts/admin-sidebar/sidebar.php'; ?>
 
 <main class="main-content">
   <!-- Header -->
