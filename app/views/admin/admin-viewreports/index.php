@@ -1,31 +1,31 @@
 <!-- admin/admin-viewreports -->
-<?php $current = 'reports'; // highlights “Service Progress” in sidebar ?>
+<?php $current = 'reports'; ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>AutoNexus Dashboard</title>
+  <title>AutoNexus • Reports</title>
 
-  <!-- in <head> -->
-<link rel="stylesheet" href="<?= rtrim(BASE_URL,'/') ?>/app/views/layouts/admin-sidebar/styles.css">
-<link rel="stylesheet" href="<?= rtrim(BASE_URL,'/') ?>/public/assets/css/admin/reports/style.css">
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <!-- Sidebar + Page Styles -->
+  <link rel="stylesheet" href="<?= rtrim(BASE_URL,'/') ?>/app/views/layouts/admin-sidebar/styles.css">
+  <link rel="stylesheet" href="<?= rtrim(BASE_URL,'/') ?>/public/assets/css/admin/reports/style.css">
 
-<!-- Chart.js CDN -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 
-
-
-  
-
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
+
 <body>
-<?php include APP_ROOT . '/views/layouts/admin-sidebar/sidebar.php'; ?>
+  <?php include APP_ROOT . '/views/layouts/admin-sidebar/sidebar.php'; ?>
+
   <div class="main">
-    
     <div class="reports-container">
       <h2>Reports</h2>
+
+      <!-- Filters -->
       <div class="filter-bar">
         <select>
           <option>Service Report</option>
@@ -40,17 +40,18 @@
         <button class="red-btn">Export</button>
       </div>
 
+      <!-- Tabs -->
       <div class="tab-buttons">
         <button class="tab-btn active" data-tab="service">Service Report</button>
         <button class="tab-btn" data-tab="revenue">Revenue Report</button>
         <button class="tab-btn" data-tab="distribution">Service Distribution</button>
       </div>
 
-      <!-- Service Report Tab -->
+      <!-- === Service Report Tab === -->
       <div id="service" class="tab-content active">
-  <h4>Service Trends</h4>
-  <canvas id="serviceChart" width="700" height="300"></canvas>
-        
+        <h4>Service Trends</h4>
+        <div class="chart-box"><canvas id="serviceChart"></canvas></div>
+
         <h4>Service Summary</h4>
         <table>
           <thead>
@@ -65,37 +66,33 @@
         </table>
       </div>
 
-      <!-- Revenue Report Tab -->
+      <!-- === Revenue Report Tab === -->
       <div id="revenue" class="tab-content">
-  <h4>Revenue Trends</h4>
-  <canvas id="revenueChart" width="700" height="300"></canvas>
-        
+        <h4>Revenue Trends</h4>
+        <div class="chart-box"><canvas id="revenueChart"></canvas></div>
+
         <h4>Revenue Summary</h4>
         <div class="summary-cards">
           <div class="card">
-            <p>Total Revenue</p>
-            <h3>$140,000</h3>
+            <p>Total Revenue</p><h3>$140,000</h3>
             <span class="green">+15% from last period</span>
           </div>
           <div class="card">
-            <p>Average Monthly</p>
-            <h3>$23,333</h3>
+            <p>Average Monthly</p><h3>$23,333</h3>
             <span class="green">+8% from last period</span>
           </div>
           <div class="card">
-            <p>Projected Annual</p>
-            <h3>$280,000</h3>
+            <p>Projected Annual</p><h3>$280,000</h3>
             <span class="green">+12% from last year</span>
           </div>
         </div>
       </div>
 
-      <!-- Service Distribution Tab -->
+      <!-- === Service Distribution Tab === -->
       <div id="distribution" class="tab-content">
-  <h4>Service Distribution</h4>
-  <canvas id="distributionChart" width="400" height="300"></canvas>
+        <h4>Service Distribution</h4>
+        <div class="chart-box"><canvas id="distributionChart"></canvas></div>
 
-        
         <h4>Service Breakdown</h4>
         <table>
           <thead>
@@ -115,7 +112,8 @@
       </div>
     </div>
   </div>
-<!-- at end of <body>, BEFORE closing body -->
-<script src="<?= rtrim(BASE_URL,'/') ?>/public/assets/js/admin/reports/script.js"></script>
+
+  <!-- JS -->
+  <script src="<?= rtrim(BASE_URL,'/') ?>/public/assets/js/admin/reports/script.js"></script>
 </body>
 </html>

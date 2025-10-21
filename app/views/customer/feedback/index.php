@@ -8,7 +8,7 @@ $base = rtrim(BASE_URL, '/');
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title><?= htmlspecialchars($title ?? 'Rate Your Service') ?> - AutoNexus</title>
 
-  <link rel="stylesheet" href="<?= $base ?>/../public/assets/css/customer/rate-service.css" />
+  <link rel="stylesheet" href="<?= $base ?>/public/assets/css/customer/rate-service.css" />
   <link rel="stylesheet" href="<?= $base ?>/public/assets/css/customer/sidebar.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -66,6 +66,6 @@ $base = rtrim(BASE_URL, '/');
     </main>
   </div>
 
-  <script src="<?= $base ?>/assets/js/customer/rate-service.js"></script>
+  <script src="<?= $base ?>/public/assets/js/customer/rate-service.js"></script>
 </body>
 </html>

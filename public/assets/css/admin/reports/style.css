@@ -1,32 +1,27 @@
 body {
   margin: 0;
   font-family: 'Segoe UI', sans-serif;
-  display: flex;
   background: #f5f6fa;
+  display: flex;
 }
-
-
-
 
 .main {
   flex: 1;
   padding: 20px 300px 20px;
-  /* padding: 30px; */
   overflow-y: auto;
 }
 
-h2{
-   margin-bottom:20px;
-    font-size: 24px;
+h2 {
+  margin-bottom: 20px;
+  font-size: 24px;
   font-weight: 600;
   color: #333;
- }
-
+}
 
 .reports-container {
   background: white;
   border-radius: 10px;
-  padding: 20px ;
+  padding: 20px;
 }
 
 .filter-bar {
@@ -82,6 +77,7 @@ h2{
   display: block;
 }
 
+/* Tables */
 table {
   width: 100%;
   border-collapse: collapse;
@@ -98,14 +94,10 @@ th {
   background: #f3f3f3;
 }
 
-.green {
-  color: green;
-}
+.green { color: green; }
+.red { color: red; }
 
-.red {
-  color: red;
-}
-
+/* Summary cards */
 .summary-cards {
   display: flex;
   gap: 20px;
@@ -119,6 +111,7 @@ th {
   border-radius: 8px;
 }
 
+/* Bottom button */
 .bottom-button {
   margin-top: 20px;
   text-align: center;
@@ -130,27 +123,24 @@ th {
   padding: 12px;
 }
 
-/* Dont forget to put this after u merge the dashboard*/
+/* Chart sizing fix */
+.chart-box {
+  position: relative;
+  width: 100%;
+  max-width: 900px;
+  height: 320px;
+  margin: 8px 0 16px;
+}
+
+.tab-content canvas {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+}
+
+/* Sidebar adjustments */
 .sidebar-frame {
   width: 260px;
   border: none;
   height: 100vh;
-}
-.container {
-  display: flex;
-}
-
-.tab-content canvas {
-  width: 100%;
-  max-width: 900px;
-  height: 320px; /* Chart.js will honor height if maintainAspectRatio:false */
-  display: block;
-  margin: 8px 0 16px;
-}
-
-/* Tab visibility (if not already present) */
-.tab-content { display: none; }
-.tab-content.active { display: block; }
-.tab-buttons .tab-btn.active {
-  border-bottom: 2px solid #c92127;
 }

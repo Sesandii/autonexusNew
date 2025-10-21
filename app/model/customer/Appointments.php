@@ -78,4 +78,6 @@ class Appointments
         $stmt = $this->pdo->prepare($sql);
         return $stmt->execute(['id' => $appointmentId, 'cid' => $customerId]);
     }
+
+    
 }
