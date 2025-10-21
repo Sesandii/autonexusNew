@@ -1,0 +1,110 @@
+/* ======= Base Reset ======= */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
+}
+
+body {
+  display: flex;
+  background: #f6f7fa;
+  color: #333;
+}
+
+/* ======= Sidebar ======= */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 260px;
+  height: 100vh;
+  background: #111;          /* deeper black tone */
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;          /* scroll if content too tall */
+  scrollbar-width: thin;
+  scrollbar-color: #444 #111;
+  box-shadow: 2px 0 10px rgba(0,0,0,0.3);
+}
+
+.sidebar::-webkit-scrollbar {
+  width: 6px;
+}
+.sidebar::-webkit-scrollbar-thumb {
+  background: #444;
+  border-radius: 6px;
+}
+
+/* ======= Logo Section ======= */
+.sidebar .logo {
+  text-align: center;
+  padding: 25px 10px 20px;
+  border-bottom: 1px solid #222;
+}
+
+.sidebar .logo img {
+  width: 70px;
+  height: auto;
+  margin-bottom: 8px;
+}
+
+.sidebar .logo h2 {
+  color: #fff;
+  font-size: 20px;
+  margin-bottom: 3px;
+  letter-spacing: 1px;
+}
+
+.sidebar .logo p {
+  font-size: 11px;
+  letter-spacing: 1px;
+  color: #aaa;
+}
+
+/* ======= Menu ======= */
+.sidebar .menu {
+  list-style: none;
+  margin-top: 15px;
+  padding: 0;
+}
+
+.sidebar .menu li {
+  padding: 14px 25px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  color: #ccc;
+  transition: all 0.25s ease;
+}
+
+.sidebar .menu li i {
+  width: 20px;
+  text-align: center;
+}
+
+/* ======= Active & Hover ======= */
+.sidebar .menu li.active,
+.sidebar .menu li:hover {
+  background: #1e90ff;       /* blue active highlight */
+  color: #fff;
+  border-left: 4px solid #fff;
+  padding-left: 21px;        /* compensate for left border */
+}
+
+.sidebar .menu li a {
+  color: inherit;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+/* ======= Responsive ======= */
+@media (max-height: 600px) {
+  .sidebar {
+    overflow-y: auto;
+  }
+}

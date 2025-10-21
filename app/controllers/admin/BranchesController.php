@@ -141,8 +141,21 @@ class BranchesController extends Controller
                   ? ($get('status') ?: 'active') : 'active';
 
         // created_at is DATETIME; form gives date (YYYY-MM-DD)
-        $created_date = $get('created_at');
-        $created_at = $created_date ? ($created_date . ' 00:00:00') : date('Y-m-d 00:00:00');
+        // created_at is DATETIME; form may give date (YYYY-MM-DD) or full datetime
+$created_raw = $get('created_at');
+if ($created_raw === '') {
+    $created_at = date('Y-m-d 00:00:00');
+} elseif (preg_match('/^\d{4}-\d{2}-\d{2}$/', $created_raw)) {
+    // date only -> append midnight
+    $created_at = $created_raw . ' 00:00:00';
+} elseif (preg_match('/^\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}$/', $created_raw)) {
+    // already full datetime -> keep as is
+    $created_at = $created_raw;
+} else {
+    // unexpected format -> normalize to today midnight (or keep raw if you prefer)
+    $created_at = date('Y-m-d 00:00:00');
+}
+
 
         $capacity = is_numeric($get('capacity')) ? (int)$get('capacity') : 0;
         $staff    = is_numeric($get('staff')) ? (int)$get('staff') : 0;

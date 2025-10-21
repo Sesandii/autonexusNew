@@ -10,13 +10,9 @@ class ProfileController extends Controller
 {
     public function index(): void
     {
-        if (method_exists($this, 'requireCustomer')) {
-            $this->requireCustomer();
-        }
+        $this->requireCustomer();
 
-        // robust session user id
-        $userId = (int)($_SESSION['user']['user_id'] ?? $_SESSION['user_id'] ?? 0);
-
+        $userId   = $this->userId();        // uses parent Controller::userId()
         $model    = new Profile();
         $profile  = $model->getProfile($userId);
         $vehicles = $model->getVehicles($userId);
@@ -24,62 +20,107 @@ class ProfileController extends Controller
         $this->view('customer/profile/index', [
             'title'    => 'My Profile',
             'profile'  => $profile,
-            'vehicles' => $vehicles
+            'vehicles' => $vehicles,
+            'flash'    => $_SESSION['flash'] ?? null,
         ]);
+        unset($_SESSION['flash']);
+    }
+
+    /* ---------- Edit Profile (HTML form) ---------- */
+
+    public function editForm(): void
+    {
+        $this->requireCustomer();
+
+        $userId  = $this->userId();
+        $model   = new Profile();
+        $profile = $model->getProfile($userId);
+
+        $this->view('customer/profile/edit', [
+            'title'   => 'Edit Profile',
+            'profile' => $profile,
+            'flash'   => $_SESSION['flash'] ?? null,
+        ]);
+        unset($_SESSION['flash']);
     }
 
     public function updateProfile(): void
     {
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            http_response_code(405);
-            echo "Method Not Allowed";
-            return;
-        }
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') { http_response_code(405); echo "Method Not Allowed"; return; }
+        $this->requireCustomer();
 
-        $userId = (int)($_SESSION['user']['user_id'] ?? $_SESSION['user_id'] ?? 0);
-        if (!$userId) {
-            echo json_encode(['error' => 'Not logged in']);
-            return;
-        }
+        $userId = $this->userId();
 
-        // your form currently posts a single "name"; split to first/last safely
-        $name  = trim($_POST['name'] ?? '');
+        $first = trim($_POST['first_name'] ?? '');
+        $last  = trim($_POST['last_name'] ?? '');
         $phone = trim($_POST['phone'] ?? '');
-        $parts = preg_split('/\s+/', $name, -1, PREG_SPLIT_NO_EMPTY) ?: [];
-        $first = $parts[0] ?? '';
-        $last  = implode(' ', array_slice($parts, 1));
+        $alt   = trim($_POST['alt_phone'] ?? '');
+        $addr  = trim($_POST['street_address'] ?? '');
+        $city  = trim($_POST['city'] ?? '');
+        $state = trim($_POST['state'] ?? '');
 
         $model = new Profile();
-        // No NIC / picture update here because columns do not exist
-        $model->updateProfile($userId, $first, $last, $phone);
+        $ok = $model->updateProfileFull($userId, $first, $last, $phone, $alt, $addr, $city, $state);
 
-        echo json_encode(['success' => true]);
+        $_SESSION['flash'] = $ok ? 'Profile updated.' : 'Failed to update profile.';
+        header('Location: ' . rtrim(BASE_URL,'/') . '/customer/profile');
+        exit;
+    }
+
+    /* ---------- Vehicle add/edit (HTML forms) ---------- */
+
+    public function vehicleForm(): void
+    {
+        $this->requireCustomer();
+
+        $userId = $this->userId();
+        $vehId  = (int)($_GET['id'] ?? 0);
+
+        $model = new Profile();
+        $vehicle = $vehId ? $model->getVehicleByIdForUser($userId, $vehId) : null;
+
+        $this->view('customer/profile/vehicle_form', [
+            'title'   => $vehId ? 'Edit Vehicle' : 'Add Vehicle',
+            'vehicle' => $vehicle,
+            'flash'   => $_SESSION['flash'] ?? null,
+        ]);
+        unset($_SESSION['flash']);
     }
 
     public function saveVehicle(): void
     {
-        $userId = (int)($_SESSION['user']['user_id'] ?? $_SESSION['user_id'] ?? 0);
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') { http_response_code(405); echo "Method Not Allowed"; return; }
+        $this->requireCustomer();
 
-        // map posted names to your DB column names
+        $userId = $this->userId();
         $data = [
             'vehicle_id'    => $_POST['vehicle_id'] ?? null,
-            'make'          => trim($_POST['brand'] ?? ''),            // brand -> make
+            'license_plate' => trim($_POST['license_plate'] ?? ''),
+            'make'          => trim($_POST['make'] ?? ''),
             'model'         => trim($_POST['model'] ?? ''),
-            'color'         => trim($_POST['color'] ?? ''),
             'year'          => (int)($_POST['year'] ?? 0),
-            'license_plate' => trim($_POST['reg_no'] ?? ''),           // reg_no -> license_plate
+            'color'         => trim($_POST['color'] ?? ''),
         ];
 
         $model = new Profile();
-        $model->saveVehicle($userId, $data);
-        echo json_encode(['success' => true]);
+        $ok = $model->saveVehicle($userId, $data);
+
+        $_SESSION['flash'] = $ok ? 'Vehicle saved.' : 'Failed to save vehicle.';
+        header('Location: ' . rtrim(BASE_URL,'/') . '/customer/profile');
+        exit;
     }
 
     public function deleteVehicle(): void
     {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') { http_response_code(405); echo "Method Not Allowed"; return; }
+        $this->requireCustomer();
+
         $id = (int)($_POST['vehicle_id'] ?? 0);
         $model = new Profile();
-        $model->deleteVehicle($id);
-        echo json_encode(['success' => true]);
+        $ok = $model->deleteVehicleOwnedBy($this->userId(), $id);
+
+        $_SESSION['flash'] = $ok ? 'Vehicle removed.' : 'Could not remove vehicle.';
+        header('Location: ' . rtrim(BASE_URL,'/') . '/customer/profile');
+        exit;
     }
 }

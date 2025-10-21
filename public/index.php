@@ -253,6 +253,7 @@ use app\controllers\customer\BookingController;
 
 $router->get('/customer/book',  [BookingController::class, 'index']);   // booking form
 $router->post('/customer/book', [BookingController::class, 'create']);  // (optional) handle submit later
+$router->get('/customer/book/slots',  [BookingController::class, 'slots']);
 
 //customer - feedback
 
@@ -274,18 +275,77 @@ use app\controllers\customer\TrackServicesController;
 $router->get('/customer/track-services',        [TrackServicesController::class, 'index']);
 $router->get('/customer/track-services/list',   [TrackServicesController::class, 'list']); // JSON for AJAX (optional)
 
-use app\controllers\customer\ProfileController;
+// use app\controllers\customer\ProfileController;
 
-$router->get('/customer/profile', [ProfileController::class, 'index']);
-$router->post('/customer/profile/update', [ProfileController::class, 'updateProfile']);
-$router->post('/customer/profile/vehicle', [ProfileController::class, 'saveVehicle']);
-$router->post('/customer/profile/vehicle/delete', [ProfileController::class, 'deleteVehicle']);
+// $router->get('/customer/profile', [ProfileController::class, 'index']);
+// $router->post('/customer/profile/update', [ProfileController::class, 'updateProfile']);
+// $router->post('/customer/profile/vehicle', [ProfileController::class, 'saveVehicle']);
+// $router->post('/customer/profile/vehicle/delete', [ProfileController::class, 'deleteVehicle']);
+
+// Profile (HTML forms, no JSON)
+$router->get('/customer/profile',                 [\app\controllers\customer\ProfileController::class, 'index']);
+$router->get('/customer/profile/edit',            [\app\controllers\customer\ProfileController::class, 'editForm']);
+$router->post('/customer/profile/update',         [\app\controllers\customer\ProfileController::class, 'updateProfile']);
+
+$router->get('/customer/profile/vehicle',         [\app\controllers\customer\ProfileController::class, 'vehicleForm']); // add OR edit by ?id=
+$router->post('/customer/profile/vehicle',        [\app\controllers\customer\ProfileController::class, 'saveVehicle']);
+$router->post('/customer/profile/vehicle/delete', [\app\controllers\customer\ProfileController::class, 'deleteVehicle']);
 
 
 
 $router->get ('/customer/appointments',          [\app\controllers\customer\AppointmentsController::class, 'index']);
 $router->post('/customer/appointments/cancel',   [\app\controllers\customer\AppointmentsController::class, 'cancel']);   // optional action
 $router->get ('/customer/appointments/list',     [\app\controllers\customer\AppointmentsController::class, 'list']);     // optional JSON for AJAX
+
+/** ======================
+ *  MANAGER: Dashboard
+ *  ====================== */
+$router->get('/manager/dashboard', [\app\controllers\manager\DashboardController::class, 'index']);
+
+/** ======================
+ *  MANAGER: Services & Packages (list)
+ *  ====================== */
+$router->get('/manager/services', [\app\controllers\manager\ServicesController::class, 'index']);
+
+/** ======================
+ *  MANAGER: Team Performance
+ *  ====================== */
+$router->get('/manager/performance', [\app\controllers\manager\PerformanceController::class, 'index']);
+
+/** ======================
+ *  MANAGER: Team Schedule
+ *  ====================== */
+$router->get('/manager/schedule', [\app\controllers\manager\ScheduleController::class, 'index']);
+
+/** ======================
+ *  MANAGER: Customer Profiles
+ *  ====================== */
+$router->get('/manager/customers', [\app\controllers\manager\CustomersController::class, 'index']);
+
+/** ======================
+ *  MANAGER: Vehicle History (by customer id)
+ *  ====================== */
+$router->get('/manager/customers/{id}/history', [\app\controllers\manager\CustomerHistoryController::class, 'index']);
+
+/** ======================
+ *  MANAGER: Complaints Management
+ *  ====================== */
+$router->get('/manager/complaints', [\app\controllers\manager\ComplaintsController::class, 'index']);
+
+/** ======================
+ *  MANAGER: Reports
+ *  ====================== */
+$router->get('/manager/reports', [\app\controllers\manager\ReportsController::class, 'index']);
+
+/** ======================
+ *  MANAGER: Appointments
+ *  ====================== */
+$router->get('/manager/appointments', [\app\controllers\manager\AppointmentsController::class, 'index']);
+
+/** ======================
+ *  MANAGER: Service History (by branch)
+ *  ====================== */
+$router->get('/manager/servicehistory', [\app\controllers\manager\ServiceHistoryController::class, 'index']);
 
 
 /*

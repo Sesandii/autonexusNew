@@ -1,0 +1,122 @@
+body {
+  margin: 0;
+  font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  background: #f9fafb;
+}
+
+.main-content {
+  margin-left: 240px;
+  padding: 40px;
+  color: #111827;
+}
+
+h1 {
+  font-size: 32px;
+  color: #DC2626;
+  margin-bottom: 8px;
+}
+
+.subtitle {
+  color: #4B5563;
+  margin-bottom: 32px;
+}
+
+/* Grid layout for appointment cards */
+.appointments-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+  gap: 20px;
+}
+
+/* Appointment card */
+.appointment-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+  padding: 20px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.appointment-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 18px rgba(0,0,0,0.08);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.card-header h3 {
+  margin: 0;
+  font-size: 18px;
+  color: #111827;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.status {
+  font-size: 13px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 20px;
+  color: #fff;
+}
+
+/* Status colors */
+.upcoming .status { background: #DC2626; }
+.completed .status { background: #059669; }
+.cancelled .status { background: #6B7280; }
+
+.card-body p {
+  margin: 6px 0;
+  color: #374151;
+}
+
+.card-footer {
+  margin-top: 16px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.card-footer button {
+  border: none;
+  border-radius: 6px;
+  padding: 8px 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.reschedule {
+  background: #DC2626;
+  color: #fff;
+}
+
+.cancel {
+  background: #6B7280;
+  color: #fff;
+}
+
+.review {
+  background: #EAB308;
+  color: #111827;
+}
+
+.rebook {
+  background: #2563EB;
+  color: #fff;
+}
+
+.card-footer button:hover {
+  opacity: 0.9;
+}
+
+/* Responsive tweaks */
+@media (max-width: 768px) {
+  .main-content { margin-left: 210px; padding: 24px; }
+}
