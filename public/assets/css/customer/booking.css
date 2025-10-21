@@ -131,3 +131,37 @@ body{
   .acc-panel{ grid-template-columns:1fr; }
   .date-row{ flex-direction:column; gap:10px; }
 }
+/* Date / form controls */
+.date-row{ display:flex; align-items:flex-start; gap:18px; }
+
+.date-field input,
+.date-field select{
+  width:100%;
+  border:1px solid var(--line);
+  border-radius:10px;
+  padding:10px 12px;
+  font:inherit;
+  background:#fff;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,.03);
+}
+
+/* prettier native select */
+.date-field select{
+  appearance:none;             /* hide native arrow */
+  background-image:
+    linear-gradient(45deg, transparent 50%, #9aa0a6 50%),
+    linear-gradient(135deg, #9aa0a6 50%, transparent 50%);
+  background-position: calc(100% - 18px) calc(50% - 3px), calc(100% - 12px) calc(50% - 3px);
+  background-size: 6px 6px, 6px 6px;
+  background-repeat: no-repeat;
+  padding-right: 32px;         /* space for arrow */
+}
+
+.date-field input:focus,
+.date-field select:focus{
+  outline: none;
+  border-color: rgba(var(--accent-rgb), .6);
+  box-shadow: 0 0 0 3px rgba(var(--accent-rgb), .12), inset 0 1px 2px rgba(0,0,0,.03);
+}
+
+.notes{ margin:6px 0 0; color:var(--muted); padding-left:18px; }

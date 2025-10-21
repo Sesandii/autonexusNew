@@ -14,85 +14,89 @@
   <?php include APP_ROOT . '/views/layouts/customer-sidebar.php'; ?>
 
   <div class="main-content">
+
+    <?php if (!empty($flash)): ?>
+      <div class="flash"><?= htmlspecialchars($flash) ?></div>
+    <?php endif; ?>
+
     <div class="profile-card">
-      <h2>My Profile</h2>
-      <div class="profile-info">
-        <div class="profile-pic" id="profile-pic">
-          <?php if (!empty($profile['profile_pic'])): ?>
-            <img src="<?= $base ?>/uploads/profiles/<?= htmlspecialchars($profile['profile_pic']) ?>" alt="Profile" style="width:100%;height:100%;border-radius:50%;">
-          <?php else: ?>
-            Profile Picture
-          <?php endif; ?>
-        </div>
-
-        <div class="profile-details">
-          <?php
-            $fullName = trim(($profile['first_name'] ?? '') . ' ' . ($profile['last_name'] ?? ''));
-            $addrBits = array_filter([
-              $profile['street_address'] ?? '',
-              $profile['city'] ?? '',
-              $profile['state'] ?? ''
-            ]);
-            $address = implode(', ', $addrBits);
-          ?>
-          <?php if (!empty($profile['customer_code'])): ?>
-            <p><span class="label">Customer Code:</span> <?= htmlspecialchars($profile['customer_code']) ?></p>
-          <?php endif; ?>
-
-          <p><span class="label">Full Name:</span> <span id="profile-name"><?= htmlspecialchars($fullName ?: '—') ?></span></p>
-
-          <?php if (!empty($profile['username'])): ?>
-            <p><span class="label">Username:</span> <?= htmlspecialchars($profile['username']) ?></p>
-          <?php endif; ?>
-
-          <p><span class="label">Email:</span> <span id="profile-email"><?= htmlspecialchars($profile['email'] ?? '—') ?></span></p>
-          <p><span class="label">Contact Number:</span> <span id="profile-phone"><?= htmlspecialchars($profile['phone'] ?? '—') ?></span></p>
-
-          <?php if (!empty($profile['alt_phone'])): ?>
-            <p><span class="label">Alt. Phone:</span> <?= htmlspecialchars($profile['alt_phone']) ?></p>
-          <?php endif; ?>
-
-          <?php if (!empty($address)): ?>
-            <p><span class="label">Address:</span> <?= htmlspecialchars($address) ?></p>
-          <?php endif; ?>
-
-          <!-- NIC omitted (column not in schema) -->
-
-          <button class="btn red" id="edit-profile-btn">Edit Profile</button>
-        </div>
+      <div class="card-header">
+        <h2>My Profile</h2>
+        <a class="btn red" href="<?= $base ?>/customer/profile/edit"><i class="fa fa-pen"></i> Edit</a>
       </div>
+
+      <form class="form-card form-readonly" aria-readonly="true">
+        <?php $fullName = trim(($profile['first_name'] ?? '') . ' ' . ($profile['last_name'] ?? '')); ?>
+
+        <div class="grid-2">
+          <label>Username
+            <input type="text" value="<?= htmlspecialchars($profile['username'] ?? '—') ?>" readonly>
+          </label>
+          <label>Full Name
+            <input type="text" value="<?= htmlspecialchars($fullName ?: '—') ?>" readonly>
+          </label>
+
+          <label>Email
+            <input type="text" value="<?= htmlspecialchars($profile['email'] ?? '—') ?>" readonly>
+          </label>
+          <label>Phone
+            <input type="text" value="<?= htmlspecialchars($profile['phone'] ?? '—') ?>" readonly>
+          </label>
+
+          <label>Alt. Phone
+            <input type="text" value="<?= htmlspecialchars($profile['alt_phone'] ?? '—') ?>" readonly>
+          </label>
+          <label>Member Since
+            <input type="text" value="<?= htmlspecialchars($profile['created_at'] ?? '—') ?>" readonly>
+          </label>
+
+          <label>Street Address
+            <input type="text" value="<?= htmlspecialchars($profile['street_address'] ?? '—') ?>" readonly>
+          </label>
+          <label>City / State
+            <input type="text" value="<?= htmlspecialchars(($profile['city'] ?? '') . ' ' . ($profile['state'] ?? '')) ?>" readonly>
+          </label>
+
+          <label>Role
+            <input type="text" value="<?= htmlspecialchars($profile['role'] ?? '—') ?>" readonly>
+          </label>
+          <label>Status
+            <input type="text" value="<?= htmlspecialchars($profile['status'] ?? '—') ?>" readonly>
+          </label>
+        </div>
+      </form>
     </div>
 
-    <h2>Registered Vehicles</h2>
-    <div class="vehicles-container" id="vehicles-container">
+    <div class="card-header mt-24">
+      <h2>Registered Vehicles</h2>
+      <a class="btn yellow" href="<?= $base ?>/customer/profile/vehicle"><i class="fa fa-plus"></i> Add Vehicle</a>
+    </div>
+
+    <div class="vehicles-container">
       <?php foreach ($vehicles as $v): ?>
-        <div class="vehicle-card" data-id="<?= (int)$v['vehicle_id'] ?>">
+        <div class="vehicle-card">
           <h3><?= htmlspecialchars(($v['make'] ?? '') . ' ' . ($v['model'] ?? '')) ?></h3>
-          <p><span class="label">Registration:</span> <?= htmlspecialchars($v['license_plate'] ?? '') ?></p>
-          <p><span class="label">Color:</span> <?= htmlspecialchars($v['color'] ?? '') ?></p>
-          <p><span class="label">Year of Manufacture:</span> <?= htmlspecialchars($v['year'] ?? '') ?></p>
+          <div class="grid-2 small">
+            <div><span class="label">Code:</span> <?= htmlspecialchars($v['vehicle_code'] ?? '') ?></div>
+            <div><span class="label">Reg No:</span> <?= htmlspecialchars($v['license_plate'] ?? '') ?></div>
+            <div><span class="label">Color:</span> <?= htmlspecialchars($v['color'] ?? '') ?></div>
+            <div><span class="label">Year:</span> <?= htmlspecialchars($v['year'] ?? '') ?></div>
+          </div>
           <div class="vehicle-actions">
-            <button class="btn edit" onclick="editVehicle(this)">Edit</button>
-            <button class="btn red" onclick="removeVehicle(this)">Remove</button>
+            <a class="btn edit" href="<?= $base ?>/customer/profile/vehicle?id=<?= (int)$v['vehicle_id'] ?>">Edit</a>
+            <form method="post" action="<?= $base ?>/customer/profile/vehicle/delete" onsubmit="return confirm('Remove this vehicle?')">
+              <input type="hidden" name="vehicle_id" value="<?= (int)$v['vehicle_id'] ?>">
+              <button class="btn red" type="submit">Remove</button>
+            </form>
           </div>
         </div>
       <?php endforeach; ?>
-      <?php if (empty($vehicles)): ?>
-        <p class="notes">No vehicles found. Click “Add New Vehicle” to register one.</p>
-      <?php endif; ?>
-    </div>
 
-    <div class="vehicle-buttons">
-      <button class="btn yellow" id="add-vehicle-btn">+ Add New Vehicle</button>
+      <?php if (empty($vehicles)): ?>
+        <p class="notes">No vehicles found.</p>
+      <?php endif; ?>
     </div>
   </div>
 
-  <!-- Modals -->
-  <?php include __DIR__ . '/modals.php'; ?>
-
-  <script>
-    const BASE_URL = "<?= $base ?>";
-  </script>
-  <script src="<?= $base ?>/public/assets/js/customer/profile.js"></script>
 </body>
 </html>

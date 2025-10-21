@@ -266,12 +266,21 @@ use app\controllers\customer\TrackServicesController;
 $router->get('/customer/track-services',        [TrackServicesController::class, 'index']);
 $router->get('/customer/track-services/list',   [TrackServicesController::class, 'list']); // JSON for AJAX (optional)
 
-use app\controllers\customer\ProfileController;
+// use app\controllers\customer\ProfileController;
 
-$router->get('/customer/profile', [ProfileController::class, 'index']);
-$router->post('/customer/profile/update', [ProfileController::class, 'updateProfile']);
-$router->post('/customer/profile/vehicle', [ProfileController::class, 'saveVehicle']);
-$router->post('/customer/profile/vehicle/delete', [ProfileController::class, 'deleteVehicle']);
+// $router->get('/customer/profile', [ProfileController::class, 'index']);
+// $router->post('/customer/profile/update', [ProfileController::class, 'updateProfile']);
+// $router->post('/customer/profile/vehicle', [ProfileController::class, 'saveVehicle']);
+// $router->post('/customer/profile/vehicle/delete', [ProfileController::class, 'deleteVehicle']);
+
+// Profile (HTML forms, no JSON)
+$router->get('/customer/profile',                 [\app\controllers\customer\ProfileController::class, 'index']);
+$router->get('/customer/profile/edit',            [\app\controllers\customer\ProfileController::class, 'editForm']);
+$router->post('/customer/profile/update',         [\app\controllers\customer\ProfileController::class, 'updateProfile']);
+
+$router->get('/customer/profile/vehicle',         [\app\controllers\customer\ProfileController::class, 'vehicleForm']); // add OR edit by ?id=
+$router->post('/customer/profile/vehicle',        [\app\controllers\customer\ProfileController::class, 'saveVehicle']);
+$router->post('/customer/profile/vehicle/delete', [\app\controllers\customer\ProfileController::class, 'deleteVehicle']);
 
 
 

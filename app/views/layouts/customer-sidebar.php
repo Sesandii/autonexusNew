@@ -16,9 +16,7 @@ function isActive($path, $current) { return strpos($current, $path) === 0 ? ' cl
     <!-- Dashboard -->
     <li><a<?= isActive('/customer/dashboard', $currentPath) ?> href="<?= $base ?>/customer/dashboard"><i class="fa-solid fa-gauge"></i> Dashboard</a></li>
 
-    <!-- Book Appointment -->
-    <li><a<?= isActive('/customer/book', $currentPath) ?> href="<?= $base ?>/customer/book"><i class="fa fa-book"></i> Book Appointment</a></li>
-
+    
 
     <!-- View Appointment -->
     <li><a<?= isActive('/customer/appointments', $currentPath) ?> href="<?= $base ?>/customer/appointments"><i class="fa-regular fa-calendar-days"></i> View Appointment</a></li>
