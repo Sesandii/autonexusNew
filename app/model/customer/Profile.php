@@ -21,16 +21,29 @@ class Profile
     }
 
     public function getProfile(int $userId): array
-    {
-        // ONLY select columns that exist in your users schema
-        $sql = "SELECT user_id, first_name, last_name, email, phone, alt_phone, street_address, city, state
-                FROM users
-                WHERE user_id = :uid
-                LIMIT 1";
-        $st = $this->pdo->prepare($sql);
-        $st->execute(['uid' => $userId]);
-        return $st->fetch(PDO::FETCH_ASSOC) ?: [];
-    }
+{
+    // Join customers to expose customer_code alongside user fields
+    $sql = "SELECT 
+                u.user_id,
+                u.first_name, 
+                u.last_name, 
+                u.username,
+                u.email, 
+                u.phone, 
+                u.alt_phone, 
+                u.street_address, 
+                u.city, 
+                u.state,
+                c.customer_code
+            FROM users u
+            LEFT JOIN customers c ON c.user_id = u.user_id
+            WHERE u.user_id = :uid
+            LIMIT 1";
+    $st = $this->pdo->prepare($sql);
+    $st->execute(['uid' => $userId]);
+    return $st->fetch(PDO::FETCH_ASSOC) ?: [];
+}
+
 
     public function updateProfile(int $userId, string $first, string $last, string $phone): bool
     {

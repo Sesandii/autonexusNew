@@ -24,18 +24,39 @@
             Profile Picture
           <?php endif; ?>
         </div>
+
         <div class="profile-details">
           <?php
             $fullName = trim(($profile['first_name'] ?? '') . ' ' . ($profile['last_name'] ?? ''));
+            $addrBits = array_filter([
+              $profile['street_address'] ?? '',
+              $profile['city'] ?? '',
+              $profile['state'] ?? ''
+            ]);
+            $address = implode(', ', $addrBits);
           ?>
+          <?php if (!empty($profile['customer_code'])): ?>
+            <p><span class="label">Customer Code:</span> <?= htmlspecialchars($profile['customer_code']) ?></p>
+          <?php endif; ?>
+
           <p><span class="label">Full Name:</span> <span id="profile-name"><?= htmlspecialchars($fullName ?: '—') ?></span></p>
+
+          <?php if (!empty($profile['username'])): ?>
+            <p><span class="label">Username:</span> <?= htmlspecialchars($profile['username']) ?></p>
+          <?php endif; ?>
+
           <p><span class="label">Email:</span> <span id="profile-email"><?= htmlspecialchars($profile['email'] ?? '—') ?></span></p>
           <p><span class="label">Contact Number:</span> <span id="profile-phone"><?= htmlspecialchars($profile['phone'] ?? '—') ?></span></p>
 
-          <!-- Hide NIC since your DB doesn't have it -->
-          <?php if (!empty($profile['nic'])): ?>
-            <p><span class="label">NIC:</span> <span id="profile-nic"><?= htmlspecialchars($profile['nic']) ?></span></p>
+          <?php if (!empty($profile['alt_phone'])): ?>
+            <p><span class="label">Alt. Phone:</span> <?= htmlspecialchars($profile['alt_phone']) ?></p>
           <?php endif; ?>
+
+          <?php if (!empty($address)): ?>
+            <p><span class="label">Address:</span> <?= htmlspecialchars($address) ?></p>
+          <?php endif; ?>
+
+          <!-- NIC omitted (column not in schema) -->
 
           <button class="btn red" id="edit-profile-btn">Edit Profile</button>
         </div>
@@ -69,6 +90,9 @@
   <!-- Modals -->
   <?php include __DIR__ . '/modals.php'; ?>
 
+  <script>
+    const BASE_URL = "<?= $base ?>";
+  </script>
   <script src="<?= $base ?>/public/assets/js/customer/profile.js"></script>
 </body>
 </html>
