@@ -139,7 +139,7 @@ class ServiceManagersController extends Controller
     private function validateCreate(array $d): array
     {
         $errors = [];
-        foreach (['first_name','last_name','username','email','password','manager_code'] as $f) {
+        foreach (['first_name','last_name','username','email','password'] as $f) {
             if (empty($d[$f])) $errors[] = "$f is required";
         }
         if (!empty($d['email']) && !filter_var($d['email'], FILTER_VALIDATE_EMAIL)) $errors[] = 'email invalid';

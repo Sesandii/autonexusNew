@@ -88,9 +88,13 @@
     <li class="menu-item <?php if($current=='invoices') echo 'active'; ?>">
       <a href="<?= rtrim(BASE_URL,'/') ?>/admin/admin-viewinvoices"><i class="fa-solid fa-file-invoice-dollar"></i><span>Invoices</span></a>
     </li>
-    <li class="menu-item <?php if($current=='invoices') echo 'active'; ?>">
-      <a href="<?= rtrim(BASE_URL,'/') ?>/admin/admin-viewinvoices"><i class="fa-solid fa-right-from-bracket"></i><span>Log Out</span></a>
+    <li class="menu-item <?php if(($current ?? '')==='logout') echo 'active'; ?>">
+      <a href="<?= rtrim(BASE_URL,'/') ?>/admin/logout">
+        <i class="fa-solid fa-right-from-bracket"></i><span>Log Out</span>
+      </a>
     </li>
+
+
     
   </ul>
 </aside>

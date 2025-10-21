@@ -20,7 +20,7 @@ class Customer
                     u.user_id, u.first_name, u.last_name, u.email, u.phone, u.status
                 FROM customers c
                 JOIN users u ON u.user_id = c.user_id
-                ORDER BY c.customer_id DESC";
+                ORDER BY c.customer_id";
         return $this->db->query($sql)->fetchAll(PDO::FETCH_ASSOC);
     }
 
@@ -128,7 +128,7 @@ class Customer
     {
         $row = $this->db->query("SELECT customer_code FROM customers ORDER BY customer_id DESC LIMIT 1")
                         ->fetch(PDO::FETCH_ASSOC);
-        $last = $row['customer_code'] ?? 'CUST000';
+        $last = $row['customer_code'] ?? 'CUST001';
         $num  = (int)preg_replace('/\D/', '', $last);
         return sprintf('CUST%03d', $num + 1);
     }
