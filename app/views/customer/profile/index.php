@@ -25,10 +25,18 @@
           <?php endif; ?>
         </div>
         <div class="profile-details">
-          <p><span class="label">Full Name:</span> <span id="profile-name"><?= htmlspecialchars($profile['first_name'] ?? '') ?></span></p>
-          <p><span class="label">Email:</span> <span id="profile-email"><?= htmlspecialchars($profile['email'] ?? '') ?></span></p>
-          <p><span class="label">Contact Number:</span> <span id="profile-phone"><?= htmlspecialchars($profile['phone'] ?? '') ?></span></p>
-          <p><span class="label">NIC:</span> <span id="profile-nic"><?= htmlspecialchars($profile['nic'] ?? '') ?></span></p>
+          <?php
+            $fullName = trim(($profile['first_name'] ?? '') . ' ' . ($profile['last_name'] ?? ''));
+          ?>
+          <p><span class="label">Full Name:</span> <span id="profile-name"><?= htmlspecialchars($fullName ?: '—') ?></span></p>
+          <p><span class="label">Email:</span> <span id="profile-email"><?= htmlspecialchars($profile['email'] ?? '—') ?></span></p>
+          <p><span class="label">Contact Number:</span> <span id="profile-phone"><?= htmlspecialchars($profile['phone'] ?? '—') ?></span></p>
+
+          <!-- Hide NIC since your DB doesn't have it -->
+          <?php if (!empty($profile['nic'])): ?>
+            <p><span class="label">NIC:</span> <span id="profile-nic"><?= htmlspecialchars($profile['nic']) ?></span></p>
+          <?php endif; ?>
+
           <button class="btn red" id="edit-profile-btn">Edit Profile</button>
         </div>
       </div>
@@ -37,17 +45,20 @@
     <h2>Registered Vehicles</h2>
     <div class="vehicles-container" id="vehicles-container">
       <?php foreach ($vehicles as $v): ?>
-        <div class="vehicle-card" data-id="<?= $v['vehicle_id'] ?>">
-          <h3><?= htmlspecialchars($v['brand'] . ' ' . $v['model']) ?></h3>
-          <p><span class="label">Registration:</span> <?= htmlspecialchars($v['reg_no']) ?></p>
-          <p><span class="label">Color:</span> <?= htmlspecialchars($v['color']) ?></p>
-          <p><span class="label">Year of Manufacture:</span> <?= htmlspecialchars($v['year']) ?></p>
+        <div class="vehicle-card" data-id="<?= (int)$v['vehicle_id'] ?>">
+          <h3><?= htmlspecialchars(($v['make'] ?? '') . ' ' . ($v['model'] ?? '')) ?></h3>
+          <p><span class="label">Registration:</span> <?= htmlspecialchars($v['license_plate'] ?? '') ?></p>
+          <p><span class="label">Color:</span> <?= htmlspecialchars($v['color'] ?? '') ?></p>
+          <p><span class="label">Year of Manufacture:</span> <?= htmlspecialchars($v['year'] ?? '') ?></p>
           <div class="vehicle-actions">
             <button class="btn edit" onclick="editVehicle(this)">Edit</button>
             <button class="btn red" onclick="removeVehicle(this)">Remove</button>
           </div>
         </div>
       <?php endforeach; ?>
+      <?php if (empty($vehicles)): ?>
+        <p class="notes">No vehicles found. Click “Add New Vehicle” to register one.</p>
+      <?php endif; ?>
     </div>
 
     <div class="vehicle-buttons">
@@ -55,9 +66,9 @@
     </div>
   </div>
 
-  <!-- Modals (unchanged from your HTML) -->
-  <?php include APP_ROOT . '/views/customer/profile/modals.php'; ?>
+  <!-- Modals -->
+  <?php include __DIR__ . '/modals.php'; ?>
 
-  <script src="<?= $base ?>/assets/js/customer/profile.js"></script>
+  <script src="<?= $base ?>/public/assets/js/customer/profile.js"></script>
 </body>
 </html>
