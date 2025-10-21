@@ -37,12 +37,12 @@ class BranchService
 
 public function replaceForService(int $service_id, array $branch_ids): void
 {
-    $del = $this->pdo->prepare("DELETE FROM branch_service WHERE service_id = :sid");
+    $del = $this->pdo->prepare("DELETE FROM branch_services WHERE service_id = :sid");
     $del->execute(['sid' => $service_id]);
 
     if (empty($branch_ids)) return;
     $ins = $this->pdo->prepare(
-        "INSERT INTO branch_service (branch_id, service_id, created_at)
+        "INSERT INTO branch_services (branch_id, service_id, created_at)
          VALUES (:bid, :sid, NOW())"
     );
     foreach ($branch_ids as $bid) {

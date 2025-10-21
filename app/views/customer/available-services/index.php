@@ -16,9 +16,30 @@ if (!empty($branch_name)) {
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <link rel="stylesheet" href="<?= $base ?>/public/assets/css/customer/available-services.css" />
+  <link rel="stylesheet" href="<?= rtrim(BASE_URL,'/') ?>/public/assets/css/home.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 </head>
 <body>
+
+<!-- NAVBAR -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="<?= rtrim(BASE_URL,'/') ?>/">
+        <img src="<?= rtrim(BASE_URL,'/') ?>/public/assets/img/logo.jpg" alt="AutoNexus Logo" class="brand-logo" />
+        <span class="brand-text">AutoNexus</span>
+      </a>
+
+      <nav class="main-nav" id="mainNav">
+        <a href="<?= rtrim(BASE_URL,'/') ?>/">Home</a>
+        <a href="#services" id="servicesNavLink">Services</a>
+        <a href="#how">How It Works</a>
+        <a href="#benefits">Why Choose Us</a>
+        <a href="#reviews">Reviews</a>
+        <a href="#contact">Contact</a>
+        <a href="<?= rtrim(BASE_URL,'/') ?>/login" class="btn-outline">Login</a>
+      </nav>
+    </div>
+  </header>
 
   <!-- HERO -->
   <header class="hero">

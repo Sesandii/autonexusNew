@@ -8,16 +8,17 @@
 
   <link rel="stylesheet" href="<?= $base ?>/app/views/layouts/admin-sidebar/styles.css">
   <link rel="stylesheet" href="<?= $base ?>/public/assets/css/admin/services/styles.css">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <style>
     .sidebar{position:fixed;top:0;left:0;width:260px;height:100vh;overflow-y:auto}
     .main-content{margin-left:260px;padding:30px;background:#fff;min-height:100vh}
     .admin-title{margin:0}
     .section-header{display:flex;align-items:end;justify-content:space-between;margin-bottom:14px}
-    .btn-primary{background:#0ea5e9;color:#fff;border:0;border-radius:10px;padding:10px 14px;text-decoration:none}
-    .btn-primary:hover{background:#0284c7}
+    .btn-primary{background:#dc2626;color:#fff;border:0;border-radius:10px;padding:10px 14px;text-decoration:none}
+    .btn-primary:hover{background:#ef4444}
     .tabs{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 16px}
     .tab{border:1px solid #e5e7eb;border-radius:999px;padding:8px 12px;background:#f8fafc;cursor:pointer}
-    .tab.active{background:#0ea5e9;color:#fff;border-color:#0ea5e9}
+    .tab.active{background:#dc2626;color:#fff;border-color:#dc2626}
     .table-container{overflow:auto;border:1px solid #e5e7eb;border-radius:12px}
     table{width:100%;border-collapse:separate;border-spacing:0}
     th,td{padding:12px 14px;border-bottom:1px solid #eef2f7;text-align:left}
@@ -84,12 +85,12 @@
                     <td><?= htmlspecialchars($row['status']) ?></td>
                     <td class="actions">
   <a class="icon-btn" title="Edit"
-     href="<?= $base ?>/admin/services/<?= (int)$row['service_id'] ?>/edit">✏️</a>
+     href="<?= $base ?>/admin/services/<?= (int)$row['service_id'] ?>/edit"><i class="fas fa-pen"></i></a>
 
   <form action="<?= $base ?>/admin/services/<?= (int)$row['service_id'] ?>/delete"
         method="post" style="display:inline"
         onsubmit="return confirm('Delete this service? This cannot be undone.');">
-    <button class="icon-btn" title="Delete" style="background:none;border:0;cursor:pointer">🗑️</button>
+    <button class="icon-btn" title="Delete" style="background:none;border:0;cursor:pointer"><i class="fas fa-trash"></i></button>
   </form>
 </td>
 

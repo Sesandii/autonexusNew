@@ -55,7 +55,7 @@ body{
   height:38px; width:38px; border:none; background:#fff;
   border-radius:10px; box-shadow:var(--shadow); cursor:pointer;
 }
-.icon-btn i{ font-size:16px; color:#111827; }
+.icon-btn i{ font-size:16px; color:#111827; text-decoration: none;}
 
 .user-chip{
   display:flex; align-items:center; gap:10px; margin-left: auto;
