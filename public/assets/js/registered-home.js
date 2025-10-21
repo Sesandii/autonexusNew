@@ -87,9 +87,44 @@ document.addEventListener('DOMContentLoaded', () => {
     const sel = (document.getElementById('branchSelect')||{}).value;
     if(!sel){ alert('Please select a branch first.'); return; }
     const base = (typeof BASE_URL!=='undefined') ? BASE_URL.replace(/\/+$/,'') : '';
-    location.href = `${base}/services/available?branch=${encodeURIComponent(sel)}`;
+    location.href = `${BASE_URL}/customer/available-services?branch=${encodeURIComponent(sel)}`;
+
   });
 
   // init
   renderServices(); mkDots(); paint(0);
 });
+
+// public/assets/js/registered-home.js
+(function () {
+  const servicesLinkHeader = document.getElementById('servicesNavLink');
+  const servicesLinkFooter = document.getElementById('servicesFooterLink');
+  const modal = document.getElementById('servicesModal');
+  const closeBtn = modal?.querySelector('.close-btn');
+  const branchSel = document.getElementById('branchSelect');
+  const goBtn = document.getElementById('goToServices');
+
+  function openModal(e) {
+    if (e) e.preventDefault();
+    if (!modal) return;
+    modal.setAttribute('aria-hidden', 'false');
+    modal.style.display = 'block';
+  }
+  function closeModal() {
+    if (!modal) return;
+    modal.setAttribute('aria-hidden', 'true');
+    modal.style.display = 'none';
+  }
+  function go() {
+    const code = branchSel?.value;
+    if (!code) return;
+    // We keep BOTH routes; you already registered the alias /services/available
+    window.location.href = BASE_URL + '/services/available?branch=' + encodeURIComponent(code);
+  }
+
+  servicesLinkHeader?.addEventListener('click', openModal);
+  servicesLinkFooter?.addEventListener('click', openModal);
+  closeBtn?.addEventListener('click', closeModal);
+  goBtn?.addEventListener('click', go);
+})();
+

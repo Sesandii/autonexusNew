@@ -145,7 +145,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if(!sel){ alert('Please select a branch first.'); return; }
     // Uses BASE_URL injected from PHP view
     const base = (typeof BASE_URL !== 'undefined') ? BASE_URL.replace(/\/+$/,'') : '';
-    location.href = `${base}/services/available?branch=${encodeURIComponent(sel)}`;
+   location.href = `${BASE_URL}/customer/available-services?branch=${encodeURIComponent(sel)}`;
+
   });
 
   /* ==========================

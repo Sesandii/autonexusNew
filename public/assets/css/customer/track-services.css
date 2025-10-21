@@ -1,0 +1,205 @@
+/* Reset and Base */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+    background: #F3F4F6;
+    color: #1F2937;
+    margin: 0;
+}
+
+/* Main Content Area */
+.main-content {
+    margin-left: 240px;
+    padding: 40px;
+    min-height: 100vh;
+}
+
+/* Page Header */
+h2 {
+    font-size: 28px;
+    font-weight: bold;
+    color: #111827;
+    margin-bottom: 8px;
+}
+
+.subtitle {
+    font-size: 15px;
+    color: #6B7280;
+    margin-bottom: 30px;
+}
+
+/* Search and Filter Section */
+.search-filter {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 30px;
+    align-items: center;
+}
+
+.search-filter input,
+.search-filter select {
+    padding: 12px 16px;
+    border-radius: 8px;
+    border: 1px solid #D1D5DB;
+    font-size: 14px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+    background: #FFFFFF;
+    color: #1F2937;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.search-filter input {
+    flex: 2;
+}
+
+.search-filter select {
+    flex: 1;
+    cursor: pointer;
+}
+
+.search-filter input:focus,
+.search-filter select:focus {
+    border-color: #DC2626;
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+}
+
+.search-filter button {
+    background: #DC2626;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 24px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+}
+
+.search-filter button:hover {
+    background: #B91C1C;
+}
+
+.search-filter button:active {
+    transform: scale(0.98);
+}
+
+/* Table Container */
+.table-container {
+    background: #FFFFFF;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Table Styles */
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 16px 20px;
+    text-align: left;
+    font-size: 14px;
+}
+
+th {
+    background: #F9FAFB;
+    color: #374151;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid #E5E7EB;
+}
+
+td {
+    color: #1F2937;
+    border-bottom: 1px solid #F3F4F6;
+}
+
+tbody tr {
+    transition: background 0.2s;
+}
+
+tbody tr:hover {
+    background: #F9FAFB;
+}
+
+tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Status Badges */
+.status {
+    padding: 6px 12px;
+    border-radius: 16px;
+    font-weight: 600;
+    font-size: 12px;
+    display: inline-block;
+    text-align: center;
+    min-width: 100px;
+}
+
+.status.Pending {
+    background: #FEF3C7;
+    color: #92400E;
+}
+
+.status.In.Progress,
+.status[class*="In Progress"] {
+    background: #DBEAFE;
+    color: #1E40AF;
+}
+
+.status.Completed {
+    background: #D1FAE5;
+    color: #065F46;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .main-content {
+        margin-left: 0;
+        padding: 20px;
+    }
+    
+    .search-filter {
+        flex-direction: column;
+    }
+    
+    .search-filter input,
+    .search-filter select {
+        width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    h2 {
+        font-size: 24px;
+    }
+    
+    .subtitle {
+        font-size: 14px;
+    }
+    
+    table {
+        font-size: 12px;
+    }
+    
+    th, td {
+        padding: 12px 10px;
+    }
+    
+    .status {
+        min-width: 80px;
+        font-size: 11px;
+        padding: 4px 8px;
+    }
+}

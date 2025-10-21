@@ -134,7 +134,18 @@ use app\controllers\admin\ServicesController;
 /** ======================
  *  ADMIN: View Services (route by code)
  *  ====================== */
+
+// list (you already have a UI page under /admin/admin-viewservices)
 $router->get('/admin/admin-viewservices', [ServicesController::class, 'index']);
+
+// create form + submit
+$router->get('/admin/services/create',  [ServicesController::class, 'create']);
+$router->post('/admin/services',         [ServicesController::class, 'store']);
+// NEW:
+$router->get ('/admin/services/{id}/edit',   [ServicesController::class, 'edit']);
+$router->post('/admin/services/{id}',        [ServicesController::class, 'update']);
+$router->post('/admin/services/{id}/delete', [ServicesController::class, 'destroy']);
+
 
 use app\controllers\admin\PricingController;
 
@@ -221,6 +232,53 @@ use app\controllers\customer\RegisteredHomeController;
 
 $router->get('/customer/home',     [RegisteredHomeController::class, 'index']);
 $router->get('/registeredhome',    [RegisteredHomeController::class, 'index']); // optional alias
+
+//Customer-Available services
+use app\controllers\customer\AvailableServicesController;
+
+$router->get('/customer/available-services', [AvailableServicesController::class, 'index']);
+// Alias to match earlier redirect like /services/available?branch=GL
+$router->get('/services/available',          [AvailableServicesController::class, 'index']);
+
+//Customer Booking
+use app\controllers\customer\BookingController;
+
+$router->get('/customer/book',  [BookingController::class, 'index']);   // booking form
+$router->post('/customer/book', [BookingController::class, 'create']);  // (optional) handle submit later
+
+//customer - feedback
+
+
+$router->get('/customer/rate-service', [\app\controllers\customer\FeedbackController::class, 'index']);
+$router->post('/customer/rate-service', [\app\controllers\customer\FeedbackController::class, 'store']); // for saving reviews later
+
+
+
+$router->get('/customer/service-history', [\app\controllers\customer\ServiceHistoryController::class, 'index']);
+
+use app\controllers\customer\ServiceReminderController;
+
+$router->get('/customer/service-reminder', [ServiceReminderController::class, 'index']);
+$router->post('/customer/service-reminder/update', [ServiceReminderController::class, 'updateMileage']);
+
+use app\controllers\customer\TrackServicesController;
+
+$router->get('/customer/track-services',        [TrackServicesController::class, 'index']);
+$router->get('/customer/track-services/list',   [TrackServicesController::class, 'list']); // JSON for AJAX (optional)
+
+use app\controllers\customer\ProfileController;
+
+$router->get('/customer/profile', [ProfileController::class, 'index']);
+$router->post('/customer/profile/update', [ProfileController::class, 'updateProfile']);
+$router->post('/customer/profile/vehicle', [ProfileController::class, 'saveVehicle']);
+$router->post('/customer/profile/vehicle/delete', [ProfileController::class, 'deleteVehicle']);
+
+
+
+$router->get ('/customer/appointments',          [\app\controllers\customer\AppointmentsController::class, 'index']);
+$router->post('/customer/appointments/cancel',   [\app\controllers\customer\AppointmentsController::class, 'cancel']);   // optional action
+$router->get ('/customer/appointments/list',     [\app\controllers\customer\AppointmentsController::class, 'list']);     // optional JSON for AJAX
+
 
 /*
 |--------------------------------------------------------------------------|

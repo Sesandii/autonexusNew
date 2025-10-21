@@ -47,7 +47,7 @@
     </li>
 
     <li class="menu-item <?php if($current=='services') echo 'active'; ?>">
-      <a href="<?= rtrim(BASE_URL,'/') ?>/admin/admin-viewservices"><i class="fa-solid fa-screwdriver-wrench"></i><span>Service Management</span></a>
+      <a data-e2e="nav-services" href="<?= rtrim(BASE_URL,'/') ?>/admin/admin-viewservices"><i class="fa-solid fa-screwdriver-wrench"></i><span>Service Management</span></a>
     </li>
 
     <li class="menu-item <?php if($current=='pricing') echo 'active'; ?>">

@@ -25,4 +25,14 @@ class BranchPublic
         $stmt = $this->pdo->query($sql);
         return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
     }
+
+    public function findNameByCode(string $code): ?string
+{
+    $sql = "SELECT name FROM branches WHERE branch_code = :c AND COALESCE(status,'active')='active' LIMIT 1";
+    $stmt = $this->pdo->prepare($sql);
+    $stmt->execute(['c' => $code]);
+    $name = $stmt->fetchColumn();
+    return $name !== false ? (string)$name : null;
+}
+
 }

@@ -1,4 +1,5 @@
 <?php
+// app/controllers/customer/RegisteredHomeController.php
 declare(strict_types=1);
 
 namespace app\controllers\customer;
@@ -10,19 +11,17 @@ class RegisteredHomeController extends Controller
 {
     public function index(): void
     {
-        // Gate (only if you have these helpers)
-        if (method_exists($this, 'requireCustomer')) {
-            $this->requireCustomer();
-        } elseif (method_exists($this, 'requireLogin')) {
+        if (method_exists($this, 'requireLogin')) {
             $this->requireLogin();
         }
 
-        $branches = (new BranchPublic())->allActive();
+        $branches = (new BranchPublic())->allActive(); // branch_code, branch_name
 
-        $this->view('customer/registeredhome/index', [
-            'title'     => 'AutoNexus — Vehicle Service Management',
-            'user_name' => $_SESSION['first_name'] ?? 'Customer',
-            'branches'  => $branches,
-        ]);
+        // app/controllers/customer/RegisteredHomeController.php
+$this->view('customer/registeredhome/index', [
+    'title'    => 'AutoNexus • Home',
+    'branches' => (new \app\model\public\BranchPublic())->allActive(),
+]);
+
     }
 }

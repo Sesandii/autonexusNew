@@ -117,28 +117,32 @@
           </div>
         </section>
 
-        <!-- Quick Links -->
-        <aside class="quick-links card">
-          <h2>Quick Links</h2>
-          <div class="ql-grid">
-            <button class="ql-card">
-              <i class="fa-regular fa-calendar-plus"></i>
-              <span>Add Appointment</span>
-            </button>
-            <button class="ql-card">
-              <i class="fa-solid fa-user-plus"></i>
-              <span>Register User</span>
-            </button>
-            <button class="ql-card">
-              <i class="fa-solid fa-screwdriver-wrench"></i>
-              <span>Add Service</span>
-            </button>
-            <button class="ql-card">
-              <i class="fa-regular fa-file-lines"></i>
-              <span>Create Invoice</span>
-            </button>
-          </div>
-        </aside>
+      <!-- Quick Links -->
+<aside class="quick-links card">
+  <h2>Quick Links</h2>
+  <div class="ql-grid">
+    <a class="ql-card" data-e2e="ql-add-branch" href="<?= rtrim(BASE_URL,'/') ?>/admin/branches/create">
+      <i class="fa-solid fa-building"></i>
+      <span>Add Branch</span>
+    </a>
+
+    <a class="ql-card" data-e2e="ql-add-manager" href="<?= rtrim(BASE_URL,'/') ?>/admin/service-managers/create">
+      <i class="fa-solid fa-user-plus"></i>
+      <span>Register Manager</span>
+    </a>
+
+    <a class="ql-card" data-e2e="ql-add-service" href="<?= rtrim(BASE_URL,'/') ?>/admin/services/create">
+      <i class="fa-solid fa-screwdriver-wrench"></i>
+      <span>Add Service</span>
+    </a>
+
+    <a class="ql-card" data-e2e="ql-view-reports" href="<?= rtrim(BASE_URL,'/') ?>/admin/admin-viewreports">
+      <i class="fa-solid fa-chart-simple"></i>
+      <span>View Reports</span>
+    </a>
+  </div>
+</aside>
+
       </div>
     </section>
   </main>

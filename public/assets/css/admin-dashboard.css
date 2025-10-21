@@ -154,3 +154,8 @@ body{
 
 /* Utility */
 .dash-wrap{ max-width:1400px; margin-inline:auto; }
+
+/* in admin-dashboard.css */
+.ql-card { display: inline-flex; align-items: center; gap: .5rem; text-decoration: none; }
+.ql-card i { font-size: 1.25rem; }
+

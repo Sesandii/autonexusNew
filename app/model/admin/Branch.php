@@ -70,4 +70,19 @@ class Branch
                 ORDER BY b.name ASC";
         return $this->pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public function idsOfActive(): array
+{
+    $rows = $this->pdo->query("SELECT branch_id FROM branches WHERE status='active'")
+                      ->fetchAll(PDO::FETCH_COLUMN, 0);
+    return array_map('intval', $rows);
+}
+
+public function allActive(): array
+{
+    $sql = "SELECT branch_id, branch_code, name, city
+            FROM branches WHERE status='active' ORDER BY name";
+    return $this->pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+}
+
 }
