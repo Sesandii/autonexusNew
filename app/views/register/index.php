@@ -124,5 +124,8 @@ if (isset($_SESSION['flash'])) {
       </p>
     </form>
   </section>
+
+  <script src="<?= htmlspecialchars($base) ?>/app/views/register/assests/js/script.js"></script>
+
 </body>
 </html>
