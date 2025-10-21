@@ -25,6 +25,7 @@ return [
   'Create Invoice' => 'விலைப்பட்டியல் உருவாக்க',
 
   'Total Users' => 'மொத்த பயனர்கள்',
+  'Total Customers'=> 'மொத்த வாடிக்கையாளர்கள்',
   'Total Appointments' => 'மொத்த அப்பாயின்மெண்ட்கள்',
   'Services Completed' => 'முடிந்த சேவைகள்',
   'Total Revenue' => 'மொத்த வருவாய்',

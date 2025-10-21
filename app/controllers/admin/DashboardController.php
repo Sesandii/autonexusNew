@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace app\controllers\admin;
 
 use app\core\Controller;
+use PDO;
 
 class DashboardController extends Controller
 {
@@ -16,16 +17,66 @@ class DashboardController extends Controller
     /** GET /admin-dashboard */
     public function index(): void
     {
-        // Optional: pass the logged-in user to the view
         $user = $_SESSION['user'] ?? null;
+        $pdo  = db();
 
-        // If you later want dynamic KPIs, you can query here and pass to the view.
-        // $pdo = db(); ... fetch counts ...
+        // --- KPI queries (adapt to your schema) ---
+        $totalUsers = $pdo->query("SELECT COUNT(*) FROM users WHERE role ='customer'")->fetchColumn() ?? 0;
+        $totalAppointments = $pdo->query("SELECT COUNT(*) FROM appointments")->fetchColumn() ?? 0;
+
+        // Completed services (work_orders or appointments)
+        if ($this->tableExists($pdo, 'work_orders')) {
+            $stmt = $pdo->query("SELECT COUNT(*) FROM work_orders WHERE status IN ('completed','done','closed')");
+            $completedServices = $stmt->fetchColumn() ?? 0;
+        } elseif ($this->tableExists($pdo, 'appointments')) {
+            $stmt = $pdo->query("SELECT COUNT(*) FROM appointments WHERE status IN ('completed','done')");
+            $completedServices = $stmt->fetchColumn() ?? 0;
+        } else {
+            $completedServices = 0;
+        }
+
+        // Total revenue (payments or invoices)
+        if ($this->tableExists($pdo, 'payments')) {
+            $stmt = $pdo->query("SELECT COALESCE(SUM(amount),0) FROM payments WHERE status IN ('paid','success')");
+            $totalRevenue = $stmt->fetchColumn() ?? 0;
+        } elseif ($this->tableExists($pdo, 'invoices')) {
+            $stmt = $pdo->query("SELECT COALESCE(SUM(total_amount),0) FROM invoices WHERE status='paid'");
+            $totalRevenue = $stmt->fetchColumn() ?? 0;
+        } else {
+            $totalRevenue = 0;
+        }
+
+        // Feedback count
+        $feedbackCount = $this->tableExists($pdo, 'feedback')
+            ? ($pdo->query("SELECT COUNT(*) FROM feedback")->fetchColumn() ?? 0)
+            : 0;
+
+        // --- Pass to view ---
+        $metrics = [
+            'users'        => (int)$totalUsers,
+            'appointments' => (int)$totalAppointments,
+            'completed'    => (int)$completedServices,
+            'revenue'      => (float)$totalRevenue,
+            'feedback'     => (int)$feedbackCount,
+        ];
 
         $this->view('admin/admin-dashboard/index', [
-            'user' => $user,
+            'user'     => $user,
+            'metrics'  => $metrics,
         ]);
     }
+
+    /** Utility: check if table exists safely */
+    private function tableExists(PDO $pdo, string $table): bool
+    {
+        // Escape any backticks in case a table name is unusual
+        $safeTable = str_replace('`', '``', $table);
+        $sql = "SHOW TABLES LIKE " . $pdo->quote($safeTable);
+
+        $stmt = $pdo->query($sql);
+        return (bool)$stmt->fetchColumn();
+    }
+
 
     /** Guard: must be logged in and role=admin */
     private function requireAdmin(): void
@@ -35,13 +86,7 @@ class DashboardController extends Controller
         }
 
         $u = $_SESSION['user'] ?? null;
-        if (!$u) {
-            header('Location: ' . rtrim(BASE_URL, '/') . '/login');
-            exit;
-        }
-
-        if (($u['role'] ?? '') !== 'admin') {
-            // send non-admins to their role landing, or show 403
+        if (!$u || ($u['role'] ?? '') !== 'admin') {
             header('Location: ' . rtrim(BASE_URL, '/') . '/login');
             exit;
         }

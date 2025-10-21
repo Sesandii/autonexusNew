@@ -30,10 +30,11 @@
         </div>
         
      
-        <div class="user-chip">
+        <a class="user-chip user-chip--link" href="<?= rtrim(BASE_URL,'/') ?>/admin/profile" aria-label="Open profile">
           <div class="avatar"><i class="fa-solid fa-user"></i></div>
           <span>Admin User</span>
-        </div>
+        </a>
+
 
      
     </header>
@@ -46,9 +47,9 @@
         <article class="kpi-card">
           <div class="kpi-icon"><i class="fa-solid fa-user-group"></i></div>
           <div class="kpi-meta">
-            <h3>Total Users</h3>
-            <p class="kpi-value">2,543</p>
-            <span class="kpi-delta up">+12.5% from last month</span>
+            <h3>Total Customers</h3>
+            <p class="kpi-value"><?= number_format($metrics['users'] ?? 0) ?></p>
+            <span class="kpi-delta up">Live</span>
           </div>
         </article>
 
@@ -56,8 +57,8 @@
           <div class="kpi-icon"><i class="fa-regular fa-calendar-check"></i></div>
           <div class="kpi-meta">
             <h3>Total Appointments</h3>
-            <p class="kpi-value">148</p>
-            <span class="kpi-delta up">+4.3% from last month</span>
+            <p class="kpi-value"><?= number_format($metrics['appointments'] ?? 0) ?></p>
+            <span class="kpi-delta up">Live</span>
           </div>
         </article>
 
@@ -65,8 +66,8 @@
           <div class="kpi-icon"><i class="fa-solid fa-circle-check"></i></div>
           <div class="kpi-meta">
             <h3>Services Completed</h3>
-            <p class="kpi-value">1,257</p>
-            <span class="kpi-delta up">+8.2% from last month</span>
+            <p class="kpi-value"><?= number_format($metrics['completed'] ?? 0) ?></p>
+            <span class="kpi-delta up">Live</span>
           </div>
         </article>
 
@@ -74,8 +75,11 @@
           <div class="kpi-icon"><i class="fa-solid fa-sack-dollar"></i></div>
           <div class="kpi-meta">
             <h3>Total Revenue</h3>
-            <p class="kpi-value">$84,325</p>
-            <span class="kpi-delta up">+15.6% from last month</span>
+            <p class="kpi-value">
+              <?= 'Rs.' . number_format((float)($metrics['revenue'] ?? 0), 2) ?>
+              <!-- or '$' if you prefer -->
+            </p>
+            <span class="kpi-delta up">Live</span>
           </div>
         </article>
 
@@ -83,11 +87,12 @@
           <div class="kpi-icon"><i class="fa-regular fa-message"></i></div>
           <div class="kpi-meta">
             <h3>Feedback Count</h3>
-            <p class="kpi-value">342</p>
-            <span class="kpi-delta up">+6.8% from last month</span>
+            <p class="kpi-value"><?= number_format($metrics['feedback'] ?? 0) ?></p>
+            <span class="kpi-delta up">Live</span>
           </div>
         </article>
       </div>
+
 
       <div class="content-grid">
         <!-- Recent Activity -->

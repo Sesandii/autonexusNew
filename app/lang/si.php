@@ -25,6 +25,7 @@ return [
   'Create Invoice' => 'ඉන්විසි තනන්න',
 
   'Total Users' => 'මුළු පරිශීලකයන්',
+  'Total Customers'=> 'මුළු පාරිභෝගිකයන්',
   'Total Appointments' => 'මුළු ඇපොයින්ට්',
   'Services Completed' => 'අවසන් කළ සේවාවන්',
   'Total Revenue' => 'මුළු ආදායම',
