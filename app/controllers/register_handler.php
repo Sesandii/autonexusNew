@@ -18,7 +18,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
     exit;
 }
 
-/* Collect & normalize */
+/* ---------------- Collect & normalize ---------------- */
 $first_name = trim($_POST['first_name'] ?? '');
 $last_name  = trim($_POST['last_name'] ?? '');
 $email      = strtolower(trim($_POST['email'] ?? ''));
@@ -31,7 +31,7 @@ $username   = trim($_POST['username'] ?? '');
 $password   = $_POST['password'] ?? '';
 $confirm    = $_POST['confirm_password'] ?? '';
 
-/* Validate */
+/* ---------------- Validate ---------------- */
 $errors = [];
 $nameRe = "/^[A-Za-z][A-Za-z\s'.-]{1,49}$/";
 
@@ -85,13 +85,13 @@ if ($errors) {
     exit;
 }
 
-/* Persist */
+/* ---------------- Persist (schema-aware) ---------------- */
 try {
     $pdo = db();
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $pdo->beginTransaction();
 
-    // Enforce uniqueness
+    // Enforce uniqueness (before insert)
     $check = $pdo->prepare('SELECT user_id FROM users WHERE email = :email OR username = :username LIMIT 1');
     $check->execute(['email' => $email, 'username' => $usernameToUse]);
     if ($check->fetch()) {
@@ -103,18 +103,35 @@ try {
 
     $hash   = password_hash($password, PASSWORD_DEFAULT);
     $role   = 'customer';
-    $status = 'active'; // set to 'pending' if you want approval flow
+    $status = 'active'; // or 'pending' if you need approval
 
-    // NOTE: users table uses `street`, not `street_address`
-    $insertUser = $pdo->prepare(
-        'INSERT INTO users
-         (first_name, last_name, username, email, password_hash, phone, alt_phone,
-          street, city, state, role, status, created_at)
-         VALUES
-         (:first_name, :last_name, :username, :email, :password_hash, :phone, :alt_phone,
-          :street, :city, :state, :role, :status, NOW())'
-    );
-    $insertUser->execute([
+    // Detect users table columns
+    $userCols = $pdo->query("SHOW COLUMNS FROM users")->fetchAll(PDO::FETCH_COLUMN, 0);
+    $hasStreet        = in_array('street', $userCols, true);
+    $hasStreetAddress = in_array('street_address', $userCols, true);
+    $hasCreatedAt     = in_array('created_at', $userCols, true);
+
+    // Build dynamic INSERT for users
+    $insertCols    = ['first_name','last_name','username','email','password_hash','phone','alt_phone','city','state','role','status'];
+    $placeHolders  = [':first_name',':last_name',':username',':email',':password_hash',':phone',':alt_phone',':city',':state',':role',':status'];
+
+    if ($hasStreet) {
+        $insertCols[]   = 'street';
+        $placeHolders[] = ':street';
+    } elseif ($hasStreetAddress) {
+        $insertCols[]   = 'street_address';
+        $placeHolders[] = ':street';
+    }
+
+    if ($hasCreatedAt) {
+        $insertCols[]   = 'created_at';
+        $placeHolders[] = 'NOW()';
+    }
+
+    $sqlUsers = 'INSERT INTO users ('.implode(',', $insertCols).') VALUES ('.implode(',', $placeHolders).')';
+    $insertUser = $pdo->prepare($sqlUsers);
+
+    $params = [
         'first_name'    => $first_name,
         'last_name'     => $last_name,
         'username'      => $usernameToUse,
@@ -122,21 +139,33 @@ try {
         'password_hash' => $hash,
         'phone'         => $phone,
         'alt_phone'     => $alt_phone !== '' ? $alt_phone : null,
-        'street'        => $street !== '' ? $street : null,
         'city'          => $city   !== '' ? $city   : null,
         'state'         => $state  !== '' ? $state  : null,
         'role'          => $role,
         'status'        => $status,
-    ]);
+    ];
+    if ($hasStreet || $hasStreetAddress) {
+        $params['street'] = $street !== '' ? $street : null; // maps to whichever col exists
+    }
 
+    $insertUser->execute($params);
     $userId = (int)$pdo->lastInsertId();
 
-    // Customer record
+    // Insert into customers (schema-aware)
+    $custCols = $pdo->query("SHOW COLUMNS FROM customers")->fetchAll(PDO::FETCH_COLUMN, 0);
+    $hasCustCreated = in_array('created_at', $custCols, true);
+
     $customerCode = 'CUS-' . str_pad((string)$userId, 6, '0', STR_PAD_LEFT);
-    $insertCustomer = $pdo->prepare(
-        'INSERT INTO customers (user_id, customer_code, created_at)
-         VALUES (:user_id, :customer_code, NOW())'
-    );
+
+    $cCols = ['user_id','customer_code'];
+    $cVals = [':user_id',':customer_code'];
+    if ($hasCustCreated) {
+        $cCols[] = 'created_at';
+        $cVals[] = 'NOW()';
+    }
+
+    $sqlCust = 'INSERT INTO customers ('.implode(',', $cCols).') VALUES ('.implode(',', $cVals).')';
+    $insertCustomer = $pdo->prepare($sqlCust);
     $insertCustomer->execute([
         'user_id'       => $userId,
         'customer_code' => $customerCode,
@@ -148,8 +177,23 @@ try {
     header('Location: ' . $base . '/login');
     exit;
 
+} catch (PDOException $e) {
+    if (isset($pdo) && $pdo->inTransaction()) $pdo->rollBack();
+
+    // 23000 = integrity constraint (e.g., duplicate key on unique email/username)
+    if ((int)$e->getCode() === 23000) {
+        $_SESSION['flash'] = 'Email or username already exists.';
+    } else {
+        // Uncomment to log exact DB error in development:
+        // error_log('[register_handler] '.$e->getMessage());
+        $_SESSION['flash'] = 'Server error while creating the account. Please try again.';
+    }
+    header('Location: ' . $base . '/register');
+    exit;
+
 } catch (Throwable $e) {
-    if ($pdo && $pdo->inTransaction()) $pdo->rollBack();
+    if (isset($pdo) && $pdo->inTransaction()) $pdo->rollBack();
+    // error_log('[register_handler] '.$e->getMessage());
     $_SESSION['flash'] = 'Server error while creating the account. Please try again.';
     header('Location: ' . $base . '/register');
     exit;

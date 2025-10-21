@@ -8,6 +8,7 @@
 
   <link rel="stylesheet" href="<?= rtrim(BASE_URL,'/') ?>/app/views/layouts/admin-sidebar/styles.css">
   <link rel="stylesheet" href="<?= rtrim(BASE_URL,'/') ?>/public/assets/css/admin/services/styles.css">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <style>
     .sidebar{position:fixed;top:0;left:0;width:260px;height:100vh;overflow-y:auto}
     .main-content{margin-left:260px;padding:30px;background:#fff;min-height:100vh}
@@ -18,7 +19,8 @@
     .branch-box{max-height:260px;overflow:auto;border:1px solid #e5e7eb;border-radius:10px;padding:10px}
     .actions{display:flex;gap:10px;margin-top:16px}
     .btn{padding:10px 16px;border-radius:8px;border:1px solid transparent;cursor:pointer}
-    .btn-primary{background:#0ea5e9;color:#fff}
+    .btn-primary{background:#dc2626;color:#fff}
+    .btn-primary:hover{background: #ef4444;}
     .btn-secondary{background:#f3f4f6}
     .hint{font-size:12px;color:#6b7280}
   </style>

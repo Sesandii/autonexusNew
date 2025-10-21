@@ -9,6 +9,7 @@ $selCode = $branch_code ?? '';
   <title><?= htmlspecialchars($title ?? 'Book Service') ?></title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="<?= $base ?>/public/assets/css/customer/booking.css" />
+  <link rel="stylesheet" href="<?= rtrim(BASE_URL,'/') ?>/public/assets/css/home.css" />
 </head>
 <body>
   <div class="container">
