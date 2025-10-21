@@ -35,4 +35,5 @@ class BranchPublic
     return $name !== false ? (string)$name : null;
 }
 
+
 }

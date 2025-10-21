@@ -250,6 +250,7 @@ use app\controllers\customer\BookingController;
 
 $router->get('/customer/book',  [BookingController::class, 'index']);   // booking form
 $router->post('/customer/book', [BookingController::class, 'create']);  // (optional) handle submit later
+$router->get('/customer/book/slots',  [BookingController::class, 'slots']);
 
 //customer - feedback
 

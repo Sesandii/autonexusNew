@@ -8,16 +8,11 @@ use app\model\customer\Profile;
 
 class ProfileController extends Controller
 {
-    private function userId(): int
-    {
-        return (int)($_SESSION['user']['user_id'] ?? $_SESSION['user_id'] ?? 0);
-    }
-
     public function index(): void
     {
-        if (method_exists($this, 'requireCustomer')) $this->requireCustomer();
+        $this->requireCustomer();
 
-        $userId   = $this->userId();
+        $userId   = $this->userId();        // uses parent Controller::userId()
         $model    = new Profile();
         $profile  = $model->getProfile($userId);
         $vehicles = $model->getVehicles($userId);
@@ -35,7 +30,7 @@ class ProfileController extends Controller
 
     public function editForm(): void
     {
-        if (method_exists($this, 'requireCustomer')) $this->requireCustomer();
+        $this->requireCustomer();
 
         $userId  = $this->userId();
         $model   = new Profile();
@@ -52,7 +47,7 @@ class ProfileController extends Controller
     public function updateProfile(): void
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') { http_response_code(405); echo "Method Not Allowed"; return; }
-        if (method_exists($this, 'requireCustomer')) $this->requireCustomer();
+        $this->requireCustomer();
 
         $userId = $this->userId();
 
@@ -76,7 +71,7 @@ class ProfileController extends Controller
 
     public function vehicleForm(): void
     {
-        if (method_exists($this, 'requireCustomer')) $this->requireCustomer();
+        $this->requireCustomer();
 
         $userId = $this->userId();
         $vehId  = (int)($_GET['id'] ?? 0);
@@ -95,7 +90,7 @@ class ProfileController extends Controller
     public function saveVehicle(): void
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') { http_response_code(405); echo "Method Not Allowed"; return; }
-        if (method_exists($this, 'requireCustomer')) $this->requireCustomer();
+        $this->requireCustomer();
 
         $userId = $this->userId();
         $data = [
@@ -118,7 +113,7 @@ class ProfileController extends Controller
     public function deleteVehicle(): void
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') { http_response_code(405); echo "Method Not Allowed"; return; }
-        if (method_exists($this, 'requireCustomer')) $this->requireCustomer();
+        $this->requireCustomer();
 
         $id = (int)($_POST['vehicle_id'] ?? 0);
         $model = new Profile();

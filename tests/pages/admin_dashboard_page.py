@@ -1,12 +1,13 @@
+# tests/pages/admin_dashboard_page.py
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import TimeoutException, NoSuchElementException
+from selenium.common.exceptions import NoSuchElementException
 
 class AdminDashboardPage:
     # Proof dashboard loaded
-    SIDEBAR = (By.CSS_SELECTOR, "aside.sidebar")  # adjust if your admin sidebar differs
-    TITLE = (By.CSS_SELECTOR, "h1.page-title")    # "Admin Dashboard"
+    SIDEBAR = (By.CSS_SELECTOR, "aside.sidebar")          # tweak if admin sidebar differs
+    TITLE   = (By.CSS_SELECTOR, "h1.page-title")          # "Admin Dashboard" on your page
 
     # Language switcher (preferred, after adding data-e2e)
     LANG_EN = (By.CSS_SELECTOR, "[data-e2e='lang-en']")
@@ -17,15 +18,16 @@ class AdminDashboardPage:
     _FALLBACK_LANG_SI = [(By.CSS_SELECTOR, ".lang-switcher a[href*='?lang=si']")]
     _FALLBACK_LANG_TA = [(By.CSS_SELECTOR, ".lang-switcher a[href*='?lang=ta']")]
 
-    # Nav to Services
-    NAV_SERVICES = (By.CSS_SELECTOR, "[data-e2e='nav-services']")  # if you add this in admin sidebar
-    # Quick Link to Add Service
+    # Services (nav + quick link)
+    NAV_SERVICES   = (By.CSS_SELECTOR, "[data-e2e='nav-services']")           # if you add this in admin sidebar
     QL_ADD_SERVICE = (By.CSS_SELECTOR, "[data-e2e='ql-add-service']")
-    # Fallbacks
     _FALLBACK_SERVICES = [
-        (By.CSS_SELECTOR, "a[href*='/admin/services']"),                     # any /admin/services*
-        (By.XPATH, "//a[contains(., 'Service') or contains(., 'Services')]") # text-based
+        (By.CSS_SELECTOR, "a[href*='/admin/services']"),                      # any /admin/services*
+        (By.XPATH, "//a[contains(., 'Service') or contains(., 'Services')]"), # text-based
     ]
+
+    # QUICK LINK: Add Branch (matches your dashboard quick link)
+    QL_ADD_BRANCH = (By.CSS_SELECTOR, "[data-e2e='ql-add-branch'], a.ql-card[href*='/admin/branches/create']")
 
     def __init__(self, driver, base_url=None):
         self.driver = driver
@@ -54,23 +56,34 @@ class AdminDashboardPage:
             raise last
         raise NoSuchElementException("None of the locators matched")
 
-    # Public helpers
+    # ----- Public helpers -----
+
     def go_services(self):
         # Prefer an admin nav item if present
         try:
-            WebDriverWait(self.driver, 3).until(EC.element_to_be_clickable(self.NAV_SERVICES)).click()
+            WebDriverWait(self.driver, 3).until(
+                EC.element_to_be_clickable(self.NAV_SERVICES)
+            ).click()
             return
         except Exception:
             pass
         # Otherwise, use Quick Link to Add Service (exists in your markup)
         try:
-            WebDriverWait(self.driver, 3).until(EC.element_to_be_clickable(self.QL_ADD_SERVICE)).click()
+            WebDriverWait(self.driver, 3).until(
+                EC.element_to_be_clickable(self.QL_ADD_SERVICE)
+            ).click()
             return
         except Exception:
             pass
         # Fallback to any services link
         self._click_first_that_exists(self._FALLBACK_SERVICES)
 
+    def go_add_branch(self):
+        WebDriverWait(self.driver, 8).until(
+            EC.element_to_be_clickable(self.QL_ADD_BRANCH)
+        ).click()
+
+    # Language switches
     def set_lang_en(self):
         try:
             WebDriverWait(self.driver, 3).until(EC.element_to_be_clickable(self.LANG_EN)).click()

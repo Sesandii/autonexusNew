@@ -14,19 +14,40 @@ class AppointmentsController extends Controller
             $this->requireCustomer();
         }
 
-        $userId = (int)($_SESSION['user_id'] ?? 0);
+        // IMPORTANT: use the helper so it works with either session shape
+        $userId = $this->userId();
 
         $model = new Appointments();
-        // Pull all for now; you can paginate later
-        $rows = $model->getByCustomer($userId);
+        $rows  = $model->getByCustomer($userId);
+
+        // Map DB rows to the keys your view expects
+        $items = array_map(function ($r) {
+            $status       = (string)($r['status'] ?? 'requested');
+            $statusClass  = match ($status) {
+                'completed' => 'completed',
+                'cancelled' => 'cancelled',
+                'ongoing'   => 'ongoing',
+                'confirmed' => 'upcoming',
+                default     => 'upcoming',
+            };
+            return [
+                'appointment_id' => (int)$r['appointment_id'],
+                'service'        => $r['service_name'] ?? 'Service',
+                'branch'         => $r['branch_name']  ?? '—',
+                'date'           => $r['appointment_date'] ?? '',
+                'time'           => substr((string)($r['appointment_time'] ?? ''), 0, 5),
+                'status'         => ucfirst($status),
+                'status_class'   => $statusClass,
+                'est_completion' => null, // fill if you compute ETA elsewhere
+            ];
+        }, $rows);
 
         $this->view('customer/appointments/index', [
-            'title'       => 'Your Appointments',
-            'appointments'=> $rows,
+            'title'        => 'Your Appointments',
+            'appointments' => $items,
         ]);
     }
 
-    // JSON endpoint (handy if you later add client-side filters)
     public function list(): void
     {
         if (method_exists($this, 'requireCustomer')) {
@@ -35,14 +56,13 @@ class AppointmentsController extends Controller
 
         header('Content-Type: application/json; charset=utf-8');
 
-        $userId = (int)($_SESSION['user_id'] ?? 0);
-        $model = new Appointments();
-        $rows  = $model->getByCustomer($userId);
+        $userId = $this->userId();
+        $model  = new Appointments();
+        $rows   = $model->getByCustomer($userId);
 
         echo json_encode(['data' => $rows], JSON_UNESCAPED_UNICODE);
     }
 
-    // Simple cancel action
     public function cancel(): void
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -54,11 +74,11 @@ class AppointmentsController extends Controller
             $this->requireCustomer();
         }
 
-        $userId        = (int)($_SESSION['user_id'] ?? 0);
+        $userId        = $this->userId();
         $appointmentId = (int)($_POST['appointment_id'] ?? 0);
 
         $model = new Appointments();
-        $ok = $model->cancelIfCustomerOwns($userId, $appointmentId);
+        $ok    = $model->cancelIfCustomerOwns($userId, $appointmentId);
 
         if (isset($_SERVER['HTTP_ACCEPT']) && str_contains($_SERVER['HTTP_ACCEPT'], 'application/json')) {
             header('Content-Type: application/json; charset=utf-8');
@@ -66,7 +86,6 @@ class AppointmentsController extends Controller
             return;
         }
 
-        // Redirect back
         $base = rtrim(BASE_URL, '/');
         header("Location: {$base}/customer/appointments");
     }
