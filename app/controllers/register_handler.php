@@ -1,5 +1,5 @@
 <?php
-// app/controllers/register_handler.php
+// app/controllers/register_handler.php (no CSRF)
 declare(strict_types=1);
 
 require_once CONFIG_PATH . '/config.php';
@@ -18,12 +18,12 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
     exit;
 }
 
-/* ------------ Collect & normalize ------------ */
+/* Collect & normalize */
 $first_name = trim($_POST['first_name'] ?? '');
 $last_name  = trim($_POST['last_name'] ?? '');
 $email      = strtolower(trim($_POST['email'] ?? ''));
-$phone      = preg_replace('/\D+/', '', $_POST['phone'] ?? '');          // keep digits only
-$alt_phone  = preg_replace('/\D+/', '', $_POST['alt_phone'] ?? '');      // optional
+$phone      = preg_replace('/\D+/', '', $_POST['phone'] ?? '');
+$alt_phone  = preg_replace('/\D+/', '', $_POST['alt_phone'] ?? '');
 $street     = trim($_POST['street'] ?? '');
 $city       = trim($_POST['city'] ?? '');
 $state      = trim($_POST['state'] ?? '');
@@ -31,11 +31,10 @@ $username   = trim($_POST['username'] ?? '');
 $password   = $_POST['password'] ?? '';
 $confirm    = $_POST['confirm_password'] ?? '';
 
-/* ------------ Validation rules ------------ */
+/* Validate */
 $errors = [];
-
-// Names: required, 2–50 letters + common punctuation/spaces
 $nameRe = "/^[A-Za-z][A-Za-z\s'.-]{1,49}$/";
+
 if ($first_name === '' || $last_name === '') {
     $errors[] = 'First and last name are required.';
 } else {
@@ -43,38 +42,29 @@ if ($first_name === '' || $last_name === '') {
     if (!preg_match($nameRe, $last_name))  $errors[] = 'Last name must be 2–50 letters (A–Z), spaces, (.\'-).';
 }
 
-// Email: required, valid, max length
 if (!filter_var($email, FILTER_VALIDATE_EMAIL) || strlen($email) > 254) {
     $errors[] = 'Enter a valid email address (≤254 chars).';
 }
 
-// Phone: required, exactly 10 digits
 if ($phone === '' || !preg_match('/^\d{10}$/', $phone)) {
     $errors[] = 'Phone number must be exactly 10 digits.';
 }
-
-// Alt phone: optional, if present must be 10 digits
 if ($alt_phone !== '' && !preg_match('/^\d{10}$/', $alt_phone)) {
     $errors[] = 'Alternate phone must be exactly 10 digits.';
 }
 
-// Addresses: soft limits
 if (strlen($street) > 120) $errors[] = 'Street is too long (max 120).';
 if (strlen($city)   > 100) $errors[] = 'City is too long (max 100).';
 if (strlen($state)  > 100) $errors[] = 'State is too long (max 100).';
 
-// Username: optional; if empty we’ll derive from email local-part
+// Username fallback from email local-part, capped 30
 $usernameToUse = $username !== '' ? $username : strtok($email, '@');
-$usernameToUse = substr($usernameToUse, 0, 30); // cap to 30
-if ($usernameToUse === '') {
-    $errors[] = 'Could not derive a username from your email—please enter one.';
-} else {
-    if (!preg_match('/^[A-Za-z0-9_.]{3,30}$/', $usernameToUse)) {
-        $errors[] = 'Username must be 3–30 chars (letters, numbers, _ or .).';
-    }
+$usernameToUse = substr($usernameToUse, 0, 30);
+if ($usernameToUse === '' || !preg_match('/^[A-Za-z0-9_.]{3,30}$/', $usernameToUse)) {
+    $errors[] = 'Username must be 3–30 chars (letters, numbers, _ or .).';
 }
 
-// Password: 8+ and include lower, upper, digit, symbol; must match
+// Password rules
 if (strlen($password) < 8) {
     $errors[] = 'Password must be at least 8 characters.';
 } else {
@@ -89,23 +79,20 @@ if ($password !== $confirm) {
     $errors[] = 'Passwords do not match.';
 }
 
-// Bail early on errors
 if ($errors) {
     $_SESSION['flash'] = implode(' ', $errors);
     header('Location: ' . $base . '/register');
     exit;
 }
 
-/* ------------ Persist ------------ */
+/* Persist */
 try {
     $pdo = db();
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $pdo->beginTransaction();
 
-    // Uniqueness check (email or username)
-    $check = $pdo->prepare(
-        'SELECT user_id FROM users WHERE email = :email OR username = :username LIMIT 1'
-    );
+    // Enforce uniqueness
+    $check = $pdo->prepare('SELECT user_id FROM users WHERE email = :email OR username = :username LIMIT 1');
     $check->execute(['email' => $email, 'username' => $usernameToUse]);
     if ($check->fetch()) {
         $pdo->rollBack();
@@ -114,12 +101,11 @@ try {
         exit;
     }
 
-    // Hash password
     $hash   = password_hash($password, PASSWORD_DEFAULT);
     $role   = 'customer';
-    $status = 'active'; // change to 'pending' if you need approval
+    $status = 'active'; // set to 'pending' if you want approval flow
 
-    // NOTE: Column name fix — your schema uses `street`, not `street_address`
+    // NOTE: users table uses `street`, not `street_address`
     $insertUser = $pdo->prepare(
         'INSERT INTO users
          (first_name, last_name, username, email, password_hash, phone, alt_phone,
@@ -128,7 +114,6 @@ try {
          (:first_name, :last_name, :username, :email, :password_hash, :phone, :alt_phone,
           :street, :city, :state, :role, :status, NOW())'
     );
-
     $insertUser->execute([
         'first_name'    => $first_name,
         'last_name'     => $last_name,
@@ -146,7 +131,7 @@ try {
 
     $userId = (int)$pdo->lastInsertId();
 
-    // Customer row
+    // Customer record
     $customerCode = 'CUS-' . str_pad((string)$userId, 6, '0', STR_PAD_LEFT);
     $insertCustomer = $pdo->prepare(
         'INSERT INTO customers (user_id, customer_code, created_at)
@@ -164,10 +149,7 @@ try {
     exit;
 
 } catch (Throwable $e) {
-    if (isset($pdo) && $pdo->inTransaction()) {
-        $pdo->rollBack();
-    }
-    // error_log($e->getMessage());
+    if ($pdo && $pdo->inTransaction()) $pdo->rollBack();
     $_SESSION['flash'] = 'Server error while creating the account. Please try again.';
     header('Location: ' . $base . '/register');
     exit;

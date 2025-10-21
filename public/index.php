@@ -88,6 +88,11 @@ $router->post('/admin/customers/{id}/delete',    [\app\controllers\Admin\Custome
 $router->get('/admin-dashboard',    [\app\controllers\Admin\DashboardController::class, 'index']);
 
 
+use app\controllers\admin\AdminProfileController;
+
+$router->get('/admin/profile',         [AdminProfileController::class, 'index']);
+$router->post('/admin/profile/update', [AdminProfileController::class, 'update']);
+
 
 /** ======================
  *  ADMIN: Mechanics
