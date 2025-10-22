@@ -1,0 +1,156 @@
+:root{
+  --bg:#0f1724;
+  --card:#0b1220;
+  --accent:#ef4444;      /* red */
+  --muted:#94a3b8;       /* slate-400 */
+  --ink:#0b1220;         /* dark text */
+  --border:#e6eef7;      /* light border */
+  --fill:#ffffff;        /* white */
+  --fill-soft:#f8fafc;   /* table head bg */
+  --shadow:0 2px 8px rgba(2,6,23,.06);
+}
+
+/* ---------- Page header ---------- */
+.page-header{
+  display:flex;align-items:flex-end;justify-content:space-between;
+  gap:16px;margin:0 0 18px 0;
+}
+.page-header h1{margin:0;font-size:22px;color:var(--ink);}
+.page-header .subtitle{margin:4px 0 0 0;color:var(--muted);font-size:13px}
+
+/* ---------- Card / container ---------- */
+.form-card{
+  background:var(--fill);
+  border:1px solid var(--border);
+  border-radius:10px;
+  box-shadow:var(--shadow);
+  padding:18px;
+}
+
+/* ---------- Grid layout ---------- */
+.form-grid{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap:16px;
+}
+.form-grid.one{grid-template-columns:1fr;}
+.form-grid.three{grid-template-columns:1fr 1fr 1fr;}
+@media (max-width: 920px){
+  .form-grid, .form-grid.three{grid-template-columns:1fr;}
+}
+
+/* ---------- Groups & labels ---------- */
+.form-group{display:flex;flex-direction:column;}
+.form-group.inline{flex-direction:row;align-items:center;gap:10px}
+label{
+  font-weight:600;color:var(--ink);
+  margin-bottom:6px;
+}
+.required::after{
+  content:" *"; color:var(--accent); font-weight:700;
+}
+
+/* ---------- Inputs ---------- */
+input[type="text"],
+input[type="number"],
+input[type="email"],
+input[type="tel"],
+input[type="datetime-local"],
+select, textarea{
+  width:100%;
+  padding:10px 12px;
+  border:1px solid var(--border);
+  border-radius:8px;
+  background:#fff;
+  color:var(--ink);
+  outline:0;
+  transition:border-color .15s ease, box-shadow .15s ease;
+}
+
+textarea{min-height:110px;resize:vertical;}
+select{appearance:none;background-image:
+  linear-gradient(45deg, transparent 50%, #9aa4b2 50%),
+  linear-gradient(135deg, #9aa4b2 50%, transparent 50%),
+  linear-gradient(to right, transparent, transparent);
+background-position:
+  calc(100% - 18px) calc(50% - 4px),
+  calc(100% - 12px) calc(50% - 4px),
+  100% 0;
+background-size:6px 6px, 6px 6px, 2.5em 100%;
+background-repeat:no-repeat;}
+
+input:focus, select:focus, textarea:focus{
+  border-color:var(--accent);
+  box-shadow:0 0 0 3px rgba(239,68,68,.12);
+}
+
+/* readonly / disabled */
+input[readonly], textarea[readonly]{
+  background:#f6f8fb;color:#64748b;
+}
+:disabled{
+  cursor:not-allowed;opacity:.9;background:#f1f5f9;
+}
+
+/* ---------- Help / errors ---------- */
+.help{
+  margin-top:6px;color:#64748b;font-size:12px;
+}
+.error-text{
+  color:#b91c1c;font-size:12px;margin-top:6px;
+}
+.is-invalid{
+  border-color:#fecaca; background:#fff; box-shadow:0 0 0 3px rgba(239,68,68,.10);
+}
+
+/* ---------- Fieldsets (e.g., status radios) ---------- */
+fieldset{
+  border:1px dashed var(--border);
+  padding:12px;border-radius:8px;
+}
+legend{padding:0 6px;color:#475569;font-weight:600;font-size:13px}
+
+/* ---------- Input addons (prefix/suffix) ---------- */
+.input-addon{
+  display:flex;align-items:center;
+  border:1px solid var(--border);border-radius:8px;background:#fff;
+}
+.input-addon > span{
+  padding:10px 12px;color:#475569;background:#f8fafc;border-right:1px solid var(--border);
+  border-top-left-radius:8px;border-bottom-left-radius:8px;
+}
+.input-addon > input{border:0;flex:1;padding:10px 12px;}
+.input-addon > input:focus{box-shadow:none}
+
+/* ---------- Actions bar ---------- */
+.form-actions{
+  display:flex;justify-content:flex-end;gap:10px;margin-top:18px;
+  position:sticky;bottom:0;background:linear-gradient(#ffffffcc, #ffffffcc);
+  padding-top:10px;
+}
+
+/* Reuse your existing .btn styles; add a subtle loading style */
+.btn.loading{pointer-events:none;opacity:.7}
+
+/* ---------- Breadcrumbs (optional) ---------- */
+.breadcrumbs{
+  display:flex;align-items:center;gap:8px;margin:0 0 10px 0;color:#6b7280;font-size:12px;
+}
+.breadcrumbs a{color:#6b7280;text-decoration:none}
+.breadcrumbs a:hover{color:var(--accent)}
+
+/* ---------- Read-only detail view ---------- */
+.details{
+  display:grid;grid-template-columns:220px 1fr;gap:10px 16px;margin:8px 0 0;
+}
+.details dt{color:#64748b}
+.details dd{margin:0;color:#0b1220}
+@media (max-width: 720px){
+  .details{grid-template-columns:1fr}
+}
+
+/* ---------- Tiny utilities ---------- */
+.w-100{width:100%}
+.mt-0{margin-top:0}.mt-6{margin-top:6px}.mt-12{margin-top:12px}.mt-18{margin-top:18px}
+.mb-0{margin-bottom:0}.mb-6{margin-bottom:6px}.mb-12{margin-bottom:12px}
+

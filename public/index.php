@@ -348,6 +348,86 @@ $router->get('/manager/appointments', [\app\controllers\manager\AppointmentsCont
 $router->get('/manager/servicehistory', [\app\controllers\manager\ServiceHistoryController::class, 'index']);
 
 
+
+
+
+// --------------Mechanic copy N paste 
+
+// use app\controllers\mechanic\MechanicController;
+
+// $router->get('/mechanic/dashboard', [\app\controllers\mechanic\MechanicController::class, 'dashboard']);
+
+use app\controllers\mechanic\JobsMController;
+
+$router->get('/mechanic/jobs', [\app\controllers\mechanic\JobsMController::class, 'index']);
+
+use app\controllers\mechanic\AssignedJobsMController;
+
+$router->get('/mechanic/assignedjobs', [\app\controllers\mechanic\AssignedJobsMController::class, 'index']);
+
+use app\controllers\mechanic\HistoryController;
+
+$router->get('/mechanic/history', [\app\controllers\mechanic\HistoryController::class, 'index']);
+
+$router->get('/mechanic/dashboard', [\app\controllers\mechanic\DashboardController::class, 'index']);
+
+
+
+
+// ------------------Supervisor copy N paste
+
+
+use app\controllers\supervisor\SupervisorController;
+
+$router->get('/supervisor/dashboard', [\app\controllers\supervisor\SupervisorController::class, 'dashboard']);
+
+use app\controllers\supervisor\ComplaintsController;
+
+$router->get('/supervisor/complaints', [\app\controllers\supervisor\ComplaintsController::class, 'index']);
+
+use app\controllers\supervisor\FeedbacksController;
+
+$router->get('/supervisor/feedbacks', [\app\controllers\supervisor\FeedbacksController::class, 'index']);
+
+use app\controllers\supervisor\VehicleReportsController;
+
+$router->get('/supervisor/reports', [\app\controllers\supervisor\VehicleReportsController::class, 'index']);
+
+use app\controllers\supervisor\VehicleHistoryController;
+
+$router->get('/supervisor/history', [\app\controllers\supervisor\VehicleHistoryController::class, 'index']);
+
+use app\controllers\supervisor\AssignedJobsController;
+
+$router->get('/supervisor/assignedjobs', [\app\controllers\supervisor\AssignedJobsController::class, 'index']);
+
+use app\controllers\supervisor\JobsController;
+
+
+
+// $router->get('/supervisor/workorders', [\app\controllers\supervisor\WorkOrdersController::class, 'index']);
+
+use app\controllers\supervisor\WorkOrdersController;
+
+// LIST
+$router->get ('/supervisor/workorders',           [WorkOrdersController::class, 'index']);
+
+// CREATE
+$router->get ('/supervisor/workorders/create',    [WorkOrdersController::class, 'createForm']);
+$router->post('/supervisor/workorders',           [WorkOrdersController::class, 'store']);
+
+// SHOW
+$router->get ('/supervisor/workorders/{id}',      [WorkOrdersController::class, 'show']);
+
+// EDIT/UPDATE
+$router->get ('/supervisor/workorders/{id}/edit', [WorkOrdersController::class, 'editForm']);
+$router->post('/supervisor/workorders/{id}',      [WorkOrdersController::class, 'update']);
+
+// DELETE
+$router->post('/supervisor/workorders/{id}/delete', [WorkOrdersController::class, 'destroy']);
+
+
+
 /*
 |--------------------------------------------------------------------------|
 | Normalize request path (works with or without /public in URL)

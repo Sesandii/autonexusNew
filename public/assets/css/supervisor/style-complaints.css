@@ -1,0 +1,123 @@
+/* Sidebar */
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: #f8f9fc;
+    display: flex;
+  }
+  
+  .sidebar {
+    width: 220px;
+    background: #111;
+    color: white;
+    height: 100vh;
+    padding: 20px;
+  }
+  
+  .logo {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 30px;
+    text-align: center;
+  }
+  
+  .sidebar ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .sidebar ul li {
+    padding: 12px 0;
+    cursor: pointer;
+    color: #ddd;
+    transition: 0.3s;
+  }
+  
+  .sidebar ul li:hover,
+  .sidebar ul li.active {
+    color: #ff3b3b;
+  }
+  
+  /* Main Content */
+  .main-content {
+    flex: 1;
+    padding: 20px 40px;
+  }
+  
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  #search {
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    width: 250px;
+  }
+  
+  .filters select {
+    padding: 8px;
+    margin-left: 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+  }
+  
+  .title {
+    margin: 25px 0 10px;
+    font-size: 22px;
+    font-weight: 600;
+  }
+  
+  .complaint-card {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+    padding: 15px 20px;
+    margin-bottom: 15px;
+    transition: transform 0.2s ease;
+  }
+  
+  .complaint-card:hover {
+    transform: translateY(-3px);
+  }
+  
+  .complaint-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+  }
+  
+  .status {
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: bold;
+    text-transform: uppercase;
+  }
+  
+  .status.open {
+    background: #ffe4e4;
+    color: #e23e3e;
+  }
+  
+  .status.in-progress {
+    background: #fff3cd;
+    color: #b58b00;
+  }
+  
+  .status.resolved {
+    background: #d1f7d1;
+    color: #178717;
+  }
+  
+  .meta {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+    color: #777;
+    font-size: 13px;
+  }
+  

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace app\model\customer;
 
 use PDO;
+use PDOException;
 
 class Appointments
 {
@@ -31,7 +32,102 @@ class Appointments
         return $bid !== false ? (int)$bid : null;
     }
 
-    /** Public reader used by your appointments page */
+    /** Verify vehicle belongs to customer */
+    private function ownsVehicle(int $customerId, int $vehicleId): bool
+    {
+        $sql = "SELECT 1 FROM vehicles WHERE vehicle_id = :v AND customer_id = :c LIMIT 1";
+        $st  = $this->pdo->prepare($sql);
+        $st->execute(['v' => $vehicleId, 'c' => $customerId]);
+        return (bool)$st->fetchColumn();
+    }
+
+    /** How many bookings exist for a branch at date+time */
+    private function countAtSlot(int $branchId, string $dateYmd, string $time): int
+    {
+        $sql = "SELECT COUNT(*) 
+                  FROM appointments 
+                 WHERE branch_id = :b 
+                   AND appointment_date = :d 
+                   AND appointment_time = :t
+                   AND status IN ('requested','confirmed','ongoing')";
+        $st = $this->pdo->prepare($sql);
+        $st->execute([
+            'b' => $branchId,
+            'd' => $dateYmd,
+            't' => $time
+        ]);
+        return (int)$st->fetchColumn();
+    }
+
+    /** Create a booking (returns [ok, message]) */
+    public function createBooking(
+        int $userId, string $branchCode, int $vehicleId, int $serviceId, string $dateYmd, string $time
+    ): array {
+        try {
+            $customerId = $this->customerIdByUserId($userId);
+            if (!$customerId) return [false, 'Customer profile not found.'];
+
+            $branchId = $this->branchIdByCode($branchCode);
+            if (!$branchId) return [false, 'Invalid branch.'];
+
+            if (!$this->ownsVehicle($customerId, $vehicleId)) {
+                return [false, 'Selected vehicle does not belong to your account.'];
+            }
+
+           // normalize time to HH:MM:SS
+if (preg_match('/^\d{2}:\d{2}(:\d{2})?$/', $time)) {
+    if (strlen($time) === 5) {
+        $time .= ':00';
+    }
+} else {
+    $time = '00:00:00';
+}
+
+            // simple slot cap (max 3 per slot, as discussed earlier)
+            $cap   = 3;
+            $count = $this->countAtSlot($branchId, $dateYmd, $time);
+            if ($count >= $cap) {
+                return [false, 'Selected time slot is full. Please choose another time.'];
+            }
+
+            $sql = "INSERT INTO appointments
+                        (customer_id, branch_id, vehicle_id, service_id, appointment_date, appointment_time, status, created_at)
+                    VALUES
+                        (:cid, :bid, :vid, :sid, :d, :t, 'requested', NOW())";
+            $st = $this->pdo->prepare($sql);
+            $st->execute([
+                'cid' => $customerId,
+                'bid' => $branchId,
+                'vid' => $vehicleId,
+                'sid' => $serviceId,
+                'd'   => $dateYmd,
+                't'   => $time,
+            ]);
+
+            return [true, 'Booking created successfully.'];
+        } catch (PDOException $e) {
+            // optional: log $e->getMessage()
+            return [false, 'Failed to create booking.'];
+        }
+    }
+
+    /** Cancel appointment if it belongs to the current customer */
+    public function cancelIfCustomerOwns(int $userId, int $appointmentId): bool
+    {
+        $cid = $this->customerIdByUserId($userId);
+        if (!$cid || $appointmentId <= 0) return false;
+
+        // Only allow cancel of own appointment, and only if not completed/cancelled
+        $sql = "UPDATE appointments
+                   SET status = 'cancelled'
+                 WHERE appointment_id = :id
+                   AND customer_id = :cid
+                   AND status IN ('requested','confirmed')";
+        $st = $this->pdo->prepare($sql);
+        return $st->execute(['id' => $appointmentId, 'cid' => $cid]);
+    }
+
+    /** Reader used by your appointments page */
     public function getByCustomer(int $userId): array
     {
         $cid = $this->customerIdByUserId($userId);
@@ -51,6 +147,4 @@ class Appointments
         $st->execute(['cid' => $cid]);
         return $st->fetchAll(PDO::FETCH_ASSOC) ?: [];
     }
-
-    
 }

@@ -1,0 +1,137 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+body {
+  display: flex;
+  height: 100vh;
+  background-color: #f8f9fc;
+}
+
+.logo-container {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.logo {
+    width: 180px;
+    height: 80px;
+}
+
+.sidebar {
+  width: 220px;
+  background-color: #000;
+  color: white;
+  padding: 10px;
+}
+
+.sidebar h2 {
+  margin-bottom: 30px;
+  font-size: 22px;
+  text-align: center;
+}
+
+.sidebar a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 10px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  border-radius: 6px;
+  color: #d1d5db;
+  text-decoration:none;
+}
+
+.sidebar a img {
+  width: 20px;
+  height: 20px;
+}
+.sidebar a.nav{
+background-color: #1F2937;
+  color: #fff;
+}
+.sidebar a:hover {
+  background-color:#1F2937;
+}
+
+.main{
+  flex: 1;
+  padding: 30px;
+  overflow-y: auto;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+h2 {
+  margin-top: 10px;
+  font-size: 30px;
+  margin-bottom: 20px;
+}
+
+.search {
+  width: 300px;
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.user-profile {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.user-profile img{
+  width: 20px;
+  height: 20px;
+}
+.icon {
+  width: 22px;
+  height: 22px;
+}
+
+.avatar-img {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+}
+
+
+
+.search-box {
+  background-color: white;
+  padding: 20px;
+  display: flex;
+  gap: 20px;
+  align-items: flex-end;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.search-box input {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  width: 180px;
+}
+
+.search-box button {
+  padding: 10px 15px;
+  background-color: #DC2626;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.result {
+  color: #2e66f8;
+}
