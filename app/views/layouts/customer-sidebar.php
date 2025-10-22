@@ -37,6 +37,7 @@ function isActive($path, $current) { return strpos($current, $path) === 0 ? ' cl
     <li><a<?= isActive('/customer/profile', $currentPath) ?> href="<?= $base ?>/customer/profile"><i class="fa fa-user"></i> Profile</a></li>
 
     <!-- Logout -->
-    <li><a href="<?= $base ?>/logout"><i class="fa fa-sign-out"></i> Logout</a></li>
+   <li><a href="<?= rtrim(BASE_URL, '/') ?>/logout"><i class="fa fa-sign-out"></i> Logout</a></li>
+
   </ul>
 </aside>

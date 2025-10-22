@@ -151,9 +151,7 @@ $router->get ('/admin/services/{id}/edit',   [ServicesController::class, 'edit']
 $router->post('/admin/services/{id}',        [ServicesController::class, 'update']);
 $router->post('/admin/services/{id}/delete', [ServicesController::class, 'destroy']);
 
-use app\controllers\admin\LogoutController;
 
-$router->get('/admin/logout', [LogoutController::class, 'index']);
 
 use app\controllers\admin\PricingController;
 
@@ -191,6 +189,12 @@ $router->get('/admin/admin-viewreports', [ReportsController::class, 'index']);
 use app\controllers\admin\ReceptionistsController;
 
 $router->get('/admin/viewreceptionist', [ReceptionistsController::class, 'index']);
+
+
+
+$router->get('/logout', [\app\controllers\LogoutController::class, 'index']);
+
+
 
 /** Dev helper */
 $router->get('/test-managers', function () {

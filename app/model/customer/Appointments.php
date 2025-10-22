@@ -147,4 +147,64 @@ if (preg_match('/^\d{2}:\d{2}(:\d{2})?$/', $time)) {
         $st->execute(['cid' => $cid]);
         return $st->fetchAll(PDO::FETCH_ASSOC) ?: [];
     }
+
+    /** Completed appointments for a given user */
+public function completedByUser(int $userId): array
+{
+    $cid = $this->customerIdByUserId($userId);
+    if (!$cid) return [];
+
+    $sql = "SELECT a.appointment_id, a.appointment_date, a.appointment_time,
+                   a.status, b.name AS branch_name, s.name AS service_name,
+                   v.license_plate, v.make, v.model
+              FROM appointments a
+         LEFT JOIN branches b ON b.branch_id = a.branch_id
+         LEFT JOIN services s ON s.service_id = a.service_id
+         LEFT JOIN vehicles v ON v.vehicle_id = a.vehicle_id
+             WHERE a.customer_id = :cid
+               AND a.status = 'completed'
+          ORDER BY a.appointment_date DESC, a.appointment_time DESC";
+    $st = $this->pdo->prepare($sql);
+    $st->execute(['cid' => $cid]);
+    return $st->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+}
+
+/** Completed appointments for user that DON'T have feedback yet */
+public function completedWithoutFeedbackByUser(int $userId): array
+{
+    $cid = $this->customerIdByUserId($userId);
+    if (!$cid) return [];
+
+    $sql = "SELECT a.appointment_id, a.appointment_date, a.appointment_time,
+                   b.name AS branch_name, s.name AS service_name
+              FROM appointments a
+         LEFT JOIN branches b ON b.branch_id = a.branch_id
+         LEFT JOIN services s ON s.service_id = a.service_id
+         LEFT JOIN feedback f ON f.appointment_id = a.appointment_id
+                                AND f.user_id = :uid
+             WHERE a.customer_id = :cid
+               AND a.status = 'completed'
+               AND f.appointment_id IS NULL
+          ORDER BY a.appointment_date DESC, a.appointment_time DESC";
+    $st = $this->pdo->prepare($sql);
+    $st->execute(['cid' => $cid, 'uid' => $userId]);
+    return $st->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+}
+
+/** Quick ownership check used before accepting feedback */
+public function appointmentBelongsToUserAndCompleted(int $userId, int $appointmentId): bool
+{
+    $cid = $this->customerIdByUserId($userId);
+    if (!$cid) return false;
+
+    $sql = "SELECT 1 FROM appointments
+             WHERE appointment_id = :aid
+               AND customer_id = :cid
+               AND status = 'completed'
+             LIMIT 1";
+    $st = $this->pdo->prepare($sql);
+    $st->execute(['aid' => $appointmentId, 'cid' => $cid]);
+    return (bool)$st->fetchColumn();
+}
+
 }
