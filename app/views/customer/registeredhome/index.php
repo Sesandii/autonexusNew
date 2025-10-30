@@ -29,6 +29,7 @@ $base = rtrim(BASE_URL,'/');
         <a href="<?= $base ?>/customer/dashboard">Dashboard</a>
         <a href="<?= $base ?>/logout" class="btn-outline">Log out</a>
       </nav>
+      
     </div>
   </header>
 

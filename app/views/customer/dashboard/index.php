@@ -20,6 +20,7 @@ $title = 'AutoNexus - Dashboard';
   <main class="main-content">
     <h1>Welcome back, <?= htmlspecialchars($user_first_name ?? 'Customer') ?> 👋</h1>
     <p>Manage your vehicle services with ease.</p>
+     <?php require APP_ROOT . '/views/partials/lang-switcher.php'; ?>
 
     <!-- Stats Section -->
     <section class="stats">

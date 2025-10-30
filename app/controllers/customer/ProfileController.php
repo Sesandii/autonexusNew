@@ -110,17 +110,22 @@ class ProfileController extends Controller
         exit;
     }
 
-    public function deleteVehicle(): void
-    {
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') { http_response_code(405); echo "Method Not Allowed"; return; }
-        $this->requireCustomer();
+   public function deleteVehicle(): void
+{
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') { http_response_code(405); echo "Method Not Allowed"; return; }
+    $this->requireCustomer();
 
-        $id = (int)($_POST['vehicle_id'] ?? 0);
-        $model = new Profile();
-        $ok = $model->deleteVehicleOwnedBy($this->userId(), $id);
+    $id = (int)($_POST['vehicle_id'] ?? 0);
 
-        $_SESSION['flash'] = $ok ? 'Vehicle removed.' : 'Could not remove vehicle.';
-        header('Location: ' . rtrim(BASE_URL,'/') . '/customer/profile');
-        exit;
-    }
+    $model = new Profile();
+    $ok    = $model->deleteVehicleOwnedBy($this->userId(), $id);
+
+    $_SESSION['flash'] = $ok
+      ? 'Vehicle removed.'
+      : 'Cannot remove this vehicle because it has appointments. Please cancel them first.';
+
+    header('Location: ' . rtrim(BASE_URL,'/') . '/customer/profile');
+    exit;
+}
+
 }

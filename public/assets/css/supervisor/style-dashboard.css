@@ -211,3 +211,37 @@ th, td {
   width: 28px;
   height: 28px;
 }
+
+
+.dropdown {
+  position: absolute;
+  top: 35px; /* slightly lower so it doesn’t overlap the name */
+  right: 0;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  list-style: none;
+  padding: 8px 0;
+  margin: 0;
+  width: 160px;
+  box-shadow: 0px 4px 8px rgba(0,0,0,0.1);
+  z-index: 100;
+}
+
+.dropdown li {
+  padding: 10px 15px;
+}
+
+.dropdown li a {
+  text-decoration: none;
+  color: #333;
+  display: block;
+}
+
+.dropdown li:hover {
+  background: #f4f4f4;
+}
+
+.hidden {
+  display: none;
+}

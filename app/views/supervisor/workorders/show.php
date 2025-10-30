@@ -4,6 +4,7 @@
 <head>
   <meta charset="utf-8">
   <title>Work Order #<?= htmlspecialchars($wo['work_order_id']) ?></title>
+  <link rel="stylesheet" href="<?= $base ?>/public/assets/css/supervisor/style-workorders.css">
   <link rel="stylesheet" href="<?= $base ?>/public/assets/css/supervisor/forms.css">
 </head>
 <body>
@@ -14,7 +15,6 @@
      </div>
 <h2>AUTONEXUS</h2>
 <a href="/autonexus/supervisor/dashboard"><img src="/autonexus/public/assets/img/dashboard.png"/>Dashboard</a>
-    was /supervisor/workloads
 <a href="/autonexus/supervisor/workorders" class="nav active">
   <img src="/autonexus/public/assets/img/jobs.png"/>Work Orders
 </a>
@@ -24,6 +24,8 @@
      <a href="/autonexus/supervisor/complaints"><img src="/autonexus/public/assets/img/Complaints.png"/>Complaints</a>
      <a href="/autonexus/supervisor/feedbacks"><img src="/autonexus/public/assets/img/Feedbacks.png"/>Feedbacks</a>
      <a href="/autonexus/supervisor/reports"><img src="/autonexus/public/assets/img/Inspection.png"/>Report</a>
+
+     <a href="<?= rtrim(BASE_URL, '/') ?>/logout"><img src="/autonexus/public/assets/img/user.png" alt="User" class="avatar-img" /> Sign Out</a>
 </div> 
 
 <main class="container">

@@ -19,7 +19,7 @@
       <img src="/autonexus/public/assets/img/jobs.png"/>Work Orders
     </a>
     <a href="/autonexus/supervisor/assignedjobs">
-      <img src="/autonexus/public/assets/img/assigned.png"/>Assigned Jobs
+      <img src="/autonexus/public/assets/img/assigned.png"/>Assigned 
     </a>
     <a href="/autonexus/supervisor/history">
       <img src="/autonexus/public/assets/img/history.png"/>Vehicle History
@@ -33,13 +33,18 @@
       <a href="/autonexus/supervisor/reports">
        <img src="/autonexus/public/assets/img/Inspection.png"/>Report
      </a>
+
+    
+
+    
+<a href="<?= rtrim(BASE_URL, '/') ?>/logout"><img src="/autonexus/public/assets/img/user.png" alt="User" class="avatar-img" /> Sign Out</a>
+     
     </div>
 
     <main class="main-content">
       <header>
         <input type="text" placeholder="Search..." class="search" />
         <div class="user-profile">
-          <img src="/autonexus/public/assets/img/bell.png" alt="Notifications" class="icon" />
           <img src="/autonexus/public/assets/img/user.png" alt="User" class="avatar-img" />
           <span>John Doe</span>
         </div>
@@ -54,36 +59,36 @@
         <div class="card green">
           <div class="card-header">
             <img src="/autonexus/public/assets/img/done.png" class="card-icon" />
-            <h3>Cases Done</h3>
+            <h3>Workorders Done</h3>
           </div>
-          <p>128</p>
+          <p>15</p>
           <span class="change">+12.5% vs last month</span>
         </div>
 
         <div class="card blue">
           <div class="card-header">
             <img src="/autonexus/public/assets/img/assigned2.png" class="card-icon" />
-            <h3>Assigned Cases</h3>
+            <h3>Assigned Jobs</h3>
           </div>
-          <p>45</p>
+          <p>9</p>
           <span class="change">+8.2% vs last month</span>
         </div>
 
         <div class="card red">
           <div class="card-header">
             <img src="/autonexus/public/assets/img/ongoing.png" class="card-icon" />
-            <h3>Ongoing Cases</h3>
+            <h3>Ongoing Workorders</h3>
           </div>
-          <p>32</p>
+          <p>4</p>
           <span class="change">-1.8% vs last month</span>
         </div>
 
         <div class="card purple">
           <div class="card-header">
             <img src="/autonexus/public/assets/img/total.png" class="card-icon" />
-            <h3>Total Cases</h3>
+            <h3>Total Workorders</h3>
           </div>
-          <p>205</p>
+          <p>28</p>
           <span class="change">+6.4% vs last month</span>
         </div>
       </section>

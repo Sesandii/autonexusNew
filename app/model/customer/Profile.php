@@ -143,13 +143,26 @@ class Profile
         }
     }
 
-   public function deleteVehicleOwnedBy(int $userId, int $vehicleId): bool
-    {
-        $cid = $this->customerIdByUserId($userId);
-        if (!$cid) return false;
-        $sql = "DELETE FROM vehicles WHERE vehicle_id = :vid AND customer_id = :cid";
-        $st = $this->pdo->prepare($sql);
-        return $st->execute(['vid' => $vehicleId, 'cid' => $cid]);
+  public function deleteVehicleOwnedBy(int $userId, int $vehicleId): bool
+{
+    $cid = $this->customerIdByUserId($userId);
+    if (!$cid) return false;
+
+    // Block delete if any appointment references this vehicle
+    $chk = $this->pdo->prepare(
+        "SELECT COUNT(*) FROM appointments WHERE vehicle_id = :vid"
+    );
+    $chk->execute(['vid' => $vehicleId]);
+
+    if ((int)$chk->fetchColumn() > 0) {
+        return false; // caller will set a friendly flash message
     }
+
+    $st = $this->pdo->prepare(
+        "DELETE FROM vehicles WHERE vehicle_id = :vid AND customer_id = :cid"
+    );
+    return $st->execute(['vid' => $vehicleId, 'cid' => $cid]);
+}
+
 
 }

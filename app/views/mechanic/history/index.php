@@ -15,7 +15,7 @@
       <img src="/autonexus/public/assets/img/dashboard.png"/>Dashboard
     </a>
     <a href="/autonexus/mechanic/jobs">
-      <img src="/autonexus/public/assets/img/jobs.png"/>All Jobs
+      <img src="/autonexus/public/assets/img/jobs.png"/>Jobs
     </a>
     <a href="/autonexus/mechanic/assignedjobs">
       <img src="/autonexus/public/assets/img/assigned.png"/>Assigned Jobs
@@ -28,11 +28,10 @@
     <main class="main">
      <header>
         <input type="text" placeholder="Search..." class="search" />
-        <div class="user-profile">
-          <img src="/autonexus/public/assets/img/bell.png" alt="Notifications" class="icon" />
+        <!--<div class="user-profile">
           <img src="/autonexus/public/assets/img/user.png" alt="User" class="avatar-img" />
           <span>John Doe</span>
-        </div>
+        </div>-->
       </header>
       <h2>Vehicle History</h2>
       <div class="search-box">

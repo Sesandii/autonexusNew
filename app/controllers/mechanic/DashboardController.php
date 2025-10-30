@@ -10,13 +10,13 @@ class DashboardController extends Controller
     public function index(): void
     {
         // Optional guards (use only if you have them)
-        if (method_exists($this, 'requireMechanic')) {
-            $this->requireMechanic();
-        } elseif (method_exists($this, 'requireRole')) {
-            $this->requireRole('mechanic');
-        } elseif (method_exists($this, 'requireLogin')) {
-            $this->requireLogin();
-        }
+        // if (method_exists($this, 'requireMechanic')) {
+        //     $this->requireMechanic();
+        // } elseif (method_exists($this, 'requireRole')) {
+        //     $this->requireRole('mechanic');
+        // } elseif (method_exists($this, 'requireLogin')) {
+        //     $this->requireLogin();
+        // }
 
         // TODO: replace placeholders with real DB data later
         $data = [

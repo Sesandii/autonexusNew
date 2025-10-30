@@ -48,8 +48,9 @@ class WorkOrdersController extends Controller
         ];
 
         if ($m->getAppointmentExists($payload['appointment_id'])) {
+            header('Location: ' . rtrim(BASE_URL,'/') . '/supervisor/workorders');
             $_SESSION['message'] = ['type' => 'error', 'text' => '⚠️ This appointment already has a work order.'];
-            header('Location: ' . rtrim(BASE_URL,'/') . '/supervisor/workorders/create'); exit;
+            exit;
         }
 
         $m->create($payload);

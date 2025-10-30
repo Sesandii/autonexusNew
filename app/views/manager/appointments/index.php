@@ -9,7 +9,7 @@
   <!-- Remembered sidebar CSS -->
   <link rel="stylesheet" href="<?= $base ?>/public/assets/css/manager/sidebar.css">
   <!-- Page CSS (migrated from sm_css to css/manager) -->
-  <link rel="stylesheet" href="<?= $base ?>/public/assets/css/manager/appointments.css">
+  <link rel="stylesheet" href="<?= $base ?>/public/assets/css/manager/appointment.css">
   <link rel="stylesheet" href="<?= $base ?>/public/assets/css/manager/sidebar.css"><!-- if your page also needs sidebar layout styles -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 </head>

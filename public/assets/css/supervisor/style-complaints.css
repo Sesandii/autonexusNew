@@ -1,123 +1,227 @@
-/* Sidebar */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', sans-serif;
+}
+
 body {
-    margin: 0;
-    font-family: 'Segoe UI', sans-serif;
-    background: #f8f9fc;
-    display: flex;
-  }
-  
-  .sidebar {
-    width: 220px;
-    background: #111;
-    color: white;
-    height: 100vh;
-    padding: 20px;
-  }
-  
-  .logo {
-    font-size: 20px;
-    font-weight: bold;
-    margin-bottom: 30px;
+  display: flex;
+  height: 100vh;
+  background-color: #f8f9fc;
+}
+
+.logo-container {
     text-align: center;
-  }
-  
-  .sidebar ul {
-    list-style: none;
-    padding: 0;
-  }
-  
-  .sidebar ul li {
-    padding: 12px 0;
-    cursor: pointer;
-    color: #ddd;
-    transition: 0.3s;
-  }
-  
-  .sidebar ul li:hover,
-  .sidebar ul li.active {
-    color: #ff3b3b;
-  }
-  
-  /* Main Content */
-  .main-content {
-    flex: 1;
-    padding: 20px 40px;
-  }
-  
-  .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  
-  #search {
-    padding: 8px 12px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-    width: 250px;
-  }
-  
-  .filters select {
-    padding: 8px;
-    margin-left: 10px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-  }
-  
-  .title {
-    margin: 25px 0 10px;
-    font-size: 22px;
-    font-weight: 600;
-  }
-  
-  .complaint-card {
-    background: white;
-    border-radius: 10px;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
-    padding: 15px 20px;
-    margin-bottom: 15px;
-    transition: transform 0.2s ease;
-  }
-  
-  .complaint-card:hover {
-    transform: translateY(-3px);
-  }
-  
-  .complaint-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 6px;
-  }
-  
-  .status {
-    padding: 5px 10px;
-    border-radius: 20px;
-    font-size: 13px;
-    font-weight: bold;
-    text-transform: uppercase;
-  }
-  
-  .status.open {
-    background: #ffe4e4;
-    color: #e23e3e;
-  }
-  
-  .status.in-progress {
-    background: #fff3cd;
-    color: #b58b00;
-  }
-  
-  .status.resolved {
-    background: #d1f7d1;
-    color: #178717;
-  }
-  
-  .meta {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 10px;
-    color: #777;
-    font-size: 13px;
-  }
-  
+    margin-bottom: 10px;
+}
+
+.logo {
+    width: 180px;
+    height: 80px;
+}
+
+.sidebar {
+  width: 220px;
+  background-color: #000;
+  color: white;
+  padding: 10px;
+}
+
+.sidebar h2 {
+  margin-bottom: 30px;
+  font-size: 22px;
+  text-align: center;
+}
+
+.sidebar a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 10px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  border-radius: 6px;
+  color: #d1d5db;
+  text-decoration:none;
+}
+
+.sidebar a img {
+  width: 20px;
+  height: 20px;
+}
+.sidebar a.nav{
+background-color: #1F2937;
+  color: #fff;
+}
+.sidebar a:hover {
+  background-color:#1F2937;
+}
+
+.main-content {
+  flex: 1;
+  padding: 30px;
+  overflow-y: auto;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+header h1 {
+  font-size: 24px;
+  margin-bottom: 5px;
+}
+
+.search {
+  width: 300px;
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.user-profile {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.user-profile img{
+  width: 20px;
+  height: 20px;
+}
+.icon {
+  width: 22px;
+  height: 22px;
+}
+
+.avatar-img {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+}
+
+.job-section h2 {
+  font-size: 28px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: white;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+thead {
+  background-color: #f0f0f0;
+}
+
+th, td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+
+button.view-btn {
+  background-color: #DC2626;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button.view-btn:hover {
+  background-color: #1F2937;
+}
+
+.job-section {
+  padding: 30px;
+}
+.title-filter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+.title-filter h2 {
+  font-size: 24px;
+  color: #1a1d23;
+}
+.filters select {
+  padding: 8px 12px;
+  font-size: 14px;
+  margin-left: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.complaints-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.complaint-card {
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 20px;
+  position: relative;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+.complaint-card .title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.complaint-card .desc {
+  font-size: 15px;
+  margin-bottom: 12px;
+  color: #555;
+}
+.complaint-card .meta {
+  font-size: 13px;
+  color: #777;
+  margin-bottom: 12px;
+  display: flex;
+  justify-content: space-between;
+  gap: 30px;
+}
+.complaint-card .assigned {
+  font-size: 14px;
+  margin-bottom: 12px;
+}
+.status-badge {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  padding: 6px 14px;
+  font-size: 18px;
+  font-weight: bold;
+  border-radius: 12px;
+}
+.status-open {
+  background-color: #fdecea;
+  color: #d93025;
+}
+.status-inprogress {
+  background-color: #fff4db;
+  color: #c67c00;
+}
+.status-resolved {
+  background-color: #e6f4ea;
+  color: #137333;
+}
+
+.complaint-icon {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+}

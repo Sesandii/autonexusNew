@@ -19,7 +19,7 @@
       <img src="/autonexus/public/assets/img/jobs.png"/>Work Orders
     </a>
     <a href="/autonexus/supervisor/assignedjobs">
-      <img src="/autonexus/public/assets/img/assigned.png"/>Assigned Jobs
+      <img src="/autonexus/public/assets/img/assigned.png"/>Assigned
     </a>
     <a href="/autonexus/supervisor/history">
       <img src="/autonexus/public/assets/img/history.png"/>Vehicle History
@@ -33,15 +33,12 @@
       <a href="/autonexus/supervisor/reports">
        <img src="/autonexus/public/assets/img/Inspection.png"/>Report
      </a>
+
+     <a href="<?= rtrim(BASE_URL, '/') ?>/logout"><img src="/autonexus/public/assets/img/user.png" alt="User" class="avatar-img" /> Sign Out</a>
     </div>
     <main class="main-content">
       <header>
         <input type="text" placeholder="Search..." class="search" />
-        <div class="user-profile">
-          <img src="/autonexus/public/assets/img/bell.png" alt="Notifications" class="icon" />
-          <img src="/autonexus/public/assets/img/user.png" alt="User" class="avatar-img" />
-          <span>John Doe</span>
-        </div>
       </header>
 
 <section class="feedback-section">

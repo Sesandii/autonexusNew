@@ -33,10 +33,6 @@
     <input type="text" placeholder="Search..." class="search" />
     
     <div class="user-profile">
-      
-      <!-- Notification Icon -->
-      <img src="/autonexus/public/assets/img/bell.png" alt="Notifications" class="icon" />
-
       <!-- User Menu -->
       <div class="user">
         <img src="/autonexus/public/assets/img/user.png" alt="User" class="user-img" />
@@ -44,8 +40,8 @@
           <span id="user-name">John Doe</span>
           <ul id="dropdown" class="dropdown hidden">
             <li><a href="#">Edit Profile</a></li>
-            <li><a href="#">Settings</a></li>
-            <li><a href="..\Signin\index.html">Sign Out</a></li>
+            <li><a href="<?= $base ?>/logout">Sign Out</a></li>
+            <!-- <li><a href="..\Signin\index.html">Sign Out</a></li> -->
           </ul>
         </div>
       </div>
@@ -62,7 +58,7 @@
         <div class="card green">
           <div class="card-header">
             <img src="/autonexus/public/assets/img/done.png" class="card-icon" />
-            <h3>Cases Done</h3>
+            <h3>Jobs Done</h3>
           </div>
           <p>128</p>
           <span class="change">+12.5% vs last month</span>
@@ -71,7 +67,7 @@
         <div class="card blue">
           <div class="card-header">
             <img src="/autonexus/public/assets/img/assigned2.png" class="card-icon" />
-            <h3>Assigned Cases</h3>
+            <h3>Assigned Jobs</h3>
           </div>
           <p>45</p>
           <span class="change">+8.2% vs last month</span>
@@ -80,7 +76,7 @@
         <div class="card red">
           <div class="card-header">
             <img src="/autonexus/public/assets/img/ongoing.png" class="card-icon" />
-            <h3>Ongoing Cases</h3>
+            <h3>Ongoing Appointments</h3>
           </div>
           <p>32</p>
           <span class="change">-1.8% vs last month</span>
@@ -89,7 +85,7 @@
         <div class="card purple">
           <div class="card-header">
             <img src="/autonexus/public/assets/img/total.png" class="card-icon" />
-            <h3>Total Cases</h3>
+            <h3>Total Jobs</h3>
           </div>
           <p>205</p>
           <span class="change">+6.4% vs last month</span>
@@ -110,39 +106,39 @@
           </thead>
           <tbody>
             <tr>
-              <td><img src="/autonexus/public/assets/img/user2.png" class="user-icon" /> James Wilson</td>
-              <td><img src="/autonexus/public/assets/img/car.png" class="icon-car" /> Toyota Camry (2019)</td>
-              <td>9:00 AM</td>
-              <td>Oil Change</td>
-              <td><span class="badge upcoming">Upcoming</span></td>
+              <td><img src="/autonexus/public/assets/img/user2.png" class="user-icon" /> Mike Wilson</td>
+              <td><img src="/autonexus/public/assets/img/car.png" class="icon-car" /> Ford Focus (2019)</td>
+              <td>12:00 AM</td>
+              <td>General service</td>
+              <td><span class="badge upcoming">Waiting</span></td>
             </tr>
             <tr>
-              <td><img src="/autonexus/public/assets/img/user2.png" class="user-icon" /> Sarah Johnson</td>
+              <td><img src="/autonexus/public/assets/img/user2.png" class="user-icon" /> Willy walker</td>
               <td><img src="/autonexus/public/assets/img/car.png" class="icon-car" /> Honda Civic (2020)</td>
-              <td>10:30 AM</td>
-              <td>Tire Rotation</td>
-              <td><span class="badge upcoming">Upcoming</span></td>
+              <td>11:30 AM</td>
+              <td>Wheel alignment</td>
+              <td><span class="badge upcoming">Confirmed</span></td>
             </tr>
             <tr>
               <td><img src="/autonexus/public/assets/img/user2.png" class="user-icon" /> Robert Brown</td>
-              <td><img src="/autonexus/public/assets/img/car.png" class="icon-car" /> Ford F-150 (2018)</td>
+              <td><img src="/autonexus/public/assets/img/car.png" class="icon-car" /> Ford Raptor (2018)</td>
               <td>11:45 AM</td>
-              <td>Brake Inspection</td>
-              <td><span class="badge confirmed">Confirmed</span></td>
+              <td>Suspension Inspection</td>
+              <td><span class="badge confirmed">Upcoming</span></td>
             </tr>
             <tr>
-              <td><img src="/autonexus/public/assets/img/user2.png" class="user-icon" /> Emily Davis</td>
-              <td><img src="/autonexus/public/assets/img/car.png" class="icon-car" /> Chevrolet Equinox (2021)</td>
+              <td><img src="/autonexus/public/assets/img/user2.png" class="user-icon" /> Ben johnson</td>
+              <td><img src="/autonexus/public/assets/img/car.png" class="icon-car" /> Chevrolet Bronco (2021)</td>
               <td>2:15 PM</td>
               <td>Full Inspection</td>
-              <td><span class="badge confirmed">Confirmed</span></td>
+              <td><span class="badge confirmed">Waiting</span></td>
             </tr>
             <tr>
               <td><img src="/autonexus/public/assets/img/user2.png" class="user-icon" /> Michael Thompson</td>
-              <td><img src="/autonexus/public/assets/img/car.png" class="icon-car" /> Nissan Altima (2017)</td>
+              <td><img src="/autonexus/public/assets/img/car.png" class="icon-car" /> Nissan 370z (2017)</td>
               <td>4:00 PM</td>
               <td>Engine Diagnostics</td>
-              <td><span class="badge waiting">Waiting</span></td>
+              <td><span class="badge waiting">Confirmed</span></td>
             </tr>
           </tbody>
         </table>

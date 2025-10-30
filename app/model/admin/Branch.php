@@ -12,14 +12,48 @@ class Branch
         $this->pdo = db(); // your global db() function
     }
 
+    /**
+     * Generate the next branch code automatically.
+     * Example pattern: BR001, BR002, BR010, etc.
+     */
+    public function nextCode(): string
+    {
+        // Get the last branch code in numeric order (based on suffix)
+        $sql = "SELECT branch_code
+                  FROM branches
+              ORDER BY CAST(SUBSTRING(branch_code, 3) AS UNSIGNED) DESC
+                 LIMIT 1";
+        $last = $this->pdo->query($sql)->fetchColumn();
+
+        if (!$last) {
+            // No branches yet → start with BR001
+            return 'BR001';
+        }
+
+        // Extract numeric part
+        $num = (int)preg_replace('/\D/', '', $last);
+        $next = $num + 1;
+
+        // Return formatted code
+        return 'BR' . str_pad((string)$next, 3, '0', STR_PAD_LEFT);
+    }
+
+    /** Get all branches */
     public function all(): array
     {
         $stmt = $this->pdo->query("SELECT * FROM branches ORDER BY branch_code");
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    /**
+     * Create branch. If branch_code not provided, auto-generate it.
+     */
     public function create(array $data): void
     {
+        if (empty($data['branch_code'])) {
+            $data['branch_code'] = $this->nextCode();
+        }
+
         $cols = array_keys($data);
         $sql = "INSERT INTO branches (" . implode(',', $cols) . ")
                 VALUES (:" . implode(',:', $cols) . ")";
@@ -72,17 +106,18 @@ class Branch
     }
 
     public function idsOfActive(): array
-{
-    $rows = $this->pdo->query("SELECT branch_id FROM branches WHERE status='active'")
-                      ->fetchAll(PDO::FETCH_COLUMN, 0);
-    return array_map('intval', $rows);
-}
+    {
+        $rows = $this->pdo->query("SELECT branch_id FROM branches WHERE status='active'")
+                          ->fetchAll(PDO::FETCH_COLUMN, 0);
+        return array_map('intval', $rows);
+    }
 
-public function allActive(): array
-{
-    $sql = "SELECT branch_id, branch_code, name, city
-            FROM branches WHERE status='active' ORDER BY name";
-    return $this->pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
-}
-
+    public function allActive(): array
+    {
+        $sql = "SELECT branch_id, branch_code, name, city
+                  FROM branches
+                 WHERE status='active'
+              ORDER BY name";
+        return $this->pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+    }
 }

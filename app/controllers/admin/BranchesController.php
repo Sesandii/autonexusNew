@@ -16,14 +16,18 @@ class BranchesController extends Controller
     }
 
     /** GET /admin/branches/create */
-    public function create()
-    {
-        $managers = (new Manager())->all();
-        $this->view('admin/admin-viewbranches/create', [
-            'base'      => BASE_URL,
-            'managers'  => $managers,
-        ]);
-    }
+    /** GET /admin/branches/create */
+public function create()
+{
+    $managers = (new Manager())->all();
+    $nextCode = $this->Branch->nextCode();   // ← add this
+    $this->view('admin/admin-viewbranches/create', [
+        'base'      => BASE_URL,
+        'managers'  => $managers,
+        'nextCode'  => $nextCode,            // ← pass to view
+    ]);
+}
+
 
     /** GET /admin/branches */
     public function index()
@@ -68,15 +72,23 @@ class BranchesController extends Controller
     }
 
     /** POST /admin/branches */
-    public function store()
-    {
-        $data   = $this->sanitize($_POST);
-        $errors = $this->validate($data, creating: true);
-        if ($errors) { http_response_code(422); echo implode("\n", $errors); return; }
+    /** POST /admin/branches */
+public function store()
+{
+    $data = $this->sanitize($_POST);
 
-        $this->Branch->create($data);
-        header('Location: ' . BASE_URL . '/admin/branches'); exit;
+    // Auto-generate if empty (server-side source of truth)
+    if ($data['branch_code'] === '') {
+        $data['branch_code'] = $this->Branch->nextCode();
     }
+
+    $errors = $this->validate($data, creating: true);
+    if ($errors) { http_response_code(422); echo implode("\n", $errors); return; }
+
+    $this->Branch->create($data);
+    header('Location: ' . BASE_URL . '/admin/branches'); exit;
+}
+
 
     /** POST /admin/branches/{code} */
     public function update($code)
@@ -182,25 +194,29 @@ if ($created_raw === '') {
         ];
     }
 
-    private function validate(array $d, bool $creating): array
-    {
-        $e = [];
-        if ($creating && $d['branch_code'] === '') $e[] = 'Branch code is required';
-        if ($d['name'] === '')                     $e[] = 'Name is required';
-        if ($d['city'] === '')                     $e[] = 'City is required';
-
-        if ($d['email'] !== '' && !filter_var($d['email'], FILTER_VALIDATE_EMAIL)) {
-            $e[] = 'Invalid email';
-        }
-
-        // very light DATETIME format check
-        if ($d['created_at'] !== '' && !preg_match('/^\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}$/', $d['created_at'])) {
-            $e[] = 'created_at must be DATETIME (YYYY-MM-DD HH:MM:SS)';
-        }
-
-        if (!in_array($d['status'], ['active','inactive'], true)) {
-            $e[] = 'Invalid status';
-        }
-        return $e;
+  private function validate(array $d, bool $creating): array
+{
+    $e = [];
+    // DO NOT require code during create; we auto-generate if empty
+    if ($d['branch_code'] === '') {
+        $e[] = 'Branch code could not be generated'; // should not happen, but a safety net
     }
+    if ($d['name'] === '') $e[] = 'Name is required';
+    if ($d['city'] === '') $e[] = 'City is required';
+
+    if ($d['email'] !== '' && !filter_var($d['email'], FILTER_VALIDATE_EMAIL)) {
+        $e[] = 'Invalid email';
+    }
+
+    if ($d['created_at'] !== '' &&
+        !preg_match('/^\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}$/', $d['created_at'])) {
+        $e[] = 'created_at must be DATETIME (YYYY-MM-DD HH:MM:SS)';
+    }
+
+    if (!in_array($d['status'], ['active','inactive'], true)) {
+        $e[] = 'Invalid status';
+    }
+    return $e;
+}
+
 }

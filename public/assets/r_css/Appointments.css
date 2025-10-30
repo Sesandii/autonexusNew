@@ -1,0 +1,129 @@
+
+.header {
+  display: flex;
+  justify-content: space-between; /* Heading left, actions right */
+  align-items: center;
+  margin-bottom: 25px;
+  margin-top: 10px;
+}
+
+.header h2 {
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0;
+}
+
+/* Right-side actions (button + search bar) */
+.top-actions {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+/* Button styling */
+.add-btn {
+  background: #e53935;
+  color: #fff;
+  border: none;
+  padding: 9px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 14px;
+  transition: background 0.3s;
+  white-space: nowrap;
+}
+
+.add-btn:hover {
+  background: #c62828;
+}
+
+/* Search bar styling */
+.search-bar {
+  display: flex;
+  align-items: center;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  overflow: hidden;
+  background: #fff;
+}
+
+.search-bar input {
+  border: none;
+  padding: 8px 10px;
+  outline: none;
+  width: 180px;
+  font-size: 14px;
+}
+
+.search-bar button {
+  background: #f0f0f0;
+  border: none;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.search-bar button:hover {
+  background: #ddd;
+}
+
+/* Container for calendar + schedule */
+.main-content {
+  display: flex;
+  gap: 20px;            /* space between calendar and schedule */
+  margin-top: 20px;
+}
+
+/* Calendar takes most of the space */
+.calendar {
+  flex: 3;              /* wider column */
+  background: #fff;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+}
+
+/* Schedule takes less space */
+.schedule {
+  flex: 1;              /* narrow column */
+  background: #fff;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+  max-width: 300px;     /* optional: limit width */
+}
+
+
+.schedule h4 {
+  font-weight: 600;
+  margin-bottom: 15px;
+}
+
+.task {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f7f8fa;
+  border-radius: 6px;
+  padding: 12px 15px;
+  margin-bottom: 10px;
+}
+
+.task p {
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.task span {
+  font-size: 13px;
+  color: #777;
+}
+
+.edit {
+  font-size: 14px;
+  cursor: pointer;
+  color: #333;
+}
+
+ 

@@ -4,6 +4,7 @@
 <head>
   <meta charset="utf-8">
   <title>Create Work Order</title>
+  <link rel="stylesheet" href="<?= $base ?>/public/assets/css/supervisor/style-workorders.css">
   <link rel="stylesheet" href="<?= $base ?>/public/assets/css/supervisor/forms.css">
 </head>
 <body>
@@ -13,7 +14,6 @@
      </div>
 <h2>AUTONEXUS</h2>
 <a href="/autonexus/supervisor/dashboard"><img src="/autonexus/public/assets/img/dashboard.png"/>Dashboard</a>
-    was /supervisor/workloads
 <a href="/autonexus/supervisor/workorders" class="nav active">
   <img src="/autonexus/public/assets/img/jobs.png"/>Work Orders
 </a>
@@ -119,7 +119,6 @@
     const appt = document.getElementById('appointment_id');
     const svc  = document.getElementById('service_display');
     const prc  = document.getElementById('service_price');
-    const tot  = document.getElementById('total_cost');
 
     function applyFromOption(opt){
       const name  = opt?.dataset.service || '';

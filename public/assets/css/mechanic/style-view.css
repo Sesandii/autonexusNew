@@ -1,0 +1,226 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', sans-serif;
+}
+body {
+  display: flex;
+  height: 100vh;
+  background-color: #f8f9fc;
+}
+
+.logo-container {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.logo {
+    width: 180px;
+    height: 80px;
+}
+
+.sidebar {
+  width: 220px;
+  background-color: #000;
+  color: white;
+  padding: 10px;
+}
+.sidebar h2 {
+  margin-bottom: 30px;
+  font-size: 22px;
+  text-align: center;
+}
+.sidebar a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 10px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  border-radius: 6px;
+  color: #d1d5db;
+  text-decoration:none;
+}
+.sidebar a img {
+  width: 20px;
+  height: 20px;
+}
+.sidebar a.active{
+ background-color: #1F2937;
+ color: #fff;
+}
+.sidebar a:hover {
+  background-color: #1F2937;
+}
+.main {
+  flex: 1;
+  padding: 30px;
+  overflow-y: auto;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.search {
+  width: 300px;
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.user-profile {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.user-profile img{
+  width: 20px;
+  height: 20px;
+}
+.icon {
+  width: 22px;
+  height: 22px;
+}
+
+.avatar-img {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+}
+.card {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  margin-bottom: 20px;
+}
+.section-title {
+  display: flex;
+  align-items: center;
+  font-size: 18px;
+  margin-top: 15px;
+  margin-bottom: 15px;
+  font-weight: bold;
+  gap: 10px;
+}
+.section-title .section-icon {
+  width: 24px;
+  height: 24px;
+}
+.info-row {
+  display: flex;
+  grid-template-columns: 150px 1fr;
+  margin-bottom: 8px;
+  gap: 5px;
+}
+.info-row .label {
+  font-weight: 600;
+  color: #444;
+  min-width: 100px;
+}
+.status {
+  display: inline-block;
+  background-color: #d4f8da;
+  color: #2c7a36;
+  padding: 5px 10px;
+  border-radius: 15px;
+  font-size: 12px;
+}
+.checklist-card {
+  padding: 20px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.checklist-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+  font-size: 14px;
+}
+
+.checklist-table th {
+  text-align: left;
+  padding: 12px 8px;
+  color: #666;
+  font-weight: 600;
+  border-bottom: 1px solid #eee;
+}
+
+.checklist-table td {
+  padding: 12px 8px;
+  border-bottom: 1px solid #f2f2f2;
+  vertical-align: middle;
+}
+
+.status-icon {
+  color: green;
+  font-size: 16px;
+  margin-right: 6px;
+}
+
+.status-text {
+  color: green;
+  font-weight: 500;
+}
+
+.checklist-note {
+  margin-top: 12px;
+  font-size: 13px;
+  color: #888;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  font-size: 18px;
+  font-weight: bold;
+  gap: 10px;
+}
+
+.section-icon {
+  width: 20px;
+  height: 20px;
+}
+
+
+.completed {
+  color: green;
+}
+.photos {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+.photos img {
+  width: 100%;
+  border-radius: 5px;
+  object-fit: cover;
+}
+
+.job-title {
+  font-weight: bold;
+}
+
+.status {
+  color: green;
+  font-weight: bold;
+}
+
+.label {
+  font-weight: 600;
+  color: #444;
+}
+
+.job-header {
+  font-size: 26px;  
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #000;        
+}

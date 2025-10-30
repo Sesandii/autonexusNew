@@ -14,7 +14,7 @@
     </div>
     <h2>AUTONEXUS</h2>
     <a href="<?= $base ?>/mechanic/dashboard"><img src="<?= $base ?>/public/assets/img/dashboard.png"/>Dashboard</a>
-    <a href="<?= $base ?>/mechanic/jobs" class="nav"><img src="<?= $base ?>/public/assets/img/jobs.png"/>All Jobs</a>
+    <a href="<?= $base ?>/mechanic/jobs" class="nav"><img src="<?= $base ?>/public/assets/img/jobs.png"/>Jobs</a>
     <a href="<?= $base ?>/mechanic/assignedjobs"><img src="<?= $base ?>/public/assets/img/assigned.png"/>Assigned Jobs</a>
     <a href="<?= $base ?>/mechanic/history"><img src="<?= $base ?>/public/assets/img/history.png"/>Vehicle History</a>
   </div>
@@ -22,11 +22,10 @@
   <main class="main-content">
     <header>
       <input type="text" placeholder="Search..." class="search" />
-      <div class="user-profile">
-        <img src="<?= $base ?>/public/assets/img/bell.png" alt="Notifications" class="icon" />
+      <!--<div class="user-profile">
         <img src="<?= $base ?>/public/assets/img/user.png" alt="User" class="avatar-img" />
         <span><?= htmlspecialchars($_SESSION['first_name'] ?? 'Mechanic') ?></span>
-      </div>
+      </div>-->
     </header>
 
     <section class="job-section">

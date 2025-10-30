@@ -28,11 +28,10 @@
     <main class="main">
       <header>
         <input type="text" placeholder="Search..." class="search" />
-        <div class="user-profile">
-          <img src="/autonexus/public/assets/img/bell.png" alt="Notifications" class="icon" />
+        <!--<div class="user-profile">
           <img src="/autonexus/public/assets/img/user.png" alt="User" class="avatar-img" />
           <span>John Doe</span>
-        </div>
+        </div>-->
       </header>
       <section class="job-section">
        <p>Overview of all ongoing jobs</p>

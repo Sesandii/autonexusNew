@@ -10,21 +10,29 @@
   <link rel="stylesheet" href="<?= $base ?>/public/assets/css/manager/sidebar.css">
   <!-- Page CSS (changed from sm_css to css/manager) -->
   <link rel="stylesheet" href="<?= $base ?>/public/assets/css/manager/profile.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
 
   <?php include APP_ROOT . '/views/layouts/managersidebar.php'; ?>
 
   <div class="main">
-    <header>
-      <h1>Customer Profiles</h1>
-    </header>
+     <div class="header">
+  <h2>Customers</h2>
 
-    <!-- Search Bar -->
+  <div class="top-actions">
+    <!-- Create New Appointment Button -->
+    <button class="add-btn" onclick="window.location.href='<?= $base ?>/manager/customers/create'">
+    + New Customer
+</button>
+
+    <!-- Search Appointment Bar -->
     <div class="search-bar">
-      <input type="text" placeholder="Search customer by ID...">
-      <button>Search</button>
+      <input type="text" id="searchInput" placeholder="Search Customer...." />
+      <button id="searchBtn">🔍</button>
     </div>
+  </div>
+</div>
 
     <!-- Customer List -->
     <div class="card customer-list">
@@ -44,10 +52,10 @@
             <th>Vehicle</th>
             <th>Last Visit</th>
             <th>Status</th>
-          </tr>
+</tr>
         </thead>
         <tbody>
-          <tr onclick="window.location='<?= $base ?>/manager/customers/10045/history'">
+          <tr onclick="window.location='<?= $base ?>/manager/customers/newCustomer'">
             <td>CUS10045</td>
             <td>
               <div class="customer-info">
@@ -62,14 +70,14 @@
             <td>June 10, 2023</td>
             <td><span class="status active">Active</span></td>
           </tr>
-          <tr onclick="window.location='<?= $base ?>/manager/customers/10046/history'">
+          <tr onclick="window.location='<?= $base ?>/manager/customers/newCustomer'">
             <td>CUS10046</td>
             <td>
               <div class="customer-info">
                 <div class="avatar">👤</div>
                 <div>
-                  <strong>Sarah Williams</strong><br>
-                  <span>sarah.w@example.com</span>
+                  <strong>Sarah De Silva</strong><br>
+                  <span>sarah.s@example.com</span>
                 </div>
               </div>
             </td>
@@ -77,14 +85,14 @@
             <td>June 5, 2023</td>
             <td><span class="status active">Active</span></td>
           </tr>
-          <tr onclick="window.location='<?= $base ?>/manager/customers/10047/history'">
+         <tr onclick="window.location='<?= $base ?>/manager/customers/newCustomer'">
             <td>CUS10047</td>
             <td>
               <div class="customer-info">
                 <div class="avatar">👤</div>
                 <div>
-                  <strong>David Brown</strong><br>
-                  <span>dbrown@example.com</span>
+                  <strong>Danush Jay</strong><br>
+                  <span>danujay@example.com</span>
                 </div>
               </div>
             </td>
@@ -92,14 +100,14 @@
             <td>May 28, 2023</td>
             <td><span class="status inactive">Inactive</span></td>
           </tr>
-          <tr onclick="window.location='<?= $base ?>/manager/customers/10048/history'">
+          <tr>
             <td>CUS10048</td>
             <td>
               <div class="customer-info">
                 <div class="avatar">👤</div>
                 <div>
-                  <strong>Jennifer Davis</strong><br>
-                  <span>jdavis@example.com</span>
+                  <strong>Nathasha Davis</strong><br>
+                  <span>ndavis@example.com</span>
                 </div>
               </div>
             </td>
@@ -107,14 +115,14 @@
             <td>June 12, 2023</td>
             <td><span class="status active">Active</span></td>
           </tr>
-          <tr onclick="window.location='<?= $base ?>/manager/customers/10049/history'">
+          <tr>
             <td>CUS10049</td>
             <td>
               <div class="customer-info">
                 <div class="avatar">👤</div>
                 <div>
-                  <strong>Robert Wilson</strong><br>
-                  <span>rwilson@example.com</span>
+                  <strong>Ruwan Perera</strong><br>
+                  <span>rperp@example.com</span>
                 </div>
               </div>
             </td>

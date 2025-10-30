@@ -14,12 +14,12 @@
     <a href="/autonexus/supervisor/dashboard">
       <img src="/autonexus/public/assets/img/dashboard.png"/>Dashboard
     </a>
-    <a href="/autonexus/supervisor/jobs" >
+    <a href="/autonexus/supervisor/workorders" >
       <img src="/autonexus/public/assets/img/jobs.png"/>Work Orders
     </a>
     <a href="/autonexus/supervisor/assignedjobs">
-      <img src="/autonexus/public/assets/img/assigned.png"/>Assigned Jobs
-    </a>
+      <img src="/autonexus/public/assets/img/assigned.png"/>Assigned
+</a>
     <a href="/autonexus/supervisor/history" class="nav">
       <img src="/autonexus/public/assets/img/history.png"/>Vehicle History
     </a>
@@ -32,16 +32,15 @@
       <a href="/autonexus/supervisor/reports">
        <img src="/autonexus/public/assets/img/Inspection.png"/>Report
      </a>
+
+     <a href="<?= rtrim(BASE_URL, '/') ?>/logout"><img src="/autonexus/public/assets/img/user.png" alt="User" class="avatar-img" /> Sign Out</a>
   </div>
     
     <main class="main">
      <header>
         <input type="text" placeholder="Search..." class="search" />
         <div class="user-profile">
-          <img src="/autonexus/public/assets/img/bell.png" alt="Notifications" class="icon" />
-          <img src="/autonexus/public/assets/img/user.png" alt="User" class="avatar-img" />
-          <span>John Doe</span>
-        </div>
+
       </header>
       <h2>Vehicle History</h2>
       <div class="search-box">

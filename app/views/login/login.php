@@ -53,7 +53,7 @@ $base = rtrim(BASE_URL, '/');
                     <!-- Post to the router endpoint, not db_login.php -->
                     <form class="login-form" id="loginForm" method="post" action="<?= htmlspecialchars($base . '/login', ENT_QUOTES, 'UTF-8') ?>">
                         <div class="form-group">
-                            <label for="email">Email</label>
+                            <label for="email">Email/Username</label>
                             <input
                                 type="email"
                                 id="email"

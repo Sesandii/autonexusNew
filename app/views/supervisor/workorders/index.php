@@ -14,15 +14,17 @@
      <div class="logo-container">
      <img src="/autonexus/public/assets/img/Auto.png" alt="Logo" class="logo">
      </div>
+     
       <h2>AUTONEXUS</h2>
-      <a href="/autonexus/supervisor/dashboard" class="nav">
+
+      <a href="/autonexus/supervisor/dashboard">
       <img src="/autonexus/public/assets/img/dashboard.png"/>Dashboard
     </a>
-    <a href="/autonexus/supervisor/workorders" >
+    <a href="/autonexus/supervisor/workorders" class="nav">
       <img src="/autonexus/public/assets/img/jobs.png"/>Work Orders
     </a>
     <a href="/autonexus/supervisor/assignedjobs">
-      <img src="/autonexus/public/assets/img/assigned.png"/>Assigned Jobs
+      <img src="/autonexus/public/assets/img/assigned.png"/>Assigned
     </a>
     <a href="/autonexus/supervisor/history">
       <img src="/autonexus/public/assets/img/history.png"/>Vehicle History
@@ -36,12 +38,14 @@
       <a href="/autonexus/supervisor/reports">
        <img src="/autonexus/public/assets/img/Inspection.png"/>Report
      </a>
+
+     <a href="<?= rtrim(BASE_URL, '/') ?>/logout"><img src="/autonexus/public/assets/img/user.png" alt="User" class="avatar-img" /> Sign Out</a>
     </div>
 <div class="container">
   <div class="page-header">
     <div>
       <h1>Work Orders</h1>
-      <p class="subtitle">All work orders with their appointment’s service.</p>
+      <p class="subtitle">All work orders with their appointment's service.</p>
     </div>
     <a class="btn primary" href="<?= $base ?>/supervisor/workorders/create">Add Work Order</a>
   </div>

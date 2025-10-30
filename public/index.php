@@ -352,6 +352,49 @@ $router->get('/manager/appointments', [\app\controllers\manager\AppointmentsCont
 $router->get('/manager/servicehistory', [\app\controllers\manager\ServiceHistoryController::class, 'index']);
 
 
+/*Receptionist*/
+
+use app\controllers\Receptionist\ComplaintController;
+
+// Always put static routes first
+$router->get('/receptionist/complaints', [ComplaintController::class, 'index']);
+$router->get('/receptionist/complaints/new', [ComplaintController::class, 'create']);
+$router->post('/receptionist/complaints', [ComplaintController::class, 'store']);
+$router->get('/receptionist/complaints/history/{customer_name}', [ComplaintController::class, 'history']);
+$router->get('/receptionist/complaints/{id}', [ComplaintController::class, 'show']);
+$router->get('/receptionist/complaints/edit/{id}', [ComplaintController::class, 'edit']);
+$router->post('/receptionist/complaints/update/{id}', [ComplaintController::class, 'update']);
+$router->get('/receptionist/complaints/delete/{id}', [\app\controllers\Receptionist\ComplaintController::class, 'delete']);
+
+
+
+
+
+$router->get('/receptionist/appointments', [app\controllers\Receptionist\AppointmentsController::class, 'index']);
+$router->get('/receptionist/appointments/new', [AppointmentsController::class, 'create']);
+$router->get('/receptionist/appointments/day', [AppointmentsController::class, 'day']); // Route to show appointments for a specific day
+$router->get('/receptionist/appointments/edit/{id}', [AppointmentsController::class, 'edit']);// Show update form
+
+use app\controllers\Receptionist\CustomerProfileController;
+
+$router->get('/receptionist/customers', [CustomerProfileController::class, 'index']); // Customer Profiles list
+$router->get('/receptionist/customers/new', [CustomerProfileController::class, 'create']); // Show new customer form
+$router->get('/receptionist/customers/details', [CustomerProfileController::class, 'show']);
+
+use app\controllers\Receptionist\ReceptionistD;
+
+$router->get('/receptionist/dashboard', [app\controllers\Receptionist\ReceptionistD::class, 'index']);
+
+use app\controllers\Receptionist\ReceptionistService;
+
+$router->get('/receptionist/service', [app\controllers\Receptionist\ReceptionistService::class, 'index']);
+
+use app\controllers\Receptionist\BillingController;
+
+$router->get('/receptionist/billing', [app\controllers\Receptionist\BillingController::class, 'index']); // Receptionist Billing & Payments
+$router->get('/receptionist/billing/create', [BillingController::class, 'create']);
+
+
 
 
 

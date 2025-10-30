@@ -230,3 +230,44 @@ body{
 @keyframes fadeIn{ from{opacity:0; transform:translateY(-6px)} to{opacity:1; transform:translateY(0)} }
 
 
+.lang-switcher a:hover{
+  background:#f8fafc;
+  color:#0f172a;
+}
+
+.lang-switcher a:active{
+  transform: translateY(1px);
+}
+
+.lang-switcher a.active{
+  background: var(--brand);
+  color:#fff;
+  box-shadow: 0 1px 0 rgba(0,0,0,.05) inset;
+}
+
+.lang-switcher a:focus-visible{
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 999px;
+}
+
+/* Placement niceties for the topbar */
+.topbar .lang-switcher{
+  margin-top: 8px;
+}
+
+/* Small screens: allow wrapping without breaking pill shape */
+@media (max-width: 520px){
+  .lang-switcher{
+    flex-wrap:wrap;
+    gap:6px;
+  }
+  .lang-switcher a{
+    padding:6px 10px;
+    font-size:12px;
+  }
+}
+.user-chip--link { text-decoration:none; color:inherit; transition:transform .06s ease, background .2s ease; }
+.user-chip--link:hover { background:#f8fafc; }
+.user-chip--link:active { transform: translateY(1px); }
+.user-chip--link:focus-visible { outline:2px solid var(--accent); outline-offset:3px; }

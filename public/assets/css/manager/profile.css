@@ -23,32 +23,73 @@ body {
   margin-left: 280px;
 }
 
-header h1 {
-  font-size: 24px;
-  font-weight: bold;
-  margin-bottom: 20px;
+.header {
+  display: flex;
+  justify-content: space-between; /* Heading left, actions right */
+  align-items: center;
+  margin-bottom: 25px;
+  margin-top: 10px;
 }
 
-/* Search Bar */
+.header h2 {
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0;
+}
+
+/* Right-side actions (button + search bar) */
+.top-actions {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+/* Button styling */
+.add-btn {
+  background: #e53935;
+  color: #fff;
+  border: none;
+  padding: 9px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 14px;
+  transition: background 0.3s;
+  white-space: nowrap;
+}
+
+.add-btn:hover {
+  background: #c62828;
+}
+
+/* Search bar styling */
 .search-bar {
   display: flex;
-  margin-bottom: 20px;
+  align-items: center;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  overflow: hidden;
+  background: #fff;
 }
 
 .search-bar input {
-  flex: 1;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 8px 0 0 8px;
+  border: none;
+  padding: 8px 10px;
+  outline: none;
+  width: 180px;
+  font-size: 14px;
 }
 
 .search-bar button {
-  background: #e63946;
-  color: white;
+  background: #f0f0f0;
   border: none;
-  padding: 10px 20px;
-  border-radius: 0 8px 8px 0;
+  padding: 8px 12px;
   cursor: pointer;
+  transition: 0.3s;
+}
+
+.search-bar button:hover {
+  background: #ddd;
 }
 
 /* Card */

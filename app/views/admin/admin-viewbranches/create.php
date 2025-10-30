@@ -1,9 +1,12 @@
 <?php
 /** @var string $base */
 /** @var array $managers */
+/** @var string $nextCode */
 $base = rtrim($base ?? BASE_URL, '/');
 $current = 'branches';
+$nextCode = $nextCode ?? 'BR001';
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -32,9 +35,12 @@ $current = 'branches';
     <form class="form" method="post" action="<?= htmlspecialchars($base . '/admin/branches', ENT_QUOTES, 'UTF-8') ?>">
       <div class="grid">
         <div>
-          <label class="label">Branch Code</label>
-          <input class="input" name="code" placeholder="e.g. BR010" required>
-        </div>
+  <label class="label">Branch Code</label>
+  <input class="input" name="code"
+         value="<?= htmlspecialchars($nextCode, ENT_QUOTES, 'UTF-8') ?>"
+         readonly>
+  <!-- If you prefer editable: remove readonly. Server will still ignore empty and auto-generate. -->
+</div>
 
         <div>
           <label class="label">Status</label>
