@@ -79,6 +79,21 @@
           </div>
         </div>
 
+        <!-- BEGIN: Package picker (hidden unless Category = Package) -->
+<div class="field" id="package-services-wrap" style="display:none;">
+  <label for="package_services">Services in this Package</label>
+  <select id="package_services" name="package_services[]" multiple size="6">
+    <?php foreach (($servicesForPackage ?? []) as $svc): ?>
+      <option value="<?= (int)$svc['service_id'] ?>">
+        <?= htmlspecialchars($svc['service_code'].' — '.$svc['name']) ?>
+      </option>
+    <?php endforeach; ?>
+  </select>
+  <span class="hint">Hold Ctrl/Cmd to select multiple. Leave empty if not a package.</span>
+</div>
+<!-- END: Package picker -->
+
+
         <div class="field" style="margin-top:12px;">
           <label for="description">Description</label>
           <textarea id="description" name="description" rows="4" placeholder="Short description..."></textarea>
@@ -120,5 +135,28 @@
     radios.forEach(r => r.addEventListener('change', update));
     update();
   </script>
+
+  <script>
+  const typeSel = document.getElementById('type_id');
+  const pkgWrap = document.getElementById('package-services-wrap');
+
+  function isPackageSelected() {
+    const opt = typeSel.options[typeSel.selectedIndex];
+    if (!opt) return false;
+    // normalize & match “package” or “packages” (case-insensitive)
+    const label = (opt.text || '').trim().toLowerCase();
+    return /(^|\s)packages?($|\s)/i.test(label);
+  }
+
+  function togglePackageUI() {
+    if (!pkgWrap) return; // safety for edit page if block not present yet
+    pkgWrap.style.display = isPackageSelected() ? 'block' : 'none';
+  }
+
+  typeSel.addEventListener('change', togglePackageUI);
+  togglePackageUI(); // run once on load
+</script>
+
+
 </body>
 </html>

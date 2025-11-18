@@ -111,5 +111,21 @@ public function deleteById(int $id): void
     $stmt->execute(['id' => $id]);
 }
 
+public function allAtomicServices(): array
+{
+    // return active services that can be included in a package.
+    // By default, exclude services whose type name is "Package".
+    $sql = "
+      SELECT s.service_id, s.service_code, s.name
+      FROM services s
+      LEFT JOIN service_types st ON st.type_id = s.type_id
+      WHERE s.status = 'active'
+        AND (st.type_name IS NULL OR LOWER(st.type_name) <> 'package')
+      ORDER BY s.name
+    ";
+    return $this->pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+}
+
+
 
 }
