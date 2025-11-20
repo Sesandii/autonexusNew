@@ -1,6 +1,7 @@
 <?php
 $base  = rtrim(BASE_URL, '/');
 $items = $appointments ?? [];
+$total = count($items);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -11,68 +12,174 @@ $items = $appointments ?? [];
 
   <link rel="stylesheet" href="<?= $base ?>/public/assets/css/customer/appointments.css">
   <link rel="stylesheet" href="<?= $base ?>/public/assets/css/customer/sidebar.css">
+  <link rel="stylesheet" href="<?= rtrim(BASE_URL,'/') ?>/public/assets/css/normalize-ui.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
- 
-  
-
-<link rel="stylesheet" href="<?= rtrim(BASE_URL,'/') ?>/public/assets/css/normalize-ui.css">
-
 </head>
 <body>
 
   <?php include APP_ROOT . '/views/layouts/customer-sidebar.php'; ?>
 
   <main class="main-content">
-    <h1>Your Appointments</h1>
-    <p class="subtitle">Here’s a summary of all your upcoming and past service bookings.</p>
 
+    <!-- Page header -->
+    <header class="page-header">
+      <div class="page-header-left">
+        <h1>Your Appointments</h1>
+        <p class="subtitle">Track upcoming visits, completed services, and past cancellations in one place.</p>
+      </div>
+      <div class="page-header-right">
+        <?php if ($total > 0): ?>
+          <span class="appointment-count"><?= $total ?> appointment<?= $total === 1 ? '' : 's' ?></span>
+        <?php endif; ?>
+        <a href="<?= $base ?>/customer/book" class="btn-primary">
+          <i class="fa-regular fa-calendar-plus"></i>
+          Book service
+        </a>
+      </div>
+    </header>
+
+    <!-- Filters -->
+    <section class="filters-bar">
+      <span class="filters-label">Filter by status:</span>
+
+      <button class="filter-chip active" data-filter="all" type="button">
+        <i class="fa-solid fa-layer-group"></i>
+        All
+      </button>
+      <button class="filter-chip" data-filter="upcoming" type="button">
+        <i class="fa-regular fa-clock"></i>
+        Upcoming
+      </button>
+      <button class="filter-chip" data-filter="completed" type="button">
+        <i class="fa-regular fa-circle-check"></i>
+        Completed
+      </button>
+      <button class="filter-chip" data-filter="cancelled" type="button">
+        <i class="fa-regular fa-circle-xmark"></i>
+        Cancelled
+      </button>
+    </section>
+
+    <!-- Appointments grid -->
     <section class="appointments-grid">
       <?php if (empty($items)): ?>
-        <p style="color:#6B7280">No appointments yet.</p>
+        <div class="empty-state">
+          <i class="fa-regular fa-calendar-xmark"></i>
+          <h2>No appointments yet</h2>
+          <p>You don’t have any bookings at the moment. Schedule your first service to get started.</p>
+          <a href="<?= $base ?>/customer/book">
+            <i class="fa-regular fa-calendar-plus"></i>
+            Book a service
+          </a>
+        </div>
       <?php else: ?>
         <?php foreach ($items as $a): ?>
-          <div class="appointment-card <?= htmlspecialchars($a['status_class']) ?>">
+          <?php $statusClass = htmlspecialchars($a['status_class']); ?>
+          <article class="appointment-card <?= $statusClass ?>" data-status="<?= $statusClass ?>">
             <div class="card-header">
               <h3>
                 <?php
                   $icon = 'fa-screwdriver-wrench';
-                  if ($a['status_class'] === 'completed') $icon = 'fa-car-side';
-                  if ($a['status_class'] === 'cancelled') $icon = 'fa-ban';
+                  if ($statusClass === 'completed') $icon = 'fa-car-side';
+                  if ($statusClass === 'cancelled') $icon = 'fa-ban';
                 ?>
                 <i class="fa-solid <?= $icon ?>"></i>
                 <?= htmlspecialchars($a['service']) ?>
               </h3>
               <span class="status"><?= htmlspecialchars($a['status']) ?></span>
             </div>
+
+            <!-- quick meta row -->
+            <div class="card-meta">
+              <span class="meta-item">
+                <i class="fa-regular fa-calendar"></i>
+                <?= htmlspecialchars($a['date']) ?>
+              </span>
+              <span class="meta-item">
+                <i class="fa-regular fa-clock"></i>
+                <?= htmlspecialchars($a['time']) ?>
+              </span>
+              <span class="meta-item">
+                <i class="fa-solid fa-location-dot"></i>
+                <?= htmlspecialchars($a['branch']) ?>
+              </span>
+            </div>
+
             <div class="card-body">
-              <p><strong>Date:</strong> <?= htmlspecialchars($a['date']) ?></p>
-              <p><strong>Time:</strong> <?= htmlspecialchars($a['time']) ?></p>
-              <p><strong>Branch:</strong> <?= htmlspecialchars($a['branch']) ?></p>
               <?php if (!empty($a['est_completion'])): ?>
-                <p><strong>Est. Completion:</strong> <?= htmlspecialchars($a['est_completion']) ?></p>
+                <p><strong>Est. completion:</strong> <?= htmlspecialchars($a['est_completion']) ?></p>
               <?php endif; ?>
             </div>
+
             <div class="card-footer">
-              <?php if ($a['status_class'] === 'upcoming'): ?>
-                <form method="post" action="<?= $base ?>/customer/appointments/cancel" onsubmit="return confirm('Cancel this appointment?')">
+              <?php if ($statusClass === 'upcoming'): ?>
+                <form method="post"
+                      action="<?= $base ?>/customer/appointments/cancel"
+                      onsubmit="return confirm('Cancel this appointment?');">
                   <input type="hidden" name="appointment_id" value="<?= (int)$a['appointment_id'] ?>">
-                  <button class="cancel" type="submit">Cancel</button>
+                  <button class="btn-danger" type="submit">
+                    <i class="fa-regular fa-circle-xmark"></i>
+                    Cancel
+                  </button>
                 </form>
-                <a class="reschedule" href="<?= $base ?>/customer/booking?reschedule=<?= (int)$a['appointment_id'] ?>">View</a>
-              <?php elseif ($a['status_class'] === 'completed'): ?>
-                <a class="review" href="<?= $base ?>/customer/rate-service?appointment=<?= (int)$a['appointment_id'] ?>">Leave Review</a>
+
+                <a class="btn-ghost"
+                   href="<?= $base ?>/customer/booking?reschedule=<?= (int)$a['appointment_id'] ?>">
+                  <i class="fa-regular fa-eye"></i>
+                  View details
+                </a>
+
+              <?php elseif ($statusClass === 'completed'): ?>
+                <a class="btn-success"
+                   href="<?= $base ?>/customer/rate-service?appointment=<?= (int)$a['appointment_id'] ?>">
+                  <i class="fa-regular fa-star"></i>
+                  Leave review
+                </a>
+
+                <a class="btn-primary-small"
+                   href="<?= $base ?>/customer/booking?rebook=<?= (int)$a['appointment_id'] ?>">
+                  <i class="fa-solid fa-rotate-right"></i>
+                  Rebook
+                </a>
+
               <?php else: ?>
-                <a class="rebook" href="<?= $base ?>/customer/booking?rebook=<?= (int)$a['appointment_id'] ?>">Rebook</a>
+                <a class="btn-primary-small"
+                   href="<?= $base ?>/customer/booking?rebook=<?= (int)$a['appointment_id'] ?>">
+                  <i class="fa-solid fa-rotate-right"></i>
+                  Rebook
+                </a>
               <?php endif; ?>
             </div>
-          </div>
+          </article>
         <?php endforeach; ?>
       <?php endif; ?>
     </section>
   </main>
 
-  <!-- Optional: small script if you later want AJAX cancel -->
-  <!-- <script src="<?= $base ?>/assets/js/customer/appointments.js"></script> -->
+  <!-- Small JS for filter chips -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const chips = document.querySelectorAll('.filter-chip');
+      const cards = document.querySelectorAll('.appointment-card');
 
+      chips.forEach(chip => {
+        chip.addEventListener('click', () => {
+          const filter = chip.getAttribute('data-filter');
+
+          chips.forEach(c => c.classList.remove('active'));
+          chip.classList.add('active');
+
+          cards.forEach(card => {
+            const status = card.getAttribute('data-status');
+            if (filter === 'all' || status === filter) {
+              card.style.display = '';
+            } else {
+              card.style.display = 'none';
+            }
+          });
+        });
+      });
+    });
+  </script>
 </body>
 </html>

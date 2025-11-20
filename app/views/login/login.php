@@ -66,16 +66,37 @@ $base = rtrim(BASE_URL, '/');
                         <div class="form-group">
                             <div class="password-label">
                                 <label for="password">Password</label>
-                                <a href="#" class="forgot-password">Forgot password?</a>
                             </div>
-                            <input
-                                type="password"
-                                id="password"
-                                name="password"
-                                placeholder="••••••••"
-                                required
-                            />
+
+                            <div class="password-wrapper">
+                                <input
+                                    type="password"
+                                    id="password"
+                                    name="password"
+                                    placeholder="••••••••"
+                                    required
+                                />
+
+                                <!-- Toggle password button -->
+                                <button type="button" id="togglePassword" class="toggle-password-btn" aria-label="Show password">
+                                    <!-- Open Eye -->
+                                    <svg class="icon-eye" viewBox="0 0 24 24" fill="none" stroke="#718096" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/>
+                                        <circle cx="12" cy="12" r="3"/>
+                                    </svg>
+
+                                    <!-- Closed Eye -->
+                                    <svg class="icon-eye-off" viewBox="0 0 24 24" fill="none" stroke="#718096" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a20.53 20.53 0 015.37-6.5"/>
+                                        <path d="M1 1l22 22"/>
+                                        <path d="M9.53 9.53A3 3 0 0114.47 14.47"/>
+                                    </svg>
+                                </button>
+                            </div>
+
+                            <a href="#" class="forgot-password">Forgot password?</a>
                         </div>
+
 
                         <button type="submit" class="login-btn">Login</button>
                     </form>

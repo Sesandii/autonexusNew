@@ -8,6 +8,24 @@ document.addEventListener('DOMContentLoaded', function() {
   const forgotPasswordLink = document.querySelector('.forgot-password');
   const signupLink = document.querySelector('.signup-btn');
 
+  const togglePasswordBtn = document.getElementById('togglePassword');
+
+  if (togglePasswordBtn && passwordInput) {
+      togglePasswordBtn.addEventListener('click', () => {
+          const isHidden = passwordInput.type === 'password';
+
+          passwordInput.type = isHidden ? 'text' : 'password';
+
+          togglePasswordBtn.classList.toggle('showing', isHidden);
+
+          togglePasswordBtn.setAttribute(
+              'aria-label',
+              isHidden ? 'Hide password' : 'Show password'
+          );
+      });
+  }
+
+
   // Validation helpers
   function validateEmail(email) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

@@ -41,28 +41,52 @@ $title = 'AutoNexus - Dashboard';
       </div>
     </section>
 
-    <!-- Quick Actions -->
-    <section class="quick-actions">
-      <h2>Quick Actions</h2>
-      <div class="actions-grid">
-        <button onclick="location.href='<?= $base ?>/customer/book'">Book Service</button>
-        <button onclick="location.href='<?= $base ?>/customer/appointments'">View Appointments</button>
-        <button onclick="location.href='<?= $base ?>/customer/track'">Track Service</button>
-        <button onclick="location.href='<?= $base ?>/customer/history'">Service History</button>
-      </div>
-    </section>
+    <!-- Recent Services + Quick Actions in one row -->
+    <section class="lower-grid">
+      <!-- Recent Services card -->
+      <section class="history-preview card">
+        <h2>Recent Services</h2>
+        <div class="history-list">
+          <?php foreach (($recent_services ?? []) as $item): ?>
+            <div class="history-item">
+              <p><?= htmlspecialchars($item['title']) ?></p>
+              <span><?= htmlspecialchars($item['date']) ?></span>
+            </div>
+          <?php endforeach; ?>
+          <?php if (empty($recent_services)): ?>
+            <div class="history-item">
+              <p>No services yet.</p>
+              <span>-</span>
+            </div>
+          <?php endif; ?>
+        </div>
+      </section>
 
-    <!-- Recent Services -->
-    <section class="history-preview">
-      <h2>Recent Services</h2>
-      <div class="history-list">
-        <?php foreach (($recent_services ?? []) as $item): ?>
-          <div class="history-item">
-            <p><?= htmlspecialchars($item['title']) ?></p>
-            <span><?= htmlspecialchars($item['date']) ?></span>
-          </div>
-        <?php endforeach; ?>
-      </div>
+      <!-- Quick Actions card (like admin quick links) -->
+      <aside class="quick-actions card">
+        <h2>Quick Actions</h2>
+        <div class="ql-grid">
+          <a class="ql-card" href="<?= $base ?>/customer/book">
+            <i class="fa-regular fa-calendar-check"></i>
+            <span>Book Service</span>
+          </a>
+
+          <a class="ql-card" href="<?= $base ?>/customer/appointments">
+            <i class="fa-solid fa-list-check"></i>
+            <span>View Appointments</span>
+          </a>
+
+          <a class="ql-card" href="<?= $base ?>/customer/track">
+            <i class="fa-solid fa-location-dot"></i>
+            <span>Track Service</span>
+          </a>
+
+          <a class="ql-card" href="<?= $base ?>/customer/history">
+            <i class="fa-solid fa-clock-rotate-left"></i>
+            <span>Service History</span>
+          </a>
+        </div>
+      </aside>
     </section>
   </main>
 

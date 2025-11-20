@@ -19,10 +19,14 @@
       <div class="flash"><?= htmlspecialchars($flash) ?></div>
     <?php endif; ?>
 
+    <!-- Profile card -->
     <div class="profile-card">
       <div class="card-header">
         <h2>My Profile</h2>
-        <a class="btn red" href="<?= $base ?>/customer/profile/edit"><i class="fa fa-pen"></i> Edit</a>
+        <a class="btn red" href="<?= $base ?>/customer/profile/edit">
+          <i class="fa fa-pen"></i>
+          Edit
+        </a>
       </div>
 
       <form class="form-card form-readonly" aria-readonly="true">
@@ -67,34 +71,48 @@
       </form>
     </div>
 
-    <div class="card-header mt-24">
-      <h2>Registered Vehicles</h2>
-      <a class="btn yellow" href="<?= $base ?>/customer/profile/vehicle"><i class="fa fa-plus"></i> Add Vehicle</a>
-    </div>
+    <!-- Vehicles section as its own card -->
+    <div class="section-card mt-24">
+      <div class="section-header">
+        <h2>Registered Vehicles</h2>
+        <a class="btn yellow" href="<?= $base ?>/customer/profile/vehicle">
+          <i class="fa fa-plus"></i>
+          Add Vehicle
+        </a>
+      </div>
 
-    <div class="vehicles-container">
-      <?php foreach ($vehicles as $v): ?>
-        <div class="vehicle-card">
-          <h3><?= htmlspecialchars(($v['make'] ?? '') . ' ' . ($v['model'] ?? '')) ?></h3>
-          <div class="grid-2 small">
-            <div><span class="label">Code:</span> <?= htmlspecialchars($v['vehicle_code'] ?? '') ?></div>
-            <div><span class="label">Reg No:</span> <?= htmlspecialchars($v['license_plate'] ?? '') ?></div>
-            <div><span class="label">Color:</span> <?= htmlspecialchars($v['color'] ?? '') ?></div>
-            <div><span class="label">Year:</span> <?= htmlspecialchars($v['year'] ?? '') ?></div>
+      <div class="vehicles-container">
+        <?php foreach ($vehicles as $v): ?>
+          <div class="vehicle-card">
+            <h3><?= htmlspecialchars(($v['make'] ?? '') . ' ' . ($v['model'] ?? '')) ?></h3>
+            <div class="grid-2 small">
+              <div><span class="label">Code:</span> <?= htmlspecialchars($v['vehicle_code'] ?? '') ?></div>
+              <div><span class="label">Reg No:</span> <?= htmlspecialchars($v['license_plate'] ?? '') ?></div>
+              <div><span class="label">Color:</span> <?= htmlspecialchars($v['color'] ?? '') ?></div>
+              <div><span class="label">Year:</span> <?= htmlspecialchars($v['year'] ?? '') ?></div>
+            </div>
+            <div class="vehicle-actions">
+              <a class="btn edit" href="<?= $base ?>/customer/profile/vehicle?id=<?= (int)$v['vehicle_id'] ?>">
+                <i class="fa fa-pen"></i>
+                Edit
+              </a>
+              <form method="post"
+                    action="<?= $base ?>/customer/profile/vehicle/delete"
+                    onsubmit="return confirm('Remove this vehicle?')">
+                <input type="hidden" name="vehicle_id" value="<?= (int)$v['vehicle_id'] ?>">
+                <button class="btn red" type="submit">
+                  <i class="fa fa-trash"></i>
+                  Remove
+                </button>
+              </form>
+            </div>
           </div>
-          <div class="vehicle-actions">
-            <a class="btn edit" href="<?= $base ?>/customer/profile/vehicle?id=<?= (int)$v['vehicle_id'] ?>">Edit</a>
-            <form method="post" action="<?= $base ?>/customer/profile/vehicle/delete" onsubmit="return confirm('Remove this vehicle?')">
-              <input type="hidden" name="vehicle_id" value="<?= (int)$v['vehicle_id'] ?>">
-              <button class="btn red" type="submit">Remove</button>
-            </form>
-          </div>
-        </div>
-      <?php endforeach; ?>
+        <?php endforeach; ?>
 
-      <?php if (empty($vehicles)): ?>
-        <p class="notes">No vehicles found.</p>
-      <?php endif; ?>
+        <?php if (empty($vehicles)): ?>
+          <p class="notes">No vehicles registered yet. Use “Add Vehicle” to register your car with AutoNexus.</p>
+        <?php endif; ?>
+      </div>
     </div>
   </div>
 
