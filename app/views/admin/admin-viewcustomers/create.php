@@ -2,75 +2,118 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
   <title>Create Customer</title>
-  <link rel="stylesheet" href="../../app/views/layouts/admin-shared/management.css">
-  <link rel="stylesheet" href="../../app/views/layouts/admin-sidebar/styles.css">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-  <style>.sidebar{position:fixed;top:0;left:0;width:260px;height:100vh;overflow-y:auto}.main-content{margin-left:260px;padding:30px;background:#fff;min-height:100vh}.form{max-width:700px}.form .row{display:grid;grid-template-columns:1fr 1fr;gap:16px}.form label{display:block;margin:8px 0 4px}.form input,.form select{width:100%;padding:10px;border:1px solid #ddd;border-radius:8px}</style>
+
+  <link rel="stylesheet" href="<?= rtrim(BASE_URL,'/') ?>/app/views/layouts/admin-shared/management.css">
+  <link rel="stylesheet" href="<?= rtrim(BASE_URL,'/') ?>/app/views/layouts/admin-sidebar/styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
 <?php include(__DIR__ . '/../../layouts/admin-sidebar/sidebar.php'); ?>
+
 <main class="main-content">
-  <h2>Create Customer</h2>
+  <header class="page-header">
+    <div class="page-breadcrumb">
+      <a href="<?= rtrim(BASE_URL,'/') ?>/admin/customers">Customers</a>
+      <span>›</span>
+      <span>Create</span>
+    </div>
+
+    <div class="page-header-main">
+      <div class="page-title-wrap">
+        <div class="page-icon"><i class="fa-solid fa-user-plus"></i></div>
+        <div>
+          <h2>Create Customer</h2>
+          <p>Add a new customer to AutoNexus.</p>
+        </div>
+      </div>
+      <span class="page-chip">New record</span>
+    </div>
+  </header>
 
   <?php if (!empty($errors)): ?>
-    <div style="background:#ffecec;color:#b30000;padding:10px;border-radius:8px;margin-bottom:12px">
-      <?= implode('<br>', array_map('htmlspecialchars', $errors)) ?>
+    <div class="error-box">
+      <?php foreach ($errors as $err): ?>
+        <?= htmlspecialchars($err) ?><br>
+      <?php endforeach; ?>
     </div>
   <?php endif; ?>
 
-  <form class="form" method="post" action="<?= rtrim(BASE_URL,'/') ?>/admin/customers">
+  <form class="form-card" method="post"
+        action="<?= rtrim(BASE_URL,'/') ?>/admin/customers">
 
-    <div class="row">
+    <div class="section-title">Basic Info</div>
+    <div class="section-divider"></div>
+
+    <div class="form-grid">
       <div>
-        <label>First Name</label>
-        <input name="first_name" required value="<?= htmlspecialchars($old['first_name'] ?? '') ?>">
+        <label for="first_name">First Name</label>
+        <input id="first_name" name="first_name" required
+               value="<?= htmlspecialchars($old['first_name'] ?? '') ?>">
       </div>
       <div>
-        <label>Last Name</label>
-        <input name="last_name" required value="<?= htmlspecialchars($old['last_name'] ?? '') ?>">
+        <label for="last_name">Last Name</label>
+        <input id="last_name" name="last_name" required
+               value="<?= htmlspecialchars($old['last_name'] ?? '') ?>">
       </div>
     </div>
 
-    <div class="row">
+    <div class="form-grid" style="margin-top:14px;">
       <div>
-        <label>Email</label>
-        <input type="email" name="email" value="<?= htmlspecialchars($old['email'] ?? '') ?>">
+        <label for="email">Email</label>
+        <input id="email" type="email" name="email"
+               value="<?= htmlspecialchars($old['email'] ?? '') ?>">
+        <small>We’ll send booking confirmations to this address.</small>
       </div>
       <div>
-        <label>Phone</label>
-        <input name="phone" value="<?= htmlspecialchars($old['phone'] ?? '') ?>">
+        <label for="phone">Phone</label>
+        <input id="phone" name="phone"
+               value="<?= htmlspecialchars($old['phone'] ?? '') ?>">
+        <small>Primary contact number for the customer.</small>
       </div>
     </div>
 
-    <div class="row">
+    <div class="section-title" style="margin-top:22px;">Account & Status</div>
+    <div class="section-divider"></div>
+
+    <div class="form-grid">
       <div>
-        <label>Status</label>
-        <select name="status">
-          <?php $s = $old['status'] ?? 'active'; ?>
+        <label for="status">Status</label>
+        <?php $s = $old['status'] ?? 'active'; ?>
+        <select id="status" name="status">
           <option value="active"   <?= $s==='active'?'selected':'' ?>>Active</option>
           <option value="inactive" <?= $s==='inactive'?'selected':'' ?>>Inactive</option>
           <option value="pending"  <?= $s==='pending'?'selected':'' ?>>Pending</option>
         </select>
+        <small>Choose how this account should behave initially.</small>
       </div>
       <div>
-        <label>Customer Code (optional)</label>
-        <input name="customer_code" placeholder="Auto if empty" value="<?= htmlspecialchars($old['customer_code'] ?? '') ?>">
+        <label for="customer_code">Customer Code (optional)</label>
+        <input id="customer_code" name="customer_code"
+               placeholder="Auto-generated if left blank"
+               value="<?= htmlspecialchars($old['customer_code'] ?? '') ?>">
+        <small>Useful if you follow a custom coding scheme.</small>
       </div>
     </div>
 
-    <div class="row">
-      <div>
-        <label>Initial Password (optional)</label>
-        <input name="password" type="password" placeholder="Defaults to 'autonexus' if blank">
-      </div>
+    <div style="margin-top:16px;">
+      <label for="password">Initial Password (optional)</label>
+      <input id="password" name="password" type="password"
+             placeholder="Defaults to 'autonexus' if left blank">
+      <small>Customer can change this after logging in.</small>
     </div>
 
-    <p style="margin-top:18px">
-      <button class="add-btn" type="submit">Create</button>
-      <a class="btn-secondary" href="<?= rtrim(BASE_URL,'/') ?>/admin/customers" style="margin-left:8px">Cancel</a>
-    </p>
+    <div class="form-actions">
+      <button class="btn-primary" type="submit">
+        <i class="fas fa-plus"></i>&nbsp;Create Customer
+      </button>
+      <a class="btn-secondary"
+         href="<?= rtrim(BASE_URL,'/') ?>/admin/customers">
+        Cancel
+      </a>
+    </div>
   </form>
 </main>
 </body>

@@ -55,7 +55,7 @@ class MechanicsController extends Controller
         }
 
         $id = $this->Mechanic->create($data);
-        $this->redirect(rtrim(BASE_URL,'/')."/admin/mechanics/{$id}");
+         $this->redirect(BASE_URL . '/admin/mechanics' );
     }
 
     /** GET /admin/mechanics/{id} */

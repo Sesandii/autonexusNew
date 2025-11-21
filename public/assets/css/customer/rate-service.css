@@ -7,56 +7,68 @@
   --gray: #f3f4f6;
   --muted: #6b7280;
   --border: #e5e7eb;
-  --shadow: 0 2px 8px rgba(0,0,0,0.08);
-  --radius: 12px;
+  --shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+  --radius: 14px;
   --transition: 0.25s ease;
 }
 
 /* Layout */
 body {
   margin: 0;
-  font-family: "Poppins", "Segoe UI", sans-serif;
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   background-color: var(--gray);
   color: var(--black);
-  display: flex;
 }
 
+/* keep in sync with sidebar width */
 .container {
-  flex: 1;
-  padding: 40px 60px;
+  margin-left: 240px;
+  padding: 32px 40px 40px;
   background: var(--gray);
   min-height: 100vh;
+  box-sizing: border-box;
 }
 
+/* Card shell */
 .main-content {
   background: var(--white);
-  padding: 40px;
+  padding: 28px 28px 32px;
   border-radius: var(--radius);
   box-shadow: var(--shadow);
   max-width: 900px;
   margin: 0 auto;
 }
 
-/* Page title */
+/* Page header */
+.page-header {
+  text-align: left;
+  margin-bottom: 24px;
+}
+
 .page-title {
-  font-size: 1.9rem;
+  font-size: 1.8rem;
   font-weight: 700;
   color: var(--brand-red);
-  text-align: center;
-  margin-bottom: 30px;
+  margin: 0 0 6px;
+}
+
+.page-subtitle {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--muted);
 }
 
 /* Form container */
 .form-container {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 20px 30px;
+  gap: 18px 26px;
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 
 .full-width {
@@ -65,55 +77,97 @@ body {
 
 label {
   font-weight: 600;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   color: var(--black);
 }
 
+/* Inputs */
 input[type="text"],
 select,
 textarea {
-  padding: 10px 12px;
-  font-size: 0.95rem;
+  padding: 9px 11px;
+  font-size: 0.9rem;
   border: 1px solid var(--border);
   border-radius: 8px;
-  transition: border-color var(--transition), box-shadow var(--transition);
+  transition: border-color var(--transition), box-shadow var(--transition), background 0.2s ease;
   background-color: #fff;
+  color: var(--black);
+  box-sizing: border-box;
+}
+
+input[readonly] {
+  background: #f9fafb;
+  color: #4b5563;
 }
 
 input:focus,
 select:focus,
 textarea:focus {
   border-color: var(--brand-red);
-  box-shadow: 0 0 0 3px rgba(220,38,38,0.15);
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.16);
   outline: none;
 }
 
-/* Star Rating */
+/* =============================
+   ⭐ AUTO–NEXUS STAR RATING UI
+   ============================= */
+
+.stars-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
 .stars {
   display: flex;
-  gap: 10px;
-  font-size: 1.6rem;
+  gap: 12px;
+  font-size: 1.9rem;
   cursor: pointer;
+  user-select: none;
 }
 
 .stars i {
   color: #d1d5db; /* default gray */
-  transition: transform var(--transition), color var(--transition);
+  transition: color 0.25s ease, transform 0.2s ease;
 }
 
-/* Hover and active stars — fill from left to right */
-.stars i:hover,
-.stars i:hover ~ i,
-.stars i.active,
-.stars i.active ~ i {
+/* JS-controlled filled stars (LEFT → RIGHT) */
+.stars i.active {
   color: var(--brand-red);
   transform: scale(1.1);
+}
+
+/* Small individual hover effect (does NOT fill others) */
+.stars i:hover {
+  transform: scale(1.15);
+}
+
+/* Rating hint text */
+.rating-hint {
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin-top: -4px;
+}
+
+/* 🔒 Hard override to prevent any old right-to-left rules */
+.stars i:hover ~ i,
+.stars i.active ~ i,
+.stars i.hover,
+.stars i.hover ~ i {
+  color: #d1d5db !important;
+  transform: none !important;
 }
 
 /* Textarea */
 textarea {
   resize: vertical;
-  min-height: 120px;
+  min-height: 110px;
+}
+
+/* Submit button row */
+.actions-row {
+  display: flex;
+  justify-content: flex-end;
 }
 
 /* Submit button */
@@ -121,34 +175,48 @@ textarea {
   background: var(--brand-red);
   color: var(--white);
   border: none;
-  padding: 12px 18px;
-  border-radius: 8px;
+  padding: 11px 18px;
+  border-radius: 999px;
   font-weight: 600;
-  font-size: 1rem;
+  font-size: 0.95rem;
   cursor: pointer;
-  transition: background var(--transition), transform 0.1s ease;
+  transition: background var(--transition), transform 0.1s ease, box-shadow 0.18s ease;
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.32);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.submit-btn i {
+  font-size: 0.95rem;
 }
 
 .submit-btn:hover {
   background: var(--brand-red-light);
   transform: translateY(-1px);
+  box-shadow: 0 7px 18px rgba(220, 38, 38, 0.4);
 }
 
 .submit-btn:active {
   transform: translateY(1px);
+  box-shadow: 0 3px 8px rgba(220, 38, 38, 0.34);
 }
 
 /* Responsive */
-@media (max-width: 768px) {
+@media (max-width: 900px) {
   .container {
-    padding: 20px;
+    margin-left: 220px;
+    padding: 24px;
+  }
+}
+
+@media (max-width: 640px) {
+  .container {
+    margin-left: 0;
+    padding: 20px 16px 28px;
   }
 
   .main-content {
-    padding: 25px;
-  }
-
-  .form-container {
-    grid-template-columns: 1fr;
+    padding: 22px 18px 26px;
   }
 }

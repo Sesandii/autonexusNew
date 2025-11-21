@@ -80,6 +80,21 @@ $router->get('/admin/customers/{id}',            [\app\controllers\Admin\Custome
 $router->get('/admin/customers/{id}/edit',       [\app\controllers\Admin\CustomersController::class, 'edit']);
 $router->post('/admin/customers/{id}',           [\app\controllers\Admin\CustomersController::class, 'update']);
 $router->post('/admin/customers/{id}/delete',    [\app\controllers\Admin\CustomersController::class, 'destroy']);
+$router->post('/admin/customers/{id}/deactivate', [\app\controllers\Admin\CustomersController::class, 'deactivate']);
+$router->post('/admin/customers/{id}/activate',   [\app\controllers\Admin\CustomersController::class, 'activate']);
+
+/** ======================
+ *  ADMIN: Receptionists (route by code)
+ *  ====================== */
+
+$router->get('/admin/viewreceptionist', [\app\controllers\Admin\ReceptionistsController::class, 'index']);
+// Receptionists (admin)
+$router->get ('/admin/receptionists/create',        [\app\controllers\Admin\ReceptionistsController::class, 'create']);
+$router->post('/admin/receptionists/create',        [\app\controllers\Admin\ReceptionistsController::class, 'create']);   // same method handles POST
+$router->get ('/admin/receptionists/show',          [\app\controllers\Admin\ReceptionistsController::class, 'show']);
+$router->get ('/admin/receptionists/edit',          [\app\controllers\Admin\ReceptionistsController::class, 'edit']);
+$router->post('/admin/receptionists/edit',          [\app\controllers\Admin\ReceptionistsController::class, 'edit']);     // same method handles POST
+$router->post('/admin/receptionists/delete',        [\app\controllers\Admin\ReceptionistsController::class, 'delete']);
 
 // ADMIN: Dashboard
 // use app\controllers\admin\DashboardController;
@@ -190,9 +205,7 @@ use app\controllers\admin\ReportsController;
 
 $router->get('/admin/admin-viewreports', [ReportsController::class, 'index']);
 
-use app\controllers\admin\ReceptionistsController;
 
-$router->get('/admin/viewreceptionist', [ReceptionistsController::class, 'index']);
 
 
 

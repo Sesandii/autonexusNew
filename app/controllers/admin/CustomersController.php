@@ -111,4 +111,54 @@ exit;
         $this->Customer->delete((int)$id);
         $this->redirect(BASE_URL . '/admin/customers');
     }
+
+    /** POST /admin/customers/{id}/deactivate */
+    public function deactivate($id)
+    {
+        $id = (int)$id;
+
+        // Ensure customer exists
+        $customer = $this->Customer->find($id);
+        if (!$customer) {
+            http_response_code(404);
+            echo "Customer not found";
+            return;
+        }
+
+        // Update status only (soft delete)
+        $this->Customer->update($id, [
+            'status' => 'inactive'
+        ]);
+
+        // Optionally: add success message
+        $_SESSION['flash'] = "Customer has been marked as inactive.";
+
+        $this->redirect(BASE_URL . '/admin/customers');
+    }
+
+    /** POST /admin/customers/{id}/activate */
+    public function activate($id)
+    {
+        $id = (int)$id;
+
+        // Ensure customer exists
+        $customer = $this->Customer->find($id);
+        if (!$customer) {
+            http_response_code(404);
+            echo "Customer not found";
+            return;
+        }
+
+        // Update status only (soft "restore")
+        $this->Customer->update($id, [
+            'status' => 'active'
+        ]);
+
+        // Optional flash message
+        $_SESSION['flash'] = "Customer has been marked as active.";
+
+        $this->redirect(BASE_URL . '/admin/customers');
+    }
+
+
 }

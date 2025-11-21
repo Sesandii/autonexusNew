@@ -11,6 +11,7 @@ $base = rtrim(BASE_URL, '/');
   <link rel="stylesheet" href="<?= $base ?>/public/assets/css/customer/rate-service.css" />
   <link rel="stylesheet" href="<?= $base ?>/public/assets/css/customer/sidebar.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="<?= $base ?>/public/assets/js/customer/rate-service.js"></script>
 </head>
 <body>
 
@@ -18,13 +19,20 @@ $base = rtrim(BASE_URL, '/');
 
   <div class="container">
     <main class="main-content">
-      <h1 class="page-title">⭐ We Value Your Feedback!</h1>
+
+      <header class="page-header">
+        <h1 class="page-title">Rate Your Service</h1>
+        <p class="page-subtitle">
+          Tell us how we did so we can keep improving every visit.
+        </p>
+      </header>
 
       <form class="form-container" method="POST" action="<?= $base ?>/customer/rate-service">
+        <!-- Appointment selector -->
         <div class="form-group full-width">
-          <label for="appointment">Select Completed Appointment:</label>
+          <label for="appointment">Select Completed Appointment</label>
           <select id="appointment" name="appointment_id" required>
-            <option value="">-- Choose an Appointment --</option>
+            <option value="">-- Choose an appointment --</option>
             <?php foreach ($appointments as $a): ?>
               <option value="<?= htmlspecialchars($a['appointment_id']) ?>">
                 <?= htmlspecialchars($a['vehicle_model'] . ' - ' . $a['service_name'] . ' - ' . date('d M Y', strtotime($a['service_date']))) ?>
@@ -33,39 +41,49 @@ $base = rtrim(BASE_URL, '/');
           </select>
         </div>
 
+        <!-- Auto-filled info -->
         <div class="form-group">
-          <label for="vehicleNumber">Vehicle Number:</label>
+          <label for="vehicleNumber">Vehicle Number</label>
           <input type="text" id="vehicleNumber" readonly />
         </div>
 
         <div class="form-group">
-          <label for="brandModel">Brand & Model:</label>
+          <label for="brandModel">Brand &amp; Model</label>
           <input type="text" id="brandModel" readonly />
         </div>
 
         <div class="form-group">
-          <label for="serviceDate">Service Date:</label>
+          <label for="serviceDate">Service Date</label>
           <input type="text" id="serviceDate" readonly />
         </div>
 
+        <!-- Rating -->
         <div class="form-group full-width">
-          <label>Rate Your Service:</label>
-          <div class="stars" id="ratingStars"></div>
+          <label>Rate Your Service</label>
+          <div class="stars-wrapper">
+            <div class="stars" id="ratingStars"></div>
+            <span class="rating-hint">Tap a star to set your rating (1–5).</span>
+          </div>
           <input type="hidden" name="rating" id="ratingInput" value="0">
         </div>
 
+        <!-- Feedback -->
         <div class="form-group full-width">
-          <label for="feedback">Your Feedback:</label>
-          <textarea id="feedback" name="feedback" placeholder="Write your comments here..."></textarea>
+          <label for="feedback">Your Feedback (optional)</label>
+          <textarea id="feedback" name="feedback" placeholder="Share anything that stood out, good or bad..."></textarea>
         </div>
 
-        <div class="form-group full-width">
-          <button type="submit" class="submit-btn">Submit Review</button>
+        <!-- Submit -->
+        <div class="form-group full-width actions-row">
+          <button type="submit" class="submit-btn">
+            <i class="fa-regular fa-paper-plane"></i>
+            Submit Review
+          </button>
         </div>
       </form>
     </main>
   </div>
 
-  <script src="<?= $base ?>/public/assets/js/customer/rate-service.js"></script>
+  
 </body>
 </html>
