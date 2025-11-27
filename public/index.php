@@ -2,6 +2,8 @@
 declare(strict_types=1);
 session_start();
 
+date_default_timezone_set('Asia/Colombo');   // 👈 add this line
+
 define('BASE_PATH', dirname(__DIR__));              // C:\xampp\htdocs\autonexus
 define('APP_ROOT', BASE_PATH . '/app');             // C:\xampp\htdocs\autonexus\app
 define('CONFIG_PATH', BASE_PATH . '/config');       // C:\xampp\htdocs\autonexus\config
@@ -200,6 +202,8 @@ $router->get('/admin/admin-serviceapproval', [ApprovalController::class, 'index'
 use app\controllers\admin\OngoingServicesController;
 
 $router->get('/admin/admin-ongoingservices', [OngoingServicesController::class, 'index']);
+$router->get('/admin/admin-ongoingservices/show', [OngoingServicesController::class, 'show']);
+
 
 use app\controllers\admin\ServiceHistoryController;
 
