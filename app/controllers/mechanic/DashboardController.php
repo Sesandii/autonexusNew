@@ -4,11 +4,21 @@ declare(strict_types=1);
 namespace app\controllers\mechanic;
 
 use app\core\Controller;
+use app\core\Auth;
 
 class DashboardController extends Controller
 {
+    public function __construct(array $config = [])
+    {
+        parent::__construct($config);
+        $this->requireMechanic();
+    }
     public function index(): void
     {
+        
+            // normal dashboard code
+        
+        
         // Optional guards (use only if you have them)
         // if (method_exists($this, 'requireMechanic')) {
         //     $this->requireMechanic();
@@ -41,5 +51,14 @@ class DashboardController extends Controller
         ];
 
         $this->view('mechanic/dashboard/index', $data);
+    }
+    private function requireMechanic(): void
+    {
+        if (session_status() !== PHP_SESSION_ACTIVE) session_start();
+        $u = $_SESSION['user'] ?? null;
+        if (!$u || (($u['role'] ?? '') !== 'mechanic')) {
+            header('Location: ' . rtrim(BASE_URL, '/') . '/login');
+            exit;
+        }
     }
 }

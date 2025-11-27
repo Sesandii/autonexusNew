@@ -1,3 +1,4 @@
+<?php $base = rtrim(BASE_URL, '/'); ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -33,21 +34,25 @@
       <a href="/autonexus/supervisor/reports">
        <img src="/autonexus/public/assets/img/Inspection.png"/>Report
      </a>
-
-    
-
-    
-<a href="<?= rtrim(BASE_URL, '/') ?>/logout"><img src="/autonexus/public/assets/img/user.png" alt="User" class="avatar-img" /> Sign Out</a>
-     
     </div>
 
     <main class="main-content">
       <header>
         <input type="text" placeholder="Search..." class="search" />
         <div class="user-profile">
-          <img src="/autonexus/public/assets/img/user.png" alt="User" class="avatar-img" />
-          <span>John Doe</span>
+      <!-- User Menu -->
+      <div class="user">
+        <img src="/autonexus/public/assets/img/user.png" alt="User" class="user-img" />
+        <div class="user-menu">
+          <span id="user-name">John Doe</span>
+          <ul id="dropdown" class="dropdown hidden">
+            <li><a href="#">Edit Profile</a></li>
+            <li><a href="<?= $base ?>/logout">Sign Out</a></li>
+            <!-- <li><a href="..\Signin\index.html">Sign Out</a></li> -->
+          </ul>
         </div>
+      </div>
+    </div>
       </header>
 
       <section class="welcome">
@@ -61,7 +66,7 @@
             <img src="/autonexus/public/assets/img/done.png" class="card-icon" />
             <h3>Workorders Done</h3>
           </div>
-          <p>15</p>
+          <p>128</p>
           <span class="change">+12.5% vs last month</span>
         </div>
 
@@ -70,7 +75,7 @@
             <img src="/autonexus/public/assets/img/assigned2.png" class="card-icon" />
             <h3>Assigned Jobs</h3>
           </div>
-          <p>9</p>
+          <p>45</p>
           <span class="change">+8.2% vs last month</span>
         </div>
 
@@ -79,7 +84,7 @@
             <img src="/autonexus/public/assets/img/ongoing.png" class="card-icon" />
             <h3>Ongoing Workorders</h3>
           </div>
-          <p>4</p>
+          <p>32</p>
           <span class="change">-1.8% vs last month</span>
         </div>
 
@@ -88,7 +93,7 @@
             <img src="/autonexus/public/assets/img/total.png" class="card-icon" />
             <h3>Total Workorders</h3>
           </div>
-          <p>28</p>
+          <p>205</p>
           <span class="change">+6.4% vs last month</span>
         </div>
       </section>
@@ -145,6 +150,6 @@
         </table>
       </section>
     </main>
-  <script src="script.js"></script>
+  <script src="/autonexus/public/assets/js/supervisor/script-dashboard.js"></script>
 </body>
 </html>

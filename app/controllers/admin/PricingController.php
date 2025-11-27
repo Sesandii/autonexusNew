@@ -42,8 +42,9 @@ class PricingController extends Controller
             $_SESSION['flash'] = $msg;
 
             // PRG pattern → reload page so the table shows fresh data
-            header('Location: ' . rtrim(BASE_URL, '/') . '/admin/pricing');
-            exit;
+           header('Location: ' . rtrim(BASE_URL, '/') . '/admin/admin-updateserviceprice');
+exit;
+
         }
 
         // Load services for the table (you can filter to only packages if you want)

@@ -6,6 +6,11 @@ use app\model\supervisor\WorkOrder;
 
 class WorkOrdersController extends Controller
 {
+    public function __construct(array $config = [])
+    {
+        parent::__construct($config);
+        $this->requireAdmin();
+    }
     public function index()
     {
         $m = new WorkOrder();
@@ -119,5 +124,14 @@ class WorkOrdersController extends Controller
         $m->delete((int)$id);
         $_SESSION['message'] = ['type' => 'success', 'text' => 'Work order deleted.'];
         header('Location: ' . rtrim(BASE_URL,'/') . '/supervisor/workorders'); exit;
+    }
+    private function requireAdmin(): void
+    {
+        if (session_status() !== PHP_SESSION_ACTIVE) session_start();
+        $u = $_SESSION['user'] ?? null;
+        if (!$u || (($u['role'] ?? '') !== 'supervisor')) {
+            header('Location: ' . rtrim(BASE_URL, '/') . '/login');
+            exit;
+        }
     }
 }

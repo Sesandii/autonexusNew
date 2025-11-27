@@ -33,33 +33,19 @@
       <a href="/autonexus/supervisor/reports">
        <img src="/autonexus/public/assets/img/Inspection.png"/>Report
      </a>
-
-     <a href="<?= rtrim(BASE_URL, '/') ?>/logout"><img src="/autonexus/public/assets/img/user.png" alt="User" class="avatar-img" /> Sign Out</a>
     </div>
     <main class="main">
       <header>
         <input type="text" placeholder="Search..." class="search" />
-      </header>
-      <section class="job-section">
-       <p>Overview of all ongoing jobs</p>
-        <h2>Ongoing Jobs</h2>
-        <table>
-          <thead>
-            <tr>
-              <th>Customer</th>
-              <th>Vehicle</th>
-              <th>Service Type</th>
-              <th>ETA</th>
-              <th>Mechanic</th>
-              <th>Supervisor</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody id="job-table-body">
-            <!-- Populated by JavaScript -->
-          </tbody>
-        </table>
-      </section>
+</header>
+  <section class="job-section">
+  <p>Overview of all ongoing jobs</p>
+  <h2>Ongoing Jobs</h2>
+
+  <div class="job-grid" id="job-grid">
+    <!-- Tiles will be dynamically inserted here by JS -->
+  </div>
+</section>
     </main>
   <script src="/autonexus/public/assets/js/supervisor/script-assignedjobs.js"></script>
 </body>

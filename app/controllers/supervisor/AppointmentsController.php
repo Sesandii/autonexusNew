@@ -2,27 +2,28 @@
 namespace app\controllers\supervisor;
 
 use app\core\Controller;
-use app\model\supervisor\Complaint;
+use app\model\supervisor\Appointment;
 
-class ComplaintsController extends Controller
+class AppointmentsController extends Controller
 {
-    private $complaintModel;
+    private $appointmentModel;
 
     public function __construct()
     {
         $this->requireAdmin();
-        $this->complaintModel = new Complaint(db());
+        $this->appointmentModel = new Appointment();
     }
 
     public function index()
     {
-        // Fetch all complaints with related info
-        $complaints = $this->complaintModel->getAllComplaints();
+        $appointments = $this->appointmentModel->all();
+        $this->render('supervisor/appointments/index', ['appointments' => $appointments]);
+    }
 
-        // Pass to view
-        $this->view('supervisor/complaints/index', [
-            'complaints' => $complaints
-        ]);
+    public function show($id)
+    {
+        $appointment = $this->appointmentModel->find($id);
+        $this->render('supervisor/appointments/show', ['appointment' => $appointment]);
     }
 
     private function requireAdmin(): void
@@ -34,4 +35,5 @@ class ComplaintsController extends Controller
             exit;
         }
     }
+    
 }

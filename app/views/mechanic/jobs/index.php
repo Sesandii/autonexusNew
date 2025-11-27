@@ -29,18 +29,13 @@
     </header>
 
     <section class="job-section">
-      <p>Overview of all ongoing jobs</p>
-      <h2>Ongoing Jobs</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Customer</th><th>Vehicle</th><th>Service Type</th>
-            <th>ETA</th><th>Mechanic</th><th>Supervisor</th><th>Actions</th>
-          </tr>
-        </thead>
-        <tbody id="job-table-body"><!-- JS populates rows --></tbody>
-      </table>
-    </section>
+  <p>Overview of all ongoing jobs</p>
+  <h2>Ongoing Jobs</h2>
+
+  <div class="job-grid" id="job-grid">
+    <!-- Tiles will be dynamically inserted here by JS -->
+  </div>
+</section>
   </main>
 
   <script src="<?= $base ?>/public/assets/js/mechanic/script-jobs.js"></script>

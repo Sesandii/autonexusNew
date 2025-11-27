@@ -51,13 +51,16 @@ class Service
             s.service_code,
             s.name,
             s.description,
+            s.default_price,              -- ✅ add this line
             s.status,
             s.created_at,
             st.type_id,
             COALESCE(st.type_name,'Uncategorized') AS type_name,
-            COUNT(bs.branch_id)                         AS branch_count,
-            GROUP_CONCAT(DISTINCT CONCAT(b.name,' (',b.branch_code,')')
-                         ORDER BY b.name SEPARATOR ', ') AS branches
+            COUNT(bs.branch_id) AS branch_count,
+            GROUP_CONCAT(
+                DISTINCT CONCAT(b.name,' (',b.branch_code,')')
+                ORDER BY b.name SEPARATOR ', '
+            ) AS branches
         FROM services s
         LEFT JOIN service_types st ON st.type_id = s.type_id
         LEFT JOIN branch_services bs ON bs.service_id = s.service_id
@@ -67,6 +70,7 @@ class Service
     ";
     return $this->pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
 }
+
 
 public function distinctTypesForTabs(): array
 {

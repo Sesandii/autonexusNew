@@ -149,6 +149,22 @@ use app\controllers\admin\AppointmentsController;
 
 $router->get('/admin/admin-appointments', [AppointmentsController::class, 'index']);
 
+// Optional prettier alias for the list page
+$router->get('/admin/appointments', [AppointmentsController::class, 'index']);
+
+// Show details page
+$router->get('/admin/admin-appointments/show',  [AppointmentsController::class, 'show']);
+
+// Edit form
+$router->get('/admin/admin-appointments/edit',  [AppointmentsController::class, 'edit']);
+
+// Handle update form submit
+$router->post('/admin/admin-appointments/update', [AppointmentsController::class, 'update']);
+
+// Handle cancel/delete
+$router->post('/admin/admin-appointments/delete', [AppointmentsController::class, 'delete']);
+
+
 use app\controllers\admin\ServicesController;
 
 /** ======================
@@ -435,11 +451,12 @@ $router->get('/mechanic/history', [\app\controllers\mechanic\HistoryController::
 
 $router->get('/mechanic/dashboard', [\app\controllers\mechanic\DashboardController::class, 'index']);
 
+use app\controllers\mechanic\JobsMVController;
 
-
+$router->get('/mechanic/jobs/view/{id}', [JobsMController::class, 'show']);
+$router->post('/mechanic/jobs/update-status', [JobsMController::class, 'updateStatus']);
 
 // ------------------Supervisor copy N paste
-
 
 use app\controllers\supervisor\SupervisorController;
 
@@ -449,9 +466,9 @@ use app\controllers\supervisor\ComplaintsController;
 
 $router->get('/supervisor/complaints', [\app\controllers\supervisor\ComplaintsController::class, 'index']);
 
-use app\controllers\supervisor\FeedbacksController;
+use app\controllers\supervisor\SupervisorFeedbackController;
 
-$router->get('/supervisor/feedbacks', [\app\controllers\supervisor\FeedbacksController::class, 'index']);
+$router->get('/supervisor/feedbacks', [\app\controllers\supervisor\SupervisorFeedbackController::class, 'index']);
 
 use app\controllers\supervisor\VehicleReportsController;
 
@@ -460,6 +477,8 @@ $router->get('/supervisor/reports', [\app\controllers\supervisor\VehicleReportsC
 use app\controllers\supervisor\VehicleHistoryController;
 
 $router->get('/supervisor/history', [\app\controllers\supervisor\VehicleHistoryController::class, 'index']);
+$router->get('/supervisor/history/show', [\app\controllers\supervisor\VehicleHistoryController::class, 'show']);
+$router->get('/supervisor/history/details/{appointmentId}', [\app\controllers\supervisor\VehicleHistoryController::class, 'details']);
 
 use app\controllers\supervisor\AssignedJobsController;
 
@@ -489,7 +508,6 @@ $router->post('/supervisor/workorders/{id}',      [WorkOrdersController::class, 
 
 // DELETE
 $router->post('/supervisor/workorders/{id}/delete', [WorkOrdersController::class, 'destroy']);
-
 
 
 /*

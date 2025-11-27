@@ -58,7 +58,9 @@
           <td><?= number_format((float)($s['default_price'] ?? 0), 2) ?> LKR</td>
 
           <td>
-            <form method="post" class="inline">
+            <form method="post" class="inline"
+      action="<?= rtrim(BASE_URL, '/') ?>/admin/admin-updateserviceprice">
+
               <input type="hidden" name="service_id" value="<?= (int)$s['service_id'] ?>">
               <input class="price-input" type="number" step="0.01" min="0"
                      name="price" placeholder="Enter new price"

@@ -2,21 +2,20 @@
 namespace app\controllers\supervisor;
 
 use app\core\Controller;
+use app\model\supervisor\Feedback;
 
-class AssignedJobsController extends Controller
-{
-    public function __construct(array $config = [])
-    {
-        parent::__construct($config);
+class SupervisorFeedbackController extends Controller   {
+    private $feedbackModel;
+
+    public function __construct() {
         $this->requireAdmin();
-    }
-    
-    public function index()
-    {
-        // In future, load assigned jobs using a model (e.g., Job model)
-        $this->view('supervisor/assignedjobs/index');
+        $this->feedbackModel = new Feedback(db());
     }
 
+    public function index() {
+        $feedbacks = $this->feedbackModel->getAllFeedbacks();
+        $this->view('supervisor/feedbacks/index', ['feedbacks' => $feedbacks]);
+    }
     private function requireAdmin(): void
     {
         if (session_status() !== PHP_SESSION_ACTIVE) session_start();
@@ -27,3 +26,5 @@ class AssignedJobsController extends Controller
         }
     }
 }
+
+

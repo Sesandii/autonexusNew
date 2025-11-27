@@ -83,25 +83,69 @@ header {
   border: 1px solid #ccc;
 }
 
+.user-menu {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+
+#user-name {
+  color: #333;
+  margin-left: 8px; /* adds space between image and name */
+}
+
+.dropdown {
+  position: absolute;
+  top: 35px; /* slightly lower so it doesn’t overlap the name */
+  right: 0;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  list-style: none;
+  padding: 8px 0;
+  margin: 0;
+  width: 160px;
+  box-shadow: 0px 4px 8px rgba(0,0,0,0.1);
+  z-index: 100;
+}
+
+.dropdown li {
+  padding: 10px 15px;
+}
+
+.dropdown li a {
+  text-decoration: none;
+  color: #333;
+  display: block;
+}
+
+.dropdown li:hover {
+  background: #f4f4f4;
+}
+
+.hidden {
+  display: none;
+}
+
+/* Profile section */
 .user-profile {
   display: flex;
   align-items: center;
   gap: 15px;
 }
 
-.user-profile img{
+.icon {
   width: 20px;
   height: 20px;
 }
-.icon {
-  width: 22px;
-  height: 22px;
-}
 
-.avatar-img {
-  width: 30px;
-  height: 30px;
+/* User avatar */
+.user-img {
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
+  object-fit: cover;
+  vertical-align: middle;
 }
 
 section.welcome {
@@ -210,38 +254,4 @@ th, td {
 .card-icon {
   width: 28px;
   height: 28px;
-}
-
-
-.dropdown {
-  position: absolute;
-  top: 35px; /* slightly lower so it doesn’t overlap the name */
-  right: 0;
-  background: #fff;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  list-style: none;
-  padding: 8px 0;
-  margin: 0;
-  width: 160px;
-  box-shadow: 0px 4px 8px rgba(0,0,0,0.1);
-  z-index: 100;
-}
-
-.dropdown li {
-  padding: 10px 15px;
-}
-
-.dropdown li a {
-  text-decoration: none;
-  color: #333;
-  display: block;
-}
-
-.dropdown li:hover {
-  background: #f4f4f4;
-}
-
-.hidden {
-  display: none;
 }

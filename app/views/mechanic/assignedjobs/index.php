@@ -34,26 +34,31 @@
         </div>-->
       </header>
       <section class="job-section">
-       <p>Overview of all ongoing jobs</p>
-        <h2>Ongoing Jobs</h2>
-        <table>
-          <thead>
-            <tr>
-              <th>Customer</th>
-              <th>Vehicle</th>
-              <th>Service Type</th>
-              <th>ETA</th>
-              <th>Mechanic</th>
-              <th>Supervisor</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody id="job-table-body">
-            <!-- Populated by JavaScript -->
-          </tbody>
-        </table>
-      </section>
+  <p>Overview of all ongoing jobs</p>
+  <h2>Ongoing Jobs</h2>
+
+  <div class="job-grid" id="job-grid">
+    <?php if (!empty($workOrders)) : ?>
+        <?php foreach ($workOrders as $job) : ?>
+            <div class="job-card">
+                <h3><?= htmlspecialchars($job['service_summary']) ?></h3>
+                <div class="job-info"><span>Customer:</span> <?= htmlspecialchars($job['first_name'] . ' ' . $job['last_name']) ?></div>
+                <div class="job-info"><span>Address:</span> <?= htmlspecialchars($job['street_address'] . ', ' . $job['city'] . ', ' . $job['state']) ?></div>
+                <div class="job-info"><span>ETA:</span> <?= htmlspecialchars($job['started_at']) ?></div>
+                <div class="job-info"><span>Mechanic:</span> <?= htmlspecialchars($job['mechanic_code']) ?></div>
+                <div class="job-actions">
+                    <button class="view-btn">View</button>
+                    <button class="edit-btn">Edit</button>
+                </div>
+            </div>
+        <?php endforeach; ?>
+    <?php else: ?>
+        <p>No assigned jobs yet.</p>
+    <?php endif; ?>
+</div>
+
+</section>
     </main>
-  <script src="/autonexus/public/assets/js/mechanic/script-assignedjobs.js"></script>
+  <script src="/autonexus/public/assets/js/mechanic/script-assignedobs.js"></script>
 </body>
 </html>

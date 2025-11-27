@@ -108,6 +108,7 @@ html, body {
 }
 
 .edit-btn,
+.view-btn,
 .cancel-btn {
   padding: 8px 16px;
   border: none;

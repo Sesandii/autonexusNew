@@ -38,8 +38,6 @@
       <a href="/autonexus/supervisor/reports">
        <img src="/autonexus/public/assets/img/Inspection.png"/>Report
      </a>
-
-     <a href="<?= rtrim(BASE_URL, '/') ?>/logout"><img src="/autonexus/public/assets/img/user.png" alt="User" class="avatar-img" /> Sign Out</a>
     </div>
 <div class="container">
   <div class="page-header">
@@ -64,7 +62,6 @@
         <th>Service</th>
         <th>Mechanic</th>
         <th>Status</th>
-        <th>Total</th>
         <th>Actions</th>
       </tr>
     </thead>
@@ -76,7 +73,7 @@
         <td><?= htmlspecialchars($w['service_name'] ?? '') ?></td>
         <td><?= htmlspecialchars($w['mechanic_code'] ?? 'Unassigned') ?></td>
         <td><span class="status <?= htmlspecialchars($w['status']) ?>"><?= htmlspecialchars($w['status']) ?></span></td>
-        <td><?= number_format((float)$w['total_cost'],2) ?></td>
+        <!--<td><?= number_format((float)$w['total_cost'],2) ?></td>-->
         <td>
           <a class="btn small" href="<?= $base ?>/supervisor/workorders/<?= $w['work_order_id'] ?>">View</a>
           <a class="btn small" href="<?= $base ?>/supervisor/workorders/<?= $w['work_order_id'] ?>/edit">Edit</a>

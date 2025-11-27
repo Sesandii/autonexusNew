@@ -1,9 +1,15 @@
 <?php
 
+namespace app\model\supervisor;
+
 class Appointment
 {
     private $db;
-    public function __construct($db) { $this->db = $db; }
+    public function __construct($db = null)
+{
+    $this->db = $db ?? new \app\core\Database();
+}
+
 
     public function allAvailable()
     {
@@ -14,5 +20,82 @@ class Appointment
         $stmt = $this->db->query($sql);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public function getVehicleByLicense($licensePlate)
+{
+    $sql = "SELECT * FROM vehicles WHERE license_plate = :plate LIMIT 1";
+    $stmt = $this->db->prepare($sql);
+    $stmt->execute(['plate' => $licensePlate]);
+    return $stmt->fetch(\PDO::FETCH_ASSOC);
 }
 
+public function getVehicleHistoryByLicense($licensePlate)
+{
+    $sql = "SELECT 
+                a.appointment_id,
+                a.appointment_date,
+                a.appointment_time,
+                a.status,
+                s.name AS service_name,
+                s.description AS service_description,
+                s.default_price,
+                a.branch_id
+            FROM appointments a
+            JOIN vehicles v ON v.vehicle_id = a.vehicle_id
+            JOIN services s ON s.service_id = a.service_id
+            WHERE v.license_plate = :plate
+              AND a.status = 'completed'
+            ORDER BY a.appointment_date DESC";
+    $stmt = $this->db->prepare($sql);
+    $stmt->execute(['plate' => $licensePlate]);
+    return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+}
+
+public function getAppointmentDetails($appointmentId)
+{
+    $sql = "
+        SELECT 
+            a.appointment_id,
+            a.appointment_date,
+            a.appointment_time,
+            a.status AS appointment_status,
+            a.notes,
+
+            -- Service Info
+            s.name AS service_name,
+            s.description AS service_description,
+            s.default_price,
+
+            -- Customer Info
+            c.customer_code,
+
+            -- Work Order Info
+            wo.mechanic_id,
+            wo.service_summary,
+            wo.total_cost,
+            wo.status AS work_order_status,
+            wo.started_at,
+            wo.completed_at,
+
+            -- Vehicle Info
+            v.vehicle_id,
+            v.license_plate,
+            v.make,
+            v.model,
+            v.year,
+            v.color,
+            v.status AS vehicle_status
+
+        FROM appointments a
+        LEFT JOIN services s ON a.service_id = s.service_id
+        LEFT JOIN customers c ON a.customer_id = c.customer_id
+        LEFT JOIN work_orders wo ON a.appointment_id = wo.appointment_id
+        LEFT JOIN vehicles v ON a.vehicle_id = v.vehicle_id
+        WHERE a.appointment_id = :id
+    ";
+
+    $stmt = db()->prepare($sql);
+    $stmt->execute(['id' => $appointmentId]);
+    return $stmt->fetch(\PDO::FETCH_ASSOC);
+}  
+}
