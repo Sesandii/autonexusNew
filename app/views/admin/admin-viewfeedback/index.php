@@ -1,127 +1,170 @@
-<!-- admin/admin-viewfeedback -->
-<?php $current = 'feedback'; // highlights “Service Progress” in sidebar ?>
+<?php
+/** @var array       $feedbacks */
+/** @var array       $filters */
+/** @var float|null  $avgRating */
+/** @var string      $current */
+
+$current = $current ?? 'feedback';
+$B = rtrim(BASE_URL, '/');
+
+$q        = htmlspecialchars($filters['q']       ?? '', ENT_QUOTES, 'UTF-8');
+$ratingF  = $filters['rating']  ?? '';
+$repliedF = $filters['replied'] ?? '';
+$dateF    = htmlspecialchars($filters['date']    ?? '', ENT_QUOTES, 'UTF-8');
+
+function feedback_stars(int $rating): string {
+    $rating = max(0, min(5, $rating));
+    return str_repeat('★', $rating) . str_repeat('☆', 5 - $rating);
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Customer Feedback - AutoNexus</title>
+  <title><?= htmlspecialchars($pageTitle ?? 'Customer Feedback - AutoNexus') ?></title>
 
-<link rel="stylesheet" href="<?= rtrim(BASE_URL,'/') ?>/app/views/layouts/admin-sidebar/styles.css">
-<link rel="stylesheet" href="<?= rtrim(BASE_URL,'/') ?>/public/assets/css/admin/feedback/style.css">
+  <link rel="stylesheet" href="<?= $B ?>/app/views/layouts/admin-sidebar/styles.css">
+  <link rel="stylesheet" href="<?= $B ?>/public/assets/css/admin/feedback/style.css">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-
 </head>
 <body>
 <?php include APP_ROOT . '/views/layouts/admin-sidebar/sidebar.php'; ?>
 
+<main class="main-content">
+  <section class="feedback-section">
+    <h2>Customer Feedback Management</h2>
 
+    <?php if ($avgRating !== null): ?>
+      <p style="margin-bottom:10px;font-size:14px;">
+        Average Rating:
+        <strong><?= number_format($avgRating, 1) ?>/5</strong>
+        (<?= count($feedbacks) ?> reviews)
+      </p>
+    <?php endif; ?>
 
-    <!-- Main Content -->
-    <main class="main-content">
-      
+    <!-- Filters -->
+    <form class="filters" method="get" action="<?= $B ?>/admin/admin-viewfeedback">
+      <input
+        type="text"
+        id="searchInput"
+        name="q"
+        placeholder="Search (customer, branch, service, comment)..."
+        value="<?= $q ?>"
+      />
 
-      <section class="feedback-section">
-        <h2>Customer Feedback Management</h2>
+      <select id="ratingFilter" name="rating">
+        <option value="">All Ratings</option>
+        <?php for ($i = 5; $i >= 1; $i--): ?>
+          <option value="<?= $i ?>" <?= (string)$ratingF === (string)$i ? 'selected' : '' ?>>
+            <?= $i ?>/5
+          </option>
+        <?php endfor; ?>
+      </select>
 
-        <div class="filters">
-          <input type="text" id="searchInput" placeholder="Search feedback..." />
-          <select id="ratingFilter">
-            <option value="all">All Ratings</option>
-            <option value="5">5/5</option>
-            <option value="4">4/5</option>
-            <option value="3">3/5</option>
-            <option value="2">2/5</option>
-            <option value="1">1/5</option>
-          </select>
-          <select id="repliedFilter">
-            <option value="all">All</option>
-            <option value="replied">Replied</option>
-            <option value="notReplied">Not Replied</option>
-          </select>
-          <input type="date" id="dateFilter" />
-        </div>
+      <select id="repliedFilter" name="replied">
+        <option value="">All</option>
+        <option value="replied"    <?= $repliedF === 'replied' ? 'selected' : '' ?>>Replied</option>
+        <option value="notReplied" <?= $repliedF === 'notReplied' ? 'selected' : '' ?>>Not Replied</option>
+      </select>
 
-        <div class="cards-container" id="cardsContainer">
-          <div class="card" data-rating="5" data-replied="true" data-date="2023-11-05">
+      <input type="date" id="dateFilter" name="date" value="<?= $dateF ?>" />
+
+      <button type="submit" class="reply-btn" style="margin-left:8px;">
+        <i class="fa-solid fa-magnifying-glass"></i> Apply
+      </button>
+    </form>
+
+    <!-- Cards -->
+    <div class="cards-container" id="cardsContainer">
+      <?php if (empty($feedbacks)): ?>
+        <p style="margin-top:20px;font-size:14px;color:#6b7280;">
+          No feedback found for the selected filters.
+        </p>
+      <?php else: ?>
+        <?php foreach ($feedbacks as $f): ?>
+          <?php
+            $rating    = (int)$f['rating'];
+            $isReplied = strtolower($f['replied_status'] ?? '') === 'replied';
+            $replyText = $f['reply_text'] ?? '';
+
+            if     ($rating >= 4) $scoreClass = 'green';
+            elseif ($rating == 3) $scoreClass = 'yellow';
+            else                  $scoreClass = 'red';
+
+            $createdDate = substr($f['created_at'], 0, 10);
+            $createdFmt  = (new DateTime($f['created_at']))->format('M j, Y');
+          ?>
+          <div class="card"
+               data-rating="<?= $rating ?>"
+               data-replied="<?= $isReplied ? 'true' : 'false' ?>"
+               data-date="<?= htmlspecialchars($createdDate, ENT_QUOTES, 'UTF-8') ?>">
+
             <div class="card-header">
-              <strong>John Smith</strong>
+              <strong><?= htmlspecialchars($f['customer_name']) ?></strong>
               <div class="rating">
-                <span class="rating-score green">5/5</span>
-                <span class="stars">★★★★★</span>
+                <span class="rating-score <?= $scoreClass ?>"><?= $rating ?>/5</span>
+                <span class="stars"><?= feedback_stars($rating) ?></span>
               </div>
             </div>
-            <p><strong>Service:</strong> Oil Change</p>
-            <p><strong>Date:</strong> Nov 5, 2023</p>
-            <p class="feedback-text">Great service! The staff was friendly and the work was done quickly and efficiently.</p>
-            <p class="reply-status replied">Replied</p>
-            <button class="reply-btn">Reply</button>
-          </div>
 
-          <div class="card" data-rating="2" data-replied="false" data-date="2023-11-04">
-            <div class="card-header">
-              <strong>Sarah Williams</strong>
-              <div class="rating">
-                <span class="rating-score red">2/5</span>
-                <span class="stars">★★☆☆☆</span>
-              </div>
-            </div>
-            <p><strong>Service:</strong> Brake Inspection</p>
-            <p><strong>Date:</strong> Nov 4, 2023</p>
-            <p class="feedback-text">The service took much longer than expected. I had to wait for over 2 hours for what should have been a quick inspection.</p>
-            <p class="reply-status not-replied">Not replied yet</p>
-            <button class="reply-btn">Reply</button>
-          </div>
+            <p><strong>Service:</strong> <?= htmlspecialchars($f['service_name']) ?></p>
+            <p><strong>Branch:</strong> <?= htmlspecialchars($f['branch_name']) ?></p>
+            <p><strong>Date:</strong> <?= htmlspecialchars($createdFmt) ?></p>
+            <p class="feedback-text"><?= nl2br(htmlspecialchars($f['comment'] ?? '')) ?></p>
 
-          <div class="card" data-rating="4" data-replied="true" data-date="2023-11-03">
-            <div class="card-header">
-              <strong>Michael Johnson</strong>
-              <div class="rating">
-                <span class="rating-score green">4/5</span>
-                <span class="stars">★★★★☆</span>
-              </div>
-            </div>
-            <p><strong>Service:</strong> Tire Rotation</p>
-            <p><strong>Date:</strong> Nov 3, 2023</p>
-            <p class="feedback-text">Good service overall. The mechanic explained everything clearly, but the waiting area could use some improvement.</p>
-            <p class="reply-status replied">Replied</p>
-            <button class="reply-btn">Reply</button>
-          </div>
+            <?php if ($isReplied): ?>
+              <p class="reply-status replied">Replied</p>
+              <?php if ($replyText !== ''): ?>
+                <p style="font-size:13px;margin-top:4px;">
+                  <strong>Your Reply:</strong><br>
+                  <?= nl2br(htmlspecialchars($replyText)) ?>
+                </p>
+              <?php endif; ?>
+            <?php else: ?>
+              <p class="reply-status not-replied">Not replied yet</p>
+            <?php endif; ?>
 
-          <div class="card" data-rating="1" data-replied="false" data-date="2023-11-02">
-            <div class="card-header">
-              <strong>Emily Davis</strong>
-              <div class="rating">
-                <span class="rating-score red">1/5</span>
-                <span class="stars">★☆☆☆☆</span>
-              </div>
-            </div>
-            <p><strong>Service:</strong> Full Service</p>
-            <p><strong>Date:</strong> Nov 2, 2023</p>
-            <p class="feedback-text">Very disappointed with the service. My car still has the same issue after the repair, and the staff was not helpful when I called to follow up.</p>
-            <p class="reply-status not-replied">Not replied yet</p>
-            <button class="reply-btn">Reply</button>
-          </div>
+            <!-- Reply form -->
+            <form class="reply-form"
+                  method="post"
+                  action="<?= $B ?>/admin/admin-viewfeedback/reply"
+                  style="margin-top:8px;">
+              <input type="hidden" name="feedback_id" value="<?= (int)$f['feedback_id'] ?>">
 
-          <div class="card" data-rating="3" data-replied="false" data-date="2023-11-01">
-            <div class="card-header">
-              <strong>Robert Brown</strong>
-              <div class="rating">
-                <span class="rating-score yellow">3/5</span>
-                <span class="stars">★★★☆☆</span>
-              </div>
-            </div>
-            <p><strong>Service:</strong> Engine Diagnostic</p>
-            <p><strong>Date:</strong> Nov 1, 2023</p>
-            <p class="feedback-text">Average service. The diagnostic was accurate but the price was higher than quoted.</p>
-            <p class="reply-status not-replied">Not replied yet</p>
-            <button class="reply-btn">Reply</button>
-          </div>
-        </div>
-      </section>
-    </main>
- 
+              <textarea
+                name="reply_text"
+                rows="2"
+                placeholder="Type your reply to this customer..."
+                style="width:100%;resize:vertical;font-size:13px;padding:6px;border-radius:8px;border:1px solid #d1d5db;"
+                required><?= htmlspecialchars($replyText) ?></textarea>
 
-  <script src="feedback.js"></script>
+              <button type="submit" class="reply-btn" style="margin-top:6px;">
+                <i class="fa-regular fa-paper-plane"></i>
+                <?= $isReplied ? 'Update Reply' : 'Send Reply' ?>
+              </button>
+            </form>
+          </div>
+        <?php endforeach; ?>
+      <?php endif; ?>
+    </div>
+  </section>
+</main>
+
+<script>
+// optional: auto-submit on filter change
+document.addEventListener('DOMContentLoaded', () => {
+  ['ratingFilter','repliedFilter','dateFilter'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el && el.form) {
+      el.addEventListener('change', () => el.form.submit());
+    }
+  });
+});
+
+
+</script>
+
+
 </body>
 </html>

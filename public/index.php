@@ -208,10 +208,14 @@ $router->get('/admin/admin-ongoingservices/show', [OngoingServicesController::cl
 use app\controllers\admin\ServiceHistoryController;
 
 $router->get('/admin/admin-servicehistory', [ServiceHistoryController::class, 'index']);
+$router->get('/admin/admin-servicehistory/show', [ServiceHistoryController::class, 'show']);
+
 
 use app\controllers\admin\FeedbackController;
 
 $router->get('/admin/admin-viewfeedback', [FeedbackController::class, 'index']);
+$router->post('/admin/admin-viewfeedback/reply', [FeedbackController::class, 'reply']);
+
 
 use app\controllers\admin\NotificationsController;
 
