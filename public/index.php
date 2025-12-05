@@ -198,6 +198,10 @@ use app\controllers\admin\ApprovalController;
 
 // ...
 $router->get('/admin/admin-serviceapproval', [ApprovalController::class, 'index']);
+$router->get ('/admin/admin-serviceapproval/show',  [ApprovalController::class, 'show']);
+$router->get ('/admin/admin-serviceapproval/edit',  [ApprovalController::class, 'edit']);
+$router->post('/admin/admin-serviceapproval/update', [ApprovalController::class, 'update']);
+
 
 use app\controllers\admin\OngoingServicesController;
 
