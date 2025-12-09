@@ -13,7 +13,6 @@ $B = rtrim(BASE_URL, '/');
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title><?= htmlspecialchars($pageTitle ?? 'Appointments') ?></title>
-
   <link rel="stylesheet" href="<?= $B ?>/app/views/layouts/admin-shared/management.css">
   <link rel="stylesheet" href="<?= $B ?>/app/views/layouts/admin-sidebar/styles.css">
   <link rel="stylesheet" href="<?= $B ?>/public/assets/css/admin/appointments/style.css">
@@ -21,16 +20,13 @@ $B = rtrim(BASE_URL, '/');
 </head>
 <body>
 <?php include APP_ROOT . '/views/layouts/admin-sidebar/sidebar.php'; ?>
-
 <main class="main-content appointments-main">
-
   <header class="page-header">
     <div class="page-breadcrumb">
       <span>Admin</span>
       <span>›</span>
       <span>Appointments</span>
     </div>
-
     <div class="page-header-main">
       <div class="page-title-wrap">
         <div class="page-icon"><i class="fa-regular fa-calendar-check"></i></div>
@@ -42,9 +38,7 @@ $B = rtrim(BASE_URL, '/');
       <span class="page-chip">Today: <?= date('M j, Y'); ?></span>
     </div>
   </header>
-
   <section class="appointments-section">
-
     <div class="appointments-filters">
       <!-- search -->
       <div class="filter-item">
@@ -56,7 +50,6 @@ $B = rtrim(BASE_URL, '/');
                  placeholder="Search by customer or service..."/>
         </div>
       </div>
-
       <!-- status -->
       <div class="filter-item">
         <label for="statusSelect">Status</label>
@@ -68,7 +61,6 @@ $B = rtrim(BASE_URL, '/');
           <option value="Cancelled">Cancelled</option>
         </select>
       </div>
-
       <!-- branch filter -->
       <div class="filter-item">
         <label for="branchSelect">Branch</label>
@@ -81,7 +73,6 @@ $B = rtrim(BASE_URL, '/');
           <?php endforeach; ?>
         </select>
       </div>
-
       <!-- service filter -->
       <div class="filter-item">
         <label for="serviceSelect">Service</label>
@@ -94,26 +85,22 @@ $B = rtrim(BASE_URL, '/');
           <?php endforeach; ?>
         </select>
       </div>
-
       <!-- date & time filters -->
       <div class="filter-item">
         <label for="dateInput">Date</label>
         <input id="dateInput" type="date"/>
       </div>
-
       <div class="filter-item">
         <label for="timeInput">From time</label>
         <input id="timeInput" type="time"/>
       </div>
     </div>
-
     <div id="cardsContainer" class="appointments-cards">
       <?php foreach ($appointments as $a):
         $dt = new DateTime($a['datetime']);
         $dateISO = $dt->format('Y-m-d');
         $timeFmt = $dt->format('M j, g:i A');
         $time24  = $dt->format('H:i');
-
         $status  = $a['status'];
         $badgeClass = [
           'Scheduled'   => 'status-pill--scheduled',
@@ -132,7 +119,6 @@ $B = rtrim(BASE_URL, '/');
           data-status="<?= htmlspecialchars($status) ?>"
           data-date="<?= $dateISO ?>"
           data-time="<?= $time24 ?>">
-
           <header class="appointment-card__header">
             <div>
               <p class="appointment-card__customer">
@@ -146,27 +132,23 @@ $B = rtrim(BASE_URL, '/');
               <?= htmlspecialchars($status) ?>
             </span>
           </header>
-
           <div class="appointment-card__meta">
             <p><i class="fa-solid fa-location-dot"></i>
                <span><?= htmlspecialchars($a['branch']) ?></span></p>
             <p><i class="fa-regular fa-clock"></i>
                <span><?= htmlspecialchars($timeFmt) ?></span></p>
           </div>
-
           <footer class="appointment-card__actions">
             <button class="chip-btn chip-btn--light view-btn"
                     data-url="<?= $B ?>/admin/admin-appointments/show?id=<?= (int)$a['id'] ?>">
               <i class="fa-regular fa-eye"></i>
               <span>View</span>
             </button>
-
             <button class="chip-btn chip-btn--dark edit-btn"
                     data-url="<?= $B ?>/admin/admin-appointments/edit?id=<?= (int)$a['id'] ?>">
               <i class="fa-regular fa-pen-to-square"></i>
               <span>Edit</span>
             </button>
-
             <form action="<?= $B ?>/admin/admin-appointments/delete"
                   method="post"
                   class="inline-form"
@@ -180,7 +162,6 @@ $B = rtrim(BASE_URL, '/');
           </footer>
         </article>
       <?php endforeach; ?>
-
       <?php if (empty($appointments)): ?>
         <p class="appointments-empty">
           <i class="fa-regular fa-folder-open"></i>
@@ -190,12 +171,10 @@ $B = rtrim(BASE_URL, '/');
     </div>
   </section>
 </main>
-
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   const cardsContainer = document.getElementById('cardsContainer');
   if (!cardsContainer) return;
-
   const cards        = Array.from(cardsContainer.querySelectorAll('.appointment-card'));
   const searchInput  = document.getElementById('searchInput');
   const statusSelect = document.getElementById('statusSelect');
@@ -203,7 +182,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const serviceSelect = document.getElementById('serviceSelect');
   const dateInput    = document.getElementById('dateInput');
   const timeInput    = document.getElementById('timeInput');
-
   function applyFilters() {
     const searchTerm   = (searchInput && searchInput.value || '').toLowerCase().trim();
     const statusValue  = statusSelect && statusSelect.value || '';
@@ -211,7 +189,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const serviceValue = serviceSelect && serviceSelect.value || '';
     const dateValue    = dateInput && dateInput.value || '';
     const timeValue    = timeInput && timeInput.value || '';
-
     cards.forEach(card => {
       const customer = (card.dataset.customer || '').toLowerCase();
       const service  = (card.dataset.service || '').toLowerCase();
@@ -220,33 +197,27 @@ document.addEventListener('DOMContentLoaded', () => {
       const serviceId = card.dataset.serviceId || '';
       const date     = card.dataset.date || '';
       const time     = card.dataset.time || '';
-
       const matchesSearch =
         !searchTerm ||
         customer.includes(searchTerm) ||
         service.includes(searchTerm);
-
       const matchesStatus  = !statusValue || status === statusValue;
       const matchesBranch  = !branchValue || branchId === branchValue;
       const matchesService = !serviceValue || serviceId === serviceValue;
       const matchesDate    = !dateValue || date === dateValue;
       const matchesTime    = !timeValue || (time && time.startsWith(timeValue));
-
       const visible = matchesSearch && matchesStatus &&
                       matchesBranch && matchesService &&
                       matchesDate && matchesTime;
-
       card.style.display = visible ? '' : 'none';
     });
   }
-
   if (searchInput)  searchInput.addEventListener('input', applyFilters);
   if (statusSelect) statusSelect.addEventListener('change', applyFilters);
   if (branchSelect) branchSelect.addEventListener('change', applyFilters);
   if (serviceSelect) serviceSelect.addEventListener('change', applyFilters);
   if (dateInput)     dateInput.addEventListener('change', applyFilters);
   if (timeInput)     timeInput.addEventListener('change', applyFilters);
-
   // View / Edit navigation
   cardsContainer.addEventListener('click', (e) => {
     const btn = e.target.closest('.view-btn, .edit-btn');

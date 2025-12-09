@@ -5,7 +5,6 @@
 $current = $current ?? 'appointments';
 $B = rtrim(BASE_URL, '/');
 $a = $appointment;
-
 $dt = new DateTime($a['appointment_date'] . ' ' . $a['appointment_time']);
 ?>
 <!DOCTYPE html>
@@ -21,7 +20,6 @@ $dt = new DateTime($a['appointment_date'] . ' ' . $a['appointment_time']);
 </head>
 <body>
 <?php include APP_ROOT . '/views/layouts/admin-sidebar/sidebar.php'; ?>
-
 <main class="main-content appointments-main">
   <header class="page-header">
     <div class="page-breadcrumb">
@@ -29,7 +27,6 @@ $dt = new DateTime($a['appointment_date'] . ' ' . $a['appointment_time']);
       <span>›</span>
       <span>Appointment #<?= htmlspecialchars((string)$a['appointment_id']) ?></span>
     </div>
-
     <?php
     $statusLabel = \app\model\admin\Appointment::statusLabel($a['status']);
     $badgeClass = [
@@ -40,7 +37,6 @@ $dt = new DateTime($a['appointment_date'] . ' ' . $a['appointment_time']);
     ][$statusLabel] ?? 'status-pill--scheduled';
     ?>
   </header>
-
   <section class="appt-details-grid">
     <article class="appt-details-card">
       <h3>Appointment Info</h3>
@@ -77,7 +73,6 @@ $dt = new DateTime($a['appointment_date'] . ' ' . $a['appointment_time']);
         <span><?= nl2br(htmlspecialchars($a['notes'] ?? '—')) ?></span>
       </p>
     </article>
-
     <article class="appt-details-card">
       <h3>Customer & Vehicle</h3>
       <p class="field">
@@ -115,7 +110,6 @@ $dt = new DateTime($a['appointment_date'] . ' ' . $a['appointment_time']);
       </p>
     </article>
   </section>
-
   <section class="appt-details-grid" style="margin-top:18px;">
     <article class="appt-details-card">
       <h3>Assignment</h3>
@@ -128,7 +122,6 @@ $dt = new DateTime($a['appointment_date'] . ' ' . $a['appointment_time']);
         <span><?= htmlspecialchars($a['mechanic_name'] ?? 'Not assigned') ?></span>
       </p>
     </article>
-
     <article class="appt-details-card">
       <h3>Work Order</h3>
       <p class="field">
@@ -157,7 +150,6 @@ $dt = new DateTime($a['appointment_date'] . ' ' . $a['appointment_time']);
       </p>
     </article>
   </section>
-
   <div class="appt-detail-actions">
     <a href="<?= $B ?>/admin/admin-appointments/edit?id=<?= (int)$a['appointment_id'] ?>" class="btn-primary">
       <i class="fa-regular fa-pen-to-square"></i>

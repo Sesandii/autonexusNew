@@ -4,7 +4,6 @@
 /** @var array $services */
 /** @var string $pageTitle */
 /** @var string $current */
-
 $current = $current ?? 'appointments';
 $B = rtrim(BASE_URL, '/');
 $a = $appointment;
@@ -22,7 +21,6 @@ $a = $appointment;
 </head>
 <body>
 <?php include APP_ROOT . '/views/layouts/admin-sidebar/sidebar.php'; ?>
-
 <main class="main-content appointments-main">
   <header class="page-header">
     <div class="page-breadcrumb">
@@ -30,7 +28,6 @@ $a = $appointment;
       <span>›</span>
       <span>Edit #<?= htmlspecialchars((string)$a['appointment_id']) ?></span>
     </div>
-
     <div class="page-header-main">
       <div class="page-title-wrap">
         <div class="page-icon"><i class="fa-regular fa-pen-to-square"></i></div>
@@ -42,16 +39,13 @@ $a = $appointment;
       <span class="page-chip">ID: <?= (int)$a['appointment_id'] ?></span>
     </div>
   </header>
-
   <section class="appt-form-wrap">
     <form class="appt-form-card" method="post" action="<?= $B ?>/admin/appointments/update">
       <input type="hidden" name="appointment_id" value="<?= (int)$a['appointment_id'] ?>"/>
-
       <div class="appt-form-row">
         <label>Customer</label>
         <input type="text" value="<?= htmlspecialchars($a['customer_name'] ?? '') ?>" disabled>
       </div>
-
       <div class="appt-form-row">
         <label for="branch_id">Branch</label>
         <select name="branch_id" id="branch_id" required>
@@ -63,7 +57,6 @@ $a = $appointment;
           <?php endforeach; ?>
         </select>
       </div>
-
       <div class="appt-form-row">
         <label for="service_id">Service</label>
         <select name="service_id" id="service_id" required>
@@ -75,7 +68,6 @@ $a = $appointment;
           <?php endforeach; ?>
         </select>
       </div>
-
       <div class="appt-form-row appt-form-row--inline">
         <div>
           <label for="appointment_date">Date</label>
@@ -88,7 +80,6 @@ $a = $appointment;
                  value="<?= htmlspecialchars(substr($a['appointment_time'], 0, 5)) ?>" required>
         </div>
       </div>
-
       <div class="appt-form-row">
         <label for="status">Status</label>
         <select name="status" id="status">
@@ -107,13 +98,11 @@ $a = $appointment;
           <?php endforeach; ?>
         </select>
       </div>
-
       <div class="appt-form-row">
         <label for="notes">Notes</label>
         <textarea name="notes" id="notes" rows="4"
                   placeholder="Any special instructions or remarks…"><?= htmlspecialchars($a['notes'] ?? '') ?></textarea>
       </div>
-
       <div class="appt-form-actions">
         <button type="submit" class="btn-primary">
           <i class="fa-regular fa-floppy-disk"></i>

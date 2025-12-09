@@ -21,7 +21,7 @@ class DashboardController extends Controller
         $pdo  = db();
 
         // --- KPI queries (adapt to your schema) ---
-        $totalUsers = $pdo->query("SELECT COUNT(*) FROM users WHERE role ='customer'")->fetchColumn() ?? 0;
+        $totalUsers = $pdo->query("SELECT COUNT(*) FROM users WHERE role ='customer' AND status = 'active' ")->fetchColumn() ?? 0;
         $totalAppointments = $pdo->query("SELECT COUNT(*) FROM appointments")->fetchColumn() ?? 0;
 
         // Completed services (work_orders or appointments)
