@@ -10,18 +10,22 @@ class ServiceHistoryController extends Controller
 {
     public function index(): void
     {
-        // optional auth check
-        if (method_exists($this, 'requireCustomer')) {
-            $this->requireCustomer();
+        // Make sure the user is logged in as a customer
+        $this->requireCustomer();
+
+        // This helper is defined in app\core\Controller
+        $userId = $this->userId();   // == $_SESSION['user']['user_id']
+
+        if (!$userId) {
+            header('Location: ' . rtrim(BASE_URL, '/') . '/login');
+            exit;
         }
 
-        $userId = $_SESSION['user_id'] ?? 0;
-
-        $model = new ServiceHistory();
+        $model    = new ServiceHistory();
         $services = $model->getByCustomer($userId);
 
         $this->view('customer/service-history/index', [
-            'title' => 'Service History',
+            'title'    => 'Service History',
             'services' => $services,
         ]);
     }

@@ -1,205 +1,209 @@
 /* Reset and Base */
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
-    background: #F3F4F6;
-    color: #1F2937;
-    margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+  background: #f3f4f6;
+  color: #111827;
 }
 
-/* Main Content Area */
+/* Layout with sidebar */
+.container {
+  display: flex;
+}
+
 .main-content {
-    margin-left: 240px;
-    padding: 40px;
-    min-height: 100vh;
+  margin-left: 260px;          /* match sidebar width */
+  padding: 32px 40px;
+  min-height: 100vh;
+  width: 100%;
 }
 
-/* Page Header */
-h2 {
-    font-size: 28px;
-    font-weight: bold;
-    color: #111827;
-    margin-bottom: 8px;
+/* Page header */
+.page-title {
+  font-size: 26px;
+  font-weight: 700;
+  margin-bottom: 4px;
 }
 
 .subtitle {
-    font-size: 15px;
-    color: #6B7280;
-    margin-bottom: 30px;
+  font-size: 14px;
+  color: #6b7280;
+  margin-bottom: 24px;
 }
 
-/* Search and Filter Section */
+/* Search & Filter bar */
 .search-filter {
-    display: flex;
-    gap: 12px;
-    margin-bottom: 30px;
-    align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 24px;
 }
 
 .search-filter input,
 .search-filter select {
-    padding: 12px 16px;
-    border-radius: 8px;
-    border: 1px solid #D1D5DB;
-    font-size: 14px;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
-    background: #FFFFFF;
-    color: #1F2937;
-    outline: none;
-    transition: border-color 0.2s, box-shadow 0.2s;
+  padding: 10px 14px;
+  border-radius: 999px;
+  border: 1px solid #d1d5db;
+  font-size: 14px;
+  background: #ffffff;
+  color: #111827;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 .search-filter input {
-    flex: 2;
+  flex: 2;
 }
 
 .search-filter select {
-    flex: 1;
-    cursor: pointer;
+  flex: 1;
+  cursor: pointer;
 }
 
 .search-filter input:focus,
 .search-filter select:focus {
-    border-color: #DC2626;
-    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+  border-color: #cf3202;
+  box-shadow: 0 0 0 3px rgba(207, 50, 2, 0.15);
 }
 
 .search-filter button {
-    background: #DC2626;
-    color: #FFFFFF;
-    border: none;
-    border-radius: 8px;
-    padding: 12px 24px;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background 0.2s, transform 0.1s;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #cf3202;
+  color: #ffffff;
+  border: none;
+  border-radius: 999px;
+  padding: 10px 18px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s, box-shadow 0.2s;
 }
 
 .search-filter button:hover {
-    background: #B91C1C;
+  background: #ab2c08;
+  box-shadow: 0 6px 18px rgba(207, 50, 2, 0.25);
 }
 
 .search-filter button:active {
-    transform: scale(0.98);
+  transform: scale(0.97);
 }
 
-/* Table Container */
+/* Table container */
 .table-container {
-    background: #FFFFFF;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  background: #ffffff;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(15, 23, 42, 0.08);
 }
 
-/* Table Styles */
+/* Table */
 table {
-    width: 100%;
-    border-collapse: collapse;
+  width: 100%;
+  border-collapse: collapse;
 }
 
-th, td {
-    padding: 16px 20px;
-    text-align: left;
-    font-size: 14px;
+th,
+td {
+  padding: 14px 16px;
+  text-align: left;
+  font-size: 14px;
 }
 
 th {
-    background: #F9FAFB;
-    color: #374151;
-    font-weight: 600;
-    text-transform: uppercase;
-    font-size: 12px;
-    letter-spacing: 0.5px;
-    border-bottom: 1px solid #E5E7EB;
+  background: #f9fafb;
+  color: #4b5563;
+  font-weight: 600;
+  border-bottom: 1px solid #e5e7eb;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 11px;
 }
 
 td {
-    color: #1F2937;
-    border-bottom: 1px solid #F3F4F6;
-}
-
-tbody tr {
-    transition: background 0.2s;
+  border-bottom: 1px solid #f3f4f6;
+  color: #111827;
 }
 
 tbody tr:hover {
-    background: #F9FAFB;
+  background: #f9fafb;
 }
 
-tbody tr:last-child td {
-    border-bottom: none;
-}
-
-/* Status Badges */
+/* Status badges */
 .status {
-    padding: 6px 12px;
-    border-radius: 16px;
-    font-weight: 600;
-    font-size: 12px;
-    display: inline-block;
-    text-align: center;
-    min-width: 100px;
+  padding: 5px 11px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-block;
+  min-width: 100px;
+  text-align: center;
 }
 
 .status.Pending {
-    background: #FEF3C7;
-    color: #92400E;
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.status.Completed {
+  background: #dcfce7;
+  color: #166534;
 }
 
 .status.In.Progress,
 .status[class*="In Progress"] {
-    background: #DBEAFE;
-    color: #1E40AF;
+  background: #dbeafe;
+  color: #1e40af;
 }
 
-.status.Completed {
-    background: #D1FAE5;
-    color: #065F46;
+/* Empty state */
+.empty-state {
+  text-align: center;
+  padding: 28px 16px;
+  color: #6b7280;
+  font-size: 14px;
 }
 
-/* Responsive Design */
+.empty-state i {
+  display: block;
+  font-size: 26px;
+  margin-bottom: 8px;
+}
+
+/* Responsive */
 @media (max-width: 1024px) {
-    .main-content {
-        margin-left: 0;
-        padding: 20px;
-    }
-    
-    .search-filter {
-        flex-direction: column;
-    }
-    
-    .search-filter input,
-    .search-filter select {
-        width: 100%;
-    }
+  .main-content {
+    margin-left: 0;
+    padding: 20px 16px;
+  }
+
+  .search-filter {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .search-filter input,
+  .search-filter select,
+  .search-filter button {
+    width: 100%;
+  }
 }
 
-@media (max-width: 768px) {
-    h2 {
-        font-size: 24px;
-    }
-    
-    .subtitle {
-        font-size: 14px;
-    }
-    
-    table {
-        font-size: 12px;
-    }
-    
-    th, td {
-        padding: 12px 10px;
-    }
-    
-    .status {
-        min-width: 80px;
-        font-size: 11px;
-        padding: 4px 8px;
-    }
+@media (max-width: 640px) {
+  th,
+  td {
+    padding: 10px 8px;
+    font-size: 12px;
+  }
+
+  .status {
+    min-width: 82px;
+    font-size: 11px;
+  }
 }

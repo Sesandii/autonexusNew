@@ -11,43 +11,76 @@ class ServiceReminder
 
     public function __construct()
     {
-        $this->pdo = db();
+        $this->pdo = db(); // your global db() helper
     }
 
     /**
-     * Get service reminder info for all vehicles owned by the customer
+     * Get reminder info for all vehicles owned by this user.
+     *
+     * Uses existing tables only:
+     *  - customers
+     *  - vehicles
+     *  - work_orders + appointments (just to get last completed service date)
      */
-    public function getByCustomer(int $customerId): array
+    public function getForUser(int $userId): array
     {
-        if (!$customerId) return [];
+        if (!$userId) {
+            return [];
+        }
 
         $sql = "
             SELECT 
                 v.vehicle_id,
-                v.brand,
+                v.make,
                 v.model,
-                v.plate_no AS reg_no,
+                v.license_plate AS reg_no,
                 v.current_mileage,
-                s.last_service_date,
-                s.next_service_due,
-                s.status
+                v.last_service_mileage,
+                v.service_interval_km,
+
+                (
+                    SELECT wo.completed_at
+                    FROM work_orders wo
+                    JOIN appointments ap ON ap.appointment_id = wo.appointment_id
+                    WHERE ap.vehicle_id = v.vehicle_id
+                      AND wo.status = 'completed'
+                    ORDER BY wo.completed_at DESC
+                    LIMIT 1
+                ) AS last_service_date
+
             FROM vehicles v
-            LEFT JOIN service_schedule s ON s.vehicle_id = v.vehicle_id
-            WHERE v.customer_id = :cid
+            JOIN customers c ON c.customer_id = v.customer_id
+            WHERE c.user_id = :uid
             ORDER BY v.vehicle_id DESC
         ";
+
         $stmt = $this->pdo->prepare($sql);
-        $stmt->execute(['cid' => $customerId]);
+        $stmt->execute(['uid' => $userId]);
+
         return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
     }
 
     /**
-     * Update mileage manually
+     * Update current mileage for a vehicle that belongs to this user.
+     * Returns true if a row was actually updated.
      */
-    public function updateMileage(int $vehicleId, int $mileage): void
+    public function updateMileage(int $vehicleId, int $userId, int $mileage): bool
     {
-        $sql = "UPDATE vehicles SET current_mileage = :m WHERE vehicle_id = :v";
+        $sql = "
+            UPDATE vehicles v
+            JOIN customers c ON c.customer_id = v.customer_id
+            SET v.current_mileage = :mileage
+            WHERE v.vehicle_id = :vid
+              AND c.user_id     = :uid
+        ";
+
         $stmt = $this->pdo->prepare($sql);
-        $stmt->execute(['m' => $mileage, 'v' => $vehicleId]);
+        $stmt->execute([
+            'mileage' => $mileage,
+            'vid'     => $vehicleId,
+            'uid'     => $userId,
+        ]);
+
+        return $stmt->rowCount() > 0;
     }
 }

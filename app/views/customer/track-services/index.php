@@ -1,5 +1,5 @@
 <?php
-$base = rtrim(BASE_URL, '/');
+$base    = rtrim(BASE_URL, '/');
 $initial = $services ?? [];
 ?>
 <!DOCTYPE html>
@@ -17,34 +17,47 @@ $initial = $services ?? [];
 
   <?php include APP_ROOT . '/views/layouts/customer-sidebar.php'; ?>
 
-  <div class="main-content">
-    <h2>Track Services</h2>
-    <p class="subtitle">Monitor the progress of your vehicle services</p>
-    
-    <div class="search-filter">
-      <input type="text" id="searchInput" placeholder="Enter service name / vehicle / date (YYYY-MM-DD)">
-      <select id="statusFilter">
-        <option value="All">All Statuses</option>
-        <option value="Pending">Pending</option>
-        <option value="In Progress">In Progress</option>
-        <option value="Completed">Completed</option>
-      </select>
-      <button id="searchBtn">Search</button>
-    </div>
-    
-    <div class="table-container">
-      <table id="servicesTable">
-        <thead>
-          <tr>
-            <th>Service Type</th>
-            <th>Date Booked</th>
-            <th>Status</th>
-            <th>Est. Completion</th>
-          </tr>
-        </thead>
-        <tbody><!-- rows inserted by JS --></tbody>
-      </table>
-    </div>
+  <div class="container">
+    <main class="main-content">
+      <h2 class="page-title">🧰 Track Services</h2>
+      <p class="subtitle">Monitor the progress of your service jobs.</p>
+
+      <section class="search-filter">
+        <input type="text" id="searchInput"
+               placeholder="Search by service, vehicle plate, or date (YYYY-MM-DD)">
+        <select id="statusFilter">
+          <option value="All">All Statuses</option>
+          <option value="Pending">Pending</option>
+          <option value="In Progress">In Progress</option>
+          <option value="Completed">Completed</option>
+        </select>
+        <button id="searchBtn">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <span>Search</span>
+        </button>
+      </section>
+
+      <section class="table-container">
+        <table id="servicesTable">
+          <thead>
+            <tr>
+              <th>Service Type</th>
+              <th>Vehicle</th>
+              <th>Date Booked</th>
+              <th>Status</th>
+              <th>Est. Completion</th>
+            </tr>
+          </thead>
+          <tbody>
+          <!-- JS fills rows -->
+          </tbody>
+        </table>
+        <div id="emptyState" class="empty-state" hidden>
+          <i class="fa-regular fa-folder-open"></i>
+          <p>No services match your filters yet.</p>
+        </div>
+      </section>
+    </main>
   </div>
 
   <script>

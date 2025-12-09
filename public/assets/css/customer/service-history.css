@@ -1,0 +1,297 @@
+/* ====== Layout ====== */
+.sh-layout {
+    display: flex;
+    min-height: 100vh;
+    background: #f3f4f6;
+}
+
+/* main content next to sidebar */
+.sh-main {
+    flex: 1;
+    padding: 24px;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+/* ====== Header ====== */
+.sh-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 18px;
+}
+
+.sh-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #111827;
+}
+
+.sh-title i {
+    font-size: 1.1rem;
+    background: #fee2e2;
+    color: #b91c1c;
+    padding: 8px;
+    border-radius: 999px;
+}
+
+.sh-subtitle {
+    margin-top: 4px;
+    font-size: 0.9rem;
+    color: #6b7280;
+}
+
+/* ====== Empty state ====== */
+.sh-empty {
+    margin-top: 30px;
+    padding: 36px 26px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #f9fafb, #eff6ff);
+    text-align: center;
+    box-shadow: 0 10px 25px rgba(15, 23, 42, 0.06);
+}
+
+.sh-empty-icon {
+    width: 52px;
+    height: 52px;
+    margin: 0 auto 10px;
+    border-radius: 999px;
+    background: #e5e7eb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #4b5563;
+    font-size: 1.4rem;
+}
+
+.sh-empty h2 {
+    font-size: 1.1rem;
+    color: #111827;
+    margin-bottom: 4px;
+}
+
+.sh-empty p {
+    font-size: 0.9rem;
+    color: #6b7280;
+}
+
+/* ====== List container ====== */
+.sh-list {
+    margin-top: 18px;
+    display: grid;
+    gap: 16px;
+}
+
+/* ====== Cards ====== */
+.sh-card {
+    background: #ffffff;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 8px 18px rgba(15, 23, 42, 0.04);
+    border: 1px solid #e5e7eb;
+}
+
+.sh-card-topbar {
+    height: 4px;
+    background: linear-gradient(90deg, #ef4444, #f97316);
+}
+
+.sh-card-body {
+    padding: 16px 18px 10px;
+}
+
+.sh-card-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    align-items: flex-start;
+}
+
+/* vehicle + service */
+.sh-vehicle {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 600;
+    color: #111827;
+    font-size: 0.95rem;
+}
+
+.sh-vehicle i {
+    color: #ef4444;
+}
+
+.sh-service-type {
+    margin-top: 3px;
+    font-size: 0.85rem;
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: #fef2f2;
+    color: #b91c1c;
+    display: inline-block;
+}
+
+/* status + chips */
+.sh-chip-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: flex-end;
+}
+
+.sh-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 9px;
+    border-radius: 999px;
+    background: #f3f4f6;
+    color: #374151;
+    font-size: 0.8rem;
+}
+
+.sh-chip i {
+    font-size: 0.8rem;
+}
+
+/* description */
+.sh-desc {
+    margin: 10px 0 8px;
+    font-size: 0.88rem;
+    color: #4b5563;
+}
+
+/* meta grid */
+.sh-meta-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px 24px;
+    margin-top: 4px;
+}
+
+.sh-label {
+    font-size: 0.78rem;
+    color: #9ca3af;
+    margin-bottom: 2px;
+}
+
+.sh-value {
+    font-size: 0.9rem;
+    color: #111827;
+}
+
+/* ====== Status pills ====== */
+.sh-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 11px;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    border: 1px solid transparent;
+}
+
+.sh-status .dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 999px;
+}
+
+/* completed */
+.sh-status--completed {
+    background: #dcfce7;
+    border-color: #bbf7d0;
+    color: #166534;
+}
+
+.sh-status--completed .dot {
+    background: #22c55e;
+}
+
+/* in progress */
+.sh-status--inprogress {
+    background: #dbeafe;
+    border-color: #bfdbfe;
+    color: #1d4ed8;
+}
+
+.sh-status--inprogress .dot {
+    background: #3b82f6;
+}
+
+/* cancelled */
+.sh-status--cancelled {
+    background: #fee2e2;
+    border-color: #fecaca;
+    color: #b91c1c;
+}
+
+.sh-status--cancelled .dot {
+    background: #ef4444;
+}
+
+/* other */
+.sh-status--other {
+    background: #f3f4f6;
+    border-color: #e5e7eb;
+    color: #374151;
+}
+
+.sh-status--other .dot {
+    background: #6b7280;
+}
+
+/* ====== Footer & buttons ====== */
+.sh-card-footer {
+    padding: 10px 18px 12px;
+    border-top: 1px solid #e5e7eb;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.sh-btn-outline {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    border: 1px solid #ef4444;
+    background: #ffffff;
+    color: #b91c1c;
+    font-size: 0.85rem;
+    text-decoration: none;
+    transition: background 0.15s ease, color 0.15s ease;
+}
+
+.sh-btn-outline i {
+    font-size: 0.85rem;
+}
+
+.sh-btn-outline:hover {
+    background: #fef2f2;
+    color: #991b1b;
+}
+
+/* ====== Responsive ====== */
+@media (max-width: 768px) {
+    .sh-main {
+        padding: 16px;
+    }
+
+    .sh-meta-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .sh-card-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .sh-card-footer {
+        justify-content: flex-start;
+    }
+}

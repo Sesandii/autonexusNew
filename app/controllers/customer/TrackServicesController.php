@@ -16,13 +16,11 @@ class TrackServicesController extends Controller
 
         $userId = (int)($_SESSION['user_id'] ?? 0);
 
-        // initial dataset for first render
-        $model = new ServiceTracking();
-        $services = $model->searchByCustomer(
-            $userId,
-            (string)($_GET['q'] ?? ''),              // optional prefilled query
-            (string)($_GET['status'] ?? 'All')       // All | Pending | In Progress | Completed
-        );
+        $q      = (string)($_GET['q']      ?? '');
+        $status = (string)($_GET['status'] ?? 'All');
+
+        $model    = new ServiceTracking();
+        $services = $model->searchByCustomer($userId, $q, $status);
 
         $this->view('customer/track-services/index', [
             'title'    => 'Track Services',
@@ -30,7 +28,7 @@ class TrackServicesController extends Controller
         ]);
     }
 
-    // Optional: JSON endpoint used by the JS to filter without full reload
+    // JSON endpoint used by JS to filter without full page reload
     public function list(): void
     {
         if (method_exists($this, 'requireCustomer')) {
@@ -40,7 +38,7 @@ class TrackServicesController extends Controller
         header('Content-Type: application/json; charset=utf-8');
 
         $userId = (int)($_SESSION['user_id'] ?? 0);
-        $q      = (string)($_GET['q'] ?? '');
+        $q      = (string)($_GET['q']      ?? '');
         $status = (string)($_GET['status'] ?? 'All');
 
         $model = new ServiceTracking();
