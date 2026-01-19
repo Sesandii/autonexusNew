@@ -13,25 +13,25 @@
      <img src="/autonexus/public/assets/img/Auto.png" alt="Logo" class="logo">
      </div>
       <h2>AUTONEXUS</h2>
-      <a href="/autonexus/supervisor/dashboard" class="nav">
+      <a href="<?= $base ?>/supervisor/dashboard" class="nav">
       <img src="/autonexus/public/assets/img/dashboard.png"/>Dashboard
     </a>
-    <a href="/autonexus/supervisor/workorders" >
+    <a href="<?= $base ?>/supervisor/workorders">
       <img src="/autonexus/public/assets/img/jobs.png"/>Work Orders
     </a>
-    <a href="/autonexus/supervisor/assignedjobs">
+    <a href="<?= $base ?>/supervisor/assignedjobs">
       <img src="/autonexus/public/assets/img/assigned.png"/>Assigned 
     </a>
-    <a href="/autonexus/supervisor/history">
+    <a href="<?= $base ?>/supervisor/history">
       <img src="/autonexus/public/assets/img/history.png"/>Vehicle History
     </a>
-    <a href="/autonexus/supervisor/complaints">
+    <a href="<?= $base ?>/supervisor/complaints">
       <img src="/autonexus/public/assets/img/Complaints.png"/>Complaints
      </a>
-      <a href="/autonexus/supervisor/feedbacks">
+      <a href="<?= $base ?>/supervisor/feedbacks">
       <img src="/autonexus/public/assets/img/Feedbacks.png"/>Feedbacks
      </a>
-      <a href="/autonexus/supervisor/reports">
+      <a href="<?= $base ?>/supervisor/reports">
        <img src="/autonexus/public/assets/img/Inspection.png"/>Report
      </a>
     </div>
@@ -40,23 +40,21 @@
       <header>
         <input type="text" placeholder="Search..." class="search" />
         <div class="user-profile">
-      <!-- User Menu -->
-      <div class="user">
-        <img src="/autonexus/public/assets/img/user.png" alt="User" class="user-img" />
-        <div class="user-menu">
-          <span id="user-name">John Doe</span>
-          <ul id="dropdown" class="dropdown hidden">
-            <li><a href="#">Edit Profile</a></li>
-            <li><a href="<?= $base ?>/logout">Sign Out</a></li>
-            <!-- <li><a href="..\Signin\index.html">Sign Out</a></li> -->
-          </ul>
+          <div class="user">
+            <img src="/autonexus/public/assets/img/user.png" alt="User" class="user-img" />
+            <div class="user-menu">
+              <span id="user-name"><?= htmlspecialchars($_SESSION['user']['name'] ?? 'Supervisor') ?></span>
+              <ul id="dropdown" class="dropdown hidden">
+              <li><a href="<?= $base ?>/supervisor/profile/edit">Edit Profile</a></li>
+                <li><a href="<?= $base ?>/logout">Sign Out</a></li>
+              </ul>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
       </header>
 
       <section class="welcome">
-        <h2>Welcome, John Doe</h2>
+        <h2>Welcome, <?= htmlspecialchars($_SESSION['user']['name'] ?? 'Supervisor') ?></h2>
         <p>Here's an overview of your dashboard</p>
       </section>
 
@@ -66,8 +64,7 @@
             <img src="/autonexus/public/assets/img/done.png" class="card-icon" />
             <h3>Workorders Done</h3>
           </div>
-          <p>128</p>
-          <span class="change">+12.5% vs last month</span>
+          <p><?= (int)($stats['completed'] ?? 0) ?></p>
         </div>
 
         <div class="card blue">
@@ -75,8 +72,7 @@
             <img src="/autonexus/public/assets/img/assigned2.png" class="card-icon" />
             <h3>Assigned Jobs</h3>
           </div>
-          <p>45</p>
-          <span class="change">+8.2% vs last month</span>
+          <p><?= (int)($stats['total'] ?? 0) - (int)($stats['completed'] ?? 0) ?></p>
         </div>
 
         <div class="card red">
@@ -84,8 +80,7 @@
             <img src="/autonexus/public/assets/img/ongoing.png" class="card-icon" />
             <h3>Ongoing Workorders</h3>
           </div>
-          <p>32</p>
-          <span class="change">-1.8% vs last month</span>
+          <p><?= (int)($stats['ongoing'] ?? 0) ?></p>
         </div>
 
         <div class="card purple">
@@ -93,8 +88,7 @@
             <img src="/autonexus/public/assets/img/total.png" class="card-icon" />
             <h3>Total Workorders</h3>
           </div>
-          <p>205</p>
-          <span class="change">+6.4% vs last month</span>
+          <p><?= (int)($stats['total'] ?? 0) ?></p>
         </div>
       </section>
 
@@ -111,45 +105,36 @@
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td><img src="/autonexus/public/assets/img/user2.png" class="user-icon" /> James Wilson</td>
-              <td><img src="/autonexus/public/assets/img/car.png" class="icon-car" /> Toyota Camry (2019)</td>
-              <td>9:00 AM</td>
-              <td>Oil Change</td>
-              <td><span class="badge upcoming">Upcoming</span></td>
-            </tr>
-            <tr>
-              <td><img src="/autonexus/public/assets/img/user2.png" class="user-icon" /> Sarah Johnson</td>
-              <td><img src="/autonexus/public/assets/img/car.png" class="icon-car" /> Honda Civic (2020)</td>
-              <td>10:30 AM</td>
-              <td>Tire Rotation</td>
-              <td><span class="badge upcoming">Upcoming</span></td>
-            </tr>
-            <tr>
-              <td><img src="/autonexus/public/assets/img/user2.png" class="user-icon" /> Robert Brown</td>
-              <td><img src="/autonexus/public/assets/img/car.png" class="icon-car" /> Ford F-150 (2018)</td>
-              <td>11:45 AM</td>
-              <td>Brake Inspection</td>
-              <td><span class="badge confirmed">Confirmed</span></td>
-            </tr>
-            <tr>
-              <td><img src="/autonexus/public/assets/img/user2.png" class="user-icon" /> Emily Davis</td>
-              <td><img src="/autonexus/public/assets/img/car.png" class="icon-car" /> Chevrolet Equinox (2021)</td>
-              <td>2:15 PM</td>
-              <td>Full Inspection</td>
-              <td><span class="badge confirmed">Confirmed</span></td>
-            </tr>
-            <tr>
-              <td><img src="/autonexus/public/assets/img/user2.png" class="user-icon" /> Michael Thompson</td>
-              <td><img src="/autonexus/public/assets/img/car.png" class="icon-car" /> Nissan Altima (2017)</td>
-              <td>4:00 PM</td>
-              <td>Engine Diagnostics</td>
-              <td><span class="badge waiting">Waiting</span></td>
-            </tr>
+            <?php if (empty($appointments)): ?>
+              <tr>
+                <td colspan="5">No appointments today</td>
+              </tr>
+            <?php else: ?>
+              <?php foreach ($appointments as $a): ?>
+              <tr>
+                <td>
+                  <img src="/autonexus/public/assets/img/user2.png" class="user-icon" /> 
+                  <?= htmlspecialchars($a['client_name'] ?? 'N/A') ?>
+                </td>
+                <td>
+                  <img src="/autonexus/public/assets/img/car.png" class="icon-car" /> 
+                  <?= htmlspecialchars($a['vehicle'] ?? 'N/A') ?>
+                </td>
+                <td><?= htmlspecialchars($a['appointment_time'] ?? '') ?></td>
+                <td><?= htmlspecialchars($a['service_name'] ?? 'N/A') ?></td>
+                <td>
+                  <span class="badge <?= strtolower($a['status'] ?? '') ?>">
+                    <?= ucfirst($a['status'] ?? 'Unknown') ?>
+                  </span>
+                </td>
+              </tr>
+              <?php endforeach; ?>
+            <?php endif; ?>
           </tbody>
         </table>
       </section>
     </main>
+
   <script src="/autonexus/public/assets/js/supervisor/script-dashboard.js"></script>
 </body>
 </html>

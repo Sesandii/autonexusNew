@@ -29,27 +29,46 @@ class Appointment
     return $stmt->fetch(\PDO::FETCH_ASSOC);
 }
 
-public function getVehicleHistoryByLicense($licensePlate)
+public function getVehicleHistoryByLicense($licensePlate, $fromDate = null, $toDate = null)
 {
-    $sql = "SELECT 
-                a.appointment_id,
-                a.appointment_date,
-                a.appointment_time,
-                a.status,
-                s.name AS service_name,
-                s.description AS service_description,
-                s.default_price,
-                a.branch_id
-            FROM appointments a
-            JOIN vehicles v ON v.vehicle_id = a.vehicle_id
-            JOIN services s ON s.service_id = a.service_id
-            WHERE v.license_plate = :plate
-              AND a.status = 'completed'
-            ORDER BY a.appointment_date DESC";
+    $sql = "
+        SELECT 
+            a.appointment_id,
+            a.appointment_date,
+            a.appointment_time,
+            a.status,
+            a.updated_at,
+            s.name AS service_name,
+            s.description AS service_description,
+            s.default_price,
+            a.branch_id
+        FROM appointments a
+        JOIN vehicles v ON v.vehicle_id = a.vehicle_id
+        JOIN services s ON s.service_id = a.service_id
+        WHERE v.license_plate = :plate
+          AND a.status = 'completed'
+    ";
+
+    $params = ['plate' => $licensePlate];
+
+    // ✅ Filter by completion (updated_at)
+    if (!empty($fromDate)) {
+        $sql .= " AND DATE(a.updated_at) >= :fromDate";
+        $params['fromDate'] = $fromDate;
+    }
+
+    if (!empty($toDate)) {
+        $sql .= " AND DATE(a.updated_at) <= :toDate";
+        $params['toDate'] = $toDate;
+    }
+
+    $sql .= " ORDER BY a.updated_at DESC";
+
     $stmt = $this->db->prepare($sql);
-    $stmt->execute(['plate' => $licensePlate]);
+    $stmt->execute($params);
     return $stmt->fetchAll(\PDO::FETCH_ASSOC);
 }
+
 
 public function getAppointmentDetails($appointmentId)
 {
@@ -98,4 +117,40 @@ public function getAppointmentDetails($appointmentId)
     $stmt->execute(['id' => $appointmentId]);
     return $stmt->fetch(\PDO::FETCH_ASSOC);
 }  
+
+public function getVehicleHistoryByLicenseWithDateRange(
+    string $licensePlate,
+    string $fromDate,
+    string $toDate
+) {
+    $sql = "
+        SELECT 
+            a.appointment_id,
+            a.appointment_date,
+            a.appointment_time,
+            a.status,
+            s.name AS service_name,
+            s.description AS service_description,
+            s.default_price,
+            a.branch_id,
+            a.updated_at
+        FROM appointments a
+        JOIN vehicles v ON v.vehicle_id = a.vehicle_id
+        JOIN services s ON s.service_id = a.service_id
+        WHERE v.license_plate = :plate
+          AND a.status = 'completed'
+          AND DATE(a.updated_at) BETWEEN :fromDate AND :toDate
+        ORDER BY a.updated_at DESC
+    ";
+
+    $stmt = $this->db->prepare($sql);
+    $stmt->execute([
+        'plate' => $licensePlate,
+        'fromDate' => $fromDate,
+        'toDate' => $toDate
+    ]);
+
+    return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+}
+
 }

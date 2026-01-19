@@ -287,3 +287,80 @@ button.view-btn:hover {
   gap: 8px;
   margin-top: 14px;
 }
+
+
+/* Grid layout */
+.job-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 22px;
+  margin-top: 20px;
+}
+
+/* Card */
+.job-card {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 20px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.job-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.08);
+}
+
+/* Title */
+.job-title {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 14px;
+  color: #111827;
+}
+
+/* Info rows */
+.job-info {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  padding: 6px 0;
+  color: #374151;
+}
+
+.job-info span {
+  font-weight: 600;
+  color: #6b7280;
+}
+
+/* Status */
+.job-info.status {
+  margin-top: 6px;
+  padding-top: 8px;
+  border-top: 1px dashed #e5e7eb;
+  font-weight: 700;
+}
+
+/* Actions */
+.job-actions {
+  margin-top: 16px;
+  text-align: right;
+}
+
+/* View button */
+.view-btn {
+  display: inline-block;
+  padding: 8px 16px;
+  border-radius: 10px;
+  background: #2563eb;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.2s ease;
+}
+
+.view-btn:hover {
+  background: #1e40af;
+}

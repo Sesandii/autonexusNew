@@ -66,3 +66,5 @@ nextBtn.addEventListener("click", () => {
 });
 
 renderCalendar(currentMonth, currentYear);
+
+

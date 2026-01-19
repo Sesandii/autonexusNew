@@ -45,15 +45,6 @@
   margin-top: 20px;
 }
 
-.cancel-button {
-  padding: 6px 16px;
-  border-radius: 5px;
-  border: none;
-  background-color: #ccc;
-  cursor: pointer;
-  font-size: 14px;
-}
-
 .save-button {
   padding: 6px 16px;
   border-radius: 5px;

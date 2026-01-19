@@ -3,28 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Complaints Management</title>
-  <link rel="stylesheet" href="<?= BASE_URL ?>/public/assets/r_css/sidebar.css">
-  <link rel="stylesheet" href="<?= BASE_URL ?>/public/assets/r_css/complaintsReceptionist.css">
+  <title>Complaints Management</title>  
+  <link rel="stylesheet" href="<?= BASE_URL ?>/public/assets/css/receptionist/sidebar.css">
+  <link rel="stylesheet" href="<?= BASE_URL ?>/public/assets/css/receptionist/complaintsReceptionist.css">
 </head>
+
 <body>
   <!-- Sidebar -->
-  <div class="sidebar">
-    <div class="logo">
-      <img src="<?= BASE_URL ?>/public/assets/img/Auto.png" alt="AutoNexus Logo">
-      <h2>AUTONEXUS</h2>
-      <p>VEHICLE SERVICE</p>
-    </div>
-    <ul class="menu">
-      <li><a href="<?= BASE_URL ?>/receptionist/dashboard">Dashboard</a></li>
-      <li><a href="<?= BASE_URL ?>/receptionist/appointments">Appointments</a></li>
-      <li><a href="<?= BASE_URL ?>/receptionist/service">Service & Packages</a></li>
-      <li class="active"><a href="<?= BASE_URL ?>/receptionist/complaints">Complaints</a></li>
-      <li><a href="<?= BASE_URL ?>/receptionist/billing">Billing & Payments</a></li>
-      <li><a href="<?= BASE_URL ?>/receptionist/customers">Customer Profiles</a></li>
-      <li><a href="<?= rtrim(BASE_URL, '/') ?>/logout">Sign Out</a></li>
-    </ul>
-  </div>
+  <?php include APP_ROOT . '/views/layouts/receptionist-sidebar.php'; ?>
 
   <!-- Main content -->
   <div class="main">
@@ -60,16 +46,28 @@
                data-status="<?= strtolower($complaint['status']) ?>">
 
             <div class="complaint-info">
-              <h3>🚨 <?= $title ?></h3>
-              <p><?= $description ?></p>
-              <span class="meta">
-                <?= htmlspecialchars($complaint['customer_name']) ?> · 
-                <?= htmlspecialchars($complaint['vehicle']) ?> · 
-                <?= date('M d, Y', strtotime($complaint['complaint_date'])) ?>
-              </span>
-            </div>
+    <!-- Complaint title -->
+            <h3>🚨 <?= htmlspecialchars($title) ?></h3>
 
-            <div class="status assigned">Assigned: <?= htmlspecialchars($complaint['assigned_to']) ?></div>
+            <!-- Complaint description -->
+            <p><?= htmlspecialchars($description) ?></p>
+
+            <!-- Customer name, vehicle, and date -->
+            <?php
+                $customerName = $complaint['customer_name'] ?? 'Unknown Customer';
+                $vehicleName  = $complaint['vehicle'] ?? 'No Vehicle';
+                $complaintDate = isset($complaint['complaint_date']) ? date('M d, Y', strtotime($complaint['complaint_date'])) : 'No Date';
+                $assignedTo = $complaint['assigned_to'] ?? 'Unassigned';
+            ?>
+            <span class="meta">
+                <?= htmlspecialchars($customerName) ?> · <?= htmlspecialchars($vehicleName) ?> · <?= $complaintDate ?>
+            </span>
+
+            <!-- Assigned to -->
+            <div class="status assigned">Assigned: <?= htmlspecialchars($assignedTo) ?></div>
+        </div>
+
+           
             <div class="badge <?= $statusClass ?>"><?= htmlspecialchars($complaint['status']) ?></div>
 
             <!-- Actions: Delete icon -->
@@ -89,6 +87,6 @@
     </div>
   </div>
 
-  <script src="<?= BASE_URL ?>/public/assets/r_js/complaintsReceptionist.js"></script>
+  <script src="<?= BASE_URL ?>/public/assets/js/receptionist/complaintsReceptionist.js"></script>
 </body>
 </html>

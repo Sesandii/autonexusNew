@@ -1,65 +1,76 @@
-// Select elements
-const saveBtn = document.querySelector(".save-button");
-const cancelBtn = document.querySelector(".cancel-button");
+document.addEventListener("DOMContentLoaded", () => {
 
-// Input fields
-const customerInput = document.getElementById("customer");
-const phoneInput = document.getElementById("phone");
-const vehicleNumberInput = document.getElementById("vehicle-number");
-const vehicleInput = document.getElementById("vehicle");
-const serviceInput = document.getElementById("service");
-const statusSelect = document.getElementById("status");
+  const saveBtn = document.querySelector(".save-button");
+  const cancelBtn = document.querySelector(".cancel-button");
 
-// Save button click
-saveBtn.addEventListener("click", () => {
-  // Check if any field is empty
-  if (
-    !customerInput.value.trim() ||
-    !phoneInput.value.trim() ||
-    !vehicleNumberInput.value.trim() ||
-    !vehicleInput.value.trim() ||
-    !serviceInput.value.trim() ||
-    !statusSelect.value
-  ) {
-    alert("Please fill in all the details.");
-    return; // stop further action
+  // Save button validation
+  if (saveBtn) {
+    saveBtn.addEventListener("click", () => {
+      const requiredFields = [
+        document.getElementById("customer"),
+        document.getElementById("phone"),
+        document.getElementById("vehicle-number"),
+        document.getElementById("vehicle"),
+        document.getElementById("service"),
+        document.getElementById("status"),
+      ];
+
+      for (let field of requiredFields) {
+        if (!field || !field.value.trim()) {
+          alert("Please fill in all the details.");
+          return;
+        }
+      }
+
+      alert("Appointment saved successfully!");
+    });
   }
 
-  // If all fields are filled, you can add save logic here
-  alert("Appointment saved successfully!");
-  // Optionally, you can redirect after saving
-  // window.location.href = "anotherPage.html";
-});
-
-// Cancel button click
-document.addEventListener("DOMContentLoaded", () => {
-    const cancelBtn = document.querySelector(".cancel-button");
-
+  // Cancel button redirect
+  if (cancelBtn) {
     cancelBtn.addEventListener("click", () => {
-        window.location.href = `${BASE_URL}/public/receptionist/customers/`;
+      window.location.href = `${BASE_URL}/receptionist/customers`;
     });
-});
+  }
 
-const addVehicleBtn = document.getElementById('add-vehicle');
-const vehiclesContainer = document.getElementById('vehicles-container');
+  // -------------------------------
+  // Vehicle Add / Remove
+  // -------------------------------
 
-addVehicleBtn.addEventListener('click', () => {
-  const div = document.createElement('div');
-  div.classList.add('vehicle-entry');
-  div.innerHTML = `
-    <input type="text" name="vehicle[]" placeholder="Vehicle Name">
-    <input type="text" name="vehicle-number[]" placeholder="Vehicle Number">
-    <button type="button" class="remove-vehicle">❌</button>
-  `;
-  vehiclesContainer.appendChild(div);
+  const addVehicleBtn = document.getElementById("add-vehicle");
+  const vehiclesContainer = document.getElementById("vehicles-container");
 
-  // Add remove functionality
-  div.querySelector('.remove-vehicle').addEventListener('click', () => {
-    div.remove();
-  });
-});
+  let vehicleIndex = 1;
 
-// Remove button for existing entries
-vehiclesContainer.querySelectorAll('.remove-vehicle').forEach(btn => {
-  btn.addEventListener('click', e => e.target.parentElement.remove());
+  if (addVehicleBtn && vehiclesContainer) {
+    addVehicleBtn.addEventListener("click", () => {
+
+      const div = document.createElement("div");
+      div.classList.add("vehicle-entry");
+
+      div.innerHTML = `
+        <input type="text" name="vehicles[${vehicleIndex}][license_plate]" placeholder="License Plate" required>
+        <input type="text" name="vehicles[${vehicleIndex}][make]" placeholder="Make">
+        <input type="text" name="vehicles[${vehicleIndex}][model]" placeholder="Model">
+        <input type="text" name="vehicles[${vehicleIndex}][year]" placeholder="Year">
+        <input type="text" name="vehicles[${vehicleIndex}][color]" placeholder="Color">
+        <button type="button" class="remove-vehicle">❌</button>
+      `;
+
+      vehicleIndex++;
+      vehiclesContainer.appendChild(div);
+
+      // Add remove handler
+      div.querySelector(".remove-vehicle").addEventListener("click", () => {
+        div.remove();
+      });
+
+    });
+
+    // Existing delete buttons (first row)
+    vehiclesContainer.querySelectorAll(".remove-vehicle").forEach(btn => {
+      btn.addEventListener("click", e => e.target.parentElement.remove());
+    });
+  }
+
 });

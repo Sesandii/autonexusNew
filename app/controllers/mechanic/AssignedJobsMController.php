@@ -1,8 +1,10 @@
 <?php
 namespace app\controllers\mechanic;
 
+use PDO;
+
 use app\core\Controller;
-use \app\model\mechanic\WorkOrder;
+use app\model\mechanic\WorkOrder;
 
 class AssignedJobsMController extends Controller
 {
@@ -13,31 +15,31 @@ class AssignedJobsMController extends Controller
     }
 
     public function index()
-    {
-        if (session_status() !== PHP_SESSION_ACTIVE) session_start();
+{
+    if (session_status() !== PHP_SESSION_ACTIVE) session_start();
 
-        // Get mechanic_id from session
-        $mechanic_id = $_SESSION['user']['mechanic_id'] ?? null;
+    $user_id = $_SESSION['user']['user_id'] ?? null;
+    if (!$user_id) die("User ID missing in session");
 
-        if (!$mechanic_id) {
-            die("Mechanic ID missing in session");
-        }
+    // Get all mechanic IDs for this user
+    $db = db();
+    $stmt = $db->prepare("SELECT mechanic_id FROM mechanics WHERE user_id = ?");
+    $stmt->execute([$user_id]);
+    $mechanic_ids = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
-        // Fetch assigned work orders
-        $workOrders = WorkOrder::getAssignedJobs($mechanic_id);
+    // Fetch assigned jobs for all mechanic IDs
+    $workOrders = \app\model\mechanic\WorkOrder::getAssignedJobsMultiple($mechanic_ids);
 
-        // Pass to view
-        $this->view('mechanic/assignedjobs/index', [
-            'workOrders' => $workOrders
-        ]);
-    }
+    $this->view('mechanic/assignedjobs/index', [
+        'workOrders' => $workOrders
+    ]);
+}
 
     private function requireMechanic(): void
     {
         if (session_status() !== PHP_SESSION_ACTIVE) session_start();
 
         $u = $_SESSION['user'] ?? null;
-
         if (!$u || (($u['role'] ?? '') !== 'mechanic')) {
             header('Location: ' . rtrim(BASE_URL, '/') . '/login');
             exit;

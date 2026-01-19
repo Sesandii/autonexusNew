@@ -225,3 +225,96 @@ button.view-btn:hover {
   height: 20px;
   object-fit: contain;
 }
+
+
+
+.complaints-section h2 {
+  margin-bottom: 15px;
+  font-size: 22px;
+}
+
+.complaints-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.complaint-row {
+  background: #fff;
+  border-radius: 15px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  transition: 0.3s ease;
+  width: 100%;
+}
+
+.complaint-row:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.12);
+}
+
+.complaint-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.complaint-header h3 {
+  margin: 0;
+  font-size: 20px;
+  color: #222;
+}
+
+.meta {
+  color: #555;
+  font-size: 14px;
+  margin-top: 4px;
+}
+
+.description {
+  margin: 15px 0;
+  line-height: 1.6;
+  color: #444;
+  font-size: 15px;
+}
+
+.complaint-footer {
+  display: flex;
+  justify-content: space-between;
+  border-top: 1px solid #eee;
+  padding-top: 10px;
+  font-size: 14px;
+  color: #333;
+}
+
+.priority {
+  padding: 6px 12px;
+  border-radius: 20px;
+  color: #fff;
+  font-size: 13px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.priority.high {
+  background-color: #ff0000;
+}
+.priority.medium {
+  background-color: #f1c40f;
+  color: #000;
+}
+.priority.low {
+  background-color: #2ecc71;
+}
+
+.status {
+  color: #3498db;
+  font-weight: 600;
+}
+
+.no-data {
+  font-size: 16px;
+  color: #777;
+  text-align: center;
+  padding: 20px 0;
+}

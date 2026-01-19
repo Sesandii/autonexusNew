@@ -14,15 +14,12 @@
      </div>
 <h2>AUTONEXUS</h2>
 <a href="/autonexus/supervisor/dashboard"><img src="/autonexus/public/assets/img/dashboard.png"/>Dashboard</a>
-<a href="/autonexus/supervisor/workorders" class="nav active">
-  <img src="/autonexus/public/assets/img/jobs.png"/>Work Orders
-</a>
-
-     <a href="/autonexus/supervisor/assignedjobs"><img src="/autonexus/public/assets/img/assigned.png"/>Assigned Jobs</a>
-     <a href="/autonexus/supervisor/history"><img src="/autonexus/public/assets/img/history.png"/>Vehicle History</a>
-     <a href="/autonexus/supervisor/complaints"><img src="/autonexus/public/assets/img/Complaints.png"/>Complaints</a>
-     <a href="/autonexus/supervisor/feedbacks"><img src="/autonexus/public/assets/img/Feedbacks.png"/>Feedbacks</a>
-     <a href="/autonexus/supervisor/reports"><img src="/autonexus/public/assets/img/Inspection.png"/>Report</a>
+<a href="/autonexus/supervisor/workorders" class="nav active"><img src="/autonexus/public/assets/img/jobs.png"/>Work Orders</a>
+<a href="/autonexus/supervisor/assignedjobs"><img src="/autonexus/public/assets/img/assigned.png"/>Assigned Jobs</a>
+<a href="/autonexus/supervisor/history"><img src="/autonexus/public/assets/img/history.png"/>Vehicle History</a>
+<a href="/autonexus/supervisor/complaints"><img src="/autonexus/public/assets/img/Complaints.png"/>Complaints</a>
+<a href="/autonexus/supervisor/feedbacks"><img src="/autonexus/public/assets/img/Feedbacks.png"/>Feedbacks</a>
+<a href="/autonexus/supervisor/reports"><img src="/autonexus/public/assets/img/Inspection.png"/>Report</a>
 </div>
 
 <main class="container">
@@ -43,13 +40,13 @@
             <option value="">-- choose appointment --</option>
             <?php foreach ($availableAppointments as $a): ?>
               <option
-                value="<?= (int)$a['appointment_id'] ?>"
-                data-service="<?= htmlspecialchars($a['service_name'] ?? '', ENT_QUOTES) ?>"
-                data-price="<?= htmlspecialchars($a['default_price'] ?? '0', ENT_QUOTES) ?>"
-                data-datetime="<?= htmlspecialchars(($a['appointment_date'] ?? '') . ' ' . ($a['appointment_time'] ?? ''), ENT_QUOTES) ?>"
-              >
-                #<?= (int)$a['appointment_id'] ?> — <?= htmlspecialchars($a['appointment_date'] ?? '') ?> <?= htmlspecialchars($a['appointment_time'] ?? '') ?> — <?= htmlspecialchars($a['service_name'] ?? '') ?>
-              </option>
+    value="<?= (int)$a['appointment_id'] ?>"
+    data-service="<?= htmlspecialchars($a['service_name'] ?? '', ENT_QUOTES) ?>"
+    data-service-id="<?= (int)($a['service_id'] ?? 0) ?>"
+    data-datetime="<?= htmlspecialchars(($a['appointment_date'] ?? '') . ' ' . ($a['appointment_time'] ?? ''), ENT_QUOTES) ?>">
+    <?= (int)$a['appointment_id'] ?> — <?= htmlspecialchars($a['appointment_date'] ?? '') ?> <?= htmlspecialchars($a['appointment_time'] ?? '') ?> — <?= htmlspecialchars($a['service_name'] ?? '') ?>
+</option>
+
             <?php endforeach; ?>
           </select>
           <div class="help">Only “requested/confirmed” appointments are shown.</div>
@@ -71,29 +68,21 @@
           <label>Service (from appointment)</label>
           <input type="text" id="service_display" value="" readonly>
           <div class="help">This is derived from the selected appointment.</div>
-        </div>
-
-        <div class="form-group">
-          <label>Default Price</label>
-          <div class="input-addon">
-            <span>LKR</span>
-            <input type="number" id="service_price" value="0" readonly>
-          </div>
-          <div class="help">You can override with “Total Cost” below if needed.</div>
-        </div>
+            </div>
 
         <div class="form-group" style="grid-column:1/-1">
           <label>Service Summary</label>
           <textarea name="service_summary" placeholder="Notes, observations, extra work…"></textarea>
         </div>
 
-        <div class="form-group">
-          <label>Total Cost</label>
-          <div class="input-addon">
-            <span>LKR</span>
-            <input type="number" step="0.01" name="total_cost" id="total_cost" value="0">
-          </div>
-        </div>
+        <div class="form-group checklist-box">
+    <label class="checklist-title">Service Checklist</label>
+
+    <ul id="checklist-display" class="checklist">
+        <li class="placeholder">Select an appointment to see the checklist</li>
+    </ul>
+</div>
+
 
         <div class="form-group">
           <label>Status</label>
@@ -115,27 +104,46 @@
 </main>
 
 <script>
-  (function(){
+(function () {
     const appt = document.getElementById('appointment_id');
     const svc  = document.getElementById('service_display');
-    const prc  = document.getElementById('service_price');
+    const checklistDisplay = document.getElementById('checklist-display');
 
-    function applyFromOption(opt){
-      const name  = opt?.dataset.service || '';
-      const price = opt?.dataset.price || '0';
-      svc.value = name;
-      prc.value = price;
-      if (!tot.value || +tot.value === 0) tot.value = price; // prefill total if empty/zero
+    // Templates passed from backend
+    const templates = <?= json_encode($allTemplates ?? []) ?>;
+
+    function applyFromOption(opt) {
+        const name = opt?.dataset.service || '';
+        svc.value = name;
+
+        checklistDisplay.innerHTML = '';
+        const serviceId = opt?.dataset.serviceId;
+
+        if (serviceId && templates[serviceId]) {
+            templates[serviceId].forEach(step => {
+                const li = document.createElement('li');
+                li.textContent = step.step_name;
+                checklistDisplay.appendChild(li);
+            });
+        } else {
+            const li = document.createElement('li');
+            li.textContent = 'No checklist defined for this service';
+            checklistDisplay.appendChild(li);
+        }
     }
 
-    appt.addEventListener('change', e => {
-      const o = appt.options[appt.selectedIndex];
-      applyFromOption(o);
+    appt.addEventListener('change', function () {
+        const o = appt.options[appt.selectedIndex];
+        applyFromOption(o);
     });
 
-    // initialize if already selected by browser restore
-    if (appt.value) applyFromOption(appt.options[appt.selectedIndex]);
-  })();
+    // If browser restores selected value
+    if (appt.value) {
+        applyFromOption(appt.options[appt.selectedIndex]);
+    }
+})();
+
 </script>
+
 </body>
 </html>

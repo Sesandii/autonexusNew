@@ -27,44 +27,48 @@
 <main class="container">
   <h1>Vehicle Service Details</h1>
 
+  <div class="details-wrapper">
+
   <!-- Vehicle Info -->
-  <div class="card">
-    <h3>Vehicle Information</h3>
+  <div class="card info-card">
+    <h3 class="card-title">Vehicle Information</h3>
     <p><b>License Plate:</b> <?= htmlspecialchars($details['license_plate']) ?></p>
     <p><b>Make & Model:</b> <?= htmlspecialchars($details['make'] . ' ' . $details['model']) ?></p>
     <p><b>Year:</b> <?= htmlspecialchars($details['year'] ?? '—') ?></p>
     <p><b>Color:</b> <?= htmlspecialchars($details['color'] ?? '—') ?></p>
-    <p><b>Status:</b> <?= htmlspecialchars($details['vehicle_status']) ?></p>
+    <p><b>Status:</b> <span class="status"><?= htmlspecialchars($details['vehicle_status']) ?></span></p>
   </div>
 
   <!-- Appointment Info -->
-  <div class="card">
-    <h3>Appointment Information</h3>
+  <div class="card info-card">
+    <h3 class="card-title">Appointment Information</h3>
     <p><b>Date:</b> <?= htmlspecialchars($details['appointment_date']) ?> at <?= htmlspecialchars($details['appointment_time']) ?></p>
-    <p><b>Status:</b> <?= htmlspecialchars($details['appointment_status']) ?></p>
+    <p><b>Status:</b> <span class="status"><?= htmlspecialchars($details['appointment_status']) ?></span></p>
     <p><b>Notes:</b> <?= htmlspecialchars($details['notes'] ?? 'None') ?></p>
   </div>
 
   <!-- Service Info -->
-  <div class="card">
-    <h3>Service Information</h3>
+  <div class="card info-card">
+    <h3 class="card-title">Service Information</h3>
     <p><b>Service Name:</b> <?= htmlspecialchars($details['service_name']) ?></p>
     <p><b>Description:</b> <?= htmlspecialchars($details['service_description'] ?? '—') ?></p>
-    <p><b>Base Price:</b> Rs. <?= htmlspecialchars($details['default_price']) ?></p>
+    <p><b>Base Price:</b> <span class="price">Rs. <?= htmlspecialchars($details['default_price']) ?></span></p>
   </div>
 
   <!-- Work Order Info -->
-  <div class="card">
-    <h3>Work Order Information</h3>
+  <div class="card info-card">
+    <h3 class="card-title">Work Order Information</h3>
     <p><b>Mechanic ID:</b> <?= htmlspecialchars($details['mechanic_id'] ?? '—') ?></p>
     <p><b>Summary:</b> <?= htmlspecialchars($details['service_summary'] ?? '—') ?></p>
-    <p><b>Total Cost:</b> Rs. <?= htmlspecialchars($details['total_cost'] ?? '0') ?></p>
-    <p><b>Status:</b> <?= htmlspecialchars($details['work_order_status'] ?? '—') ?></p>
+    <p><b>Total Cost:</b> <span class="price">Rs. <?= htmlspecialchars($details['total_cost'] ?? '0') ?></span></p>
+    <p><b>Status:</b> <span class="status"><?= htmlspecialchars($details['work_order_status'] ?? '—') ?></span></p>
     <p><b>Started:</b> <?= htmlspecialchars($details['started_at'] ?? '—') ?></p>
     <p><b>Completed:</b> <?= htmlspecialchars($details['completed_at'] ?? '—') ?></p>
   </div>
-  
-  <button onclick="history.back()" class="back-btn">← Back</button>
+
+</div>
+
+<button onclick="history.back()" class="back-btn">← Back</button>
 
 </main>
 

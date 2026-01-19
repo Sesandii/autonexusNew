@@ -130,6 +130,8 @@ header h1 {
   border-radius: 20px;
   font-size: 13px;
   font-weight: bold;
+  display: inline-block; /* Or inline-flex */
+  width: fit-content;    /* Forces the width to match the text length */
 }
 
 .status.pending {

@@ -4,34 +4,22 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Edit Complaint</title>
+  <link rel="stylesheet" href="<?= BASE_URL ?>/public/assets/css/receptionist/sidebar.css">
+  <link rel="stylesheet" href="<?= BASE_URL ?>/public/assets/css/receptionist/editComplaint.css?v=1.1">
+  </head>
   
-<link rel="stylesheet" href="<?= BASE_URL ?>/public/assets/r_css/editComplaint.css?v=1.1">
-
-  <link rel="stylesheet" href="<?= BASE_URL ?>/public/assets/r_css/sidebar.css">
-</head>
 <body>
-  <div class="sidebar">
-    <div class="logo">
-      <img src="<?= BASE_URL ?>/public/assets/img/Auto.png" alt="AutoNexus Logo">
-      <h2>AUTONEXUS</h2>
-      <p>VEHICLE SERVICE</p>
-    </div>
-    <ul class="menu">
-      <li><a href="<?= BASE_URL ?>/receptionist/dashboard">Dashboard</a></li>
-      <li><a href="<?= BASE_URL ?>/receptionist/appointments">Appointments</a></li>
-      <li><a href="<?= BASE_URL ?>/receptionist/service">Service & Packages</a></li>
-      <li class="active"><a href="<?= BASE_URL ?>/receptionist/complaints">Complaints</a></li>
-      <li><a href="<?= BASE_URL ?>/receptionist/billing">Billing & Payments</a></li>
-      <li><a href="<?= BASE_URL ?>/receptionist/customers">Customer Profiles</a></li>
-      <li><a href="<?= rtrim(BASE_URL, '/') ?>/logout">Sign Out</a></li>
-    </ul>
-  </div>
+  
+<?php include APP_ROOT . '/views/layouts/receptionist-sidebar.php'; ?>
 
   <div class="main">
     <div class="details-section">
       <h3>Edit Complaint</h3>
       <form action="<?= BASE_URL ?>/receptionist/complaints/update/<?= $complaint['complaint_id'] ?>" method="POST">
-
+        
+        <input type="hidden" name="customer_id" id="customer_id" value="<?= $complaint['customer_id'] ?>">
+        <input type="hidden" name="user_id" id="user_id" value="<?= $complaint['user_id'] ?>">
+        
         <label for="customer_name">Name:</label>
         <input type="text" id="customer_name" name="customer_name" value="<?= htmlspecialchars($complaint['customer_name']) ?>" required>
 
@@ -39,13 +27,21 @@
         <input type="text" id="phone" name="phone" value="<?= htmlspecialchars($complaint['phone']) ?>" required>
 
         <label for="email">Email:</label>
+       
         <input type="email" id="email" name="email" value="<?= htmlspecialchars($complaint['email']) ?>">
 
-        <label for="vehicle">Vehicle:</label>
-        <input type="text" id="vehicle" name="vehicle" value="<?= htmlspecialchars($complaint['vehicle']) ?>">
+<label> Vehicle:</label>
+<div id="vehicle-container" data-complaint-vehicle-id="<?= $complaint['vehicle_id'] ?>"></div>
+<input type="hidden" name="vehicle_id" id="vehicle_id" value="<?= $complaint['vehicle_id'] ?>">
 
-        <label for="vehicle_number">License:</label>
-        <input type="text" id="vehicle_number" name="vehicle_number" value="<?= htmlspecialchars($complaint['vehicle_number']) ?>">
+<label for="vehicle_number">Vehicle Number:</label>
+<input type="text" id="vehicle_number" name="vehicle_number" value="<?= htmlspecialchars($complaint['vehicle_number']) ?>" readonly>
+
+<label>Date:</label>
+  <input type="date" name="complaint_date">
+
+  <label>Time:</label>
+  <input type="time" name="complaint_time">
 
         <label for="description">Description:</label>
         <textarea id="description" name="description" required><?= htmlspecialchars($complaint['description']) ?></textarea>
@@ -65,15 +61,18 @@
           <option value="Canceled" <?= $complaint['status'] == 'Canceled' ? 'selected' : '' ?>>Canceled</option>
         </select>
 
-        <label for="assigned_to">Assigned To:</label>
-        <input type="text" id="assigned_to" name="assigned_to" value="<?= htmlspecialchars($complaint['assigned_to']) ?>">
-
+      
         <div class="modal-footer">
           <a href="<?= BASE_URL ?>/receptionist/complaints" class="cancel-button">Cancel</a>
-          <button type="submit" class="save-button">💾 Save Changes</button>
+          <button type="submit" class="save-button"> Update </button>
         </div>
       </form>
     </div>
   </div>
+
+ <script>
+  const BASE_URL = "<?= BASE_URL ?>";
+</script>
+<script src="<?= BASE_URL ?>/public/assets/js/receptionist/editComplaint.js"></script>
 </body>
 </html>

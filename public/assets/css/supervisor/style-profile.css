@@ -1,0 +1,247 @@
+/* ================================= */
+/*        GLOBAL RESET & BASE        */
+/* ================================= */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+body {
+    height: 100vh;
+    background-color: #f8f9fc;
+    overflow-x: hidden; /* FIX: prevent horizontal overflow */
+}
+
+/* ================================= */
+/*           LOGO STYLING            */
+/* ================================= */
+.logo-container {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.logo {
+    width: 180px;
+    height: 80px;
+}
+
+/* ================================= */
+/*           MAIN CONTENT            */
+/* ================================= */
+.main-content {
+    margin-left: 220px; /* same as sidebar */
+    min-height: 100vh;
+    background: #f8f9fc;
+}
+
+/* ================================= */
+/*          SIDEBAR STYLING          */
+/* ================================= */
+.sidebar {
+    width: 220px;
+    background-color: #000;
+    color: white;
+    padding: 10px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+}
+
+.sidebar h2 {
+    font-size: 22px;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.sidebar a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 10px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    border-radius: 6px;
+    color: #d1d5db;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.sidebar a img {
+    width: 20px;
+    height: 20px;
+}
+
+.sidebar a.nav {
+    background-color: #1F2937;
+    color: #fff;
+}
+
+.sidebar a:hover {
+    background-color: #1F2937;
+    color: #fff;
+}
+
+/* ================================= */
+/*       MAIN CONTAINER STYLING      */
+/* ================================= */
+.container {
+    padding: 40px 60px;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* FIX: keeps form centered */
+    background: linear-gradient(135deg, #f8fafc, #eef2ff);
+}
+
+/* ================================= */
+/*          FORM CONTAINER           */
+/* ================================= */
+.profile-form {
+    width: 100%;
+    max-width: 820px;
+    background: #ffffff;
+    padding: 30px 35px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    position: relative;
+    margin-top: 30px;
+}
+
+/* Form top divider */
+.profile-form::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: linear-gradient(90deg, #f63b3b, #000000);
+    border-radius: 10px 10px 0 0;
+}
+
+/* ================================= */
+/*          FORM HEADING             */
+/* ================================= */
+.container h2 {
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    margin-bottom: 25px;
+    position: relative;
+    color: #111827;
+}
+
+.container h2::after {
+    content: "";
+    display: block;
+    width: 50px;
+    height: 3px;
+    background: #eb2525;
+    position: absolute;
+    left: 0;
+    bottom: -8px;
+    border-radius: 2px;
+}
+
+/* ================================= */
+/*         FORM GRID & INPUTS        */
+/* ================================= */
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr)); /* FIX */
+    gap: 18px 25px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group.full {
+    grid-column: span 2;
+}
+
+.form-group label {
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: #374151;
+}
+
+.form-group input {
+    padding: 10px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 14px;
+    background: #f9fafb;
+    transition: all 0.25s ease;
+    width: 100%;              /* FIX */
+    box-sizing: border-box;   /* FIX */
+}
+
+.form-group input:focus {
+    outline: none;
+    background: #ffffff;
+    border-color: #eb2525;
+    box-shadow: 0 0 0 2px rgba(37,99,235,0.15);
+}
+
+.form-group input[type="password"] {
+    letter-spacing: 0.5px;
+}
+
+/* ================================= */
+/*          FORM BUTTONS             */
+/* ================================= */
+.form-actions {
+    margin-top: 25px;
+    display: flex;
+    gap: 15px;
+}
+
+.form-actions button {
+    background: #eb2525;
+    color: #fff;
+    border: none;
+    padding: 10px 22px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.form-actions button:hover {
+    background: #1e40af;
+    transform: translateY(-1px);
+}
+
+.cancel-btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 10px 18px;
+    border-radius: 6px;
+    background: #f3f4f6;
+    color: #111827;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.cancel-btn:hover {
+    background: #e5e7eb;
+}
+
+/* ================================= */
+/*         ROW FLEX UTILITY          */
+/* ================================= */
+.row {
+    display: flex;
+    gap: 15px;
+}
+
+.field {
+    flex: 1;
+}
+

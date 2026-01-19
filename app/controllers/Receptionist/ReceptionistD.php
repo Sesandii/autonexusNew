@@ -7,7 +7,7 @@ class ReceptionistD extends Controller
 {
     public function index(): void
     {
-        $this->view('Receptionist/Dashboard/dashboard');
+        $this->view('Receptionist/Dashboard/index');
     }
 
 }

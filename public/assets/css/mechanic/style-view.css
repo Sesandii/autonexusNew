@@ -224,3 +224,107 @@ header {
   margin-bottom: 20px;
   color: #000;        
 }
+
+/* Page wrapper */
+.page-container {
+  max-width: 1000px;
+  margin: 30px auto;
+  padding: 0 16px;
+}
+
+/* Card layout */
+.card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 22px 24px;
+  margin-bottom: 22px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.06);
+}
+
+/* Section titles */
+.section-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 14px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+/* Info rows */
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 7px 0;
+  font-size: 14px;
+  color: #374151;
+}
+
+/* Labels */
+.label {
+  font-weight: 600;
+  color: #6b7280;
+}
+
+/* Status text */
+.status {
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  text-transform: capitalize;
+  background: #eef2ff;
+  color: #4338ca;
+}
+
+/* Dropdown */
+.status-dropdown {
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  font-size: 13px;
+  outline: none;
+  min-width: 160px;
+}
+
+/* Buttons */
+.btn {
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+  padding: 7px 14px;
+  border-radius: 10px;
+  font-weight: 600;
+}
+
+.btn-primary {
+  background: #2563eb;
+  color: #ffffff;
+}
+
+.btn-primary:hover {
+  background: #1e40af;
+}
+
+/* View-only text */
+.info-row span[style*="opacity"] {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+/* Customer name alignment */
+.card span.label + span {
+  font-size: 14px;
+  color: #374151;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .info-row {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 4px;
+  }
+}

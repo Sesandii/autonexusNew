@@ -7,6 +7,7 @@ date_default_timezone_set('Asia/Colombo');   // 👈 add this line
 define('BASE_PATH', dirname(__DIR__));              // C:\xampp\htdocs\autonexus
 define('APP_ROOT', BASE_PATH . '/app');             // C:\xampp\htdocs\autonexus\app
 define('CONFIG_PATH', BASE_PATH . '/config');       // C:\xampp\htdocs\autonexus\config
+
    // optional
 
 //for multi lang support
@@ -28,6 +29,8 @@ I18n::bufferStart();
 */
 require_once CONFIG_PATH . '/config.php';
 require_once APP_ROOT . '/core/Database.php';
+require_once BASE_PATH . '/vendor/autoload.php';
+
 
 
 /*
@@ -227,7 +230,22 @@ $router->get('/admin/admin-notifications', [NotificationsController::class, 'ind
 
 use app\controllers\admin\InvoicesController;
 
-$router->get('/admin/admin-viewinvoices', [InvoicesController::class, 'index']);
+
+$router->get('/admin/admin-viewinvoices',        [InvoicesController::class, 'index']);
+$router->get('/admin/admin-viewinvoices/show',   [InvoicesController::class, 'show']);
+$router->get ('/admin/admin-viewinvoices/create', [InvoicesController::class, 'create']);
+$router->post('/admin/admin-viewinvoices/store',  [InvoicesController::class, 'store']);
+$router->get(
+  '/admin/admin-viewinvoices/download',
+  [\app\controllers\admin\InvoicesController::class, 'download']
+);
+
+$router->get(
+  '/admin/admin-viewinvoices/email',
+  [\app\controllers\admin\InvoicesController::class, 'email']
+);
+
+
 
 use app\controllers\admin\ReportsController;
 
@@ -422,17 +440,17 @@ $router->get('/receptionist/appointments/edit/{id}', [AppointmentsController::cl
 
 use app\controllers\Receptionist\CustomerProfileController;
 
-$router->get('/receptionist/customers', [CustomerProfileController::class, 'index']); // Customer Profiles list
-$router->get('/receptionist/customers/new', [CustomerProfileController::class, 'create']); // Show new customer form
-$router->get('/receptionist/customers/details', [CustomerProfileController::class, 'show']);
+// $router->get('/receptionist/customers', [CustomerProfileController::class, 'index']); // Customer Profiles list
+// $router->get('/receptionist/customers/new', [CustomerProfileController::class, 'create']); // Show new customer form
+// $router->get('/receptionist/customers/details', [CustomerProfileController::class, 'show']);
 
-use app\controllers\Receptionist\ReceptionistD;
+// use app\controllers\Receptionist\ReceptionistD;
 
-$router->get('/receptionist/dashboard', [app\controllers\Receptionist\ReceptionistD::class, 'index']);
+// $router->get('/receptionist/dashboard', [app\controllers\Receptionist\ReceptionistD::class, 'index']);
 
-use app\controllers\Receptionist\ReceptionistService;
+// use app\controllers\Receptionist\ReceptionistService;
 
-$router->get('/receptionist/service', [app\controllers\Receptionist\ReceptionistService::class, 'index']);
+// $router->get('/receptionist/service', [app\controllers\Receptionist\ReceptionistService::class, 'index']);
 
 use app\controllers\Receptionist\BillingController;
 
@@ -443,83 +461,61 @@ $router->get('/receptionist/billing/create', [BillingController::class, 'create'
 
 
 
-// --------------Mechanic copy N paste 
-
-// use app\controllers\mechanic\MechanicController;
-
-// $router->get('/mechanic/dashboard', [\app\controllers\mechanic\MechanicController::class, 'dashboard']);
-
-use app\controllers\mechanic\JobsMController;
-
+// --------------Mechanic copy
 $router->get('/mechanic/jobs', [\app\controllers\mechanic\JobsMController::class, 'index']);
-
-use app\controllers\mechanic\AssignedJobsMController;
-
 $router->get('/mechanic/assignedjobs', [\app\controllers\mechanic\AssignedJobsMController::class, 'index']);
-
-use app\controllers\mechanic\HistoryController;
-
-$router->get('/mechanic/history', [\app\controllers\mechanic\HistoryController::class, 'index']);
-
 $router->get('/mechanic/dashboard', [\app\controllers\mechanic\DashboardController::class, 'index']);
 
+use app\controllers\mechanic\HistoryController;
+$router->get('/mechanic/history', [HistoryController::class, 'index']);
+$router->get('/mechanic/history/show', [HistoryController::class, 'show']);
+$router->get('/mechanic/history/details/{appointmentId}', [HistoryController::class, 'details']);
+
+
 use app\controllers\mechanic\JobsMVController;
+$router->get('/mechanic/jobs/view/{id}', [JobsMVController::class, 'show']);
+$router->post('/mechanic/jobs/update-status', [JobsMVController::class, 'updateStatus']);
 
-$router->get('/mechanic/jobs/view/{id}', [JobsMController::class, 'show']);
-$router->post('/mechanic/jobs/update-status', [JobsMController::class, 'updateStatus']);
-
-// ------------------Supervisor copy N paste
-
-use app\controllers\supervisor\SupervisorController;
-
-$router->get('/supervisor/dashboard', [\app\controllers\supervisor\SupervisorController::class, 'dashboard']);
-
-use app\controllers\supervisor\ComplaintsController;
-
+// ------------------Supervisor copy
+$router->get('/supervisor/dashboard', [\app\controllers\supervisor\SupervisorController::class, 'index']);
 $router->get('/supervisor/complaints', [\app\controllers\supervisor\ComplaintsController::class, 'index']);
-
-use app\controllers\supervisor\SupervisorFeedbackController;
-
 $router->get('/supervisor/feedbacks', [\app\controllers\supervisor\SupervisorFeedbackController::class, 'index']);
 
+use app\controllers\supervisor\SupervisorProfileController;
+$router->get('/supervisor/profile/edit', [SupervisorProfileController::class, 'edit']);
+$router->post('/supervisor/profile/update', [SupervisorProfileController::class, 'update']);
+
 use app\controllers\supervisor\VehicleReportsController;
+$router->get('/supervisor/reports', [VehicleReportsController::class, 'index']);
+$router->get('/supervisor/reports/create', [VehicleReportsController::class, 'create']);
+$router->get('/supervisor/reports/view/{id}', [VehicleReportsController::class,'show']);
+$router->post('/supervisor/reports/store', [VehicleReportsController::class, 'store']);
+$router->get('/supervisor/reports/edit/{id}', [VehicleReportsController::class,'edit']);
+$router->post('/supervisor/reports/update/{reportId}', [VehicleReportsController::class,'update']);
+$router->post('/supervisor/reports/delete/{id}', [VehicleReportsController::class, 'delete']);
+$router->get('/supervisor/reports/delete-photo/{id}',[VehicleReportsController::class, 'deletePhoto']);
 
-$router->get('/supervisor/reports', [\app\controllers\supervisor\VehicleReportsController::class, 'index']);
-
-use app\controllers\supervisor\VehicleHistoryController;
-
-$router->get('/supervisor/history', [\app\controllers\supervisor\VehicleHistoryController::class, 'index']);
-$router->get('/supervisor/history/show', [\app\controllers\supervisor\VehicleHistoryController::class, 'show']);
-$router->get('/supervisor/history/details/{appointmentId}', [\app\controllers\supervisor\VehicleHistoryController::class, 'details']);
+use \app\controllers\supervisor\VehicleHistoryController;
+$router->get('/supervisor/history', [VehicleHistoryController::class, 'index']);
+$router->get('/supervisor/history/show', [VehicleHistoryController::class, 'show']);
+$router->get('/supervisor/history/details/{appointmentId}', [VehicleHistoryController::class, 'details']);
 
 use app\controllers\supervisor\AssignedJobsController;
-
-$router->get('/supervisor/assignedjobs', [\app\controllers\supervisor\AssignedJobsController::class, 'index']);
-
-use app\controllers\supervisor\JobsController;
-
-
-
-// $router->get('/supervisor/workorders', [\app\controllers\supervisor\WorkOrdersController::class, 'index']);
+$router->get('/supervisor/assignedjobs', [AssignedJobsController::class, 'index']);
+$router->get('/supervisor/assignedjobs/{id}', [AssignedJobsController::class, 'edit']);
+$router->post('/supervisor/checklist/toggle', [AssignedJobsController::class, 'toggleChecklist']);
+$router->post('/supervisor/assignedjobs/uploadPhoto',[AssignedJobsController::class, 'uploadPhoto']);
+$router->post('/supervisor/assignedjobs/deletePhoto',[AssignedJobsController::class, 'deletePhoto']);
 
 use app\controllers\supervisor\WorkOrdersController;
-
-// LIST
 $router->get ('/supervisor/workorders',           [WorkOrdersController::class, 'index']);
-
-// CREATE
 $router->get ('/supervisor/workorders/create',    [WorkOrdersController::class, 'createForm']);
 $router->post('/supervisor/workorders',           [WorkOrdersController::class, 'store']);
-
-// SHOW
 $router->get ('/supervisor/workorders/{id}',      [WorkOrdersController::class, 'show']);
-
-// EDIT/UPDATE
 $router->get ('/supervisor/workorders/{id}/edit', [WorkOrdersController::class, 'editForm']);
 $router->post('/supervisor/workorders/{id}',      [WorkOrdersController::class, 'update']);
-
-// DELETE
 $router->post('/supervisor/workorders/{id}/delete', [WorkOrdersController::class, 'destroy']);
+
 
 
 /*

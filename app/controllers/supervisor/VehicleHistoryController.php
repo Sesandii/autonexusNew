@@ -27,22 +27,36 @@ class VehicleHistoryController extends Controller
      * ✅ Process the license plate search and display all past appointments 
      */
     public function show()
-    {
-        $licensePlate = $_GET['license_plate'] ?? '';
-        $vehicle = null;
-        $appointments = [];
+{
+    $licensePlate = $_GET['license_plate'] ?? '';
+    $fromDate     = $_GET['fromDate'] ?? '';
+    $toDate       = $_GET['toDate'] ?? '';
 
-        if (!empty($licensePlate)) {
-            $vehicle = $this->appointmentModel->getVehicleByLicense($licensePlate);
-            $appointments = $this->appointmentModel->getVehicleHistoryByLicense($licensePlate);
-        }
-
-        // ✅ Render the history result view
-        $this->view('supervisor/history/show', [
-            'vehicle' => $vehicle,
-            'appointments' => $appointments
-        ]);
+    if (empty($licensePlate) || empty($fromDate) || empty($toDate)) {
+        $_SESSION['message'] = [
+            'type' => 'error',
+            'text' => 'License plate, From Date and To Date are required.'
+        ];
+        header('Location: ' . rtrim(BASE_URL, '/') . '/supervisor/history');
+        exit;
     }
+
+    $vehicle = $this->appointmentModel->getVehicleByLicense($licensePlate);
+
+    $appointments = $this->appointmentModel
+        ->getVehicleHistoryByLicenseWithDateRange(
+            $licensePlate,
+            $fromDate,
+            $toDate
+        );
+
+    $this->view('supervisor/history/show', [
+        'vehicle' => $vehicle,
+        'appointments' => $appointments
+    ]);
+}
+
+
 
     /**
      * ✅ Show detailed info for a specific appointment

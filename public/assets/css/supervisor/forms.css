@@ -159,3 +159,142 @@ legend{padding:0 6px;color:#475569;font-weight:600;font-size:13px}
   padding: 6px 8px;
   font-size: 13px;
 }
+
+/* Checklist container */
+.checklist-box {
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 16px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
+  margin-top: 15px;
+}
+
+/* Title */
+.checklist-title {
+  display: block;
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 10px;
+  color: #111827;
+}
+
+/* Checklist list */
+.checklist {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* Checklist items */
+.checklist li {
+  display: flex;
+  align-items: center;
+  padding: 10px 12px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  background: #f9fafb;
+  font-size: 14px;
+  color: #374151;
+  transition: all 0.2s ease;
+}
+
+/* Hover effect */
+.checklist li:hover {
+  background: #eef2ff;
+}
+
+/* Completed item */
+.checklist li.completed {
+  background: #ecfdf5;
+  color: #065f46;
+  text-decoration: line-through;
+}
+
+/* Status icon */
+.checklist li::before {
+  font-size: 12px;
+  margin-right: 10px;
+  color: #9ca3af;
+}
+
+/* Completed icon */
+.checklist li.completed::before {
+  color: #10b981;
+}
+
+/* Placeholder text */
+.checklist li.placeholder {
+  justify-content: center;
+  color: #9ca3af;
+  background: #f3f4f6;
+  font-style: italic;
+}
+
+/* Checklist items container */
+#checklist-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Each checklist row */
+.checklist-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Input field */
+.checklist-item input {
+  flex: 1;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  font-size: 14px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Input focus */
+.checklist-item input:focus {
+  outline: none;
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+}
+
+/* Remove button */
+.btn-remove {
+  background: #fee2e2;
+  color: #b91c1c;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+/* Remove hover */
+.btn-remove:hover {
+  background: #fecaca;
+}
+
+/* Add button */
+.btn-add {
+  margin-top: 14px;
+  background: #e54646;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  width: fit-content;
+  transition: background 0.2s ease;
+}
+
+/* Add hover */
+.btn-add:hover {
+  background: #fa5656;
+}

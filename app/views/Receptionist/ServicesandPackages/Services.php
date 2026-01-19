@@ -3,181 +3,99 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Service Packages - AutoNexus</title>
-  <link rel="stylesheet" href="<?= BASE_URL ?>/public/assets/r_css/service-packages.css">
+  <title>Services & Packages - AutoNexus</title>
+   <link rel="stylesheet" href="<?= BASE_URL ?>/public/assets/css/receptionist/sidebar.css">
+   <link rel="stylesheet" href="<?= BASE_URL ?>/public/assets/css/receptionist/services.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
-  <div class="sidebar">
-    <div class="logo">
-      <img src="<?= BASE_URL ?>/public/assets/img/Auto.png" alt="AutoNexus Logo">
-      <h2>AUTONEXUS</h2>
-      <p>VEHICLE SERVICE</p>
-    </div>
- 
-  <ul class="menu">
-  <li><a href="/autonexus/receptionist/dashboard">Dashboard</a></li>
-  <li><a href="/autonexus/receptionist/appointments">Appointments</a></li>
-  <li class="active"><a href="/autonexus/receptionist/service">Service & Packages</a></li>
-  <li><a href="/autonexus/receptionist/complaints">Complaints</a></li>
-  <li><a href="/autonexus/receptionist/billing">Billing & Payments</a></li>
-  <li><a href="/autonexus/receptionist/customers">Customer Profiles</a></li>
-  <li><a href="<?= rtrim(BASE_URL, '/') ?>/logout">Sign Out</a></li>
-</ul>
 
-  </div>
+<?php include APP_ROOT . '/views/layouts/receptionist-sidebar.php'; ?>
 
-  <div class="main">
-    <div class="header">
-      <h2>Service Packages</h2>
-    </div>
-    
+<div class="main">
+  <header class="header-bar">
+    <h1>Services & Packages</h1>
+  </header>
 
+  <nav class="tab-nav">
+    <ul class="tab-list">
+      <li class="tab-item active" data-tab="service">Services</li>
+      <li class="tab-item" data-tab="packages">Packages</li>
+    </ul>
+  </nav>
 
+  <section id="service" class="tab-content active">
     <div class="packages">
+
+    <div class="filter-container">
+  <select class="servicetype-filter">
+    <option value="">All Services</option>
+    <option value="maintenance">Maintenance</option>
+    <option value="tyre">Tyre</option>
+    <option value="cleaning">Cleaning</option>
+    <option value="nano">Nano</option>
+    <option value="paint">Paint</option>
+    <option value="electrical">Electrical</option>
+    <option value="brakes">Brakes</option>
+    <option value="air-conditioning">Air Conditioning</option>
+    <option value="packages">Packages</option>
+  </select>
+</div>
+
       <table>
         <thead>
           <tr>
-            <th>Package Name</th>
+            <th>Service</th>
             <th>Description</th>
             <th>Duration</th>
             <th>Price</th>
           </tr>
         </thead>
         <tbody>
-          
-           <tr class="clickable-row" onclick="toggleDropdown(this)">
-            <td>Full Service</td>
-            <td>Oil change, filter replacement, basic inspection ...
-                    <div class="Service-item hidden">
-                      <h4>Service Item</h4>
-                      <ul class="dropdown-list">
-                          <li>Item 1</li>
-                          <li>Item 2</li>
-                          <li>Item 3</li>
-                      </ul></div>
-            </td>
-            <td>120 min</td>
-            <td class = "price">$149.99</td>
-            </tr>
-
-            <tr class="clickable-row" onclick="toggleDropdown(this)">
-            <td>Full Service</td>
-            <td>Oil change, filter replacement, basic inspection ...
-                    <div class="Service-item hidden">
-                      <h4>Service Item</h4>
-                      <ul class="dropdown-list">
-                          <li>Item 1</li>
-                          <li>Item 2</li>
-                          <li>Item 3</li>
-                      </ul></div>
-            </td>
-            <td>120 min</td>
-            <td class="price">$349.99</td>
-            </tr>
-
-            <tr class="clickable-row" onclick="toggleDropdown(this)">
-            <td>Full Service</td>
-            <td>Oil change, filter replacement, basic inspection ...
-                    <div class="Service-item hidden">
-                      <h4>Service Item</h4>
-                      <ul class="dropdown-list">
-                          <li>Item 1</li>
-                          <li>Item 2</li>
-                          <li>Item 3</li>
-                      </ul></div>
-            </td>
-            <td>120 min</td>
-            <td class="price">$149.99</td>
-            </tr>
-
-            <tr class="clickable-row" onclick="toggleDropdown(this)">
-            <td>Brake Service</td>
-            <td>Complete brake system
-                    <div class="Service-item hidden">
-                      <h4>Service Item</h4>
-                      <ul class="dropdown-list">
-                          <li>Item 1</li>
-                          <li>Item 2</li>
-                          <li>Item 3</li>
-                      </ul></div>
-            </td>
-            <td>120 min</td>
-            <td class="price">$199.99</td>
-            </tr>
-
-
-      
-
-         <!--<tr class="expandable">
-            <td>Basic Service</td>
-            <td>Oil change, filter replacement, and basic inspection</td>
-            <td>60 min</td>
-            <td>$79.99</td>
-            <td>
-            <div class="dropdown">
-                <button id="toggleButton" class="toggle-button">▼</button>
-                <ul id="dropdownList" class="dropdown-list hidden">
-                    <li>Item 1</li>
-                    <li>Item 2</li>
-                    <li>Item 3</li>
-                </ul></div></td>
-             <td class="actions"><a href="editService.html">✎</a> 🗑</td>
-
-           <tr class="clickable-row" onclick="toggleDropdown(this)">
-            <td>Full Service</td>
-            <td>Oil change, filter replacement, basic inspection ...
-                    <div class="Service-item">
-                      <h4>Service Item</h4>
-                      <ul id="dropdownList" class="dropdown-list hidden">
-                          <li>Item 1</li>
-                          <li>Item 2</li>
-                          <li>Item 3</li>
-                      </ul></div>
-            </td>
-            <td>120 min</td>
-            <td>$149.99</td>
-            <td class="actions"><a href="editService.html">✎</a> 🗑</td>
-            </tr>
-            
-           
-             
-        
-          <tr>
-            <td>Brake Service</td>
-            
-            <td>
-            <div class="dropdown">
-                <button id="toggleButton" class="toggle-button">▼</button>
-                <ul id="dropdownList" class="dropdown-list hidden">
-                    <li>Item 1</li>
-                    <li>Item 2</li>
-                    <li>Item 3</li>
-                </ul></div></td>
-            <td class="actions"><a href="editService.html">✎</a> 🗑</td>
-          </tr>
-          <tr>
-            <td></td>
-            <td>Complete brake system</td>
-            <td>120 min</td>
-            <td>$199.99</td>
-            <td>
-            <div class="dropdown">
-                <button id="toggleButton" class="toggle-button">▼</button>
-                <ul id="dropdownList" class="dropdown-list hidden">
-                    <li>Item 1</li>
-                    <li>Item 2</li>
-                    <li>Item 3</li>
-                </ul></div></td>
-             <td class="actions"><a href="editService.html">✎</a> 🗑</td>
-          </tr>--> 
+          <?php if (!empty($services)): ?>
+            <?php foreach ($services as $row): ?>
+              <tr class="clickable-row">
+                <td><?= htmlspecialchars($row['name']) ?></td>
+                <td><?= htmlspecialchars($row['description']) ?></td>
+                <td><?= htmlspecialchars($row['base_duration_minutes']) ?> min</td>
+                <td class="price">Rs.<?= htmlspecialchars($row['default_price']) ?></td>
+              </tr>
+            <?php endforeach; ?>
+          <?php else: ?>
+            <tr><td colspan="4">No active services found.</td></tr>
+          <?php endif; ?>
         </tbody>
       </table>
     </div>
-  </div>
+  </section>
 
-    <script src="<?= BASE_URL ?>/public/assets/r_js/Services.js"></script>
+<section id="packages" class="tab-content">
+  
+      
+<?php $packages = $packages ?? []; ?>
+<?php foreach($packages as $package): ?>
+<div class="package-card">
+    <div class="package-header">
+        <h2><?= htmlspecialchars($package['name']) ?></h2>
+    </div>
+    <p><?= htmlspecialchars($package['description']) ?></p>
 
+    <ul class="package-services">
+        <?php foreach($package['services'] as $service): ?>
+        <li>✅ <?= htmlspecialchars($service['name']) ?> - <?= $service['base_duration_minutes'] ?> min - Rs.<?= $service['default_price'] ?></li>
+        <?php endforeach; ?>
+    </ul>
 
+    <div class="package-footer">
+        <span class="duration">Takes <?= $package['total_duration_minutes'] ?> min</span>
+        <span class="price">Rs.<?= $package['total_price'] ?></span>
+    </div>
+</div>
+<?php endforeach; ?>
+
+</section>
+</div>
+
+<script src="<?= BASE_URL ?>/public/assets/js/receptionist/x.js"></script>
 </body>
 </html>

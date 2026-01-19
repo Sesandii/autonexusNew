@@ -47,8 +47,8 @@
                 <div class="job-info"><span>ETA:</span> <?= htmlspecialchars($job['started_at']) ?></div>
                 <div class="job-info"><span>Mechanic:</span> <?= htmlspecialchars($job['mechanic_code']) ?></div>
                 <div class="job-actions">
-                    <button class="view-btn">View</button>
-                    <button class="edit-btn">Edit</button>
+                <button class="view-btn" onclick="location.href='/autonexus/mechanic/jobs/view/<?= $job['work_order_id'] ?>'">Edit</button>
+  
                 </div>
             </div>
         <?php endforeach; ?>

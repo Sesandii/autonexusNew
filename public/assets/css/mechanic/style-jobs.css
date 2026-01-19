@@ -175,6 +175,7 @@ header h1 {
 
 .view-btn {
   background: #000000;
+  text-decoration: none;
 }
 
 .view-btn:hover {

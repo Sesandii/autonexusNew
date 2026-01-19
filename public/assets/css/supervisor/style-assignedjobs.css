@@ -163,21 +163,14 @@ header h1 {
 }
 
 .view-btn, .edit-btn {
+  margin-top: 10px;
   padding: 8px 14px;
   border-radius: 8px;
   border: none;
   cursor: pointer;
-  color: #fff;
+  color: #ffffff;
   font-weight: 500;
   transition: background 0.2s ease;
-}
-
-.view-btn {
-  background: #000000;
-}
-
-.view-btn:hover {
-  background: #494949;
 }
 
 .edit-btn {
@@ -186,4 +179,279 @@ header h1 {
 
 .edit-btn:hover {
   background: #ff5757;
+}
+
+.job-info {
+  margin-bottom: 8px;
+  font-size: 14px;
+  color: #555;
+}
+
+.job-info span {
+  font-weight: 600;
+  color: #000;
+}
+
+
+
+/* Checklist container */
+.checklist-box {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 20px;
+  margin-top: 20px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+}
+
+/* Title */
+.checklist-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 15px;
+  color: #111827;
+}
+
+/* Empty message */
+.checklist-empty {
+  color: #dc2626;
+  font-size: 14px;
+}
+
+/* Table */
+.checklist-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+/* Header */
+.checklist-table thead th {
+  background: #f9fafb;
+  color: #374151;
+  text-align: left;
+  padding: 12px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+/* Rows */
+.checklist-table tbody td {
+  padding: 12px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+/* Hover effect */
+.checklist-table tbody tr:hover {
+  background: #f9fafb;
+}
+
+/* Status badge */
+.status-badge {
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* Status colors */
+.status-badge.done {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.status-badge.pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+/* Inline form */
+.inline-form {
+  display: inline;
+}
+
+/* Action buttons */
+.btn-action {
+  border: none;
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+/* Done button */
+.btn-action.done {
+  background: #4ade80;
+  color: #064e3b;
+}
+
+.btn-action.done:hover {
+  background: #22c55e;
+}
+
+/* Undo button */
+.btn-action.undo {
+  background: #fee2e2;
+  color: #7f1d1d;
+}
+
+.btn-action.undo:hover {
+  background: #fecaca;
+}
+
+
+/* Shared card layout */
+.info-card {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 20px;
+  margin-bottom: 20px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+}
+
+/* Card title */
+.info-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: #111827;
+}
+
+/* Row layout */
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  font-size: 14px;
+  border-bottom: 1px dashed #e5e7eb;
+}
+
+.info-row:last-child {
+  border-bottom: none;
+}
+
+/* Labels */
+.info-row span:first-child {
+  color: #6b7280;
+  font-weight: 500;
+}
+
+/* Values */
+.info-row span:last-child {
+  color: #111827;
+  font-weight: 500;
+}
+
+/* Status pill */
+.status-pill {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+/* Status colors */
+.status-pill.completed {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.status-pill.pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.status-pill.in-progress {
+  background: #e0f2fe;
+  color: #075985;
+}
+
+.status-pill.cancelled {
+  background: #fee2e2;
+  color: #7f1d1d;
+}
+
+/* Upload form */
+.photo-upload-form {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.photo-upload-form input[type="file"] {
+  flex: 1;
+  padding: 6px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background: #f9fafb;
+}
+
+/* Photo grid */
+.photo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 16px;
+}
+
+/* Photo card */
+.photo-card {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 10px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.05);
+  text-align: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.photo-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+}
+
+/* Image */
+.photo-img {
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 10px;
+  margin-bottom: 8px;
+  cursor: pointer;
+}
+
+/* Empty text */
+.empty-text {
+  color: #6b7280;
+  font-style: italic;
+  margin-top: 10px;
+}
+
+/* Button reuse (if not already present) */
+.btn {
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+}
+
+.btn.primary {
+  background: #ff2323;
+  color: white;
+}
+
+.btn.danger {
+  background: #ef4444;
+  color: white;
+}
+
+.btn.small {
+  padding: 5px 10px;
+  font-size: 12px;
 }

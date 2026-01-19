@@ -3,34 +3,31 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Work Order #<?= htmlspecialchars($wo['work_order_id']) ?></title>
+  <title>Work Order <?= htmlspecialchars($wo['work_order_id']) ?></title>
   <link rel="stylesheet" href="<?= $base ?>/public/assets/css/supervisor/style-workorders.css">
   <link rel="stylesheet" href="<?= $base ?>/public/assets/css/supervisor/forms.css">
 </head>
 <body>
-<!-- your sidebar include here -->
- <div class="sidebar">
-<div class="logo-container">
-       <img src="/autonexus/public/assets/img/Auto.png" alt="Logo" class="logo">
-     </div>
-<h2>AUTONEXUS</h2>
-<a href="/autonexus/supervisor/dashboard"><img src="/autonexus/public/assets/img/dashboard.png"/>Dashboard</a>
-<a href="/autonexus/supervisor/workorders" class="nav active">
-  <img src="/autonexus/public/assets/img/jobs.png"/>Work Orders
-</a>
 
-     <a href="/autonexus/supervisor/assignedjobs"><img src="/autonexus/public/assets/img/assigned.png"/>Assigned Jobs</a>
-     <a href="/autonexus/supervisor/history"><img src="/autonexus/public/assets/img/history.png"/>Vehicle History</a>
-     <a href="/autonexus/supervisor/complaints"><img src="/autonexus/public/assets/img/Complaints.png"/>Complaints</a>
-     <a href="/autonexus/supervisor/feedbacks"><img src="/autonexus/public/assets/img/Feedbacks.png"/>Feedbacks</a>
-     <a href="/autonexus/supervisor/reports"><img src="/autonexus/public/assets/img/Inspection.png"/>Report</a>
-</div> 
+<div class="sidebar">
+  <div class="logo-container">
+    <img src="/autonexus/public/assets/img/Auto.png" alt="Logo" class="logo">
+  </div>
+  <h2>AUTONEXUS</h2>
+  <a href="/autonexus/supervisor/dashboard"><img src="/autonexus/public/assets/img/dashboard.png"/>Dashboard</a>
+  <a href="/autonexus/supervisor/workorders" class="nav active"><img src="/autonexus/public/assets/img/jobs.png"/>Work Orders</a>
+  <a href="/autonexus/supervisor/assignedjobs"><img src="/autonexus/public/assets/img/assigned.png"/>Assigned Jobs</a>
+  <a href="/autonexus/supervisor/history"><img src="/autonexus/public/assets/img/history.png"/>Vehicle History</a>
+  <a href="/autonexus/supervisor/complaints"><img src="/autonexus/public/assets/img/Complaints.png"/>Complaints</a>
+  <a href="/autonexus/supervisor/feedbacks"><img src="/autonexus/public/assets/img/Feedbacks.png"/>Feedbacks</a>
+  <a href="/autonexus/supervisor/reports"><img src="/autonexus/public/assets/img/Inspection.png"/>Report</a>
+</div>
 
 <main class="container">
   <div class="page-header">
     <div>
-      <h1>Work Order #<?= htmlspecialchars($wo['work_order_id']) ?></h1>
-      <p class="subtitle"><?= htmlspecialchars(($wo['appointment_date'] ?? '') . ' ' . ($wo['appointment_time'] ?? '')) ?></p>
+      <h1>Work Order Info</h1>
+      <p class="subtitle">Details showed related to the workorder.</p>
     </div>
     <div>
       <a class="btn" href="<?= $base ?>/supervisor/workorders">Back</a>
@@ -40,23 +37,61 @@
 
   <div class="form-card">
     <dl class="details">
+
+    <dt>Workorder ID</dt>
+    <dd><?= htmlspecialchars($wo['work_order_id']) ?></dd>
+
+      <dt>Appointment ID</dt>
+      <dd><?= htmlspecialchars($wo['appointment_id']) ?></dd>
+      
       <dt>Appointment</dt>
-      <dd>#<?= htmlspecialchars($wo['appointment_id']) ?> — <?= htmlspecialchars(($wo['appointment_date'] ?? '') . ' ' . ($wo['appointment_time'] ?? '')) ?></dd>
+      <dd><?= htmlspecialchars(($wo['appointment_date'] ?? '') . ' ' . ($wo['appointment_time'] ?? '')) ?></dd>
+
+      <dt>Customer Code</dt>
+      <dd><?= htmlspecialchars($wo['customer_code'] ?? 'CUST000') ?></dd>
+
+      <dt>Customer</dt>
+      <dd><?= htmlspecialchars($wo['customer_first_name'] ?? '') . " " . htmlspecialchars($wo['customer_last_name'] ?? '') ?></dd>
+
+      <dt>License Plate</dt>
+      <dd><?= htmlspecialchars($wo['license_plate'] ?? '') ?></dd>
+
+      <dt>Vehicle</dt>
+      <dd><?= htmlspecialchars($wo['make'] ?? '') . " " . htmlspecialchars($wo['model'] ?? '')?></dd>
 
       <dt>Service</dt>
       <dd><?= htmlspecialchars($wo['service_name'] ?? '—') ?></dd>
 
+      <dt>Created at</dt>
+      <dd><?= htmlspecialchars($wo['started_at'] ?? '—') ?></dd>
+
+      <dt>Started at</dt>
+      <dd><?= htmlspecialchars($wo['job_start_time'] ?? '') ?></dd>
+
+      <dt>Mechanic Code</dt>
+      <dd><?= htmlspecialchars($wo['mechanic_code'] ?? '')?></dd>
+
       <dt>Mechanic</dt>
-      <dd><?= htmlspecialchars($wo['mechanic_code'] ?? 'Unassigned') ?></dd>
+<dd>
+  <?php 
+    if (!empty($wo['mechanic_first_name']) || !empty($wo['mechanic_last_name'])) {
+        echo htmlspecialchars($wo['mechanic_first_name'] . ' ' . $wo['mechanic_last_name']);
+    } else {
+        echo 'Unassigned';
+    }
+  ?>
+</dd>
+
 
       <dt>Status</dt>
       <dd><span class="status <?= htmlspecialchars($wo['status']) ?>"><?= htmlspecialchars($wo['status']) ?></span></dd>
 
-      <dt>Total Cost</dt>
-      <dd>LKR <?= number_format((float)($wo['total_cost'] ?? 0), 2) ?></dd>
+      <dt>Actual Completion</dt>
+      <dd><?= htmlspecialchars($wo['completed_at'] ?? '—') ?></dd>
 
       <dt>Summary</dt>
       <dd><pre style="white-space:pre-wrap"><?= htmlspecialchars($wo['service_summary'] ?? '') ?></pre></dd>
+
     </dl>
   </div>
 </main>

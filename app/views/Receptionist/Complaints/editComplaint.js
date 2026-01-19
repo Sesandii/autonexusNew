@@ -1,37 +1,86 @@
-// Select elements
-const saveBtn = document.querySelector(".save-button");
-const cancelBtn = document.querySelector(".cancel-button");
+document.addEventListener("DOMContentLoaded", () => {
+  const BASE_URL = "<?= BASE_URL ?>";
 
-// Input fields
-const customerInput = document.getElementById("customer");
-const phoneInput = document.getElementById("phone");
-const vehicleNumberInput = document.getElementById("vehicle-number");
-const vehicleInput = document.getElementById("vehicle");
-const serviceInput = document.getElementById("service");
-const statusSelect = document.getElementById("status");
+  const customerInput = document.getElementById("customer_name");
+  const phoneInput = document.getElementById("phone");
+  const emailInput = document.getElementById("email");
+  const vehicleContainer = document.getElementById("vehicle-container");
+  const vehicleNumberInput = document.getElementById("vehicle_number");
 
-// Save button click
-saveBtn.addEventListener("click", () => {
-  // Check if any field is empty
-  if (
-    !customerInput.value.trim() ||
-    !phoneInput.value.trim() ||
-    !vehicleNumberInput.value.trim() ||
-    !vehicleInput.value.trim() ||
-    !serviceInput.value.trim() ||
-    !statusSelect.value
-  ) {
-    alert("Please fill in all the details.");
-    return; // stop further action
+  const complaintVehicle = "<?= htmlspecialchars($complaint['vehicle']) ?>"; // pre-selected vehicle
+
+  // Function to populate vehicles
+  function populateVehicleDropdown(vehicles) {
+    vehicleContainer.innerHTML = "";
+
+    if (vehicles.length === 0) {
+      const input = document.createElement("input");
+      input.type = "text";
+      input.name = "vehicle";
+      input.className = "form-control";
+      vehicleContainer.appendChild(input);
+      vehicleNumberInput.value = "";
+      return;
+    }
+
+    const dropdown = document.createElement("select");
+    dropdown.name = "vehicle";
+    dropdown.className = "form-control";
+
+    vehicles.forEach(v => {
+      const opt = document.createElement("option");
+      opt.value = `${v.make} ${v.model}`;
+      opt.textContent = `${v.make} ${v.model}`;
+      opt.dataset.plate = v.license_plate;
+
+      if (opt.value === complaintVehicle) {
+        opt.selected = true; // pre-select complaint vehicle
+        vehicleNumberInput.value = v.license_plate;
+      }
+
+      dropdown.appendChild(opt);
+    });
+
+    dropdown.addEventListener("change", () => {
+      vehicleNumberInput.value = dropdown.selectedOptions[0].dataset.plate;
+    });
+
+    vehicleContainer.appendChild(dropdown);
   }
 
-  // If all fields are filled, you can add save logic here
-  alert("Appointment saved successfully!");
-  // Optionally, you can redirect after saving
-  // window.location.href = "anotherPage.html";
-});
+  // Fetch customer vehicles on page load using phone
+  const phone = phoneInput.value.trim();
+  if (phone) {
+    fetch(`${BASE_URL}/receptionist/complaints/fetch-by-phone?phone=${encodeURIComponent(phone)}`)
+      .then(res => res.json())
+      .then(data => {
+        if (!data.success || !data.data) return;
+        const customer = data.data;
 
-// Cancel button click
-cancelBtn.addEventListener("click", () => {
-  window.location.href = "<?= BASE_URL ?>/receptionist/complaints"; // redirect to another page
+        customerInput.value = `${customer.first_name ?? ''} ${customer.last_name ?? ''}`.trim();
+        emailInput.value = customer.email ?? "";
+
+        populateVehicleDropdown(customer.vehicles ?? []);
+      })
+      .catch(err => console.error("Fetch error:", err));
+  }
+
+  // Optional: update vehicles if phone changes
+  phoneInput.addEventListener("blur", () => {
+    const phone = phoneInput.value.trim();
+    if (!phone) return;
+
+    fetch(`${BASE_URL}/receptionist/complaints/fetch-by-phone?phone=${encodeURIComponent(phone)}`)
+      .then(res => res.json())
+      .then(data => {
+        if (!data.success || !data.data) return;
+        const customer = data.data;
+
+        customerInput.value = `${customer.first_name ?? ''} ${customer.last_name ?? ''}`.trim();
+        emailInput.value = customer.email ?? "";
+
+        populateVehicleDropdown(customer.vehicles ?? []);
+      })
+      .catch(err => console.error("Fetch error:", err));
+  });
 });

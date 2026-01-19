@@ -1,68 +1,105 @@
+<?php
+// Set the active page for sidebar highlighting
+$activePage = 'appointments';
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Team Schedule - AutoNexus</title>
-  <link rel="stylesheet" href="<?= BASE_URL ?>/public/assets/r_css/newAppointment.css">
-  <link rel="stylesheet" href="<?= BASE_URL ?>/public/assets/r_css/sidebar.css">
+  <title>Appointments - AutoNexus</title>
+
+  <link rel="stylesheet" href="<?= BASE_URL ?>/public/assets/css/receptionist/sidebar.css">
+  <link rel="stylesheet" href="<?= BASE_URL ?>/public/assets/css/receptionist/newAppointment.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
-  <div class="sidebar">
-  <div class="logo">
-         <img src="<?= BASE_URL ?>/public/assets/img/Auto.png" alt="AutoNexus Logo">
-      <h2>AUTONEXUS</h2>
-      <p>VEHICLE SERVICE</p>
-    </div>
-  <ul class="menu">
-  <li><a href="/autonexus/receptionist/dashboard">Dashboard</a></li>
-  <li class="active"><a href="/autonexus/receptionist/appointments">Appointments</a></li>
-  <li><a href="/autonexus/receptionist/service">Service & Packages</a></li>
-  <li><a href="/autonexus/receptionist/complaints">Complaints</a></li>
-  <li><a href="/autonexus/receptionist/billing">Billing & Payments</a></li>
-  <li><a href="/autonexus/receptionist/customers">Customer Profiles</a></li>
-  <li><a href="<?= rtrim(BASE_URL, '/') ?>/logout">Sign Out</a></li>
-</ul>
-  </div>
 
+ <?php include APP_ROOT . '/views/layouts/receptionist-sidebar.php'; ?>
+ 
 <div class="main">
     <div class="details-section">
       <h3>Appointment Details</h3>
 
       
-<form action="" method="post">
+<form action="<?= BASE_URL ?>/receptionist/appointments/save" method="post">
 
-          <label>Customer:</label>
-          <input type="text" id="customer">
+<label>Phone:</label>
+<input type="text" id="phone">
 
-          <label>Phone:</label>
-          <input type="text" id="phone">
+<input type="hidden" id="customer_id">
 
-          <label>Vehicle Number:</label>
-          <input type="text" id="vehicle-number">
+<label>Customer Name:</label>
+<input type="text" id="customer" readonly>
 
-          <label>Vehicle:</label>
-          <input type="text" id="vehicle">
+<input type="hidden" id="vehicle_id">
 
-          <label>Date:</label>
-          <input type="date" id="Date">
+<label>Vehicle:</label>
+<select id="vehicle-select">
+    <option value=""></option>
+</select>
 
-          <label>Time:</label>
-          <input type="time" id="Time">
+<label>Vehicle Number:</label>
+<input type="text" id="vehicle-number" readonly>
+
+<input type="hidden" id="customer_id" name="customer_id">
+<input type="hidden" id="vehicle_id" name="vehicle_id">
+
+<input type="hidden" id="service_id" name="service_id">
+
+<label>Date:</label>
+<input type="date" id="Date" name="appointment_date">
+
+<label>Time:</label>
+<input type="time" id="Time" name="appointment_time">
+
+<label>Service:</label>
+<select id="service" name="service">
+    <option value="">-- Select Service or Package --</option>
+
+    <?php if (!empty($services)) : ?>
+        <?php foreach ($services as $service) : ?>
+            <option value="<?= $service['service_id'] ?>">
+                <?= htmlspecialchars($service['name']) ?> (₨<?= number_format($service['default_price'], 2) ?>)
+            </option>
+        <?php endforeach; ?>
+    <?php endif; ?>
+
+    <?php if (!empty($packages)) : ?>
+        <?php foreach ($packages as $package) : ?>
+            <option value="package_<?= htmlspecialchars($package['package_code']) ?>">
+                <?= htmlspecialchars($package['name']) ?> (₨<?= number_format($package['total_price'], 2) ?>)
+            </option>
+        <?php endforeach; ?>
+    <?php endif; ?>
+
+</select>
 
 
-          <label>Service:</label>
-          <input type="text" id="service">
 
-          <label>Status:</label>
-          <select id="status">
-            <option>Not Arrived</option>
-            <option>Waiting</option>
-            <option>In Service</option>
-            <option>Completed</option>
-            <option>Canceled</option>
-          </select>
+<label>Status:</label>
+<select id="status">
+    <option>Requested</option>
+    <option>Postponed</option>
+    <option>Waiting</option>
+    <option>In Service</option>
+    <option>Completed</option>
+    <option>Canceled</option>
+</select>
+
+
+<input type="hidden" id="branch_id" name="branch_id">
+
+<label>Branch:</label>
+<input list="branch-list" id="branch-search" placeholder="Type branch name...">
+<datalist id="branch-list">
+    <?php foreach ($branches as $branch) : ?>
+        <option data-id="<?= $branch['branch_id'] ?>" value="<?= htmlspecialchars($branch['name'] . ' (' . $branch['city'] . ')') ?>"></option>
+    <?php endforeach; ?>
+</datalist>
+
+
+
 
 </form>
 
@@ -73,10 +110,13 @@
   </div>
 
     </div>
-
-   <script>
-  const BASE_URL = "<?= BASE_URL ?>";
+<!-- Define BASE_URL for JS -->
+<script>
+    const BASE_URL = "<?= BASE_URL ?>";
 </script>
-<script src="<?= BASE_URL ?>/public/assets/r_js/newAppointment.js"></script>
+
+<!-- Load JS -->
+<script src="<?= BASE_URL ?>/public/assets/js/receptionist/newAppointment.js"></script>
+
 </body>
     </html>

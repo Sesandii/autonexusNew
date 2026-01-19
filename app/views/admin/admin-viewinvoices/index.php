@@ -21,13 +21,42 @@
     <div class="page">
       <h2>Invoices Management</h2>
 
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+  <div></div>
+
+  <a href="<?= rtrim(BASE_URL,'/') ?>/admin/admin-viewinvoices/create"
+     class="btn btn-primary">
+     <i class="fa-solid fa-plus"></i> Create New Invoice
+  </a>
+</div>
+
+
       <!-- Summary cards -->
-      <div class="summary-cards">
-        <div class="card total"><p>Total Revenue</p><h3>Rs.1459.92</h3></div>
-        <div class="card paid"><p>Paid</p><h3>Rs.919.95</h3></div>
-        <div class="card pending"><p>Pending</p><h3>Rs.439.98</h3></div>
-        <div class="card overdue"><p>Overdue</p><h3>Rs.99.99</h3></div>
-      </div>
+     <div class="summary-cards">
+  <div class="card total">
+    <p>Total Revenue</p>
+    <h3>Rs.<?= number_format($summary['total'], 2) ?></h3>
+  </div>
+
+  <div class="card paid">
+    <p>Paid</p>
+    <h3>Rs.<?= number_format($summary['paid'], 2) ?></h3>
+  </div>
+
+  <div class="card pending">
+    <p>Pending</p>
+    <h3>Rs.<?= number_format($summary['pending'], 2) ?></h3>
+  </div>
+
+  <div class="card overdue">
+    <p>Overdue</p>
+    <h3>Rs.<?= number_format(
+        max($summary['pending'] - 0, 0), 
+        2
+    ) ?></h3>
+  </div>
+</div>
+
 
       <!-- Filters -->
       <div class="filter-bar">
@@ -55,43 +84,58 @@
               <th>Actions</th>
             </tr>
           </thead>
-          <tbody id="invoiceTable"></tbody>
+         <tbody id="invoiceTable">
+<?php foreach ($invoices as $inv): ?>
+<tr>
+  <td><?= htmlspecialchars($inv['invoice_no']) ?></td>
+  <td><?= htmlspecialchars($inv['first_name'].' '.$inv['last_name']) ?></td>
+  <td><?= htmlspecialchars($inv['service_name']) ?></td>
+  <td>Rs.<?= number_format($inv['grand_total'],2) ?></td>
+  <td><?= date('M d, Y', strtotime($inv['issued_at'])) ?></td>
+  <td>
+    <span class="status <?= htmlspecialchars($inv['status']) ?>">
+      <?= ucfirst($inv['status']) ?>
+    </span>
+  </td>
+  <td class="actions">
+    <a class="icon-btn"
+       href="<?= rtrim(BASE_URL,'/') ?>/admin/admin-viewinvoices/show?id=<?= (int)$inv['invoice_id'] ?>">
+       <i class="fa-regular fa-eye"></i>
+    </a>
+  
+    <a class="icon-btn"
+   href="<?= rtrim(BASE_URL,'/') ?>/admin/admin-viewinvoices/download?id=<?= (int)$inv['invoice_id'] ?>">
+   <i class="fa-solid fa-file-arrow-down"></i>
+</a>
+
+<!-- <a class="icon-btn"
+   href="<?= rtrim(BASE_URL,'/') ?>/admin/admin-viewinvoices/email?id=<?= (int)$inv['invoice_id'] ?>"
+   title="Email Invoice">
+   <i class="fa-regular fa-envelope"></i>
+</a> -->
+
+    
+  </td>
+</tr>
+<?php endforeach; ?>
+</tbody>
+
         </table>
       </div>
     </div>
   </main>
 
-  <!-- JS for dummy invoices -->
-  <script>
-  const invoices = [
-    { id: "INV-001", customer: "John Smith", service: "Oil Change & Filter Replacement", amount: "Rs.89.99", date: "Aug 10, 2025", status: "Paid" },
-    { id: "INV-002", customer: "Sarah Williams", service: "Brake Pad Replacement", amount: "Rs.249.99", date: "Aug 9, 2025", status: "Pending" },
-    { id: "INV-003", customer: "Michael Johnson", service: "Tire Rotation & Alignment", amount: "Rs.129.99", date: "Aug 8, 2025", status: "Paid" },
-    { id: "INV-004", customer: "Emily Davis", service: "Full Service", amount: "Rs.349.99", date: "Aug 7, 2025", status: "Paid" },
-    { id: "INV-005", customer: "Robert Brown", service: "Engine Diagnostic", amount: "Rs.99.99", date: "Aug 6, 2025", status: "Overdue" },
-    { id: "INV-006", customer: "Lisa Chen", service: "Transmission Fluid Change", amount: "Rs.149.99", date: "Aug 5, 2025", status: "Paid" },
-    { id: "INV-007", customer: "David Wilson", service: "Battery Replacement", amount: "Rs.189.99", date: "Aug 4, 2025", status: "Pending" },
-  ];
+ <script>
+const search = document.querySelector('.filter-bar input');
+const rows = document.querySelectorAll('#invoiceTable tr');
 
-  const tableBody = document.getElementById('invoiceTable');
-
-  invoices.forEach(inv => {
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td>${inv.id}</td>
-      <td>${inv.customer}</td>
-      <td>${inv.service}</td>
-      <td>${inv.amount}</td>
-      <td>${inv.date}</td>
-      <td><span class="status ${inv.status}">${inv.status}</span></td>
-      <td class="actions">
-        <button class="icon-btn" title="View"><i class="fa-regular fa-eye"></i></button>
-        <button class="icon-btn" title="Download"><i class="fa-solid fa-file-arrow-down"></i></button>
-        <button class="icon-btn" title="Email"><i class="fa-regular fa-envelope"></i></button>
-      </td>
-    `;
-    tableBody.appendChild(tr);
+search.addEventListener('input', () => {
+  const q = search.value.toLowerCase();
+  rows.forEach(r => {
+    r.style.display = r.innerText.toLowerCase().includes(q) ? '' : 'none';
   });
-  </script>
+});
+</script>
+
 </body>
 </html>

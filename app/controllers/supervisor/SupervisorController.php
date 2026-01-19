@@ -2,6 +2,7 @@
 namespace app\controllers\supervisor;
 
 use app\core\Controller;
+use app\model\supervisor\Dashboard;
 
 class SupervisorController extends Controller
 {
@@ -10,30 +11,22 @@ class SupervisorController extends Controller
         parent::__construct($config);
         $this->requireAdmin();
     }
-    public function dashboard()
+    
+    public function index()
     {
-        $this->view('supervisor/dashboard/index');
+        if (session_status() !== PHP_SESSION_ACTIVE) session_start();
+        $supervisor_id = $_SESSION['user']['user_id'];
+
+        $model = new Dashboard();
+
+        $data = [
+            'stats'        => $model->getWorkorderStats($supervisor_id),
+            'appointments' => $model->getTodayAppointments()
+        ];
+
+        $this->view('supervisor/dashboard/index', $data);
     }
 
-    /*public function login()
-    {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $email = $_POST['email'] ?? '';
-            $password = $_POST['password'] ?? '';
-
-            // Example login logic
-            if ($email === 'supervisor@example.com' && $password === '1234') {
-                session_start();
-                $_SESSION['role'] = 'supervisor';
-                header('Location: /autonexus/supervisor/dashboard');
-                exit;
-            } else {
-                echo "Invalid credentials!";
-            }
-        } else {
-            $this->render('Supervisor/Login/index');
-        }
-    }*/
     private function requireAdmin(): void
     {
         if (session_status() !== PHP_SESSION_ACTIVE) session_start();

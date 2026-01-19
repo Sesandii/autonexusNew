@@ -174,17 +174,9 @@ header h1 {
 }
 
 .view-btn {
-  background: #000000;
-}
-
-.view-btn:hover {
-  background: #5f5f5f;
-}
-
-.edit-btn {
   background: #ff0000;
 }
 
-.edit-btn:hover {
-  background: #ff5555;
+.view-btn:hover {
+  background: #ff5959;
 }
