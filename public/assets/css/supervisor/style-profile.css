@@ -9,79 +9,12 @@
 }
 
 body {
-    height: 100vh;
-    background-color: #f8f9fc;
-    overflow-x: hidden; /* FIX: prevent horizontal overflow */
-}
-
-/* ================================= */
-/*           LOGO STYLING            */
-/* ================================= */
-.logo-container {
-    text-align: center;
-    margin-bottom: 10px;
-}
-
-.logo {
-    width: 180px;
-    height: 80px;
-}
-
-/* ================================= */
-/*           MAIN CONTENT            */
-/* ================================= */
-.main-content {
-    margin-left: 220px; /* same as sidebar */
-    min-height: 100vh;
-    background: #f8f9fc;
-}
-
-/* ================================= */
-/*          SIDEBAR STYLING          */
-/* ================================= */
-.sidebar {
-    width: 220px;
-    background-color: #000;
-    color: white;
-    padding: 10px;
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 100vh;
-}
-
-.sidebar h2 {
-    font-size: 22px;
-    margin-bottom: 30px;
-    text-align: center;
-}
-
-.sidebar a {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 12px 10px;
-    margin-bottom: 10px;
-    cursor: pointer;
-    border-radius: 6px;
-    color: #d1d5db;
-    text-decoration: none;
-    transition: all 0.2s ease;
-}
-
-.sidebar a img {
-    width: 20px;
-    height: 20px;
-}
-
-.sidebar a.nav {
-    background-color: #1F2937;
-    color: #fff;
-}
-
-.sidebar a:hover {
-    background-color: #1F2937;
-    color: #fff;
+  overflow-x: hidden;
+  background: #f6f8fb;
+  color: #0b1220;
+  display: flex;
+  height: 100vh;
+  margin: 0;
 }
 
 /* ================================= */
@@ -89,10 +22,12 @@ body {
 /* ================================= */
 .container {
     padding: 40px 60px;
-    display: flex;
     flex-direction: column;
-    align-items: center; /* FIX: keeps form centered */
+    align-items: center;
     background: linear-gradient(135deg, #f8fafc, #eef2ff);
+        flex: 1;
+        overflow-y: auto;
+      
 }
 
 /* ================================= */

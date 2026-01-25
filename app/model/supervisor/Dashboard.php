@@ -30,23 +30,24 @@ class Dashboard
     public function getTodayAppointments(): array
 {
     $sql = "
-    SELECT 
-        CONCAT(u.first_name, ' ', u.last_name) AS client_name,
-        CONCAT(v.make, ' ', v.model) AS vehicle,
-        a.appointment_time,
-        s.name AS service,
-        a.status
-    FROM appointments a
-    JOIN customers c ON c.customer_id = a.customer_id
-    JOIN users u ON u.user_id = c.user_id
-    JOIN vehicles v ON v.vehicle_id = a.vehicle_id
-    JOIN services s ON s.service_id = a.service_id
-    WHERE a.appointment_date = CURDATE()
-    ORDER BY a.appointment_time ASC
-";
+        SELECT 
+            CONCAT(v.model, ' ', v.make) AS vehicle,
+            CONCAT(u.first_name, ' ', u.last_name) AS customer_name,
+            a.appointment_time,
+            s.name,
+            a.status
+        FROM appointments a
+        JOIN vehicles v ON v.vehicle_id = a.vehicle_id
+        JOIN customers c ON c.customer_id = a.customer_id
+        JOIN users u ON u.user_id = c.user_id
+        JOIN services s ON s.service_id = a.service_id
+        WHERE DATE(a.appointment_date) = CURDATE()
+        ORDER BY a.appointment_time ASC
+    ";
 
-
-    return $this->pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+    $stmt = $this->pdo->prepare($sql);
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
 

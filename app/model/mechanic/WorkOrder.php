@@ -25,6 +25,8 @@ class WorkOrder
                 w.started_at,
                 w.completed_at,
                 w.status,
+                s.base_duration_minutes,
+                s.name,
                 u.first_name,
                 u.last_name,
                 u.street_address,
@@ -40,6 +42,7 @@ class WorkOrder
             JOIN appointments a ON w.appointment_id = a.appointment_id
             JOIN vehicles v ON a.vehicle_id = v.vehicle_id
             JOIN users u ON a.customer_id = u.user_id
+            JOIN services s ON a.service_id = s.service_id
             JOIN mechanics m ON w.mechanic_id = m.mechanic_id
             WHERE w.mechanic_id = ?
             ORDER BY w.started_at DESC
@@ -69,6 +72,8 @@ class WorkOrder
                 u.last_name,
                 u.street_address,
                 u.city,
+                s.base_duration_minutes,
+                s.name,
                 u.state,
                 a.appointment_date,
                 a.appointment_time,
@@ -80,6 +85,7 @@ class WorkOrder
             JOIN appointments a ON w.appointment_id = a.appointment_id
             JOIN vehicles v ON a.vehicle_id = v.vehicle_id
             JOIN users u ON a.customer_id = u.user_id
+            JOIN services s ON a.service_id = s.service_id
             JOIN mechanics m ON w.mechanic_id = m.mechanic_id
             WHERE w.mechanic_id IN ($placeholders)
             ORDER BY w.started_at DESC
@@ -101,6 +107,7 @@ class WorkOrder
                 a.appointment_date,
                 a.appointment_time,
                 a.notes,
+    
                 v.make,
                 v.model,
                 v.year,
@@ -118,6 +125,7 @@ class WorkOrder
             FROM work_orders w
             JOIN appointments a ON w.appointment_id = a.appointment_id
             JOIN vehicles v ON a.vehicle_id = v.vehicle_id
+            JOIN services s ON a.service_id = s.service_id
             JOIN users u ON a.customer_id = u.user_id
             JOIN mechanics m ON w.mechanic_id = m.mechanic_id
             WHERE w.work_order_id = :id
@@ -180,12 +188,14 @@ class WorkOrder
                 w.started_at,
                 w.completed_at,
                 w.status,
+                s.name,
+                s.base_duration_minutes,
                 w.mechanic_id,
-                u.first_name,
-                u.last_name,
-                u.street_address,
-                u.city,
-                u.state,
+                cu.first_name,
+                cu.last_name,
+                cu.street_address,
+                cu.city,
+                cu.state,
                 a.appointment_date,
                 a.appointment_time,
                 v.make,
@@ -194,7 +204,9 @@ class WorkOrder
                 m.mechanic_code
             FROM work_orders w
             JOIN appointments a ON w.appointment_id = a.appointment_id
-            JOIN users u ON a.customer_id = u.user_id
+            JOIN customers c ON a.customer_id = c.customer_id
+            JOIN users cu ON c.user_id = cu.user_id
+            JOIN services s ON a.service_id = s.service_id
             JOIN vehicles v ON a.vehicle_id = v.vehicle_id
             JOIN mechanics m ON w.mechanic_id = m.mechanic_id
             ORDER BY w.started_at DESC

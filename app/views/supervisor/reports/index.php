@@ -9,34 +9,7 @@
 </head>
 <body>
 
-<div class="sidebar">
-  <div class="logo-container">
-    <img src="/autonexus/public/assets/img/Auto.png" alt="Logo" class="logo">
-  </div>
-  <h2>AUTONEXUS</h2>
-
-  <a href="/autonexus/supervisor/dashboard">
-    <img src="/autonexus/public/assets/img/dashboard.png"/>Dashboard
-  </a>
-  <a href="/autonexus/supervisor/workorders">
-    <img src="/autonexus/public/assets/img/jobs.png"/>Work Orders
-  </a>
-  <a href="/autonexus/supervisor/assignedjobs">
-    <img src="/autonexus/public/assets/img/assigned.png"/>Assigned
-  </a>
-  <a href="/autonexus/supervisor/history">
-    <img src="/autonexus/public/assets/img/history.png"/>Vehicle History
-  </a>
-  <a href="/autonexus/supervisor/complaints">
-    <img src="/autonexus/public/assets/img/Complaints.png"/>Complaints
-  </a>
-  <a href="/autonexus/supervisor/feedbacks">
-    <img src="/autonexus/public/assets/img/Feedbacks.png"/>Feedbacks
-  </a>
-  <a href="/autonexus/supervisor/reports" class="nav">
-    <img src="/autonexus/public/assets/img/Inspection.png"/>Reports
-  </a>
-</div>
+<?php include __DIR__ . '/../partials/sidebar.php'; ?>
 
 <div class="container">
 
@@ -57,6 +30,28 @@
       <?= htmlspecialchars($message['text']) ?>
     </div>
   <?php endif; ?>
+  <div class="filters-row">
+  <input type="text" id="searchInput" placeholder="Search report, customer, vehicle..." />
+
+  <select id="statusFilter">
+    <option value="">All Status</option>
+    <option value="draft">Draft</option>
+    <option value="submitted">Submitted</option>
+  </select>
+
+  <select id="mechanicFilter">
+    <option value="">All Mechanics</option>
+    <?php foreach (array_unique(array_column($reports, 'mechanic_code')) as $m): ?>
+      <?php if ($m): ?>
+        <option value="<?= htmlspecialchars($m) ?>">
+          <?= htmlspecialchars($m) ?>
+        </option>
+      <?php endif; ?>
+    <?php endforeach; ?>
+  </select>
+
+  <input type="date" id="dateFilter" />
+</div>
 
   <table class="workorders">
     <thead>
@@ -75,7 +70,12 @@
     <tbody>
       <?php if (!empty($reports)): ?>
         <?php foreach ($reports as $r): ?>
-          <tr>
+          <tr
+  data-status="<?= strtolower($r['status']) ?>"
+  data-mechanic="<?= strtolower($r['mechanic_code'] ?? '') ?>"
+  data-date="<?= date('Y-m-d', strtotime($r['created_at'])) ?>"
+>
+
             <td><?= htmlspecialchars($r['report_id']) ?></td>
             <td><?= htmlspecialchars($r['work_order_id']) ?></td>
             <td><?= htmlspecialchars($r['license_plate'] ?? '-') ?></td>
@@ -125,5 +125,45 @@
   </table>
 
 </div>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const searchInput = document.getElementById("searchInput");
+    const statusFilter = document.getElementById("statusFilter");
+    const mechanicFilter = document.getElementById("mechanicFilter");
+    const dateFilter = document.getElementById("dateFilter");
+
+    const rows = document.querySelectorAll(".workorders tbody tr");
+
+    function applyFilters() {
+        const searchVal = searchInput.value.toLowerCase();
+        const statusVal = statusFilter.value;
+        const mechanicVal = mechanicFilter.value.toLowerCase();
+        const dateVal = dateFilter.value;
+
+        rows.forEach(row => {
+            const text = row.innerText.toLowerCase();
+            const rowStatus = row.dataset.status;
+            const rowMechanic = row.dataset.mechanic;
+            const rowDate = row.dataset.date;
+
+            const matchSearch = !searchVal || text.includes(searchVal);
+            const matchStatus = !statusVal || rowStatus === statusVal;
+            const matchMechanic = !mechanicVal || rowMechanic === mechanicVal;
+            const matchDate = !dateVal || rowDate === dateVal;
+
+            row.style.display =
+                matchSearch && matchStatus && matchMechanic && matchDate
+                    ? ""
+                    : "none";
+        });
+    }
+
+    searchInput.addEventListener("keyup", applyFilters);
+    statusFilter.addEventListener("change", applyFilters);
+    mechanicFilter.addEventListener("change", applyFilters);
+    dateFilter.addEventListener("change", applyFilters);
+});
+</script>
+
 </body>
 </html>

@@ -27,35 +27,7 @@
 </head>
 
 <body>
-  <div class="sidebar">
-    <div class="logo-container">
-      <img src="/autonexus/public/assets/img/Auto.png" alt="Logo" class="logo">
-    </div>
-
-    <h2>AUTONEXUS</h2>
-
-    <a href="/autonexus/supervisor/dashboard">
-      <img src="/autonexus/public/assets/img/dashboard.png"/>Dashboard
-    </a>
-    <a href="/autonexus/supervisor/workorders">
-      <img src="/autonexus/public/assets/img/jobs.png"/>Work Orders
-    </a>
-    <a href="/autonexus/supervisor/assignedjobs" class="nav active">
-      <img src="/autonexus/public/assets/img/assigned.png"/>Assigned
-    </a>
-    <a href="/autonexus/supervisor/history">
-      <img src="/autonexus/public/assets/img/history.png"/>Vehicle History
-    </a>
-    <a href="/autonexus/supervisor/complaints">
-      <img src="/autonexus/public/assets/img/Complaints.png"/>Complaints
-    </a>
-    <a href="/autonexus/supervisor/feedbacks">
-      <img src="/autonexus/public/assets/img/Feedbacks.png"/>Feedbacks
-    </a>
-    <a href="/autonexus/supervisor/reports">
-      <img src="/autonexus/public/assets/img/Inspection.png"/>Report
-    </a>
-  </div>
+<?php include __DIR__ . '/../partials/sidebar.php'; ?>
   <main class="main">
     <header>
       <h2>Job Details</h2>
@@ -109,6 +81,14 @@
         <span>Model</span>
         <span><?= $job['model'] ?></span>
     </div>
+    <div class="info-row">
+        <span>Colour</span>
+        <span><?= $job['color'] ?></span>
+    </div>
+    <div class="info-row">
+        <span>Mileage</span>
+        <span><?= $job['mileage'] ?></span>
+    </div>
 </div>
 
 <!-- CUSTOMER INFO -->
@@ -123,6 +103,22 @@
     <div class="info-row">
         <span>Customer Code</span>
         <span><?= $job['customer_code'] ?></span>
+    </div>
+    <div class="info-row">
+        <span>Contact</span>
+        <span><?= $job['phone'] ?></span>
+    </div>
+    <div class="info-row">
+        <span>Street address</span>
+        <span><?= $job['street_address'] ?></span>
+    </div>
+    <div class="info-row">
+        <span>City</span>
+        <span><?= $job['city'] ?></span>
+    </div>
+    <div class="info-row">
+        <span>State</span>
+        <span><?= $job['state'] ?></span>
     </div>
 </div>
 

@@ -8,33 +8,7 @@
   <link rel="stylesheet" href="/autonexus/public/assets/css/supervisor/style-dashboard.css" />
 </head>
 <body>
-    <div class="sidebar">
-     <div class="logo-container">
-     <img src="/autonexus/public/assets/img/Auto.png" alt="Logo" class="logo">
-     </div>
-      <h2>AUTONEXUS</h2>
-      <a href="<?= $base ?>/supervisor/dashboard" class="nav">
-      <img src="/autonexus/public/assets/img/dashboard.png"/>Dashboard
-    </a>
-    <a href="<?= $base ?>/supervisor/workorders">
-      <img src="/autonexus/public/assets/img/jobs.png"/>Work Orders
-    </a>
-    <a href="<?= $base ?>/supervisor/assignedjobs">
-      <img src="/autonexus/public/assets/img/assigned.png"/>Assigned 
-    </a>
-    <a href="<?= $base ?>/supervisor/history">
-      <img src="/autonexus/public/assets/img/history.png"/>Vehicle History
-    </a>
-    <a href="<?= $base ?>/supervisor/complaints">
-      <img src="/autonexus/public/assets/img/Complaints.png"/>Complaints
-     </a>
-      <a href="<?= $base ?>/supervisor/feedbacks">
-      <img src="/autonexus/public/assets/img/Feedbacks.png"/>Feedbacks
-     </a>
-      <a href="<?= $base ?>/supervisor/reports">
-       <img src="/autonexus/public/assets/img/Inspection.png"/>Report
-     </a>
-    </div>
+<?php include __DIR__ . '/../partials/sidebar.php'; ?>
 
     <main class="main-content">
       <header>
@@ -54,14 +28,13 @@
       </header>
 
       <section class="welcome">
-        <h2>Welcome, <?= htmlspecialchars($_SESSION['user']['name'] ?? 'Supervisor') ?></h2>
+      <h2>Welcome, <?= htmlspecialchars(($_SESSION['user']['first_name'] ?? '') . ' ' . ($_SESSION['user']['last_name'] ?? '')) ?></h2>
         <p>Here's an overview of your dashboard</p>
       </section>
 
       <section class="cards">
         <div class="card green">
           <div class="card-header">
-            <img src="/autonexus/public/assets/img/done.png" class="card-icon" />
             <h3>Workorders Done</h3>
           </div>
           <p><?= (int)($stats['completed'] ?? 0) ?></p>
@@ -69,7 +42,6 @@
 
         <div class="card blue">
           <div class="card-header">
-            <img src="/autonexus/public/assets/img/assigned2.png" class="card-icon" />
             <h3>Assigned Jobs</h3>
           </div>
           <p><?= (int)($stats['total'] ?? 0) - (int)($stats['completed'] ?? 0) ?></p>
@@ -77,7 +49,6 @@
 
         <div class="card red">
           <div class="card-header">
-            <img src="/autonexus/public/assets/img/ongoing.png" class="card-icon" />
             <h3>Ongoing Workorders</h3>
           </div>
           <p><?= (int)($stats['ongoing'] ?? 0) ?></p>
@@ -85,7 +56,6 @@
 
         <div class="card purple">
           <div class="card-header">
-            <img src="/autonexus/public/assets/img/total.png" class="card-icon" />
             <h3>Total Workorders</h3>
           </div>
           <p><?= (int)($stats['total'] ?? 0) ?></p>
@@ -105,32 +75,22 @@
             </tr>
           </thead>
           <tbody>
-            <?php if (empty($appointments)): ?>
-              <tr>
-                <td colspan="5">No appointments today</td>
-              </tr>
-            <?php else: ?>
-              <?php foreach ($appointments as $a): ?>
-              <tr>
-                <td>
-                  <img src="/autonexus/public/assets/img/user2.png" class="user-icon" /> 
-                  <?= htmlspecialchars($a['client_name'] ?? 'N/A') ?>
-                </td>
-                <td>
-                  <img src="/autonexus/public/assets/img/car.png" class="icon-car" /> 
-                  <?= htmlspecialchars($a['vehicle'] ?? 'N/A') ?>
-                </td>
-                <td><?= htmlspecialchars($a['appointment_time'] ?? '') ?></td>
-                <td><?= htmlspecialchars($a['service_name'] ?? 'N/A') ?></td>
-                <td>
-                  <span class="badge <?= strtolower($a['status'] ?? '') ?>">
-                    <?= ucfirst($a['status'] ?? 'Unknown') ?>
-                  </span>
-                </td>
-              </tr>
-              <?php endforeach; ?>
-            <?php endif; ?>
-          </tbody>
+      <?php if (!empty($appointments)): ?>
+        <?php foreach ($appointments as $appt): ?>
+          <tr>
+            <td><img src="<?= $base ?>/public/assets/img/user2.png" class="user-icon" /> <?= htmlspecialchars($appt['customer_name']) ?></td>
+            <td><img src="<?= $base ?>/public/assets/img/car.png" class="icon-car" /> <?= htmlspecialchars($appt['vehicle']) ?></td>
+            <td><?= htmlspecialchars(date('h:i A', strtotime($appt['appointment_time']))) ?></td>
+            <td><?= htmlspecialchars($appt['name']) ?></td>
+            <td><?= htmlspecialchars($appt['status']) ?></td>
+          </tr>
+        <?php endforeach; ?>
+      <?php else: ?>
+        <tr>
+          <td colspan="5" style="text-align:center;">No appointments today</td>
+        </tr>
+      <?php endif; ?>
+    </tbody>
         </table>
       </section>
     </main>

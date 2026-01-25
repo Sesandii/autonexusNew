@@ -4,47 +4,22 @@
 <head>
   <meta charset="utf-8">
   <title>Work Orders</title>
-  <link rel="stylesheet" href="<?= $base ?>/public/assets/css/supervisor/forms.css">
   <link rel="stylesheet" href="<?= $base ?>/public/assets/css/supervisor/style-workorders.css">
+  <link rel="stylesheet" href="<?= $base ?>/public/assets/css/supervisor/forms.css">
 </head>
 <body>
 
-<div class="sidebar">
-  <div class="logo-container">
-    <img src="/autonexus/public/assets/img/Auto.png" alt="Logo" class="logo">
-  </div>
-  <h2>AUTONEXUS</h2>
-
-  <a href="/autonexus/supervisor/dashboard">
-    <img src="/autonexus/public/assets/img/dashboard.png"/>Dashboard
-  </a>
-  <a href="/autonexus/supervisor/workorders" class="nav">
-    <img src="/autonexus/public/assets/img/jobs.png"/>Work Orders
-  </a>
-  <a href="/autonexus/supervisor/assignedjobs">
-    <img src="/autonexus/public/assets/img/assigned.png"/>Assigned
-  </a>
-  <a href="/autonexus/supervisor/history">
-    <img src="/autonexus/public/assets/img/history.png"/>Vehicle History
-  </a>
-  <a href="/autonexus/supervisor/complaints">
-    <img src="/autonexus/public/assets/img/Complaints.png"/>Complaints
-  </a>
-  <a href="/autonexus/supervisor/feedbacks">
-    <img src="/autonexus/public/assets/img/Feedbacks.png"/>Feedbacks
-  </a>
-  <a href="/autonexus/supervisor/reports">
-    <img src="/autonexus/public/assets/img/Inspection.png"/>Report
-  </a>
-</div>
+<?php include __DIR__ . '/../partials/sidebar.php'; ?>
 
 <div class="container">
   <div class="page-header">
-    <div>
+    <div class="header">
       <h1>Work Orders</h1>
       <p class="subtitle">All work orders with their appointment's service.</p>
     </div>
     <a class="btn primary" href="<?= $base ?>/supervisor/workorders/create">Add Work Order</a>
+    
+
   </div>
 
   <?php if (!empty($message)): ?>
@@ -53,6 +28,45 @@
     </div>
   <?php endif; ?>
 
+  <div class="table-filters">
+  <input
+    type="text"
+    id="idFilter"
+    placeholder="Search by Work Order ID, Service"
+    class="filter-input"
+  >
+
+  <select id="serviceFilter">
+    <option value="">All Services</option>
+    <?php
+      $services = array_unique(array_column($workOrders, 'service_name'));
+      foreach ($services as $service):
+    ?>
+      <option value="<?= strtolower($service) ?>">
+        <?= htmlspecialchars($service) ?>
+      </option>
+    <?php endforeach; ?>
+  </select>
+
+  <select id="mechanicFilter">
+    <option value="">All Mechanics</option>
+    <?php
+      $mechanics = array_unique(array_column($workOrders, 'mechanic_code'));
+      foreach ($mechanics as $mech):
+    ?>
+      <option value="<?= strtolower($mech ?: 'unassigned') ?>">
+        <?= htmlspecialchars($mech ?: 'Unassigned') ?>
+      </option>
+    <?php endforeach; ?>
+  </select>
+
+  <select id="statusFilter">
+    <option value="">All Statuses</option>
+    <option value="open">Open</option>
+    <option value="in_progress">In Progress</option>
+    <option value="completed">Completed</option>
+  </select>
+</div>
   <table class="workorders">
     <thead>
       <tr>
@@ -76,7 +90,13 @@
               $expectedEnd = $dt->format('Y-m-d H:i:s'); // full timestamp
           }
         ?>
-        <tr>
+        <tr
+  data-id="<?= $w['work_order_id'] ?>"
+  data-service="<?= strtolower($w['service_name'] ?? '') ?>"
+  data-mechanic="<?= strtolower($w['mechanic_code'] ?? 'unassigned') ?>"
+  data-status="<?= strtolower($w['status']) ?>"
+>
+
           <td><?= htmlspecialchars($w['work_order_id']) ?></td>
           <td><?= htmlspecialchars(($w['appointment_date'] ?? '') . ' ' . ($w['appointment_time'] ?? '')) ?></td>
           <td><?= htmlspecialchars($w['service_name'] ?? '') ?></td>
@@ -134,6 +154,44 @@ function updateTimers() {
 // Update timers every second
 setInterval(updateTimers, 1000);
 updateTimers(); // initial call
+document.addEventListener("DOMContentLoaded", function () {
+    const searchInput = document.getElementById("idFilter"); // now used for ID or Service
+    const serviceFilter = document.getElementById("serviceFilter");
+    const mechanicFilter = document.getElementById("mechanicFilter");
+    const statusFilter = document.getElementById("statusFilter");
+    const rows = document.querySelectorAll(".workorders tbody tr");
+
+    function applyFilters() {
+        const searchVal = searchInput.value.trim().toLowerCase(); // search by ID OR Service
+        const serviceVal = serviceFilter.value;
+        const mechanicVal = mechanicFilter.value;
+        const statusVal = statusFilter.value;
+
+        rows.forEach(row => {
+            const rowId = (row.dataset.id || "").toLowerCase();
+            const rowService = (row.dataset.service || "").toLowerCase();
+            const rowMechanic = (row.dataset.mechanic || "").toLowerCase();
+            const rowStatus = (row.dataset.status || "").toLowerCase();
+
+            // ✅ Match search input with ID OR Service name
+            const matchSearch = !searchVal || rowId.includes(searchVal) || rowService.includes(searchVal);
+
+            // Match dropdown filters
+            const matchService = !serviceVal || rowService === serviceVal;
+            const matchMechanic = !mechanicVal || rowMechanic === mechanicVal;
+            const matchStatus = !statusVal || rowStatus === statusVal;
+
+            row.style.display = (matchSearch && matchService && matchMechanic && matchStatus) ? "" : "none";
+        });
+    }
+
+    // Event listeners
+    searchInput.addEventListener("keyup", applyFilters);
+    serviceFilter.addEventListener("change", applyFilters);
+    mechanicFilter.addEventListener("change", applyFilters);
+    statusFilter.addEventListener("change", applyFilters);
+});
+
 </script>
 
 </body>

@@ -9,27 +9,7 @@
 </head>
 
 <body>
-  <div class="sidebar">
-    <div class="logo-container">
-      <img src="/autonexus/public/assets/img/Auto.png" alt="Logo" class="logo">
-    </div>
-
-    <h2>AUTONEXUS</h2>
-
-    <a href="/autonexus/mechanic/dashboard">
-      <img src="/autonexus/public/assets/img/dashboard.png">Dashboard
-    </a>
-    <a href="/autonexus/mechanic/jobs">
-      <img src="/autonexus/public/assets/img/jobs.png">Jobs
-    </a>
-    <a href="/autonexus/mechanic/assignedjobs" class="active">
-      <img src="/autonexus/public/assets/img/assigned.png">Assigned Jobs
-    </a>
-    <a href="/autonexus/mechanic/history">
-      <img src="/autonexus/public/assets/img/history.png">Vehicle History
-    </a>
-  </div>
-
+<?php include __DIR__ . '/../partials/sidebar.php'; ?>
   <div class="main">
     <header>
       <input type="text" placeholder="Search..." class="search">

@@ -1,67 +1,44 @@
-document.addEventListener("DOMContentLoaded", () => {
-  const jobGrid = document.getElementById("job-grid");
-  if (!jobGrid) {
-    console.error("❌ job-grid not found in DOM");
-    return;
-  }
+document.addEventListener("DOMContentLoaded", function () {
+    const searchInput = document.getElementById("jobSearch");
+    const serviceFilter = document.getElementById("serviceFilter");
+    const mechanicFilter = document.getElementById("mechanicFilter");
+    const statusFilter = document.getElementById("statusFilter");
+    const jobCards = document.querySelectorAll(".job-card");
 
-  // Sample data
-  const jobs = [
-    {
-      customer: "John Smith",
-      vehicle: "2018 Toyota Camry",
-      service: "Oil Change & Tire Rotation",
-      eta: "2023-11-15 15:30",
-      mechanic: "Mike Johnson",
-      supervisor: "Sarah Williams"
-    },
-    {
-      customer: "Jake Paul",
-      vehicle: "1994 Nissan R33",
-      service: "Engine Diagnostic",
-      eta: "2023-09-14 14:00",
-      mechanic: "Alex Perera",
-      supervisor: "Nuwan Silva"
-    },
-    {
-      customer: "Jake Paul",
-      vehicle: "1994 Nissan R33",
-      service: "Engine Diagnostic",
-      eta: "2023-09-14 14:00",
-      mechanic: "Alex Perera",
-      supervisor: "Nuwan Silva"
-    }, 
-    {
-      customer: "Jake Paul",
-      vehicle: "1994 Nissan R33",
-      service: "Engine Diagnostic",
-      eta: "2023-09-14 14:00",
-      mechanic: "Alex Perera",
-      supervisor: "Nuwan Silva"
+    function filterJobs() {
+        const searchText = searchInput.value.toLowerCase().trim();
+        const serviceValue = serviceFilter.value;
+        const mechanicValue = mechanicFilter.value;
+        const statusValue = statusFilter.value;
+
+        jobCards.forEach(card => {
+            const workOrder = card.dataset.workorder;
+            const service = card.dataset.service;
+            const mechanic = card.dataset.mechanic;
+            const status = card.dataset.status;
+
+            const matchesSearch =
+                workOrder.includes(searchText) ||
+                service.includes(searchText);
+
+            const matchesService =
+                serviceValue === "" || service === serviceValue;
+
+            const matchesMechanic =
+                mechanicValue === "" || mechanic === mechanicValue;
+
+            const matchesStatus =
+                statusValue === "" || status === statusValue;
+
+            card.style.display =
+                (matchesSearch && matchesService && matchesMechanic && matchesStatus)
+                ? "block"
+                : "none";
+        });
     }
-  ];
 
-  // Clear old content
-  jobGrid.innerHTML = "";
-
-  // Render each job as a card
-  jobs.forEach(job => {
-    const card = document.createElement("div");
-    card.className = "job-card";
-
-    card.innerHTML = `
-      <h3>${job.service}</h3>
-      <div class="job-info"><span>Customer:</span> ${job.customer}</div>
-      <div class="job-info"><span>Vehicle:</span> ${job.vehicle}</div>
-      <div class="job-info"><span>ETA:</span> ${job.eta}</div>
-      <div class="job-info"><span>Mechanic:</span> ${job.mechanic}</div>
-      <div class="job-info"><span>Supervisor:</span> ${job.supervisor}</div>
-      <div class="job-actions">
-        <button class="view-btn">View</button>
-        <button class="edit-btn">Edit</button>
-      </div>
-    `;
-
-    jobGrid.appendChild(card);
-  });
+    searchInput.addEventListener("keyup", filterJobs);
+    serviceFilter.addEventListener("change", filterJobs);
+    mechanicFilter.addEventListener("change", filterJobs);
+    statusFilter.addEventListener("change", filterJobs);
 });
