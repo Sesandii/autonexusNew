@@ -247,9 +247,19 @@ $router->get(
 
 
 
+
 use app\controllers\admin\ReportsController;
 
 $router->get('/admin/admin-viewreports', [ReportsController::class, 'index']);
+
+
+
+
+$router->get('/admin/admin-viewreports',              [ReportsController::class, 'index']);
+$router->get('/admin/admin-viewreports/export',       [ReportsController::class, 'export']);
+$router->get('/admin/admin-viewreports/export-pdf',   [ReportsController::class, 'exportPdf']);
+
+
 
 
 
