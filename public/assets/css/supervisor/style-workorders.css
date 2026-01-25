@@ -7,6 +7,9 @@
 
 * {
   box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', sans-serif;
 }
 
 body {
@@ -17,57 +20,6 @@ body {
   height: 100vh;
   margin: 0;
 }
-
-.logo-container {
-  text-align: center;
-  margin-bottom: 10px;
-}
-
-.logo {
-  width: 180px;
-  height: 80px;
-}
-
-.sidebar {
-  width: 220px;
-  background-color: #000;
-  color: white;
-  padding: 10px;
-}
-
-.sidebar h2 {
-  margin-top: 0;
-  margin-bottom: 30px;
-  font-size: 22px;
-  text-align: center;
-}
-
-.sidebar a {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 12px 10px;
-  margin-bottom: 10px;
-  cursor: pointer;
-  border-radius: 6px;
-  color: #d1d5db;
-  text-decoration: none;
-}
-
-.sidebar a img {
-  width: 20px;
-  height: 20px;
-}
-
-.sidebar a.nav {
-  background-color: #1F2937;
-  color: #fff;
-}
-
-.sidebar a:hover {
-  background-color: #1F2937;
-}
-
 
 .container {
   flex: 1;
@@ -81,9 +33,9 @@ header {
   justify-content: space-between;
 }
 
-h1 {
+.header h1 {
   margin: 0;
-  font-size: 22px;
+  font-size: 35px;
 }
 
 .btn {
@@ -278,4 +230,37 @@ h1 {
 .toast.error {
   background: #fff1f2;
   color: #ef4444;
+}
+
+/* Filter bar layout */
+.table-filters {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: nowrap;   /* keep in one line */
+  margin-top: 12px;
+}
+
+/* Small inputs & dropdowns */
+.table-filters input,
+.table-filters select {
+  min-width: 130px;
+  padding: 6px 10px;
+  font-size: 13px;
+  height: 34px;
+}
+
+.tooltip {
+  position: absolute;
+  background: #222;
+  color: #fff;
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-size: 13px;
+  width: 220px;
+  z-index: 1000;
+}
+
+.hidden {
+  display: none;
 }

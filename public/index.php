@@ -7,7 +7,6 @@ date_default_timezone_set('Asia/Colombo');   // 👈 add this line
 define('BASE_PATH', dirname(__DIR__));              // C:\xampp\htdocs\autonexus
 define('APP_ROOT', BASE_PATH . '/app');             // C:\xampp\htdocs\autonexus\app
 define('CONFIG_PATH', BASE_PATH . '/config');       // C:\xampp\htdocs\autonexus\config
-
    // optional
 
 //for multi lang support
@@ -29,8 +28,6 @@ I18n::bufferStart();
 */
 require_once CONFIG_PATH . '/config.php';
 require_once APP_ROOT . '/core/Database.php';
-require_once BASE_PATH . '/vendor/autoload.php';
-
 
 
 /*
@@ -235,15 +232,6 @@ $router->get('/admin/admin-viewinvoices',        [InvoicesController::class, 'in
 $router->get('/admin/admin-viewinvoices/show',   [InvoicesController::class, 'show']);
 $router->get ('/admin/admin-viewinvoices/create', [InvoicesController::class, 'create']);
 $router->post('/admin/admin-viewinvoices/store',  [InvoicesController::class, 'store']);
-$router->get(
-  '/admin/admin-viewinvoices/download',
-  [\app\controllers\admin\InvoicesController::class, 'download']
-);
-
-$router->get(
-  '/admin/admin-viewinvoices/email',
-  [\app\controllers\admin\InvoicesController::class, 'email']
-);
 
 
 
@@ -472,6 +460,10 @@ $router->get('/receptionist/billing/create', [BillingController::class, 'create'
 
 
 // --------------Mechanic copy
+use app\controllers\mechanic\MechanicProfileController;
+$router->get('/mechanic/profile/edit', [MechanicProfileController::class, 'edit']);
+$router->post('/mechanic/profile/update', [MechanicProfileController::class, 'update']);
+
 $router->get('/mechanic/jobs', [\app\controllers\mechanic\JobsMController::class, 'index']);
 $router->get('/mechanic/assignedjobs', [\app\controllers\mechanic\AssignedJobsMController::class, 'index']);
 $router->get('/mechanic/dashboard', [\app\controllers\mechanic\DashboardController::class, 'index']);
@@ -525,7 +517,6 @@ $router->get ('/supervisor/workorders/{id}',      [WorkOrdersController::class, 
 $router->get ('/supervisor/workorders/{id}/edit', [WorkOrdersController::class, 'editForm']);
 $router->post('/supervisor/workorders/{id}',      [WorkOrdersController::class, 'update']);
 $router->post('/supervisor/workorders/{id}/delete', [WorkOrdersController::class, 'destroy']);
-
 
 
 /*

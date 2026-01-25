@@ -8,21 +8,9 @@
   <link rel="stylesheet" href="<?= $base ?>/public/assets/css/supervisor/style-history.css">
 </head>
 <body>
-
-<div class="sidebar">
-  <div class="logo-container">
-    <img src="/autonexus/public/assets/img/Auto.png" alt="Logo" class="logo">
-  </div>
-
-  <h2>AUTONEXUS</h2>
-  <a href="/autonexus/mechanic/dashboard"><img src="/autonexus/public/assets/img/dashboard.png"/>Dashboard</a>
-  <a href="/autonexus/mechanic/jobs"><img src="/autonexus/public/assets/img/jobs.png"/>Jobs</a>
-  <a href="/autonexus/mechanic/assignedjobs"><img src="/autonexus/public/assets/img/assigned.png"/>Assigned</a>
-  <a href="/autonexus/mechanic/history" class="nav active"><img src="/autonexus/public/assets/img/history.png"/>Vehicle History</a>
-</div>
-
-<main class="container">
-  <div class="page-header">
+<?php include __DIR__ . '/../partials/sidebar.php'; ?>
+<div class="main-content">
+<header class="page-header">
     <div>
       <?php if (!empty($vehicle)): ?>
         <h1><?= htmlspecialchars($vehicle['make'] . ' ' . $vehicle['model']) ?> (<?= htmlspecialchars($vehicle['license_plate']) ?>)</h1>
@@ -31,9 +19,10 @@
         <h1>Vehicle Not Found</h1>
         <p class="subtitle">Please check the license plate number and try again.</p>
       <?php endif; ?>
-    </div>
+      </div>
     <a class="btn" href="<?= $base ?>/mechanic/history">Back</a>
-  </div>
+
+  </header>
 
   <?php if (!empty($appointments)): ?>
     <div class="tiles">
@@ -53,7 +42,7 @@
   <?php elseif (!empty($vehicle)): ?>
     <p class="subtitle" style="text-align:center;">No completed services found for this vehicle.</p>
   <?php endif; ?>
-</main>
+  </div>
 
 </body>
 </html>

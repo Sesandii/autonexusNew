@@ -11,54 +11,7 @@ body {
   background-color: #f8f9fc;
 }
 
-.logo-container {
-    text-align: center;
-    margin-bottom: 10px;
-}
-
-.logo {
-    width: 180px;
-    height: 80px;
-}
-
-.sidebar {
-  width: 220px;
-  background-color: #000;
-  color: white;
-  padding: 10px;
-}
-
-.sidebar h2 {
-  margin-bottom: 30px;
-  font-size: 22px;
-  text-align: center;
-}
-
-.sidebar a {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 12px 10px;
-  margin-bottom: 10px;
-  cursor: pointer;
-  border-radius: 6px;
-  color: #d1d5db;
-  text-decoration:none;
-}
-
-.sidebar a img {
-  width: 20px;
-  height: 20px;
-}
-.sidebar a.nav{
-background-color: #1F2937;
-  color: #fff;
-}
-.sidebar a:hover {
-  background-color:#1F2937;
-}
-
-.main{
+.main-content {
   flex: 1;
   padding: 30px;
   overflow-y: auto;
@@ -162,17 +115,15 @@ h2 {
 }
 
 /* ===== Vehicle History Styles ===== */
-
-.container {
-  margin-left: 0px;
-  padding: 30px;
-}
-
 .page-header {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 25px;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+
+  /* 🔽 THIS fixes the alignment */
+  align-items: flex-start;
+  text-align: left;
 }
 
 .page-header h1 {
@@ -303,26 +254,6 @@ h2 {
   margin: 6px 0;
   line-height: 1.6;
 }
-
-.sidebar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 220px;  /* adjust as per your design */
-  height: 100vh; /* full viewport height */
-  background: #000000; /* or your sidebar color */
-  overflow-y: auto;
-  padding-top: 10px;
-  z-index: 1000;
-}
-
-.main-content,
-.container {
-  margin-left: 220px; /* same width as sidebar */
-  padding: 20px;
-}
-
-
 
 /* Layout */
 .details-wrapper {

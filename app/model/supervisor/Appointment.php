@@ -23,7 +23,11 @@ class Appointment
 
     public function getVehicleByLicense($licensePlate)
 {
-    $sql = "SELECT * FROM vehicles WHERE license_plate = :plate LIMIT 1";
+    $sql = "SELECT v.*, CONCAT(u.first_name,' ', u.last_name) AS owner_name
+    FROM vehicles v
+    JOIN customers c ON v.customer_id = c.customer_id
+    JOIN users u ON c.user_id = u.user_id
+    WHERE license_plate = :plate LIMIT 1";
     $stmt = $this->db->prepare($sql);
     $stmt->execute(['plate' => $licensePlate]);
     return $stmt->fetch(\PDO::FETCH_ASSOC);

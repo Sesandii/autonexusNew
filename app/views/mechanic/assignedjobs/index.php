@@ -7,58 +7,149 @@
   <link rel="stylesheet" href="/autonexus/public/assets/css/mechanic/style-assignedjobs.css"/>
 </head>
 <body>
-  <div class="sidebar">
-     <div class="logo-container">
-     <img src="/autonexus/public/assets/img/Auto.png" alt="Logo" class="logo">
-     </div>
-      <h2>AUTONEXUS</h2>
-    <a href="/autonexus/mechanic/dashboard" >
-      <img src="/autonexus/public/assets/img/dashboard.png"/>Dashboard
-    </a>
-    <a href="/autonexus/mechanic/jobs">
-      <img src="/autonexus/public/assets/img/jobs.png"/>Jobs
-    </a>
-    <a href="/autonexus/mechanic/assignedjobs" class="nav">
-      <img src="/autonexus/public/assets/img/assigned.png"/>Assigned Jobs
-    </a>
-    <a href="/autonexus/mechanic/history">
-      <img src="/autonexus/public/assets/img/history.png"/>Vehicle History
-    </a>
-    </div>
+<?php include __DIR__ . '/../partials/sidebar.php'; ?>
     <main class="main">
       <header>
         <input type="text" placeholder="Search..." class="search" />
-        <!--<div class="user-profile">
-          <img src="/autonexus/public/assets/img/user.png" alt="User" class="avatar-img" />
-          <span>John Doe</span>
-        </div>-->
       </header>
       <section class="job-section">
-  <p>Overview of all ongoing jobs</p>
   <h2>Ongoing Jobs</h2>
-
+  <p>Overview of all ongoing jobs</p>
+  <section class="focus-section">
+  <h2>Focus Job</h2>
+  <div id="focus-dropzone" class="focus-dropzone">
+    <p>Drag a job here to focus</p>
+  </div>
+</section>
   <div class="job-grid" id="job-grid">
     <?php if (!empty($workOrders)) : ?>
         <?php foreach ($workOrders as $job) : ?>
-            <div class="job-card">
-                <h3><?= htmlspecialchars($job['service_summary']) ?></h3>
-                <div class="job-info"><span>Customer:</span> <?= htmlspecialchars($job['first_name'] . ' ' . $job['last_name']) ?></div>
-                <div class="job-info"><span>Address:</span> <?= htmlspecialchars($job['street_address'] . ', ' . $job['city'] . ', ' . $job['state']) ?></div>
-                <div class="job-info"><span>ETA:</span> <?= htmlspecialchars($job['started_at']) ?></div>
-                <div class="job-info"><span>Mechanic:</span> <?= htmlspecialchars($job['mechanic_code']) ?></div>
-                <div class="job-actions">
-                <button class="view-btn" onclick="location.href='/autonexus/mechanic/jobs/view/<?= $job['work_order_id'] ?>'">Edit</button>
-  
-                </div>
-            </div>
+          <div class="job-card"
+          draggable="true"
+     data-created="<?= $job['started_at'] ?>"
+     data-duration="<?= $job['base_duration_minutes'] ?>"
+     data-status="<?= strtolower($job['status']) ?>"
+     data-service="<?= strtolower($job['name']) ?>"
+     data-customer="<?= strtolower($job['first_name'] . ' ' . $job['last_name']) ?>"
+     data-vehicle="<?= strtolower($job['make'] . ' ' . $job['model']) ?>"
+     data-workorder="<?= $job['work_order_id'] ?>">
+
+      <h3 class="job-title">Work Order <?= htmlspecialchars($job['work_order_id']) ?></h3>
+
+      <div class="job-info">
+        <span>Service</span>
+        <?= htmlspecialchars($job['name']) ?>
+      </div>
+      <div class="job-info">
+        <span>Customer</span>
+        <?= htmlspecialchars($job['first_name'] . ' ' . $job['last_name']) ?>
+      </div>
+
+      <div class="job-info">
+        <span>Vehicle</span>
+        <?= htmlspecialchars($job['make'] . ' ' . $job['model']) ?>
+      </div>
+
+      <div class="job-info timer">
+    <span>Time Remaining</span>
+    <strong class="job-timer">--:--:--</strong>
+  </div>
+
+      <div class="job-info status">
+        <span>Status</span>
+        <?= htmlspecialchars($job['status']) ?>
+      </div>
+
+      <div class="job-actions">
+      <button class="view-btn" onclick="location.href='/autonexus/mechanic/jobs/view/<?= $job['work_order_id'] ?>'">Edit</button>
+      </div>
+      </div>
         <?php endforeach; ?>
     <?php else: ?>
         <p>No assigned jobs yet.</p>
     <?php endif; ?>
 </div>
-
 </section>
     </main>
-  <script src="/autonexus/public/assets/js/mechanic/script-assignedobs.js"></script>
+  <script> 
+  function updateTimers() {
+  document.querySelectorAll('.job-card').forEach(card => {
+    const createdAt = card.dataset.created;
+    const durationMin = parseInt(card.dataset.duration);
+
+    if (!createdAt || !durationMin) return;
+
+    const startTime = new Date(createdAt);
+    const endTime = new Date(startTime.getTime() + durationMin * 60000);
+    const now = new Date();
+
+    const diff = endTime - now;
+    const timerEl = card.querySelector('.job-timer');
+
+    if (diff <= 0) {
+      timerEl.textContent = "Overdue";
+      timerEl.style.color = "red";
+      return;
+    }
+
+    const hours = Math.floor(diff / (1000 * 60 * 60));
+    const minutes = Math.floor((diff / (1000 * 60)) % 60);
+    const seconds = Math.floor((diff / 1000) % 60);
+
+    timerEl.textContent =
+      `${String(hours).padStart(2, '0')}:` +
+      `${String(minutes).padStart(2, '0')}:` +
+      `${String(seconds).padStart(2, '0')}`;
+  });
+}
+
+// run immediately
+updateTimers();
+// update every second
+setInterval(updateTimers, 1000);
+
+const focusDropzone = document.getElementById('focus-dropzone');
+let draggedJob = null;
+
+// Drag start
+document.querySelectorAll('.job-card').forEach(card => {
+  card.addEventListener('dragstart', e => {
+    draggedJob = card;
+    e.dataTransfer.effectAllowed = 'move';
+    card.style.opacity = '0.5';
+  });
+  card.addEventListener('dragend', e => {
+    draggedJob = null;
+    card.style.opacity = '1';
+  });
+});
+
+// Drag over dropzone
+focusDropzone.addEventListener('dragover', e => {
+  e.preventDefault();
+  focusDropzone.style.backgroundColor = '#f0f0f0';
+});
+
+// Drag leave
+focusDropzone.addEventListener('dragleave', e => {
+  focusDropzone.style.backgroundColor = '';
+});
+
+// Drop
+focusDropzone.addEventListener('drop', e => {
+  e.preventDefault();
+  focusDropzone.style.backgroundColor = '';
+  if (draggedJob) {
+    // Clear existing focus
+    focusDropzone.innerHTML = '';
+    // Clone dragged job to focus area
+    const clone = draggedJob.cloneNode(true);
+    clone.classList.add('focused-job');
+    focusDropzone.appendChild(clone);
+    // Optional: scroll into view
+    clone.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+});
+</script>
 </body>
 </html>

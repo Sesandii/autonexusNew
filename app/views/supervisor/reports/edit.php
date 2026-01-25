@@ -10,20 +10,7 @@
 </head>
 <body>
 
-<div class="sidebar">
-  <div class="logo-container">
-    <img src="<?= $base ?>/public/assets/img/Auto.png" alt="Logo" class="logo">
-  </div>
-  <h2>AUTONEXUS</h2>
-
-  <a href="<?= $base ?>/supervisor/dashboard"><img src="<?= $base ?>/public/assets/img/dashboard.png"/>Dashboard</a>
-  <a href="<?= $base ?>/supervisor/workorders"><img src="<?= $base ?>/public/assets/img/jobs.png"/>Work Orders</a>
-  <a href="<?= $base ?>/supervisor/assignedjobs"><img src="<?= $base ?>/public/assets/img/assigned.png"/>Assigned</a>
-  <a href="<?= $base ?>/supervisor/history"><img src="<?= $base ?>/public/assets/img/history.png"/>Vehicle History</a>
-  <a href="<?= $base ?>/supervisor/complaints"><img src="<?= $base ?>/public/assets/img/Complaints.png"/>Complaints</a>
-  <a href="<?= $base ?>/supervisor/feedbacks"><img src="<?= $base ?>/public/assets/img/Feedbacks.png"/>Feedbacks</a>
-  <a href="<?= $base ?>/supervisor/reports" class="nav"><img src="<?= $base ?>/public/assets/img/Inspection.png"/>Reports</a>
-</div>
+<?php include __DIR__ . '/../partials/sidebar.php'; ?>
 
 <main class="main-content">
 

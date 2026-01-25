@@ -14,25 +14,35 @@ class DashboardController extends Controller
 
     public function index()
     {
+        
         if (session_status() !== PHP_SESSION_ACTIVE) session_start();
-        $mechanic_id = $_SESSION['user']['user_id']; // Mechanic's user ID
 
+        $userId = $_SESSION['user']['user_id']; // users.user_id
         $model = new Dashboard();
+ 
+
+
+        // ✅ Convert user_id → mechanic_id
+        $mechanicId = $model->getMechanicIdByUser($userId);
+     
+        if (!$mechanicId) {
+            die('Mechanic profile not found');
+        }
 
         $data = [
-            'stats' => $model->getWorkorderStats($mechanic_id),
-            'appointments' => $model->getTodayAppointments($mechanic_id)
+            'stats' => $model->getWorkorderStats($mechanicId),
+            'appointments' => $model->getTodayAppointments()
         ];
 
         $this->view('mechanic/dashboard/index', $data);
     }
 
-
     private function requireMechanic(): void
     {
         if (session_status() !== PHP_SESSION_ACTIVE) session_start();
         $u = $_SESSION['user'] ?? null;
-        if (!$u || (($u['role'] ?? '') !== 'mechanic')) {
+
+        if (!$u || ($u['role'] ?? '') !== 'mechanic') {
             header('Location: ' . rtrim(BASE_URL, '/') . '/login');
             exit;
         }

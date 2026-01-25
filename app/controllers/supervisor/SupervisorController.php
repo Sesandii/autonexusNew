@@ -16,7 +16,6 @@ class SupervisorController extends Controller
     {
         if (session_status() !== PHP_SESSION_ACTIVE) session_start();
         $supervisor_id = $_SESSION['user']['user_id'];
-
         $model = new Dashboard();
 
         $data = [

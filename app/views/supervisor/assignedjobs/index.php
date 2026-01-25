@@ -8,57 +8,59 @@
 </head>
 
 <body>
-  <div class="sidebar">
-    <div class="logo-container">
-      <img src="/autonexus/public/assets/img/Auto.png" alt="Logo" class="logo">
-    </div>
-
-    <h2>AUTONEXUS</h2>
-
-    <a href="/autonexus/supervisor/dashboard">
-      <img src="/autonexus/public/assets/img/dashboard.png"/>Dashboard
-    </a>
-    <a href="/autonexus/supervisor/workorders">
-      <img src="/autonexus/public/assets/img/jobs.png"/>Work Orders
-    </a>
-    <a href="/autonexus/supervisor/assignedjobs" class="nav active">
-      <img src="/autonexus/public/assets/img/assigned.png"/>Assigned
-    </a>
-    <a href="/autonexus/supervisor/history">
-      <img src="/autonexus/public/assets/img/history.png"/>Vehicle History
-    </a>
-    <a href="/autonexus/supervisor/complaints">
-      <img src="/autonexus/public/assets/img/Complaints.png"/>Complaints
-    </a>
-    <a href="/autonexus/supervisor/feedbacks">
-      <img src="/autonexus/public/assets/img/Feedbacks.png"/>Feedbacks
-    </a>
-    <a href="/autonexus/supervisor/reports">
-      <img src="/autonexus/public/assets/img/Inspection.png"/>Report
-    </a>
-  </div>
+<?php include __DIR__ . '/../partials/sidebar.php'; ?>
 
   <main class="main">
+
+  <h1>Assigned Jobs</h1>
+      <p>Here are all jobs already assigned to mechanics</p>
+
     <header>
-      <input type="text" placeholder="Search..." class="search" />
-    </header>
+    <input type="text" id="jobSearch" placeholder="Search by Work Order or Service..." class="search" />
+    <div class="filters">
+  <select id="serviceFilter">
+    <option value="">All Services</option>
+    <?php
+      $services = array_unique(array_column($workOrders, 'service_name'));
+      foreach ($services as $service):
+    ?>
+      <option value="<?= strtolower($service) ?>"><?= $service ?></option>
+    <?php endforeach; ?>
+  </select>
+
+  <select id="mechanicFilter">
+    <option value="">All Mechanics</option>
+    <?php
+      $mechanics = array_unique(array_column($workOrders, 'mechanic_code'));
+      foreach ($mechanics as $mechanic):
+    ?>
+      <option value="<?= strtolower($mechanic) ?>"><?= $mechanic ?></option>
+    <?php endforeach; ?>
+  </select>
+
+  <select id="statusFilter">
+    <option value="">All Statuses</option>
+    <option value="open">Open</option>
+    <option value="in_progress">In Progress</option>
+    <option value="completed">Completed</option>
+  </select>
+</div>
+
+  </header>
 
     <section class="job-section">
-      <p>Here are all jobs already assigned to mechanics</p>
-      <h2>Assigned Jobs</h2>
-
+      
+      
       <div class="job-grid">
 
         <?php if (!empty($workOrders)): ?>
           <?php foreach ($workOrders as $job): ?>
-            <div class="job-card">
-              
+            <div class="job-card"
+     data-workorder="<?= $job['work_order_id'] ?>"
+     data-service="<?= strtolower($job['service_name']) ?>"
+     data-mechanic="<?= strtolower($job['mechanic_code']) ?>"
+     data-status="<?= strtolower($job['status']) ?>">
               <h3>Work Order <?= $job['work_order_id'] ?></h3>
-
-              <div class="job-info"><span>Vehicle:</span> <?= $job['make']?> <?= $job['model']?> </div>
-              <div class="job-info"><span>Created:</span> <?= $job['started_at'] ?></div>
-              <div class="job-info"><span>Date:</span> <?= $job['appointment_date'] ?></div>
-              <div class="job-info"><span>Time:</span> <?= $job['appointment_time'] ?></div>
               <div class="job-info"><span>Service:</span> <?= $job['service_name'] ?></div>
 
               <div class="job-info"><span>Mechanic:</span> <?= $job['mechanic_code'] ?></p></div>

@@ -7,31 +7,47 @@
   <link rel="stylesheet" href="/autonexus/public/assets/css/supervisor/style-complaints.css"/>
 </head>
 <body>
-  <div class="sidebar">
-    <div class="logo-container">
-      <img src="/autonexus/public/assets/img/Auto.png" alt="Logo" class="logo">
-    </div>
-    <h2>AUTONEXUS</h2>
-    <a href="/autonexus/supervisor/dashboard"><img src="/autonexus/public/assets/img/dashboard.png"/>Dashboard</a>
-    <a href="/autonexus/supervisor/workorders"><img src="/autonexus/public/assets/img/jobs.png"/>Work Orders</a>
-    <a href="/autonexus/supervisor/assignedjobs"><img src="/autonexus/public/assets/img/assigned.png"/>Assigned</a>
-    <a href="/autonexus/supervisor/history"><img src="/autonexus/public/assets/img/history.png"/>Vehicle History</a>
-    <a href="/autonexus/supervisor/complaints" class="nav"><img src="/autonexus/public/assets/img/Complaints.png"/>Complaints</a>
-    <a href="/autonexus/supervisor/feedbacks"><img src="/autonexus/public/assets/img/Feedbacks.png"/>Feedbacks</a>
-    <a href="/autonexus/supervisor/reports"><img src="/autonexus/public/assets/img/Inspection.png"/>Report</a>
-  </div>
-
+<?php include __DIR__ . '/../partials/sidebar.php'; ?>
   <main class="main-content">
-    <header>
-      <input type="text" placeholder="Search complaints..." class="search" id="searchInput" />
-    </header>
+  <header class="page-header">
+  <h1>Customer Complaints</h1>
+
+  <div class="filter-bar">
+    <input
+      type="text"
+      placeholder="Search complaints..."
+      class="search"
+      id="searchInput"
+    />
+
+    <input type="date" id="dateFilter">
+
+    <select id="statusFilter">
+      <option value="">All Status</option>
+      <option value="open">Open</option>
+      <option value="in_progress">In Progress</option>
+      <option value="resolved">Resolved</option>
+    </select>
+
+    <select id="priorityFilter">
+      <option value="">All Priority</option>
+      <option value="low">Low</option>
+      <option value="medium">Medium</option>
+      <option value="high">High</option>
+    </select>
+  </div>
+</header>
+
 
     <section class="complaints-section">
-      <h2>Customer Complaints</h2>
       <div class="complaints-container">
   <?php if (!empty($complaints)): ?>
     <?php foreach ($complaints as $complaint): ?>
-      <div class="complaint-row">
+      <div class="complaint-row"
+     data-date="<?= htmlspecialchars($complaint['complaint_date']); ?>"
+     data-status="<?= strtolower($complaint['status']); ?>"
+     data-priority="<?= strtolower($complaint['priority']); ?>">
+
         <div class="complaint-header">
           <div>
             <h3><?= htmlspecialchars($complaint['customer_name']); ?></h3>
@@ -61,5 +77,45 @@
 
     </section>
   </main>
+  <script>
+document.addEventListener("DOMContentLoaded", function () {
+    const searchInput = document.getElementById("searchInput");
+    const dateFilter = document.getElementById("dateFilter");
+    const statusFilter = document.getElementById("statusFilter");
+    const priorityFilter = document.getElementById("priorityFilter");
+
+    const rows = document.querySelectorAll(".complaint-row");
+
+    function applyFilters() {
+        const searchVal = searchInput.value.toLowerCase();
+        const dateVal = dateFilter.value;
+        const statusVal = statusFilter.value;
+        const priorityVal = priorityFilter.value;
+
+        rows.forEach(row => {
+            const rowText = row.innerText.toLowerCase();
+            const rowDate = row.dataset.date;
+            const rowStatus = row.dataset.status;
+            const rowPriority = row.dataset.priority;
+
+            const matchSearch = !searchVal || rowText.includes(searchVal);
+            const matchDate = !dateVal || rowDate === dateVal;
+            const matchStatus = !statusVal || rowStatus === statusVal;
+            const matchPriority = !priorityVal || rowPriority === priorityVal;
+
+            row.style.display =
+                matchSearch && matchDate && matchStatus && matchPriority
+                ? "block"
+                : "none";
+        });
+    }
+
+    searchInput.addEventListener("keyup", applyFilters);
+    dateFilter.addEventListener("change", applyFilters);
+    statusFilter.addEventListener("change", applyFilters);
+    priorityFilter.addEventListener("change", applyFilters);
+});
+</script>
+
 </body>
 </html>

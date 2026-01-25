@@ -29,13 +29,28 @@ class HistoryController extends Controller
     public function show()
     {
         $licensePlate = $_GET['license_plate'] ?? '';
+        $fromDate     = $_GET['fromDate'] ?? '';
+        $toDate       = $_GET['toDate'] ?? '';
         $vehicle = null;
         $appointments = [];
 
+        if (empty($licensePlate) || empty($fromDate) || empty($toDate)) {
+            $_SESSION['message'] = [
+                'type' => 'error',
+                'text' => 'License plate, From Date and To Date are required.'
+            ];
+            header('Location: ' . rtrim(BASE_URL, '/') . '/mechanic/history');
+            exit;
+        } 
         if (!empty($licensePlate)) {
             $vehicle = $this->appointmentModel->getVehicleByLicense($licensePlate);
-            $appointments = $this->appointmentModel->getVehicleHistoryByLicense($licensePlate);
-        }
+            $appointments = $this->appointmentModel
+        ->getVehicleHistoryByLicenseWithDateRange(
+            $licensePlate,
+            $fromDate,
+            $toDate
+        );
+    }
 
         // ✅ Render the history result view
         $this->view('mechanic/history/show', [
@@ -43,6 +58,8 @@ class HistoryController extends Controller
             'appointments' => $appointments
         ]);
     }
+
+    
 
     /**
      * ✅ Show detailed info for a specific appointment

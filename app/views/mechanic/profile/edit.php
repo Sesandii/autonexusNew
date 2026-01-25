@@ -14,7 +14,7 @@
 <div class="page-header">
   <h2>Edit Profile</h2>
 
-  <form method="POST" action="<?= $base ?>/supervisor/profile/update" class="profile-form">
+  <form method="POST" action="<?= $base ?>/mechanic/profile/update" class="profile-form">
 
   <div class="form-grid">
     <div class="form-group">
@@ -79,7 +79,7 @@
 
   <div class="form-actions">
     <button type="submit">Update Profile</button>
-    <a href="<?= $base ?>/supervisor/dashboard" class="cancel-btn">Cancel</a>
+    <a href="<?= $base ?>/mechanic/dashboard" class="cancel-btn">Cancel</a>
   </div>
 
 </form>

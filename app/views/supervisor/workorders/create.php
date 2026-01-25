@@ -5,22 +5,11 @@
   <meta charset="utf-8">
   <title>Create Work Order</title>
   <link rel="stylesheet" href="<?= $base ?>/public/assets/css/supervisor/style-workorders.css">
+  
   <link rel="stylesheet" href="<?= $base ?>/public/assets/css/supervisor/forms.css">
 </head>
 <body>
-<div class="sidebar">
-<div class="logo-container">
-       <img src="/autonexus/public/assets/img/Auto.png" alt="Logo" class="logo">
-     </div>
-<h2>AUTONEXUS</h2>
-<a href="/autonexus/supervisor/dashboard"><img src="/autonexus/public/assets/img/dashboard.png"/>Dashboard</a>
-<a href="/autonexus/supervisor/workorders" class="nav active"><img src="/autonexus/public/assets/img/jobs.png"/>Work Orders</a>
-<a href="/autonexus/supervisor/assignedjobs"><img src="/autonexus/public/assets/img/assigned.png"/>Assigned Jobs</a>
-<a href="/autonexus/supervisor/history"><img src="/autonexus/public/assets/img/history.png"/>Vehicle History</a>
-<a href="/autonexus/supervisor/complaints"><img src="/autonexus/public/assets/img/Complaints.png"/>Complaints</a>
-<a href="/autonexus/supervisor/feedbacks"><img src="/autonexus/public/assets/img/Feedbacks.png"/>Feedbacks</a>
-<a href="/autonexus/supervisor/reports"><img src="/autonexus/public/assets/img/Inspection.png"/>Report</a>
-</div>
+<?php include __DIR__ . '/../partials/sidebar.php'; ?>
 
 <main class="container">
   <div class="page-header">
@@ -58,7 +47,7 @@
             <option value="">-- unassigned --</option>
             <?php foreach ($activeMechanics as $m): ?>
               <option value="<?= (int)$m['mechanic_id'] ?>">
-                <?= htmlspecialchars($m['mechanic_code']) ?> — <?= htmlspecialchars($m['specialization']) ?>
+              <?= htmlspecialchars($m['open_jobs']) ?>-<?= htmlspecialchars($m['in_progress_jobs']) ?>-<?= htmlspecialchars($m['completed_jobs']) ?> — <?= htmlspecialchars($m['mechanic_code']) ?> — <?= htmlspecialchars($m['specialization']) ?> — <?= htmlspecialchars($m['current_job']) ?>
               </option>
             <?php endforeach; ?>
           </select>

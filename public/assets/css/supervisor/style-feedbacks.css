@@ -11,53 +11,6 @@ body {
   background-color: #f8f9fc;
 }
 
-.logo-container {
-    text-align: center;
-    margin-bottom: 10px;
-}
-
-.logo {
-    width: 180px;
-    height: 80px;
-}
-
-.sidebar {
-  width: 220px;
-  background-color: #000;
-  color: white;
-  padding: 10px;
-}
-
-.sidebar h2 {
-  margin-bottom: 30px;
-  font-size: 22px;
-  text-align: center;
-}
-
-.sidebar a {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 12px 10px;
-  margin-bottom: 10px;
-  cursor: pointer;
-  border-radius: 6px;
-  color: #d1d5db;
-  text-decoration:none;
-}
-
-.sidebar a img {
-  width: 20px;
-  height: 20px;
-}
-.sidebar a.nav{
-background-color: #1F2937;
-  color: #fff;
-}
-.sidebar a:hover {
-  background-color:#1F2937;
-}
-
 .main-content {
   flex: 1;
   padding: 30px;
@@ -71,7 +24,7 @@ header {
 }
 
 header h1 {
-  font-size: 24px;
+  font-size: 30px;
   margin-bottom: 5px;
 }
 
@@ -102,13 +55,6 @@ header h1 {
   height: 30px;
   border-radius: 50%;
 }
-
-.job-section h2 {
-  font-size: 28px;
-  margin-top: 20px;
-  margin-bottom: 20px;
-}
-
 table {
   width: 100%;
   border-collapse: collapse;
@@ -140,7 +86,7 @@ button.view-btn:hover {
   background-color: #1F2937;
 }
 
-.feedback-section h2 {
+.page-header h1 {
   margin-top: 20px;
   margin-bottom: 20px;
 }
@@ -201,5 +147,33 @@ button.view-btn:hover {
 
 .not-replied {
   color: gray;
+}
+
+.page-header {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+  align-items: flex-start;
+}
+
+.filter-bar {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  width: 100%;
+  flex-wrap: wrap;
+}
+
+.filter-bar input,
+.filter-bar select {
+  padding: 6px 10px;
+  font-size: 13px;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+}
+
+.filter-bar .search {
+  min-width: 240px;
 }
 

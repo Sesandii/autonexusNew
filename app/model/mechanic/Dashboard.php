@@ -9,82 +9,56 @@ class Dashboard
 
     public function __construct()
     {
-        $this->pdo = db(); // Use global db() helper
+        $this->pdo = db(); 
     }
 
-    /**
-     * Get work order statistics for the mechanic
-     */
-    public function getWorkorderStats(int $mechanic_id): array
+    public function getMechanicIdByUser(int $mechanic_id ): ?int
 {
-    $stats = [
-        'assigned' => 0,
-        'completed' => 0,
-        'ongoing' => 0,
-        'total' => 0
-    ];
-
-    // Total assigned jobs
     $stmt = $this->pdo->prepare("
-        SELECT COUNT(*) as count
-        FROM work_orders
-        WHERE mechanic_id = :mechanic_id
+        SELECT mechanic_id
+        FROM mechanics
+        WHERE user_id = ?
     ");
-    $stmt->execute(['mechanic_id' => $mechanic_id]);
-    $stats['total'] = (int)$stmt->fetchColumn();
-
-    // Completed jobs
-    $stmt = $this->pdo->prepare("
-        SELECT COUNT(*) as count
-        FROM work_orders
-        WHERE mechanic_id = :mechanic_id AND status = 'completed'
-    ");
-    $stmt->execute(['mechanic_id' => $mechanic_id]);
-    $stats['completed'] = (int)$stmt->fetchColumn();
-
-    // Ongoing jobs
-    $stmt = $this->pdo->prepare("
-        SELECT COUNT(*) as count
-        FROM work_orders
-        WHERE mechanic_id = :mechanic_id AND status = 'ongoing'
-    ");
-    $stmt->execute(['mechanic_id' => $mechanic_id]);
-    $stats['ongoing'] = (int)$stmt->fetchColumn();
-
-    // Assigned but not started (optional)
-    $stats['assigned'] = $stats['total'] - $stats['completed'] - $stats['ongoing'];
-
-    return $stats;
+    $stmt->execute([$mechanic_id ]);
+    return $stmt->fetchColumn() ?: null;
 }
 
+    public function getWorkorderStats(int $mechanic_id): array
+{
+    $sql = "
+        SELECT
+            COUNT(*) AS total,
+            SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) AS completed,
+            SUM(CASE WHEN status = 'in_progress' THEN 1 ELSE 0 END) AS ongoing,
+            SUM(CASE WHEN status NOT IN ('completed','in_progress') THEN 1 ELSE 0 END) AS assigned
+        FROM work_orders
+        WHERE mechanic_id = ?
+    ";
 
-    /**
-     * Get today's appointments for the mechanic
-     */
-    public function getTodayAppointments(int $mechanicId): array
-    {
-        $today = date('Y-m-d');
+    $stmt = $this->pdo->prepare($sql);
+    $stmt->execute([$mechanic_id]);
+    return $stmt->fetch(PDO::FETCH_ASSOC);
+}
+public function getTodayAppointments(): array
+{
+    $sql = "
+        SELECT 
+            CONCAT(v.model, ' ', v.make) AS vehicle,
+            CONCAT(u.first_name, ' ', u.last_name) AS customer_name,
+            a.appointment_time,
+            s.name,
+            a.status
+        FROM appointments a
+        JOIN vehicles v ON v.vehicle_id = a.vehicle_id
+        JOIN customers c ON c.customer_id = a.customer_id
+        JOIN users u ON u.user_id = c.user_id
+        JOIN services s ON s.service_id = a.service_id
+        WHERE DATE(a.appointment_date) = CURDATE()
+        ORDER BY a.appointment_time ASC
+    ";
 
-        $sql = "
-            SELECT 
-                w.work_order_id,
-                v.license_plate,
-                CONCAT(u.first_name, ' ', u.last_name) AS customer_name,
-                a.appointment_time,
-                s.name,
-                w.status
-            FROM work_orders w
-            JOIN appointments a ON w.appointment_id = a.appointment_id
-            JOIN vehicles v ON a.vehicle_id = v.vehicle_id
-            JOIN users u ON a.customer_id = u.user_id
-            JOIN services s ON a.service_id = s.service_id
-            WHERE w.mechanic_id = ?
-            AND DATE(a.appointment_date) = ?
-            ORDER BY a.appointment_time ASC
-        ";
-
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([$mechanicId, $today]);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
+    $stmt = $this->pdo->prepare($sql);
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
 }

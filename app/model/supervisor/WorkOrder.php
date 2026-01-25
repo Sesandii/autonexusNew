@@ -99,18 +99,50 @@ class WorkOrder
 
     // Active mechanics
     public function getActiveMechanics(): array
-    {
-        $stmt = $this->pdo->query("SELECT * FROM mechanics WHERE status = 'active'");
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
+{
+    $sql = "
+        SELECT 
+            m.mechanic_id,
+            m.mechanic_code,
+            m.specialization,
 
+            -- Count of open jobs
+            SUM(CASE WHEN w.status = 'open' THEN 1 ELSE 0 END) AS open_jobs,
+
+            -- Count of in_progress jobs
+            SUM(CASE WHEN w.status = 'in_progress' THEN 1 ELSE 0 END) AS in_progress_jobs,
+
+            -- Count of completed jobs
+            SUM(CASE WHEN w.status = 'completed' THEN 1 ELSE 0 END) AS completed_jobs,
+
+            -- Current job in progress (if any)
+            MAX(
+                CASE 
+                    WHEN w.status = 'in_progress' THEN CONCAT('WO-', w.work_order_id, ' (', s.name, ')')
+                    ELSE NULL
+                END
+            ) AS current_job
+
+        FROM mechanics m
+        LEFT JOIN work_orders w ON w.mechanic_id = m.mechanic_id
+        LEFT JOIN appointments a ON w.appointment_id = a.appointment_id
+        LEFT JOIN services s ON a.service_id = s.service_id
+        WHERE m.status = 'active'
+        GROUP BY m.mechanic_id, m.mechanic_code, m.specialization
+        ORDER BY m.mechanic_code
+    ";
+
+    $stmt = $this->pdo->query($sql);
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
     // Get all work orders for this supervisor
     public function getAll(int $supervisor_id): array
     {
         $sql = "SELECT w.*, a.appointment_date, a.appointment_time,
                        s.name AS service_name, s.base_duration_minutes,
                        m.mechanic_code, v.license_plate, c.customer_code,
-                       u.first_name, u.last_name
+                       u.first_name, 
+                       u.last_name
                 FROM work_orders w
                 LEFT JOIN appointments a ON w.appointment_id = a.appointment_id
                 LEFT JOIN services s ON a.service_id = s.service_id
@@ -284,6 +316,8 @@ public function getFullJobDetails($id)
             v.model,
             v.license_plate,
             v.year,
+            v.color,
+            v.mileage,
 
             -- Mechanic
             m.mechanic_code,
@@ -293,7 +327,11 @@ public function getFullJobDetails($id)
             -- Customer
             cu.first_name AS customer_first_name,
             cu.last_name  AS customer_last_name,
-            c.customer_code
+            c.customer_code,
+            cu.phone,
+            cu.street_address,
+            cu.city,
+            cu.state
             FROM work_orders w
 
         JOIN appointments a ON w.appointment_id = a.appointment_id

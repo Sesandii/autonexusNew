@@ -11,53 +11,6 @@ body {
   background-color: #f8f9fc;
 }
 
-.logo-container {
-    text-align: center;
-    margin-bottom: 10px;
-}
-
-.logo {
-    width: 180px;
-    height: 80px;
-}
-
-.sidebar {
-  width: 220px;
-  background-color: #000;
-  color: white;
-  padding: 10px;
-}
-
-.sidebar h2 {
-  margin-bottom: 30px;
-  font-size: 22px;
-  text-align: center;
-}
-
-.sidebar a {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 12px 10px;
-  margin-bottom: 10px;
-  cursor: pointer;
-  border-radius: 6px;
-  color: #d1d5db;
-  text-decoration:none;
-}
-
-.sidebar a img {
-  width: 20px;
-  height: 20px;
-}
-.sidebar a.nav{
-background-color: #1F2937;
-  color: #fff;
-}
-.sidebar a:hover {
-  background-color:#1F2937;
-}
-
 .main-content {
   flex: 1;
   padding: 30px;
@@ -68,11 +21,6 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-}
-
-header h1 {
-  font-size: 24px;
-  margin-bottom: 5px;
 }
 
 .search {
@@ -105,14 +53,16 @@ header h1 {
 
 
 /* --- Job Section --- */
-.job-section h2 {
+.job-header h1 {
   margin-top: 10px;
-  font-size: 24px;
+  font-size: 35px;
   color: #222;
 }
 
 .job-section p {
   color: #777;
+  margin-top: 10px;
+
 }
 
 /* --- Job Grid (Tiles Layout) --- */
@@ -181,3 +131,29 @@ header h1 {
 .view-btn:hover {
   background: #444444;
 }
+
+.job-header {
+  display: flex;
+  flex-direction: column; /* stack vertically */
+  gap: 10px;
+  align-items: flex-start;  
+}
+
+.filters-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: flex-start;
+}
+
+.filters-row .search {
+  width: 260px;
+}
+
+.filters-row select {
+  min-width: 160px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+

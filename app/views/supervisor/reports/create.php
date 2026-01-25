@@ -9,34 +9,7 @@
   <link rel="stylesheet" href="/autonexus/public/assets/css/supervisor/style-report.css"/>
 </head>
 <body>
-<div class="sidebar">
-  <div class="logo-container">
-    <img src="/autonexus/public/assets/img/Auto.png" alt="Logo" class="logo">
-  </div>
-  <h2>AUTONEXUS</h2>
-
-  <a href="/autonexus/supervisor/dashboard">
-    <img src="/autonexus/public/assets/img/dashboard.png"/>Dashboard
-  </a>
-  <a href="/autonexus/supervisor/workorders">
-    <img src="/autonexus/public/assets/img/jobs.png"/>Work Orders
-  </a>
-  <a href="/autonexus/supervisor/assignedjobs">
-    <img src="/autonexus/public/assets/img/assigned.png"/>Assigned
-  </a>
-  <a href="/autonexus/supervisor/history">
-    <img src="/autonexus/public/assets/img/history.png"/>Vehicle History
-  </a>
-  <a href="/autonexus/supervisor/complaints">
-    <img src="/autonexus/public/assets/img/Complaints.png"/>Complaints
-  </a>
-  <a href="/autonexus/supervisor/feedbacks">
-    <img src="/autonexus/public/assets/img/Feedbacks.png"/>Feedbacks
-  </a>
-  <a href="/autonexus/supervisor/reports" class="nav">
-    <img src="/autonexus/public/assets/img/Inspection.png"/>Reports
-  </a>
-</div>
+<?php include __DIR__ . '/../partials/sidebar.php'; ?>
 
 <main class="main-content">
 <header>

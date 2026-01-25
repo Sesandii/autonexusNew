@@ -9,21 +9,11 @@
 </head>
 <body>
 
-<div class="sidebar">
-  <div class="logo-container">
-    <img src="/autonexus/public/assets/img/Auto.png" alt="Logo" class="logo">
-  </div>
-
-  <h2>AUTONEXUS</h2>
-  <a href="/autonexus/mechanic/dashboard"><img src="/autonexus/public/assets/img/dashboard.png"/>Dashboard</a>
-  <a href="/autonexus/mechanic/jobs"><img src="/autonexus/public/assets/img/jobs.png"/>Jobs</a>
-  <a href="/autonexus/mechanic/assignedjobs"><img src="/autonexus/public/assets/img/assigned.png"/>Assigned</a>
-  <a href="/autonexus/mechanic/history" class="nav"><img src="/autonexus/public/assets/img/history.png"/>Vehicle History</a>
-</div>
-
-<main class="container">
+<?php include __DIR__ . '/../partials/sidebar.php'; ?>
+<div class="main-content">
+<header class="page-header">
   <h1>Vehicle Service Details</h1>
-
+</header>
   <div class="details-wrapper">
 
   <!-- Vehicle Info -->
@@ -67,7 +57,7 @@
 
 <button onclick="history.back()" class="back-btn">← Back</button>
 
-</main>
+</div>
 
 </body>
 </html>
