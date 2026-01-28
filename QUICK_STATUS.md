@@ -13,7 +13,7 @@
 main branch (Jan 25, 2026)
   ↓
   ├─ Contains: 3 months of updates
-  ├─ Latest: "congig issue fixed" (73aa625)
+  ├─ Latest: "config issue fixed" (73aa625)
   └─ Status: ✅ Stable
   
 sandini branch (Oct 16, 2025)

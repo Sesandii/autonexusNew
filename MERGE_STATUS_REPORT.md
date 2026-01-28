@@ -23,7 +23,7 @@ The merge from `main` to `sandini` has been **successfully prepared** but is **N
 
 ### Main Branch
 - **SHA:** `73aa62567f6bc417c506f448bd66b7fd8c769d56`
-- **Latest Commit:** "congig issue fixed" (Jan 25, 2026)
+- **Latest Commit:** "config issue fixed" (Jan 25, 2026)
 - **Status:** Stable, no changes needed
 - **Commits ahead of sandini:** Multiple commits over 3 months
 
@@ -81,7 +81,7 @@ The following changes from `main` will be synchronized to `sandini`:
 ### PR #7: "Prepare main→sandini synchronization (manual merge required)"
 - **Status:** Open (Draft)
 - **Source Branch:** `copilot/merge-main-into-sandini`
-- **Target Branch:** `main` (NOTE: Should target `sandini`)
+- **Target Branch:** `main`
 - **URL:** https://github.com/Sesandii/autonexusNew/pull/7
 - **Mergeable:** Yes
 - **State:** Clean (no conflicts)
@@ -89,7 +89,7 @@ The following changes from `main` will be synchronized to `sandini`:
 - **Assignees:** @Copilot, @SandiniJ
 - **Reviewer:** @SandiniJ
 
-**Important Note:** The PR is currently targeting `main` as the base branch, but the intention is to merge into `sandini`. The merge branch contains the proper merged state.
+**Important Note:** PR #7 currently targets the `main` branch as its base. However, the merged content on `copilot/merge-main-into-sandini` is intended to be applied to the `sandini` branch, not `main`. Do not merge PR #7 as-is. Instead, use one of the completion options below to apply the changes to `sandini`.
 
 ---
 
@@ -172,9 +172,9 @@ Before completing the merge, verify:
 ## Recommendations
 
 1. **Complete the merge using Option 1 (Direct Branch Update)** - fastest and cleanest method
-2. **Verify functionality** after merge is applied to ensure no regressions
-3. **Document the merge** in team communications
-4. **Update PR #7** or close it after sandini is updated, since the work is complete
+2. **Close PR #7** after sandini is updated - PR #7 targets the wrong base branch (main) and should not be merged as-is
+3. **Verify functionality** after merge is applied to ensure no regressions
+4. **Document the merge** in team communications
 5. **Consider establishing a merge schedule** to prevent sandini from falling behind main again
 
 ---
