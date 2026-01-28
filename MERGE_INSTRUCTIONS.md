@@ -1,40 +1,57 @@
 # Merge Instructions: main → sandini
 
 ## Summary
-This branch (`copilot/merge-main-into-sandini`) contains the merged state of:
-- All code from the `main` branch (commit 73aa625 "congig issue fixed")
-- Plus the unique `debug.log` file from the `sandini` branch
+This branch (`copilot/merge-main-into-sandini`) contains the fully merged state of:
+- ✅ All code from the `main` branch (commit 73aa625 "congig issue fixed")
+- ✅ Plus the unique `debug.log` file from the `sandini` branch (97KB, 650 lines)
 
-## What was done
-1. Analyzed both branches to identify differences
-2. Created a merge that includes:
-   - All files and changes from `main`
+## What was completed
+1. Analyzed both branches to identify all differences
+2. Created a merged state that includes:
+   - All files and updates from `main` (composer files, tests, vendor, etc.)
    - The `debug.log` file that was unique to `sandini`
+3. Verified no conflicts exist
+4. Confirmed `main` branch remains unchanged
 
-## To complete the synchronization
-Due to credential limitations in the sandboxed environment, the final step requires manual action:
+## Final Step: Update sandini branch
 
-### Option 1: Fast-forward merge (if sandini hasn't changed)
+**AUTOMATED OPTION (Recommended):**
+Use GitHub CLI or API to update the sandini branch reference:
 ```bash
+# Using GitHub CLI
+gh api repos/Sesandii/autonexusNew/git/refs/heads/sandini -X PATCH -f sha=$(git rev-parse copilot/merge-main-into-sandini)
+```
+
+**MANUAL OPTIONS:**
+
+### Option 1: Using git commands
+```bash
+git fetch origin copilot/merge-main-into-sandini
 git checkout sandini
-git merge --ff copilot/merge-main-into-sandini
-git push origin sandini
+git reset --hard origin/copilot/merge-main-into-sandini
+git push origin sandini --force-with-lease
 ```
 
-### Option 2: Force update (if sandini history can be rewritten)
+### Option 2: Using GitHub Web UI
+1. Go to https://github.com/Sesandii/autonexusNew
+2. Navigate to Pull Requests
+3. Create new PR from `copilot/merge-main-into-sandini` → `sandini`
+4. Merge the PR (squash or merge commit, your choice)
+
+### Option 3: Direct push with refspec
 ```bash
-git push origin copilot/merge-main-into-sandini:sandini --force
+git push origin copilot/merge-main-into-sandini:sandini --force-with-lease
 ```
 
-### Option 3: Create a Pull Request
-Create a PR from `copilot/merge-main-into-sandini` to `sandini` and merge it.
+## Verification Checklist
+- ✅ `main` branch unchanged at commit 73aa625
+- ✅ Merged state contains ALL main updates
+- ✅ Merged state contains sandini's debug.log
+- ✅ No merge conflicts
+- ✅ Changes pushed to copilot/merge-main-into-sandini
+- ⏳ Pending: sandini branch ref update (requires credentials)
 
-## Verification
-- ✅ `main` branch remains unchanged
-- ✅ Merged branch contains all `main` code
-- ✅ Merged branch contains `debug.log` from `sandini`
-- ✅ No code conflicts
-
-## Files in merged state
-- All files from main (composer.json, composer.lock, tests/, etc.)
-- debug.log (from sandini)
+## Files in final merged state
+- All files from main: .htaccess, README.md, app/, composer.json, composer.lock, config/, public/, tests/, tests_artifacts/, vendor/
+- From sandini: debug.log
+- New: MERGE_INSTRUCTIONS.md (this file)
