@@ -15,16 +15,24 @@ This branch (`copilot/merge-main-into-sandini`) contains the fully merged state 
 
 ## Final Step: Update sandini branch
 
+**IMPORTANT NOTES:**
+- The sandini and main branches have diverged histories
+- Sandini is at an older commit (4f89a92 from Oct 2025)
+- Main has evolved significantly (73aa625 from Jan 2026)
+- This synchronization will effectively fast-forward sandini to include all main updates
+- **⚠️ Coordinate with team members before executing** to avoid conflicts
+
 **AUTOMATED OPTION (Recommended):**
 Use GitHub CLI or API to update the sandini branch reference:
 ```bash
-# Using GitHub CLI
+# Using GitHub CLI (updates ref without force push)
 gh api repos/Sesandii/autonexusNew/git/refs/heads/sandini -X PATCH -f sha=$(git rev-parse copilot/merge-main-into-sandini)
 ```
 
 **MANUAL OPTIONS:**
 
-### Option 1: Using git commands
+### Option 1: Using git commands (⚠️ Rewrites sandini history)
+**WARNING**: This will rewrite the sandini branch history. Coordinate with team members first.
 ```bash
 git fetch origin copilot/merge-main-into-sandini
 git checkout sandini
@@ -38,7 +46,8 @@ git push origin sandini --force-with-lease
 3. Create new PR from `copilot/merge-main-into-sandini` → `sandini`
 4. Merge the PR (squash or merge commit, your choice)
 
-### Option 3: Direct push with refspec
+### Option 3: Direct push with refspec (⚠️ Rewrites sandini history)
+**WARNING**: This will rewrite the sandini branch history. Coordinate with team members first.
 ```bash
 git push origin copilot/merge-main-into-sandini:sandini --force-with-lease
 ```
