@@ -32,12 +32,31 @@
 
 
       <!-- Summary cards -->
-      <div class="summary-cards">
-        <div class="card total"><p>Total Revenue</p><h3>Rs.1459.92</h3></div>
-        <div class="card paid"><p>Paid</p><h3>Rs.919.95</h3></div>
-        <div class="card pending"><p>Pending</p><h3>Rs.439.98</h3></div>
-        <div class="card overdue"><p>Overdue</p><h3>Rs.99.99</h3></div>
-      </div>
+     <div class="summary-cards">
+  <div class="card total">
+    <p>Total Revenue</p>
+    <h3>Rs.<?= number_format($summary['total'], 2) ?></h3>
+  </div>
+
+  <div class="card paid">
+    <p>Paid</p>
+    <h3>Rs.<?= number_format($summary['paid'], 2) ?></h3>
+  </div>
+
+  <div class="card pending">
+    <p>Pending</p>
+    <h3>Rs.<?= number_format($summary['pending'], 2) ?></h3>
+  </div>
+
+  <div class="card overdue">
+    <p>Overdue</p>
+    <h3>Rs.<?= number_format(
+        max($summary['pending'] - 0, 0), 
+        2
+    ) ?></h3>
+  </div>
+</div>
+
 
       <!-- Filters -->
       <div class="filter-bar">
@@ -83,6 +102,19 @@
        href="<?= rtrim(BASE_URL,'/') ?>/admin/admin-viewinvoices/show?id=<?= (int)$inv['invoice_id'] ?>">
        <i class="fa-regular fa-eye"></i>
     </a>
+  
+    <a class="icon-btn"
+   href="<?= rtrim(BASE_URL,'/') ?>/admin/admin-viewinvoices/download?id=<?= (int)$inv['invoice_id'] ?>">
+   <i class="fa-solid fa-file-arrow-down"></i>
+</a>
+
+<!-- <a class="icon-btn"
+   href="<?= rtrim(BASE_URL,'/') ?>/admin/admin-viewinvoices/email?id=<?= (int)$inv['invoice_id'] ?>"
+   title="Email Invoice">
+   <i class="fa-regular fa-envelope"></i>
+</a> -->
+
+    
   </td>
 </tr>
 <?php endforeach; ?>

@@ -30,6 +30,14 @@ require_once CONFIG_PATH . '/config.php';
 require_once APP_ROOT . '/core/Database.php';
 
 
+// Composer autoload (Dompdf, PHPMailer, etc.)
+$autoload = BASE_PATH . '/vendor/autoload.php';
+if (is_file($autoload)) {
+    require_once $autoload;
+}
+
+
+
 /*
 |--------------------------------------------------------------------------|
 | Autoload app\ namespace
@@ -228,10 +236,17 @@ $router->get('/admin/admin-notifications', [NotificationsController::class, 'ind
 use app\controllers\admin\InvoicesController;
 
 
-$router->get('/admin/admin-viewinvoices',        [InvoicesController::class, 'index']);
-$router->get('/admin/admin-viewinvoices/show',   [InvoicesController::class, 'show']);
-$router->get ('/admin/admin-viewinvoices/create', [InvoicesController::class, 'create']);
-$router->post('/admin/admin-viewinvoices/store',  [InvoicesController::class, 'store']);
+$router->get('/admin/admin-viewinvoices',              [InvoicesController::class, 'index']);
+
+$router->get('/admin/admin-viewinvoices/create',       [InvoicesController::class, 'create']);
+$router->post('/admin/admin-viewinvoices/store',       [InvoicesController::class, 'store']);
+
+$router->get('/admin/admin-viewinvoices/show',         [InvoicesController::class, 'show']);
+
+$router->get('/admin/admin-viewinvoices/download',     [InvoicesController::class, 'download']);
+
+// optional (only if you want emailing enabled)
+// $router->get('/admin/admin-viewinvoices/email',        [InvoicesController::class, 'email']);
 
 
 
