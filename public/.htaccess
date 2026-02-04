@@ -1,8 +1,20 @@
 RewriteEngine On
 RewriteBase /autonexus/
 
+# =============================================================================
+# STATIC ASSETS - ALLOW DIRECT ACCESS
+# =============================================================================
+# Allow direct access to assets folder (CSS, JS, images, etc.)
+# This ensures that files in assets/ are served directly without routing
+RewriteCond %{REQUEST_URI} ^/autonexus/(public/)?assets/
 RewriteCond %{REQUEST_FILENAME} -f [OR]
 RewriteCond %{REQUEST_FILENAME} -d
 RewriteRule ^ - [L]
 
+# Let other real files/folders pass through
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# Route everything else to index.php
 RewriteRule ^ index.php [QSA,L]
