@@ -348,10 +348,10 @@ $router->get('/customer/rate-service', [\app\controllers\customer\FeedbackContro
 $router->post('/customer/rate-service', [\app\controllers\customer\FeedbackController::class, 'store']); // for saving reviews later
 
 // Customer Complaints - File a Complaint feature
-use app\controllers\customer\ComplaintController;
+use app\controllers\customer\ComplaintController as CustomerComplaintController;
 
-$router->get('/customer/file-complaint', [ComplaintController::class, 'file']);
-$router->post('/customer/complaints/submit', [ComplaintController::class, 'submit']);
+$router->get('/customer/file-complaint', [CustomerComplaintController::class, 'file']);
+$router->post('/customer/complaints/submit', [CustomerComplaintController::class, 'submit']);
 
 
 
