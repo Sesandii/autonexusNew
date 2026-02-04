@@ -1,8 +1,11 @@
 <?php
 namespace app\controllers\mechanic;
 
+Use PDO;
+
 use app\core\Controller;
 use app\model\mechanic\WorkOrder;
+
 
 class JobsMVController extends Controller
 {
@@ -16,7 +19,6 @@ class JobsMVController extends Controller
     public function show($id)
 {
     if (session_status() !== PHP_SESSION_ACTIVE) session_start();
-
     $logged_user_id = $_SESSION['user']['user_id'] ?? null;
     if (!$logged_user_id) {
         die("Unauthorized");
@@ -33,15 +35,23 @@ class JobsMVController extends Controller
 
     // ✅ Determine if the logged-in mechanic can edit
     $can_edit = ((int)$logged_user_id === (int)$job_user_id);
+    $woModel = new WorkOrder();
+    $services = $woModel->getSummaryFromChecklist(
+        (int)$job['work_order_id']
+        );
+
+        $stmt = $pdo->prepare("SELECT id, file_name FROM service_photos WHERE work_order_id = ?");
+        $stmt->execute([$job['work_order_id']]);
+        $photos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     // Render the job view page
     $this->view('mechanic/jobs/view', [
         'job' => $job,
+        'services' => $services,
+        'photos' => $photos,
         'can_edit' => $can_edit
     ]);
 }
-
-
 
     /** Update job status by mechanic */
     public function updateStatus()

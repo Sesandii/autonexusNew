@@ -5,34 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Work Order Details</title>
   <link rel="stylesheet" href="/autonexus/public/assets/css/supervisor/style-assignedjobs.css"/>
-  <style>
-    .details-box {
-      background: #fff;
-      padding: 20px;
-      border-radius: 8px;
-      margin-bottom: 25px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
-    .details-box h2 {
-      margin-bottom: 10px;
-      color: #333;
-    }
-    .photo-img {
-      width: 200px;
-      margin: 8px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-    }
-  </style>
 </head>
 
 <body>
 <?php include __DIR__ . '/../partials/sidebar.php'; ?>
   <main class="main">
     <header>
-      <h2>Job Details</h2>
+      <h1>Job Details</h1>
     </header>
-    <section class="job-section">
+    <section class="job-sec">
       <!-- WORK ORDER DETAILS -->
 <div class="details-box info-card">
     <h2 class="info-title">Work Order Details</h2>
@@ -177,7 +158,7 @@
 </div>
 
      <!-- SERVICE PHOTOS -->
-<div class="details-box info-card">
+<div class="details-box info-card photos-box">
     <h2 class="info-title">Service Photos</h2>
 
     <!-- UPLOAD FORM -->
@@ -204,7 +185,6 @@
                         class="photo-img"
                         onclick="openModal(this.src)"
                     >
-
                     <!-- DELETE -->
                     <form
                         action="/autonexus/supervisor/assignedjobs/deletePhoto"
@@ -225,6 +205,11 @@
 
 
     </section>
+    <div class="back-button-wrapper">
+  <a href="/autonexus/supervisor/assignedjobs" class="btn-back">
+    Back
+  </a>
+</div>
   </main>
 
   <!-- 🔍 IMAGE MODAL -->

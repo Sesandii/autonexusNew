@@ -16,22 +16,31 @@ class WorkOrder
 
     // Create new work order
     public function create(array $data): int
-    {
-        $sql = "INSERT INTO work_orders 
-                (appointment_id, mechanic_id, service_summary, total_cost, status, supervisor_id)
-                VALUES (:appointment_id, :mechanic_id, :service_summary, :total_cost, :status, :supervisor_id)";
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([
-            'appointment_id' => $data['appointment_id'],
-            'mechanic_id'    => $data['mechanic_id'] ?: null,
-            'service_summary'=> $data['service_summary'],
-            'total_cost'     => $data['total_cost'],
-            'status'         => $data['status'],
-            'supervisor_id'  => $data['supervisor_id']
-        ]);
-        return (int)$this->pdo->lastInsertId();
-    }
+{
+    $sql = "INSERT INTO work_orders 
+            (appointment_id, mechanic_id, service_summary, total_cost, status, supervisor_id)
+            VALUES (:appointment_id, :mechanic_id, :service_summary, :total_cost, :status, :supervisor_id)";
 
+    $stmt = $this->pdo->prepare($sql);
+    $stmt->execute([
+        'appointment_id' => $data['appointment_id'],
+        'mechanic_id'    => $data['mechanic_id'] ?: null,
+        'service_summary'=> $data['service_summary'],
+        'total_cost'     => $data['total_cost'],
+        'status'         => $data['status'],
+        'supervisor_id'  => $data['supervisor_id']
+    ]);
+
+    $workOrderId = (int)$this->pdo->lastInsertId();
+
+    // ✅ Sync appointment status (OPEN → CONFIRMED)
+    $this->updateAppointmentStatus(
+        (int)$data['appointment_id'],
+        $data['status']
+    );
+
+    return $workOrderId;
+}
     // Update work order fields (does NOT handle status/timestamps)
     public function update(int $id, array $data, int $supervisor_id): void
 {
@@ -264,6 +273,9 @@ class WorkOrder
         'completed_at'   => $completed,
         'id'             => $workOrderId
     ]);
+    // ✅ Sync appointment status with work order status
+$this->updateAppointmentStatus($appointmentId, $newStatus);
+
 }
 
 
@@ -280,20 +292,24 @@ public function getAssigned(int $supervisor_id): array
                    v.model,
                    c.customer_code,
                    u.first_name, 
-                   u.last_name
+                   u.last_name,
+                   COUNT(DISTINCT p.id) AS photo_count,
+                   SUM(ch.status = 'completed') AS checklist_completed
             FROM work_orders w
             LEFT JOIN appointments a ON w.appointment_id = a.appointment_id
             LEFT JOIN services s ON a.service_id = s.service_id
             LEFT JOIN mechanics m ON w.mechanic_id = m.mechanic_id
             LEFT JOIN vehicles v ON a.vehicle_id = v.vehicle_id
             LEFT JOIN customers c ON a.customer_id = c.customer_id
+            LEFT JOIN service_photos p ON p.work_order_id = w.work_order_id
+            LEFT JOIN checklist ch ON ch.work_order_id = w.work_order_id
             LEFT JOIN users u ON c.user_id = u.user_id
             WHERE w.supervisor_id = :supervisor_id
-            ORDER BY w.work_order_id DESC";
-
+            GROUP BY w.work_order_id
+            ORDER BY w.work_order_id DESC
+            ";
     $stmt = $this->pdo->prepare($sql);
     $stmt->execute(['supervisor_id' => $supervisor_id]);
-
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
@@ -476,6 +492,27 @@ public function getCompletedWorkOrdersWithoutReport(): array
     $stmt = $this->pdo->prepare($sql);
     $stmt->execute();
     return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+}
+
+private function updateAppointmentStatus(int $appointmentId, string $workOrderStatus): void
+{
+    $map = [
+        'open'        => 'confirmed',
+        'in_progress' => 'in_service',
+        'completed'   => 'completed',
+    ];
+
+    if (!isset($map[$workOrderStatus])) {
+        return;
+    }
+
+    $stmt = $this->pdo->prepare(
+        "UPDATE appointments SET status = :status WHERE appointment_id = :id"
+    );
+    $stmt->execute([
+        'status' => $map[$workOrderStatus],
+        'id'     => $appointmentId
+    ]);
 }
 
 

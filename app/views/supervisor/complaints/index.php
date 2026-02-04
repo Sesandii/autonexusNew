@@ -37,10 +37,8 @@
     </select>
   </div>
 </header>
-
-
-    <section class="complaints-section">
-      <div class="complaints-container">
+    <section class="complaints-section" id="complaints-sec">
+      <div class="complaints-grid">
   <?php if (!empty($complaints)): ?>
     <?php foreach ($complaints as $complaint): ?>
       <div class="complaint-row"

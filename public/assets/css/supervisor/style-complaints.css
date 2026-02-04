@@ -325,3 +325,64 @@ button.view-btn:hover {
 .filter-bar .search {
   min-width: 220px;
 }
+
+.complaints-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(300px, 1fr));
+  gap: 20px; /* spacing between tiles */
+  margin-top: 20px;
+}
+
+.complaint-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.complaint-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+}
+
+.complaint-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.complaint-header h3 {
+  margin: 0;
+  font-size: 16px;
+}
+
+.complaint-header .meta {
+  font-size: 12px;
+  color: #555;
+}
+
+.priority.low { background: #e6f5ff; color: #007acc; padding: 4px 8px; border-radius: 12px; font-size: 12px; }
+.priority.medium { background: #fff3e6; color: #b07f00; padding: 4px 8px; border-radius: 12px; font-size: 12px; }
+.priority.high { background: #ffe6e6; color: #cc0000; padding: 4px 8px; border-radius: 12px; font-size: 12px; }
+
+.description {
+  font-size: 14px;
+  margin-bottom: 12px;
+  color: #333;
+}
+
+.complaint-footer p {
+  font-size: 13px;
+  margin: 2px 0;
+}
+
+/* Responsive for smaller screens */
+@media (max-width: 768px) {
+  .complaints-grid {
+    grid-template-columns: 1fr;
+  }
+}

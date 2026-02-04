@@ -4,7 +4,6 @@
 <head>
   <meta charset="utf-8">
   <title>Vehicle Service Details - <?= htmlspecialchars($details['license_plate']) ?></title>
-  <link rel="stylesheet" href="<?= $base ?>/public/assets/css/supervisor/forms.css">
   <link rel="stylesheet" href="<?= $base ?>/public/assets/css/supervisor/style-history.css">
 </head>
 <body>
@@ -14,8 +13,7 @@
 <header class="page-header">
   <h1>Vehicle Service Details</h1>
 </header>
-  <div class="details-wrapper">
-
+<div class="details-wrapper details-grid">
   <!-- Vehicle Info -->
   <div class="card info-card">
     <h3 class="card-title">Vehicle Information</h3>

@@ -30,6 +30,7 @@ class WorkOrder
                 u.first_name,
                 u.last_name,
                 u.street_address,
+                
                 u.city,
                 u.state,
                 a.appointment_date,
@@ -107,7 +108,6 @@ class WorkOrder
                 a.appointment_date,
                 a.appointment_time,
                 a.notes,
-    
                 v.make,
                 v.model,
                 v.year,
@@ -120,6 +120,7 @@ class WorkOrder
                 u.street_address,
                 u.city,
                 u.state,
+                u.phone,
                 m.mechanic_code AS assigned_mechanic_code,
                 m.mechanic_id
             FROM work_orders w
@@ -175,7 +176,6 @@ class WorkOrder
     ]);
 }
 
-
     /** Get all jobs (mechanic tab) */
     public static function getAllJobs(): array
     {
@@ -201,7 +201,9 @@ class WorkOrder
                 v.make,
                 v.model,
                 v.license_plate,
-                m.mechanic_code
+                m.mechanic_code,
+                COUNT(DISTINCT p.id) AS photo_count,
+                SUM(ch.status = 'completed') AS checklist_completed
             FROM work_orders w
             JOIN appointments a ON w.appointment_id = a.appointment_id
             JOIN customers c ON a.customer_id = c.customer_id
@@ -209,9 +211,28 @@ class WorkOrder
             JOIN services s ON a.service_id = s.service_id
             JOIN vehicles v ON a.vehicle_id = v.vehicle_id
             JOIN mechanics m ON w.mechanic_id = m.mechanic_id
+            LEFT JOIN checklist ch ON ch.work_order_id = w.work_order_id
+            LEFT JOIN service_photos p ON p.work_order_id = w.work_order_id
+            GROUP BY work_order_id
             ORDER BY w.started_at DESC
         ";
 
         return $pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public function getSummaryFromChecklist(int $workOrderId): array
+{
+    $sql = "
+        SELECT
+            item_name,
+            status
+        FROM checklist
+        WHERE work_order_id = :id
+    ";
+
+    $stmt = $this->pdo->prepare($sql);
+    $stmt->execute(['id' => $workOrderId]);
+
+    return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+}
 }

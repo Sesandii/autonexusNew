@@ -137,7 +137,7 @@ h2 {
     font-weight: 600;
     color: #555;
     text-align: center;
-    margin-top: 40px;
+    margin-top: 10px;
 }
 
 .btn {
@@ -332,4 +332,16 @@ h2 {
 
 .back-btn:hover {
   background: #374151;
+}
+
+.details-wrapper {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* 2 tiles per row */
+  gap: 20px;
+  margin-top: 20px;
+}
+
+/* Make cards stretch evenly */
+.details-wrapper .card {
+  width: 100%;
 }

@@ -13,30 +13,58 @@ class AssignedJobsController extends Controller
         $this->requireSupervisor();
     }
 
-    /** Assigned Jobs main page */
     public function index()
-    {
-        if (session_status() !== PHP_SESSION_ACTIVE) session_start();
+{
+    if (session_status() !== PHP_SESSION_ACTIVE) session_start();
 
-        $supervisor_id = $_SESSION['user']['user_id'] ?? null;
+    $supervisor_id = $_SESSION['user']['user_id'] ?? null;
 
-        if (!$supervisor_id) {
-            die("Unauthorized");
+    if (!$supervisor_id) {
+        die("Unauthorized");
+    }
+
+    $m = new WorkOrder();
+
+    $workOrders = $m->getAssigned($supervisor_id);
+
+    foreach ($workOrders as &$job) {
+
+        $progress = 0;
+
+        switch ($job['status']) {
+            case 'open':
+                $progress = 20;
+                break;
+
+            case 'in_progress':
+                $progress = 50;
+                break;
+
+            case 'completed':
+                $progress = 100;
+                break;
         }
 
-        $m = new WorkOrder();
+        if (!empty($job['photo_count']) && $job['photo_count'] > 0) {
+            $progress += 25;
+        }
 
-        // Get assigned work orders ONLY for this supervisor
-        $data = [
-            'workOrders' => $m->getAssigned($supervisor_id),  
-            'message'    => $_SESSION['message'] ?? null,
-        ];
+        if (!empty($job['checklist_completed']) && $job['checklist_completed'] > 0) {
+            $progress += 25;
+        }
 
-        unset($_SESSION['message']);
-
-        // Load the correct view
-        $this->view('supervisor/assignedjobs/index', $data);
+        $job['progress'] = min($progress, 100);
     }
+
+    $data = [
+        'workOrders' => $workOrders,
+        'message'    => $_SESSION['message'] ?? null,
+    ];
+
+    unset($_SESSION['message']);
+
+    $this->view('supervisor/assignedjobs/index', $data);
+}
 
     public function edit($id)
 {

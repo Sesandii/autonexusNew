@@ -49,10 +49,7 @@
   </header>
 
     <section class="job-section">
-      
-      
       <div class="job-grid">
-
         <?php if (!empty($workOrders)): ?>
           <?php foreach ($workOrders as $job): ?>
             <div class="job-card"
@@ -62,12 +59,21 @@
      data-status="<?= strtolower($job['status']) ?>">
               <h3>Work Order <?= $job['work_order_id'] ?></h3>
               <div class="job-info"><span>Service:</span> <?= $job['service_name'] ?></div>
-
               <div class="job-info"><span>Mechanic:</span> <?= $job['mechanic_code'] ?></p></div>
-
               <span class="status <?= strtolower($job['status']) ?>">
               <div class="job-info"><span>Status: </span><?= $job['status'] ?></div>
               </span>
+              <div class="progress-wrapper">
+  <div class="progress-label">
+    Progress: <?= $job['progress'] ?>%
+  </div>
+  <div class="progress-bar">
+    <div 
+      class="progress-fill"
+      style="width: <?= $job['progress'] ?>%">
+    </div>
+  </div>
+</div>
               <button class="edit-btn" onclick="location.href='/autonexus/supervisor/assignedjobs/<?= $job['work_order_id'] ?>'">Edit</button>
             </div>
           <?php endforeach; ?>
@@ -78,8 +84,6 @@
       </div>
     </section>
   </main>
-
   <script src="/autonexus/public/assets/js/supervisor/script-assignedjobs.js"></script>
-
 </body>
 </html>

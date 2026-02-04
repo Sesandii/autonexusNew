@@ -59,6 +59,17 @@
         <span>Status</span>
         <?= htmlspecialchars($job['status']) ?>
       </div>
+      <div class="progress-wrapper">
+  <div class="progress-label">
+    Progress: <?= $job['progress'] ?>%
+  </div>
+  <div class="progress-bar">
+    <div 
+      class="progress-fill"
+      style="width: <?= $job['progress'] ?>%">
+    </div>
+  </div>
+</div>
 
       <div class="job-actions">
       <button class="view-btn" onclick="location.href='/autonexus/mechanic/jobs/view/<?= $job['work_order_id'] ?>'">Edit</button>
