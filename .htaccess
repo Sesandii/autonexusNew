@@ -4,18 +4,13 @@ RewriteBase /autonexus/
 # =============================================================================
 # ASSET URL MAPPING
 # =============================================================================
-# Map /autonexus/public/assets/* to actual public/assets/* files
-# This allows views to reference assets as: <?= BASE_URL ?>/public/assets/...
-# Example: /autonexus/public/assets/css/style.css → public/assets/css/style.css
-RewriteCond %{REQUEST_FILENAME} -f [OR]
-RewriteCond %{REQUEST_FILENAME} -d
-RewriteRule ^public/assets/ - [L]
-
-# Also support /autonexus/assets/* → public/assets/* for cleaner URLs
-# Example: /autonexus/assets/css/style.css → public/assets/css/style.css
+# Support cleaner URLs: /autonexus/assets/* → public/assets/*
+# This allows views to use either:
+#   <?= BASE_URL ?>/public/assets/... (explicit)  OR
+#   <?= BASE_URL ?>/assets/... (cleaner)
 RewriteRule ^assets/(.*)$ public/assets/$1 [L]
 
-# Let other real files/folders pass through
+# Let real files/folders pass through (handles public/assets/* pattern)
 RewriteCond %{REQUEST_FILENAME} -f [OR]
 RewriteCond %{REQUEST_FILENAME} -d
 RewriteRule ^ - [L]

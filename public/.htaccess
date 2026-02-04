@@ -4,14 +4,8 @@ RewriteBase /autonexus/
 # =============================================================================
 # STATIC ASSETS - ALLOW DIRECT ACCESS
 # =============================================================================
-# Allow direct access to assets folder (CSS, JS, images, etc.)
-# This ensures that files in assets/ are served directly without routing
-RewriteCond %{REQUEST_URI} ^/autonexus/(public/)?assets/
-RewriteCond %{REQUEST_FILENAME} -f [OR]
-RewriteCond %{REQUEST_FILENAME} -d
-RewriteRule ^ - [L]
-
-# Let other real files/folders pass through
+# Allow direct access to all existing files and folders
+# This ensures CSS, JS, images, and other static assets are served directly
 RewriteCond %{REQUEST_FILENAME} -f [OR]
 RewriteCond %{REQUEST_FILENAME} -d
 RewriteRule ^ - [L]

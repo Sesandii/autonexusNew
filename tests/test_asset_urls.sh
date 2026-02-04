@@ -1,6 +1,10 @@
 #!/bin/bash
 # Asset URL Mapping Test Script
 # This script documents the expected behavior of asset URL mapping
+# Run from the project root directory
+
+# Get the current directory as the project root
+PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
 echo "==================================="
 echo "Asset URL Mapping Test"
@@ -8,7 +12,7 @@ echo "==================================="
 echo ""
 
 echo "Project Structure:"
-echo "  /home/runner/work/autonexusNew/autonexusNew/"
+echo "  ${PROJECT_ROOT}/"
 echo "    ├── .htaccess (root - routes requests)"
 echo "    └── public/"
 echo "        ├── .htaccess (public - serves assets)"
@@ -24,6 +28,9 @@ echo "========================================"
 echo "Browser URL → Physical File"
 echo "========================================"
 echo ""
+
+# Change to project root
+cd "$PROJECT_ROOT"
 
 # Test files
 TEST_FILES=(
@@ -71,14 +78,14 @@ echo "========================================"
 echo ".htaccess Configuration Summary:"
 echo "========================================"
 echo ""
-echo "Root .htaccess (/autonexusNew/.htaccess):"
-echo "  1. Allow direct access to public/assets/* files"
-echo "  2. Rewrite /assets/* → public/assets/*"
+echo "Root .htaccess (/.htaccess):"
+echo "  1. Rewrite /assets/* → public/assets/* (cleaner URLs)"
+echo "  2. Allow direct access to all existing files/folders"
 echo "  3. Route all other requests → public/index.php"
 echo "  4. Block access to app/ and config/ folders"
 echo ""
-echo "Public .htaccess (/autonexusNew/public/.htaccess):"
-echo "  1. Allow direct access to assets/* files"
+echo "Public .htaccess (/public/.htaccess):"
+echo "  1. Allow direct access to all existing files"
 echo "  2. Route all other requests → index.php"
 echo ""
 
@@ -91,7 +98,7 @@ echo "   sudo a2enmod rewrite"
 echo "   sudo systemctl restart apache2"
 echo ""
 echo "2. Virtual host should point to project root:"
-echo "   DocumentRoot /var/www/autonexusNew"
+echo "   DocumentRoot ${PROJECT_ROOT}"
 echo "   (NOT to the public/ folder)"
 echo ""
 echo "3. Test asset access:"
