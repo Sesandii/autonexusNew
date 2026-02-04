@@ -1,6 +1,9 @@
 RewriteEngine On
 RewriteBase /autonexus/
 
+# Redirect /autonexus/assets/ to /autonexus/public/assets/
+RewriteRule ^assets/(.*)$ public/assets/$1 [L]
+
 # Let real files/folders pass through
 RewriteCond %{REQUEST_FILENAME} -f [OR]
 RewriteCond %{REQUEST_FILENAME} -d
