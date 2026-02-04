@@ -80,8 +80,8 @@ Make sure `mod_rewrite` is enabled in XAMPP:
 1. Start Apache in XAMPP Control Panel
 2. Open browser and navigate to: `http://localhost/autonexus/`
 3. Test asset loading by accessing:
-   - `http://localhost/autonexus/assets/css/customer/dashboard.css`
-   - `http://localhost/autonexus/public/assets/css/customer/dashboard.css`
+   - `http://localhost/autonexus/assets/css/customer/complaint.css`
+   - `http://localhost/autonexus/public/assets/css/customer/complaint.css`
    
    Both URLs should work and return the CSS file.
 

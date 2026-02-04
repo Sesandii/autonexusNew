@@ -64,7 +64,7 @@ echo ""
 if [ -f "config/config.php" ]; then
     echo "✅ config/config.php exists"
     if grep -q "const BASE_URL" config/config.php; then
-        BASE_URL=$(grep "const BASE_URL" config/config.php | grep -o "'/[^']*'" | tr -d "'")
+        BASE_URL=$(grep "const BASE_URL" config/config.php | grep -o "['\"][^'\"]*['\"]" | tr -d "'\"")
         echo "   BASE_URL is set to: $BASE_URL"
         if [ "$BASE_URL" = "/autonexus" ]; then
             echo "✅ BASE_URL is correctly set to /autonexus"
