@@ -347,6 +347,9 @@ $router->get('/customer/book/slots',  [BookingController::class, 'slots']);
 $router->get('/customer/rate-service', [\app\controllers\customer\FeedbackController::class, 'index']);
 $router->post('/customer/rate-service', [\app\controllers\customer\FeedbackController::class, 'store']); // for saving reviews later
 
+//customer - complaint
+$router->get('/customer/complaint', [\app\controllers\customer\ComplaintController::class, 'index']);
+$router->post('/customer/complaint', [\app\controllers\customer\ComplaintController::class, 'store']);
 
 
 $router->get('/customer/service-history', [\app\controllers\customer\ServiceHistoryController::class, 'index']);
