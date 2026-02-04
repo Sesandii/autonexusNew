@@ -33,6 +33,9 @@ function isActive($path, $current) { return strpos($current, $path) === 0 ? ' cl
     <!-- Reviews / Feedback -->
     <li><a<?= isActive('/customer/rate-service', $currentPath) ?> href="<?= $base ?>/customer/rate-service"><i class="fa-regular fa-message"></i> Reviews</a></li>
 
+    <!-- File a Complaint (Added for customer complaint feature) -->
+    <li><a<?= isActive('/customer/file-complaint', $currentPath) ?> href="<?= $base ?>/customer/file-complaint"><i class="fa-solid fa-comment-dots"></i> File a Complaint</a></li>
+
     <!-- Profile -->
     <li><a<?= isActive('/customer/profile', $currentPath) ?> href="<?= $base ?>/customer/profile"><i class="fa fa-user"></i> Profile</a></li>
 
