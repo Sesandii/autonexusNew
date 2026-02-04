@@ -339,3 +339,19 @@ textarea{
 .actions .btn:hover {
   background: #e0e0e0;
 }
+
+.grid-row {
+  display: grid;
+  gap: 20px; /* spacing between cards */
+  margin-bottom: 30px;
+}
+
+/* First row: 2 tiles */
+.grid-row.two-columns {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+/* Second row: 3 tiles */
+.grid-row.three-columns {
+  grid-template-columns: repeat(3, 1fr);
+}

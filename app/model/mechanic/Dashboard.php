@@ -23,22 +23,24 @@ class Dashboard
     return $stmt->fetchColumn() ?: null;
 }
 
-    public function getWorkorderStats(int $mechanic_id): array
+public function getWorkorderStatsByUser(int $user_id): array
 {
     $sql = "
         SELECT
             COUNT(*) AS total,
-            SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) AS completed,
-            SUM(CASE WHEN status = 'in_progress' THEN 1 ELSE 0 END) AS ongoing,
-            SUM(CASE WHEN status NOT IN ('completed','in_progress') THEN 1 ELSE 0 END) AS assigned
-        FROM work_orders
-        WHERE mechanic_id = ?
+            SUM(CASE WHEN wo.status = 'completed' THEN 1 ELSE 0 END) AS completed,
+            SUM(CASE WHEN wo.status = 'in_progress' THEN 1 ELSE 0 END) AS ongoing,
+            SUM(CASE WHEN wo.status NOT IN ('completed','in_progress') THEN 1 ELSE 0 END) AS assigned
+        FROM work_orders wo
+        INNER JOIN mechanics m ON wo.mechanic_id = m.mechanic_id
+        WHERE m.user_id = ?
     ";
 
     $stmt = $this->pdo->prepare($sql);
-    $stmt->execute([$mechanic_id]);
+    $stmt->execute([$user_id]);
     return $stmt->fetch(PDO::FETCH_ASSOC);
 }
+
 public function getTodayAppointments(): array
 {
     $sql = "

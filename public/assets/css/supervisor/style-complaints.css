@@ -17,17 +17,6 @@ body {
   overflow-y: auto;
 }
 
-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-header h1 {
-  font-size: 24px;
-  margin-bottom: 5px;
-}
-
 .search {
   width: 300px;
   padding: 8px;
@@ -179,8 +168,6 @@ button.view-btn:hover {
   object-fit: contain;
 }
 
-
-
 .main-content h1 {
   margin-bottom: 15px;
   font-size: 30px;
@@ -293,15 +280,9 @@ button.view-btn:hover {
   flex-direction: column;
   gap: 12px;
   margin-bottom: 20px;
-
-  /* 🔽 THIS fixes the alignment */
   align-items: flex-start;
   text-align: left;
-}
 
-.page-header h1 {
-  margin: 0;
-  text-align: left;
 }
 
 .filter-bar {
@@ -378,11 +359,4 @@ button.view-btn:hover {
 .complaint-footer p {
   font-size: 13px;
   margin: 2px 0;
-}
-
-/* Responsive for smaller screens */
-@media (max-width: 768px) {
-  .complaints-grid {
-    grid-template-columns: 1fr;
-  }
 }

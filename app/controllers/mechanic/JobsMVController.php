@@ -15,7 +15,6 @@ class JobsMVController extends Controller
         $this->requireMechanic();
     }
 
-    /** Show a single job detail */
     public function show($id)
 {
     if (session_status() !== PHP_SESSION_ACTIVE) session_start();
@@ -27,13 +26,11 @@ class JobsMVController extends Controller
     $job = WorkOrder::getSingleJob((int)$id);
     if (!$job) die("Job not found.");
 
-    // ✅ Fetch the user_id of the assigned mechanic
     $pdo = db();
     $stmt = $pdo->prepare("SELECT user_id FROM mechanics WHERE mechanic_id = ?");
     $stmt->execute([$job['mechanic_id']]);
     $job_user_id = $stmt->fetchColumn();
 
-    // ✅ Determine if the logged-in mechanic can edit
     $can_edit = ((int)$logged_user_id === (int)$job_user_id);
     $woModel = new WorkOrder();
     $services = $woModel->getSummaryFromChecklist(
@@ -44,7 +41,6 @@ class JobsMVController extends Controller
         $stmt->execute([$job['work_order_id']]);
         $photos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // Render the job view page
     $this->view('mechanic/jobs/view', [
         'job' => $job,
         'services' => $services,
@@ -53,7 +49,6 @@ class JobsMVController extends Controller
     ]);
 }
 
-    /** Update job status by mechanic */
     public function updateStatus()
 {
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') return;
@@ -67,27 +62,24 @@ class JobsMVController extends Controller
     $job = WorkOrder::getSingleJob($work_order_id);
     if (!$job) die("Job not found.");
 
-    // ✅ Fetch the user_id of the assigned mechanic
     $pdo = db();
     $stmt = $pdo->prepare("SELECT user_id FROM mechanics WHERE mechanic_id = ?");
     $stmt->execute([$job['mechanic_id']]);
     $job_user_id = $stmt->fetchColumn();
 
-    // ✅ Only allow mechanic with matching user_id to update
+
     if ((int)$job_user_id !== (int)$logged_user_id) {
         die("Unauthorized");
     }
 
-    // ✅ Update status
+
     $m = new WorkOrder();
     $m->setStatusMechanic($work_order_id, $newStatus, $job['mechanic_id']);
 
-    // Redirect back to the job view page
     header("Location: " . rtrim(BASE_URL, '/') . "/mechanic/jobs/view/" . $work_order_id);
     exit;
 }
 
-    /** Require mechanic to be logged in */
     private function requireMechanic(): void
     {
         if (session_status() !== PHP_SESSION_ACTIVE) session_start();

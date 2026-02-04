@@ -20,8 +20,7 @@
 
 <?php if (!empty($report) && !empty($workOrder)): ?>
 
-<section class="report-grid">
-
+<div class="grid-row two-columns">
   <!-- Job Inspection -->
   <div class="report-card">
     <h2>Job Inspection & Reporting</h2>
@@ -58,8 +57,9 @@
       </tbody>
     </table>
   </div>
-
+  </div>
   <!-- Final Inspection -->
+  <div class="grid-row three-columns">
   <div class="report-card">
     <h2>Final Inspection</h2>
     <p><strong>Inspection Notes:</strong></p>
@@ -100,7 +100,7 @@
       <?php endif; ?>
     </p>
   </div>
-
+  </div>
 </section>
 
 <div class="actions">

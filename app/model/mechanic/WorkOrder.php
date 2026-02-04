@@ -56,47 +56,50 @@ class WorkOrder
 
     /** Get assigned jobs for multiple mechanics */
     public static function getAssignedJobsMultiple(array $mechanic_ids): array
-    {
-        if (empty($mechanic_ids)) return [];
+{
+    if (empty($mechanic_ids)) return [];
 
-        $pdo = db();
-        $placeholders = implode(',', array_fill(0, count($mechanic_ids), '?'));
+    $pdo = db();
+    $placeholders = implode(',', array_fill(0, count($mechanic_ids), '?'));
 
-        $sql = "
-            SELECT 
-                w.work_order_id,
-                w.service_summary,
-                w.started_at,
-                w.completed_at,
-                w.status,
-                u.first_name,
-                u.last_name,
-                u.street_address,
-                u.city,
-                s.base_duration_minutes,
-                s.name,
-                u.state,
-                a.appointment_date,
-                a.appointment_time,
-                v.make,
-                v.model,
-                v.license_plate,
-                m.mechanic_code
-            FROM work_orders w
-            JOIN appointments a ON w.appointment_id = a.appointment_id
-            JOIN vehicles v ON a.vehicle_id = v.vehicle_id
-            JOIN users u ON a.customer_id = u.user_id
-            JOIN services s ON a.service_id = s.service_id
-            JOIN mechanics m ON w.mechanic_id = m.mechanic_id
-            WHERE w.mechanic_id IN ($placeholders)
-            ORDER BY w.started_at DESC
-        ";
-
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute($mechanic_ids);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
+    $sql = "
+        SELECT 
+            w.work_order_id,
+            w.service_summary,
+            w.started_at,
+            w.completed_at,
+            w.status,
+            u.first_name,
+            u.last_name,
+            u.street_address,
+            u.city,
+            u.state,
+            s.base_duration_minutes,
+            s.name,
+            a.appointment_date,
+            a.appointment_time,
+            v.make,
+            v.model,
+            v.license_plate,
+            m.mechanic_code,
+            COUNT(DISTINCT wp.id) AS photo_count,
+            SUM(CASE WHEN wc.status = 'completed' THEN 1 ELSE 0 END) AS checklist_completed,
+            COUNT(DISTINCT wc.id) AS checklist_total
+        FROM work_orders w
+        JOIN appointments a ON w.appointment_id = a.appointment_id
+        JOIN vehicles v ON a.vehicle_id = v.vehicle_id
+        JOIN users u ON a.customer_id = u.user_id
+        JOIN services s ON a.service_id = s.service_id
+        JOIN mechanics m ON w.mechanic_id = m.mechanic_id
+        LEFT JOIN service_photos wp ON w.work_order_id = wp.work_order_id
+        LEFT JOIN checklist wc ON w.work_order_id = wc.work_order_id
+        WHERE w.mechanic_id IN ($placeholders)
+        GROUP BY w.work_order_id
+        ORDER BY w.started_at DESC ";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute($mechanic_ids);
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
     /** Get single job */
     public static function getSingleJob(int $work_order_id): ?array
     {
@@ -182,7 +185,7 @@ class WorkOrder
         $pdo = db();
 
         $sql = "
-            SELECT 
+            SELECT
                 w.work_order_id,
                 w.service_summary,
                 w.started_at,
@@ -235,4 +238,26 @@ class WorkOrder
 
     return $stmt->fetchAll(\PDO::FETCH_ASSOC);
 }
+
+private function updateAppointmentStatus(int $appointmentId, string $workOrderStatus): void
+{
+    $map = [
+        'open'        => 'confirmed',
+        'in_progress' => 'in_service',
+        'completed'   => 'completed',
+    ];
+
+    if (!isset($map[$workOrderStatus])) {
+        return;
+    }
+
+    $stmt = $this->pdo->prepare(
+        "UPDATE appointments SET status = :status WHERE appointment_id = :id"
+    );
+    $stmt->execute([
+        'status' => $map[$workOrderStatus],
+        'id'     => $appointmentId
+    ]);
+}
+
 }

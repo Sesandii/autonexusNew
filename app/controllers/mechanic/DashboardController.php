@@ -30,7 +30,7 @@ class DashboardController extends Controller
         }
 
         $data = [
-            'stats' => $model->getWorkorderStats($mechanicId),
+            'stats' => $model->getWorkorderStatsByUser($userId),
             'appointments' => $model->getTodayAppointments()
         ];
 

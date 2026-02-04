@@ -11,7 +11,6 @@
   <main class="main-content">
   <header class="page-header">
   <h1>Customer Complaints</h1>
-
   <div class="filter-bar">
     <input
       type="text"
@@ -19,7 +18,6 @@
       class="search"
       id="searchInput"
     />
-
     <input type="date" id="dateFilter">
 
     <select id="statusFilter">
