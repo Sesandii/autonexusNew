@@ -1,3 +1,4 @@
+<!-- admin/admin-updateserviceprice -->
 <?php $current = 'pricing'; ?>
 <!DOCTYPE html>
 <html lang="en">

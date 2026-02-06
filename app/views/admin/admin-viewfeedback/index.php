@@ -138,6 +138,7 @@ function feedback_stars(int $rating): string {
                 placeholder="Type your reply to this customer..."
                 style="width:100%;resize:vertical;font-size:13px;padding:6px;border-radius:8px;border:1px solid #d1d5db;"
                 required><?= htmlspecialchars($replyText) ?></textarea>
+                
 
               <button type="submit" class="reply-btn" style="margin-top:6px;">
                 <i class="fa-regular fa-paper-plane"></i>

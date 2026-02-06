@@ -196,10 +196,9 @@ $router->post('/admin/services/{id}/delete', [ServicesController::class, 'destro
 
 use app\controllers\admin\PricingController;
 
-$router->get('/admin/admin-updateserviceprice', [PricingController::class, 'index']);
-// /routes.php (example)
-$router->get('/admin/pricing',  'admin\\PricingController@index');
-$router->post('/admin/pricing', 'admin\\PricingController@index'); // PRG handled inside
+$router->get('/admin/admin-updateserviceprice',  [PricingController::class, 'index']);
+$router->post('/admin/admin-updateserviceprice', [PricingController::class, 'index']);
+
 
 
 use app\controllers\admin\ApprovalController;

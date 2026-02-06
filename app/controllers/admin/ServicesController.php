@@ -36,21 +36,19 @@ class ServicesController extends Controller
     /** GET /admin/services/create */
     public function create(): void
     {
-        $types    = (new ServiceType())->all();
-        $branches = (new Branch())->allActive();
-        $nextCode = (new Service())->nextCode();
+        $types             = (new ServiceType())->all();
+        $branches          = (new Branch())->allActive();
+        $nextCode          = (new Service())->nextCode();
         $servicesForPackage = (new Service())->allAtomicServices();
 
-$this->view('admin/admin-viewservices/create', [
-  'types'    => $types,
-  'branches' => $branches,
-  'nextCode' => $nextCode,
-  'base'     => BASE_URL,
-  'current'  => 'services',
-  'servicesForPackage' => $servicesForPackage, // ✨
-]);
-
-
+        $this->view('admin/admin-viewservices/create', [
+            'types'              => $types,
+            'branches'           => $branches,
+            'nextCode'           => $nextCode,
+            'base'               => BASE_URL,
+            'current'            => 'services',
+            'servicesForPackage' => $servicesForPackage,
+        ]);
     }
 
     /** POST /admin/services */
@@ -58,6 +56,7 @@ $this->view('admin/admin-viewservices/create', [
     {
         $pdo = db();
         $pdo->beginTransaction();
+
         try {
             $svc = new Service();
             $generatedCode = $svc->nextCode(); // server-side authoritative code
@@ -87,24 +86,22 @@ $this->view('admin/admin-viewservices/create', [
 
             $bs->attachToBranches($service_id, $branch_ids);
 
-                        // If this service is a Package, save its items
-$selectedTypeName = ''; // derive from posted type_id
-if (!empty($_POST['type_id'])) {
-    $st = db()->prepare("SELECT LOWER(type_name) FROM service_types WHERE type_id = :id");
-    $st->execute(['id' => (int)$_POST['type_id']]);
-    $selectedTypeName = (string)$st->fetchColumn();
-}
-if ($selectedTypeName === 'package') {
-    $childIds = array_map('intval', $_POST['package_services'] ?? []);
-    (new \app\model\admin\PackageItem())->replaceItems($service_id, array_unique($childIds));
-}
+            // If this service is a Package, save its items
+            $selectedTypeName = '';
+            if (!empty($_POST['type_id'])) {
+                $st = db()->prepare("SELECT LOWER(type_name) FROM service_types WHERE type_id = :id");
+                $st->execute(['id' => (int)$_POST['type_id']]);
+                $selectedTypeName = (string)$st->fetchColumn();
+            }
 
+            if ($selectedTypeName === 'package') {
+                $childIds = array_map('intval', $_POST['package_services'] ?? []);
+                (new \app\model\admin\PackageItem())->replaceItems($service_id, array_values(array_unique($childIds)));
+            }
 
             $pdo->commit();
             header('Location: ' . rtrim(BASE_URL, '/') . '/admin/admin-viewservices');
             exit;
-
-
 
         } catch (\Throwable $e) {
             $pdo->rollBack();
@@ -119,32 +116,33 @@ if ($selectedTypeName === 'package') {
         $id = (int)$id;
         $svc = new Service();
         $row = $svc->findById($id);
+
         if (!$row) {
             http_response_code(404);
             echo "Service not found";
             return;
         }
 
-        $types    = (new ServiceType())->all();
-        $branches = (new Branch())->allActive();
-        $bsModel  = new BranchService();
-        $attached = $bsModel->branchIdsForService($id);
-        $allActive = array_map(fn($b) => (int)$b['branch_id'], $branches);
+        $types              = (new ServiceType())->all();
+        $branches           = (new Branch())->allActive();
+        $bsModel            = new BranchService();
+        $attached           = $bsModel->branchIdsForService($id);
+        $allActive          = array_map(fn($b) => (int)$b['branch_id'], $branches);
         $servicesForPackage = (new Service())->allAtomicServices();
-$pkgChildren = (new \app\model\admin\PackageItem())->childIds($id);
+        $pkgChildren        = (new \app\model\admin\PackageItem())->childIds($id);
 
         $isAll = !array_diff($allActive, $attached) && !empty($allActive);
 
         $this->view('admin/admin-viewservices/edit', [
-            'row'      => $row,
-            'types'    => $types,
-            'branches' => $branches,
-            'attached' => $attached,
-            'applyAll' => $isAll,
-            'base'     => BASE_URL,
-            'current'  => 'services',
-            'servicesForPackage' => $servicesForPackage,
-  'packageChildIds'    => $pkgChildren,
+            'row'               => $row,
+            'types'             => $types,
+            'branches'          => $branches,
+            'attached'          => $attached,
+            'applyAll'          => $isAll,
+            'base'              => BASE_URL,
+            'current'           => 'services',
+            'servicesForPackage'=> $servicesForPackage,
+            'packageChildIds'   => $pkgChildren,
         ]);
     }
 
@@ -158,6 +156,7 @@ $pkgChildren = (new \app\model\admin\PackageItem())->childIds($id);
         try {
             $svc = new Service();
             $row = $svc->findById($id);
+
             if (!$row) {
                 $pdo->rollBack();
                 http_response_code(404);
@@ -192,23 +191,23 @@ $pkgChildren = (new \app\model\admin\PackageItem())->childIds($id);
 
             $bs->replaceForService($id, $branch_ids);
 
+            // Package items handling
             $selectedTypeName = '';
-if (!empty($_POST['type_id'])) {
-    $st = db()->prepare("SELECT LOWER(type_name) FROM service_types WHERE type_id = :id");
-    $st->execute(['id' => (int)$_POST['type_id']]);
-    $selectedTypeName = (string)$st->fetchColumn();
-} else {
-    // if type_id not posted, fall back to existing row
-    $selectedTypeName = strtolower($row['type_name'] ?? '');
-}
-if ($selectedTypeName === 'package') {
-    $childIds = array_map('intval', $_POST['package_services'] ?? []);
-    (new \app\model\admin\PackageItem())->replaceItems($id, array_unique($childIds));
-} else {
-    // ensure no stale items if it was changed from package → non-package
-    (new \app\model\admin\PackageItem())->replaceItems($id, []);
-}
+            if (!empty($_POST['type_id'])) {
+                $st = db()->prepare("SELECT LOWER(type_name) FROM service_types WHERE type_id = :id");
+                $st->execute(['id' => (int)$_POST['type_id']]);
+                $selectedTypeName = (string)$st->fetchColumn();
+            } else {
+                $selectedTypeName = strtolower((string)($row['type_name'] ?? ''));
+            }
 
+            if ($selectedTypeName === 'package') {
+                $childIds = array_map('intval', $_POST['package_services'] ?? []);
+                (new \app\model\admin\PackageItem())->replaceItems($id, array_values(array_unique($childIds)));
+            } else {
+                // ensure no stale items if it was changed from package → non-package
+                (new \app\model\admin\PackageItem())->replaceItems($id, []);
+            }
 
             $pdo->commit();
             header('Location: ' . rtrim(BASE_URL, '/') . '/admin/admin-viewservices');
@@ -226,6 +225,7 @@ if ($selectedTypeName === 'package') {
     {
         $id = (int)$id;
         $svc = new Service();
+
         if (!$svc->findById($id)) {
             http_response_code(404);
             echo "Not found";
@@ -236,6 +236,7 @@ if ($selectedTypeName === 'package') {
             $svc->deleteById($id);
             header('Location: ' . rtrim(BASE_URL, '/') . '/admin/admin-viewservices');
             exit;
+
         } catch (\Throwable $e) {
             http_response_code(500);
             echo "Delete failed: " . htmlspecialchars($e->getMessage(), ENT_QUOTES, 'UTF-8');
@@ -246,53 +247,56 @@ if ($selectedTypeName === 'package') {
 
     private function sanitize(array $src): array
     {
-        $get = fn($k, $d = '') => trim((string)($src[$k] ?? $d));
+        // ✅ Make types explicit for Intelephense (no more red underline)
+        $get = static fn(string $k, string $d = ''): string =>
+            trim((string)($src[$k] ?? $d));
 
         $service_code = strtoupper($get('service_code'));
-        $name = $get('name');
-        $description = $get('description');
-        $type_id = (int)$get('type_id', 0);
+        $name         = $get('name');
+        $description  = $get('description');
 
-        $duration = (int)($get('base_duration_minutes') !== '' ? $get('base_duration_minutes') : 0);
+        // ✅ pass default as STRING (not 0)
+        $type_id = (int)$get('type_id', '0');
+        $type_id = $type_id > 0 ? $type_id : null;
+
+        $duration = (int)$get('base_duration_minutes', '0');
+        if ($duration < 0) $duration = 0;
+
         $priceRaw = $get('default_price', '0');
         $price = is_numeric($priceRaw)
             ? number_format((float)$priceRaw, 2, '.', '')
             : '0.00';
 
-        $status = in_array($get('status', 'active'), ['active', 'inactive'], true)
-            ? $get('status', 'active')
-            : 'active';
+        $status = $get('status', 'active');
+        $status = in_array($status, ['active', 'inactive'], true) ? $status : 'active';
 
         return [
-            'service_code' => $service_code,
-            'name' => $name,
-            'description' => $description,
-            'type_id' => $type_id ?: null,
+            'service_code'          => $service_code,
+            'name'                  => $name,
+            'description'           => $description,
+            'type_id'               => $type_id,
             'base_duration_minutes' => $duration,
-            'default_price' => $price,
-            'status' => $status,
-            'created_at' => date('Y-m-d H:i:s'),
+            'default_price'         => $price,
+            'status'                => $status,
+            'created_at'            => date('Y-m-d H:i:s'),
         ];
     }
 
     private function validate(array $d, string $mode = 'create'): array
     {
         $e = [];
-        if ($mode === 'create') {
-            if (($d['service_code'] ?? '') === '') {
-                $e[] = 'Service code is required.';
-            }
-        } else {
-            if (($d['service_code'] ?? '') === '') {
-                $e[] = 'Service code missing on update.';
-            }
+
+        if (($d['service_code'] ?? '') === '') {
+            $e[] = ($mode === 'create')
+                ? 'Service code is required.'
+                : 'Service code missing on update.';
         }
 
-        if ($d['name'] === '') $e[] = 'Service name is required.';
+        if (($d['name'] ?? '') === '') $e[] = 'Service name is required.';
         if (!is_null($d['type_id']) && !is_int($d['type_id'])) $e[] = 'Invalid type.';
-        if (!in_array($d['status'], ['active', 'inactive'], true)) $e[] = 'Invalid status.';
-        if (!preg_match('/^\d+(\.\d{1,2})?$/', (string)$d['default_price'])) $e[] = 'Price must be a number with up to 2 decimals.';
-        if (!is_int($d['base_duration_minutes']) || $d['base_duration_minutes'] < 0) $e[] = 'Duration must be a non-negative integer.';
+        if (!in_array($d['status'] ?? '', ['active', 'inactive'], true)) $e[] = 'Invalid status.';
+        if (!preg_match('/^\d+(\.\d{1,2})?$/', (string)($d['default_price'] ?? ''))) $e[] = 'Price must be a number with up to 2 decimals.';
+        if (!is_int($d['base_duration_minutes'] ?? null) || ($d['base_duration_minutes'] ?? -1) < 0) $e[] = 'Duration must be a non-negative integer.';
 
         return $e;
     }
@@ -300,6 +304,7 @@ if ($selectedTypeName === 'package') {
     private function requireAdmin(): void
     {
         if (session_status() !== PHP_SESSION_ACTIVE) session_start();
+
         $u = $_SESSION['user'] ?? null;
         if (!$u || (($u['role'] ?? '') !== 'admin')) {
             header('Location: ' . rtrim(BASE_URL, '/') . '/login');
