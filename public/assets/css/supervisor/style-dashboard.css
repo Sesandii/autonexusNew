@@ -23,13 +23,41 @@ header {
   align-items: center;
 }
 
-.search {
+.search-wrapper {
+  position: relative;
   width: 300px;
   padding: 8px;
   border-radius: 8px;
   border: 1px solid #ccc;
 }
 
+#search-results {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  max-height: 200px;
+  overflow-y: auto;
+  background: #fff;
+  border: 1px solid #ccc;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  z-index: 1000;
+}
+
+#search-results li {
+  padding: 10px;
+  cursor: pointer;
+}
+
+#search-results li:hover {
+  background-color: #f0f0f0;
+}
+
+.hidden {
+  display: none;
+}
 .user-menu {
   position: relative;
   display: inline-block;

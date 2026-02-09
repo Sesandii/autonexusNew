@@ -28,7 +28,7 @@
 
 <input type="hidden" name="report_id" value="<?= $report['report_id'] ?>">
 <input type="hidden" name="work_order_id" value="<?= $workOrder['work_order_id'] ?>">
-
+<div class="grid-row two-columns">
 <!-- Job Info -->
 <div class="card">
   <div class="card-header">
@@ -87,8 +87,10 @@
     </table>
   </div>
 </div>
+</div>
 
 <!-- Final Inspection -->
+<div class="grid-row three-columns">
 <div class="form-section">
   <h2>Final Inspection</h2>
 

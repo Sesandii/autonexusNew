@@ -12,9 +12,6 @@
 <?php include __DIR__ . '/../partials/sidebar.php'; ?>
 
 <main class="main-content">
-<header>
-  <input type="text" placeholder="Search..." class="search" />
-</header>
 
 <?php if (!empty($completedOrders)): ?>
   <!-- Step 1: Choose a completed work order -->
@@ -37,7 +34,7 @@
   <!-- Step 2: Show report form for selected work order -->
   <form action="<?= $base ?>/supervisor/reports/store" method="POST" enctype="multipart/form-data">
     <input type="hidden" name="work_order_id" value="<?= $workOrder['work_order_id'] ?>">
-
+    <div class="grid-row two-columns">
   <!-- Job Inspection -->
   <div class="card">
     <div class="card-header">
@@ -102,8 +99,10 @@
     </table>
   </div>
 </div>
+</div>
 
 <!-- Final Inspection -->
+<div class="grid-row three-columns">
 <div class="form-section">
   <h2>Final Inspection Form</h2>
 
@@ -145,7 +144,7 @@
   <label>Next Service Recommendation</label>
   <input type="date" name="next_service_recommendation">
 </div>
-
+</div>
 <!-- Actions -->
 <div class="actions">
   <button type="submit" name="status" value="draft" class="btn secondary">Save as Draft</button>

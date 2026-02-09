@@ -8,9 +8,8 @@
   <link rel="stylesheet" href="<?= $base ?>/public/assets/css/supervisor/forms.css">
 </head>
 <body>
-
+  
 <?php include __DIR__ . '/../partials/sidebar.php'; ?>
-
 <div class="container">
   <div class="page-header">
     <div class="header">
@@ -18,10 +17,7 @@
       <p class="subtitle">All work orders with their appointment's service.</p>
     </div>
     <a class="btn primary" href="<?= $base ?>/supervisor/workorders/create">Add Work Order</a>
-    
-
   </div>
-
   <?php if (!empty($message)): ?>
     <div class="toast <?= htmlspecialchars($message['type']) ?>">
       <?= htmlspecialchars($message['text']) ?>
@@ -193,6 +189,5 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 </script>
-
 </body>
 </html>

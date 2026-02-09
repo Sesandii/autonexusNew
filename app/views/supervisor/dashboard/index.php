@@ -12,7 +12,10 @@
 
     <main class="main-content">
       <header>
-        <input type="text" placeholder="Search..." class="search" />
+      <div class="search-wrapper">
+  <input type="text" id="search" placeholder="Search..." class="search" autocomplete="off" />
+  <ul id="search-results" class="search-results hidden"></ul>
+</div>
         <div class="user-profile">
           <div class="user">
             <img src="/autonexus/public/assets/img/user.png" alt="User" class="user-img" />

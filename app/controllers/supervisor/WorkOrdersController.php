@@ -77,15 +77,16 @@ class WorkOrdersController extends Controller
             exit;
         }
 
-        /** 1️⃣ CREATE WORK ORDER */
-        $workOrderId = $m->createAndReturnId([
-            'appointment_id'  => $appointment_id,
-            'mechanic_id'     => $mechanic_id,
-            'service_summary' => trim($_POST['service_summary'] ?? ''),
-            'total_cost'      => 0,
-            'status'          => $_POST['status'] ?? 'open',
-            'supervisor_id'   => $supervisor_id,
-        ]);
+        /** 1️⃣ CREATE WORK ORDER (SYNC APPOINTMENT STATUS AUTOMATICALLY) */
+$workOrderId = $m->create([
+    'appointment_id'  => $appointment_id,
+    'mechanic_id'     => $mechanic_id,
+    'service_summary' => trim($_POST['service_summary'] ?? ''),
+    'total_cost'      => 0,
+    'status'          => $_POST['status'] ?? 'open',
+    'supervisor_id'   => $supervisor_id,
+]);
+
 
         /** 2️⃣ CREATE CHECKLIST FROM SERVICE TEMPLATE */
         $serviceId = $m->getServiceIdByAppointment($appointment_id);

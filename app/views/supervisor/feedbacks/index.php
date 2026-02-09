@@ -7,13 +7,10 @@
   <link rel="stylesheet" href="<?= $base ?>/public/assets/css/supervisor/style-feedbacks.css"/>
 </head>
 <body>
-
 <?php include __DIR__ . '/../partials/sidebar.php'; ?>
-
 <main class="main-content">
 <header class="page-header">
   <h1>Customer Feedback</h1>
-
   <div class="filter-bar">
     <input
       type="text"

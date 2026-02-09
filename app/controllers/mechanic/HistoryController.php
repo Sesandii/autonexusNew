@@ -23,9 +23,6 @@ class HistoryController extends Controller
         $this->view('mechanic/history/index');
     }
 
-    /** 
-     * ✅ Process the license plate search and display all past appointments 
-     */
     public function show()
     {
         $licensePlate = $_GET['license_plate'] ?? '';

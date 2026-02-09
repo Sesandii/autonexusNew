@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8">
   <title>Vehicle History<?= isset($vehicle['license_plate']) ? ' - ' . htmlspecialchars($vehicle['license_plate']) : '' ?></title>
-  <link rel="stylesheet" href="<?= $base ?>/public/assets/css/supervisor/forms.css">
+  <link rel="stylesheet" href="<?= $base ?>/public/assets/css/supervisor/fors.css">
   <link rel="stylesheet" href="<?= $base ?>/public/assets/css/supervisor/style-history.css">
 </head>
 <body>
@@ -20,8 +20,7 @@
         <p class="subtitle">Please check the license plate number and try again.</p>
       <?php endif; ?>
       </div>
-    <a class="btn" href="<?= $base ?>/mechanic/history">Back</a>
-
+      <a class="btn" href="<?= $base ?>/mechanic/history">Back</a>
   </header>
 
   <?php if (!empty($appointments)): ?>
@@ -43,6 +42,5 @@
     <p class="subtitle" style="text-align:center;">No completed services found for this vehicle.</p>
   <?php endif; ?>
   </div>
-
 </body>
 </html>

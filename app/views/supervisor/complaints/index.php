@@ -11,7 +11,6 @@
   <main class="main-content">
   <header class="page-header">
   <h1>Customer Complaints</h1>
-
   <div class="filter-bar">
     <input
       type="text"
@@ -19,7 +18,6 @@
       class="search"
       id="searchInput"
     />
-
     <input type="date" id="dateFilter">
 
     <select id="statusFilter">
@@ -37,10 +35,8 @@
     </select>
   </div>
 </header>
-
-
-    <section class="complaints-section">
-      <div class="complaints-container">
+    <section class="complaints-section" id="complaints-sec">
+      <div class="complaints-grid">
   <?php if (!empty($complaints)): ?>
     <?php foreach ($complaints as $complaint): ?>
       <div class="complaint-row"
