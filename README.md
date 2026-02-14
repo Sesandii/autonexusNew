@@ -144,3 +144,27 @@ This folder contains a minimal MVC skeleton (no frameworks) and copies of your s
 
 ## Inventory of your original upload
 See the separate CSV `inventory.csv`.
+
+---
+
+## 📋 MVP Implementation Status & Roadmap
+
+**Current Status**: ~60-70% complete for MVP
+
+### 📚 Documentation
+For detailed information about remaining features and implementation roadmap:
+
+- **[MVP_QUICK_REFERENCE.md](MVP_QUICK_REFERENCE.md)** - Quick checklist of critical missing features and priorities
+- **[MVP_FEATURES_SUMMARY.md](MVP_FEATURES_SUMMARY.md)** - Comprehensive analysis of complaint, feedback, and customer portal features
+
+### 🎯 Top Priorities for MVP Launch
+
+1. **Customer Complaint System** - Enable customers to file and track complaints (currently receptionist-only)
+2. **Payment & Invoice System** - Implement customer-facing invoice viewing and online payment processing
+3. **Notification System** - Wire email notifications for appointments, service updates, and feedback
+4. **Feedback Visibility** - Allow customers to view their submitted reviews and admin replies
+5. **Security Basics** - Add password change and reset functionality
+
+**Estimated Effort**: 220 hours (4-6 weeks) for P0 features
+
+See the MVP documentation for detailed implementation checklists, database schemas, and success metrics.
