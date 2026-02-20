@@ -175,11 +175,17 @@ public function completedWithoutFeedbackByUser(int $userId): array
     $cid = $this->customerIdByUserId($userId);
     if (!$cid) return [];
 
-    $sql = "SELECT a.appointment_id, a.appointment_date, a.appointment_time,
-                   b.name AS branch_name, s.name AS service_name
+    $sql = "SELECT a.appointment_id,
+                   a.appointment_date AS service_date,
+                   a.appointment_time,
+                   b.name AS branch_name,
+                   s.name AS service_name,
+                   v.license_plate,
+                   CONCAT(v.make, ' ', v.model) AS vehicle_model
               FROM appointments a
          LEFT JOIN branches b ON b.branch_id = a.branch_id
          LEFT JOIN services s ON s.service_id = a.service_id
+         LEFT JOIN vehicles v ON v.vehicle_id = a.vehicle_id
          LEFT JOIN feedback f ON f.appointment_id = a.appointment_id
                                 AND f.user_id = :uid
              WHERE a.customer_id = :cid

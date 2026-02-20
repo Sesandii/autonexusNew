@@ -27,6 +27,17 @@ $base = rtrim(BASE_URL, '/');
         </p>
       </header>
 
+      <?php if (!empty($flash)): ?>
+        <div class="flash-message"><?= htmlspecialchars($flash) ?></div>
+      <?php endif; ?>
+
+      <?php if (empty($appointments)): ?>
+        <div class="empty-state">
+          <i class="fa-solid fa-circle-check fa-3x" style="color:#aaa;margin-bottom:.75rem;"></i>
+          <p>You have no completed services waiting for a review.</p>
+          <p>Once a service is marked complete, it will appear here.</p>
+        </div>
+      <?php else: ?>
       <form class="form-container" method="POST" action="<?= $base ?>/customer/rate-service">
         <!-- Appointment selector -->
         <div class="form-group full-width">
@@ -34,8 +45,14 @@ $base = rtrim(BASE_URL, '/');
           <select id="appointment" name="appointment_id" required>
             <option value="">-- Choose an appointment --</option>
             <?php foreach ($appointments as $a): ?>
-              <option value="<?= htmlspecialchars($a['appointment_id']) ?>">
-                <?= htmlspecialchars($a['vehicle_model'] . ' - ' . $a['service_name'] . ' - ' . date('d M Y', strtotime($a['service_date']))) ?>
+              <option value="<?= htmlspecialchars((string)$a['appointment_id']) ?>"
+                      data-vehicle="<?= htmlspecialchars($a['license_plate'] ?? '') ?>"
+                      data-model="<?= htmlspecialchars($a['vehicle_model'] ?? '') ?>"
+                      data-date="<?= htmlspecialchars($a['service_date'] ?? '') ?>">
+                <?php
+                  $dateLabel = !empty($a['service_date']) ? date('d M Y', strtotime($a['service_date'])) : '—';
+                ?>
+                <?= htmlspecialchars(($a['vehicle_model'] ?? 'Vehicle') . ' — ' . ($a['service_name'] ?? 'Service') . ' — ' . $dateLabel) ?>
               </option>
             <?php endforeach; ?>
           </select>
@@ -81,6 +98,7 @@ $base = rtrim(BASE_URL, '/');
           </button>
         </div>
       </form>
+      <?php endif; ?>
     </main>
   </div>
 

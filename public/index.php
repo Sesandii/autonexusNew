@@ -383,6 +383,12 @@ $router->post('/customer/appointments/cancel',   [\app\controllers\customer\Appo
 $router->get ('/customer/appointments/list',     [\app\controllers\customer\AppointmentsController::class, 'list']);     // optional JSON for AJAX
 
 /** ======================
+ *  CUSTOMER: Complaints
+ *  ====================== */
+$router->get ('/customer/complaints',       [\app\controllers\customer\ComplaintController::class, 'index']);
+$router->post('/customer/complaints/store', [\app\controllers\customer\ComplaintController::class, 'store']);
+
+/** ======================
  *  MANAGER: Dashboard
  *  ====================== */
 $router->get('/manager/dashboard', [\app\controllers\manager\DashboardController::class, 'index']);
