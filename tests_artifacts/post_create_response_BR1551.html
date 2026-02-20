@@ -1,0 +1,11 @@
+<html><head></head><body><pre style="font:14px/1.4 monospace">Router dispatch error:
+
+SQLSTATE[23000]: Integrity constraint violation: 1048 Column 'manager_id' cannot be null
+
+#0 C:\xampp\htdocs\autonexus\app\model\admin\Branch.php(27): PDOStatement-&gt;execute(Array)
+#1 C:\xampp\htdocs\autonexus\app\controllers\admin\BranchesController.php(77): app\model\admin\Branch-&gt;create(Array)
+#2 [internal function]: app\controllers\admin\BranchesController-&gt;store()
+#3 C:\xampp\htdocs\autonexus\app\core\Router.php(32): call_user_func_array(Array, Array)
+#4 C:\xampp\htdocs\autonexus\app\core\Router.php(22): app\core\Router-&gt;invoke(Array, Array)
+#5 C:\xampp\htdocs\autonexus\public\index.php(353): app\core\Router-&gt;dispatch()
+#6 {main}</pre></body></html>

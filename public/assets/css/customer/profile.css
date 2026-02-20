@@ -1,0 +1,388 @@
+:root {
+  --brand-red: #dc2626;
+  --brand-red-soft: #fee2e2;
+  --bg-soft: #f3f4f6;
+  --text-main: #0f172a;
+  --text-muted: #6b7280;
+  --border-subtle: #e5e7eb;
+  --card-radius: 14px;
+  --shadow-soft: 0 2px 8px rgba(15, 23, 42, 0.06);
+}
+
+/* ---- Layout ---- */
+body {
+  margin: 0;
+  font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  background: var(--bg-soft);
+}
+
+.main-content {
+  margin-left: 240px;                 /* keep in sync with sidebar width */
+  padding: 32px 40px 40px;
+  max-width: 1100px;
+  box-sizing: border-box;
+  color: var(--text-main);
+}
+
+.mt-24 { margin-top: 24px; }
+
+/* ---- Flash message ---- */
+.flash {
+  background: #ecfdf5;
+  color: #065f46;
+  border: 1px solid #a7f3d0;
+  padding: 10px 12px;
+  border-radius: 10px;
+  margin: 0 0 18px;
+  font-size: 0.9rem;
+}
+
+/* ---- Cards ---- */
+.profile-card,
+.section-card,
+.form-card {
+  background: #fff;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--card-radius);
+  padding: 18px 18px 20px;
+  box-shadow: var(--shadow-soft);
+}
+
+.profile-card {
+  margin-bottom: 24px;
+}
+
+.card-header,
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  gap: 12px;
+}
+
+.card-header h2,
+.section-header h2 {
+  margin: 0;
+  font-size: 1.3rem;
+  color: var(--text-main);
+}
+
+/* small helper subtitle under section headers and modal titles */
+.section-subtitle {
+  margin: 4px 0 0;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+/* ---- Buttons ---- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: none;
+  border-radius: 999px;
+  padding: 9px 14px;
+  cursor: pointer;
+  text-decoration: none;
+  font-size: 0.88rem;
+  font-weight: 600;
+  transition: background 0.18s ease, color 0.18s ease,
+              box-shadow 0.18s ease, transform 0.06s ease, border-color 0.18s ease;
+}
+
+.btn i {
+  font-size: 0.9rem;
+}
+
+/* main red */
+.btn.red {
+  background: var(--brand-red);
+  color: #fff;
+  box-shadow: 0 3px 10px rgba(220, 38, 38, 0.35);
+}
+
+.btn.red:hover {
+  background: #b91c1c;
+  transform: translateY(-1px);
+}
+
+/* soft yellow for "add vehicle" */
+.btn.yellow {
+  background: #fbbf24;
+  color: #111827;
+  box-shadow: 0 3px 10px rgba(251, 191, 36, 0.36);
+}
+
+.btn.yellow:hover {
+  background: #f59e0b;
+  transform: translateY(-1px);
+}
+
+/* dark edit button */
+.btn.edit {
+  background: #111827;
+  color: #fff;
+  box-shadow: 0 3px 10px rgba(15, 23, 42, 0.3);
+}
+
+.btn.edit:hover {
+  background: #020617;
+  transform: translateY(-1px);
+}
+
+/* ghost / secondary */
+.btn-ghost {
+  background: transparent;
+  border: 1px solid #d1d5db;
+  color: #111827;
+  border-radius: 999px;
+  padding: 9px 14px;
+}
+
+.btn-ghost:hover {
+  background: #f9fafb;
+}
+
+/* primary submit */
+.btn-primary {
+  background: #111827;
+  color: #fff;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 999px;
+  box-shadow: 0 3px 10px rgba(15, 23, 42, 0.3);
+}
+
+.btn-primary:hover {
+  background: #020617;
+  transform: translateY(-1px);
+}
+
+/* ---- Forms ---- */
+.form-card label {
+  display: block;
+  font-weight: 600;
+  font-size: 0.85rem;
+  margin-bottom: 8px;
+  color: #374151;
+}
+
+.form-card label > input,
+.form-card label > select,
+.form-card label > textarea {
+  margin-top: 4px;
+}
+
+.form-card input[type="text"],
+.form-card input[type="email"],
+.form-card input[type="number"],
+.form-card input[type="date"],
+.form-card select,
+.form-card textarea {
+  width: 100%;
+  padding: 9px 11px;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  background: #fff;
+  color: var(--text-main);
+  box-sizing: border-box;
+}
+
+.form-card textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.form-card .actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+
+/* two-column grid (collapses on small screens) */
+.grid-2,
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.grid-2.small {
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+@media (max-width: 840px) {
+  .grid-2,
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Readonly look */
+.form-readonly input[readonly] {
+  background: #f9fafb;
+  color: #111827;
+  cursor: default;
+  border-color: #e5e7eb;
+}
+
+/* ---- Vehicles ---- */
+.section-card {
+  margin-top: 24px;
+}
+
+.vehicles-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 14px;
+  margin-top: 10px;
+}
+
+.vehicle-card {
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  padding: 14px;
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(15, 23, 42, 0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.vehicle-card h3 {
+  margin: 0 0 4px;
+  font-size: 1rem;
+  color: var(--text-main);
+}
+
+.vehicle-card .label {
+  color: #6b7280;
+  margin-right: 6px;
+  font-size: 0.8rem;
+}
+
+.vehicle-card .vehicle-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+/* small grid for vehicle meta */
+.grid-2.small div {
+  font-size: 0.85rem;
+  color: #374151;
+}
+
+/* Empty / notes text */
+.notes {
+  margin-top: 8px;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+/* Inputs heights consistent */
+input,
+select,
+textarea {
+  font-family: inherit;
+}
+
+/* ---- Modals ---- */
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 60;
+}
+
+.modal[hidden] {
+  display: none;
+}
+
+.modal-content {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 18px 18px 20px;
+  width: min(480px, 90vw);
+  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.35);
+  position: relative;
+}
+
+.modal-content h3 {
+  margin: 0 0 8px;
+  font-size: 1.2rem;
+}
+
+.modal-content .close {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  border: none;
+  background: transparent;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+/* modal forms reuse same styling as form-card */
+.modal-form label {
+  display: block;
+  font-weight: 600;
+  font-size: 0.85rem;
+  margin-bottom: 8px;
+  color: #374151;
+}
+
+.modal-form label > input,
+.modal-form label > select,
+.modal-form label > textarea {
+  margin-top: 4px;
+}
+
+.modal-form input[type="text"],
+.modal-form input[type="email"],
+.modal-form input[type="number"],
+.modal-form input[type="date"],
+.modal-form select,
+.modal-form textarea {
+  width: 100%;
+  padding: 9px 11px;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  background: #fff;
+  color: var(--text-main);
+  box-sizing: border-box;
+}
+
+.modal-form textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.modal-form .actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+
+/* ---- Page headings on edit/add pages ---- */
+.main-content > h2 {
+  margin: 0 0 14px;
+  font-size: 1.3rem;
+  color: var(--text-main);
+}
+
+@media (max-width: 640px) {
+  .main-content {
+    margin-left: 0;
+    padding: 20px 16px 28px;
+  }
+}

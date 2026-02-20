@@ -9,8 +9,8 @@ $current = 'service-managers';
 <head>
   <meta charset="UTF-8">
   <title>Manager #<?= htmlspecialchars($row['manager_id']) ?> • Details</title>
-  <link rel="stylesheet" href="../app/views/layouts/admin-shared/management.css">
-  <link rel="stylesheet" href="../app/views/layouts/admin-sidebar/styles.css">
+  <link rel="stylesheet" href="../../app/views/layouts/admin-shared/management.css">
+  <link rel="stylesheet" href="../../app/views/layouts/admin-sidebar/styles.css">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <style>
     .sidebar { position:fixed; top:0; left:0; width:260px; height:100vh; overflow-y:auto; }
@@ -77,14 +77,12 @@ $current = 'service-managers';
       </div>
 
       <div class="actions">
-        <a class="btn-secondary" href="<?= htmlspecialchars($base . '/service-managers', ENT_QUOTES, 'UTF-8') ?>">
+        <a class="btn-secondary" href="<?= htmlspecialchars($base . '/admin/service-managers', ENT_QUOTES, 'UTF-8') ?>">
           ← Back to list
         </a>
         <a class="btn"
-   href="<?= htmlspecialchars($base . '/service-managers/' . urlencode((string)$row['manager_id']) . '/edit', ENT_QUOTES, 'UTF-8') ?>">
-  Edit
-</a>
-
+   href="<?= htmlspecialchars($base . '/admin/service-managers/' . urlencode((string)$row['manager_id']) . '/edit', ENT_QUOTES, 'UTF-8') ?>">
+edit</a>
       </div>
     </div>
   </main>

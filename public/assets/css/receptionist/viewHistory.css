@@ -1,0 +1,171 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
+}
+
+body {
+  display: flex;
+  background: #f6f7fa;
+  color: #333;
+}
+
+.sidebar .logo img {
+  width: 80%;      
+  max-width: 200px; 
+  height: auto;    
+  display: block;
+  margin: 0 auto;  
+}
+
+.sidebar {
+  position: fixed;
+  top: 0;        /* stick to very top */
+  left: 0;
+  width: 280px;
+  background: #000;
+  color: #fff;
+  padding: 0px;
+  min-height: 100vh;
+}
+
+.sidebar .logo {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.sidebar .logo h2 {
+  color: #ffffff;
+  margin: 5px 0 0;
+}
+
+.sidebar .logo p {
+  font-size: 12px;
+  letter-spacing: 1px;
+}
+
+.sidebar .menu {
+  list-style: none;
+  margin-top: 20px;
+}
+
+.sidebar .menu li {
+  padding: 20px 40px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  color: #ccc;
+  border-radius: 0px;
+}
+
+.sidebar .menu li.active,
+.sidebar .menu li:hover {
+  background: #2a2d34;
+}
+
+.sidebar .menu li a {
+  color: inherit;        /* matches li text color */
+  text-decoration: none; /* removes underline */
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
+
+.main {
+  flex: 1;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto; 
+  margin-left: 280px;
+}
+
+.service-history {
+  background: #fff;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+  margin-bottom: 20px;
+}
+
+.service-history h4 {
+  font-weight: 600;
+  margin-bottom: 15px;
+}
+
+.history-item {
+  background-color: #f5f6fa;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.service-used {
+  padding: 20px 30px;
+}
+
+.history-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: 8px 12px;
+  margin-bottom: 10px;
+  margin-left: 30px; 
+  font-weight: bold;
+}
+
+.history-item.active .history-content {
+  max-height: 200px;      /* adjust as needed */
+  padding: 10px 15px;     /* add vertical padding when open */
+}
+
+
+.complaint-history {
+  background: #fff;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+.complaint-history h4 {
+  font-weight: 600;
+  margin-bottom: 15px;
+}
+
+.complaint-item {
+  background-color: #f5f6fa;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.complaint {
+  padding: 20px 30px;
+}
+
+.complaint-content {
+  max-height: 0;          /* start collapsed */
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: 8px 12px;
+  margin-bottom: 10px;
+  margin-left: 30px;        /* horizontal padding only */
+}
+
+.complaint-item.active .complaint-content {
+  max-height: 200px;      /* adjust as needed */
+  padding: 10px 15px;     /* add vertical padding when open */
+}
+

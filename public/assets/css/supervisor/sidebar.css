@@ -1,0 +1,110 @@
+.logo-container {
+    height: 90px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    margin-bottom: 10px;
+  }
+  
+  /* Default (collapsed) */
+  .logo-collapsed {
+    width: 40px;
+    display: block;
+  }
+  
+  .logo-expanded {
+    display: none;
+    width: 180px;
+      height: 90px;
+  }
+  
+  /* When sidebar expands */
+  .sidebar:hover .logo-collapsed {
+    display: none;
+  }
+  
+  .sidebar:hover .logo-expanded {
+    display: block;
+  }
+  
+  
+  .sidebar {
+    width: 220px;
+    background-color: #000;
+    color: white;
+    padding: 10px;
+    width: 70px;                 /* collapsed width */
+    transition: width 0.5s ease;
+    overflow: hidden;
+  }
+  
+  .sidebar h2 {
+    margin-bottom: 30px;
+    font-size: 22px;
+    text-align: center;
+  }
+  
+  .sidebar a {
+    list-style:none;
+  }
+  
+  .sidebar a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 10px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    border-radius: 6px;
+    color: #d1d5db;
+    text-decoration:none;
+  }
+  
+  .sidebar a img {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .sidebar a.nav {
+    background-color: #1F2937;
+    color: #fff;
+  }
+  
+  .sidebar a:hover {
+    background-color: #1F2937;
+  }
+
+  .sidebar:hover {
+    width: 220px;
+  }
+  
+  
+  /* Brand text */
+  .brand-text {
+    opacity: 0;
+    white-space: nowrap;
+    transition: opacity 0.5s ease;
+  }
+  
+  .sidebar:hover .brand-text {
+    opacity: 1;
+  }
+  
+  /* Link text hidden by default */
+  .sidebar .link-text {
+    opacity: 0;
+    white-space: nowrap;
+    transition: opacity 0.5s ease;
+  }
+  
+  
+  .sidebar:hover .link-text {
+    opacity: 1;
+  }
+  
+  /* Icons always visible */
+  .sidebar img {
+    min-width: 20px;
+  }
+  

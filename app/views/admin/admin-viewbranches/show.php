@@ -9,8 +9,9 @@ $current = 'branches';
 <head>
   <meta charset="UTF-8">
   <title>Branch <?= htmlspecialchars($row['branch_code'] ?? '') ?> • Details</title>
- <link rel="stylesheet" href="../app/views/layouts/admin-shared/management.css">
-  <link rel="stylesheet" href="../app/views/layouts/admin-sidebar/styles.css">
+ <link rel="stylesheet" href="<?= $base ?>/app/views/layouts/admin-shared/management.css">
+<link rel="stylesheet" href="<?= $base ?>/app/views/layouts/admin-sidebar/styles.css">
+
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <style>
     .sidebar { position:fixed; top:0; left:0; width:260px; height:100vh; overflow-y:auto; }
@@ -60,11 +61,8 @@ $current = 'branches';
       </div>
 
       <div class="actions">
-        <a class="btn-secondary" href="<?= htmlspecialchars($base . '/branches', ENT_QUOTES, 'UTF-8') ?>">← Back to list</a>
-        <a class="btn" href="<?= htmlspecialchars($base . '/branches/' . urlencode((string)$row['branch_code']) . '/edit', ENT_QUOTES, 'UTF-8') ?>">Edit</a>
-        <form class="inline" method="post" action="<?= htmlspecialchars($base . '/branches/delete/' . urlencode((string)$row['branch_code']), ENT_QUOTES, 'UTF-8') ?>" onsubmit="return confirm('Delete this branch?');" style="display:inline-block">
-          <button type="submit" class="btn-danger">Delete</button>
-        </form>
+        <a class="btn-secondary" href="<?= htmlspecialchars($base . '/admin/branches', ENT_QUOTES, 'UTF-8') ?>">← Back to list</a>
+<a class="btn" href="<?= htmlspecialchars($base . '/admin/branches/' . rawurlencode((string)$row['branch_code']) . '/edit', ENT_QUOTES, 'UTF-8') ?>">Edit</a>
       </div>
     </div>
   </main>

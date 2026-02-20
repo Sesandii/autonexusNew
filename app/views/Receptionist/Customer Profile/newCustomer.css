@@ -1,0 +1,107 @@
+.details-section {
+  flex: 1;
+  margin-left: 280px;               /* keeps it next to sidebar */
+  padding: 40px 50px;               /* reasonable padding */
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  width: calc(100% - 320px);        /* full width minus sidebar + some margin */
+  max-width: 1400px;
+  margin: 40px auto;                /* centers it */
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* Form header */
+.details-section h3 {
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 15px;
+}
+
+/* Form groups */
+.details-section label {
+  font-weight: 600;
+  margin-bottom: 4px;
+  display: block;
+}
+
+.details-section input,
+.details-section select {
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+  width: 100%;                   /* takes full width of container */
+  background-color: #f5f5f5;
+  box-sizing: border-box;
+}
+
+/* Footer buttons */
+.modal-footer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.save-button {
+  padding: 6px 16px;
+  border-radius: 5px;
+  border: none;
+  background-color: red;
+  color: #fff;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+  .details-section {
+    width: calc(100% - 60px);  /* some margin on smaller screens */
+    padding: 30px 20px;
+  }
+}
+
+.vehicle-entry {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.vehicle-entry input {
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  flex: 1;
+}
+
+.remove-vehicle {
+  background: red;
+  color: white;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  padding: 1px 4px;     /* smaller padding */
+  font-size: 12px;       /* smaller text */
+  line-height: 1;        /* reduces extra height */
+  display: inline-block; /* keeps it tight */
+}
+
+
+#add-vehicle {
+  padding: 4px 10px;       /* smaller padding */
+  font-size: 14px;         /* smaller font */
+  border-radius: 5px;      /* rounded corners */
+  border: none;            /* remove default border */
+  background-color: grey; /* red background */
+  color: #fff;             /* white text */
+  cursor: pointer;         /* pointer on hover */
+  min-width: 0;
+  width: 20%;            /* allows it to shrink */
+}
+
+#add-vehicle:hover {
+  background-color: #c62828; /* darker red on hover */
+}
+

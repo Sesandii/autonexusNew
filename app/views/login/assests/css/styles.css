@@ -127,6 +127,10 @@ body {
 }
 
 .forgot-password {
+    display: block;          /* make it take full row */
+    align-items: end;
+    text-align: right;       /* push text to the right */
+    margin-top: 0.35rem;     /* small gap under the input */
     font-size: 0.875rem;
     color: #e53e3e;
     text-decoration: none;
@@ -137,6 +141,7 @@ body {
 .forgot-password:hover {
     color: #c53030;
 }
+
 
 .form-group input {
     width: 100%;
@@ -157,6 +162,52 @@ body {
 .form-group input::placeholder {
     color: #a0aec0;
 }
+
+.password-wrapper {
+    position: relative;
+}
+
+.password-wrapper input {
+    width: 100%;
+    padding-right: 3rem; /* space for eye icon */
+}
+
+/* Eye button */
+.toggle-password-btn {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    outline: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Icon sizing */
+.toggle-password-btn svg {
+    width: 22px;
+    height: 22px;
+}
+
+/* Initially hide the "eye-off" icon */
+.icon-eye-off {
+    display: none;
+}
+
+/* When password is visible */
+.toggle-password-btn.showing .icon-eye {
+    display: none;
+}
+
+.toggle-password-btn.showing .icon-eye-off {
+    display: inline;
+}
+
 
 .login-btn {
     width: 100%;

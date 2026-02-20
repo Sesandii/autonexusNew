@@ -1,0 +1,116 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  display: flex;
+  background: #f9f9fb;
+  color: #333;
+}
+
+
+.main {
+  flex: 1;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto; 
+  margin-left: 280px;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+header h1 {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.filters {
+  display: flex;
+  gap: 10px;
+}
+
+.filters input {
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  width: 200px;
+}
+
+.filters select {
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.complaints-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.complaint {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  position: relative;
+}
+
+.complaint-info h3 {
+  font-size: 18px;
+  margin-bottom: 6px;
+}
+
+.complaint-info p {
+  font-size: 14px;
+  margin-bottom: 6px;
+  color: #666;
+}
+
+.complaint-info .meta {
+  font-size: 12px;
+  color: #999;
+}
+
+.status {
+  font-size: 13px;
+  color: #666;
+  position: absolute;
+  bottom: 15px;
+  right: 90px;
+}
+
+.badge {
+  padding: 5px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.badge.open {
+  background: #ffd8d8;
+  color: #a00;
+}
+
+.badge.progress {
+  background: #fff3c4;
+  color: #b78a00;
+}
+
+.badge.resolved {
+  background: #d8fadd;
+  color: #228b22;
+}
