@@ -536,3 +536,8 @@ margin-top: 10px;
   background: #e9eef5;
   transform: translateY(-1px);
 }
+
+.btn.small {
+  padding: 6px 8px;
+  font-size: 13px;
+}

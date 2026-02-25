@@ -1,0 +1,241 @@
+/* ====== RESET / BASE ====== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', sans-serif;
+font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+  
+  body {
+    display: flex;
+  height: 100vh;
+  background-color: #f8f9fc;
+  }
+  
+  .main-content {
+    flex: 1;
+    padding: 30px;
+    overflow-y: auto;
+  }
+  /* ====== PAGE TITLE ====== */
+  .main-content h1 {
+    font-size: 30px;
+    margin-bottom: 20px;
+    color: #1f2937;
+  }
+  
+  /* ====== BOARD LAYOUT ====== */
+  .mechanic-board {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+  }
+  
+  /* ====== MECHANIC TILE ====== */
+  .mechanic-card {
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 18px 18px 20px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    position: relative;
+  }
+  
+  .mechanic-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 28px rgba(0,0,0,0.12);
+  }
+  
+  /* ====== STATUS INDICATOR ====== */
+  .mechanic-card::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 6px;
+    height: 100%;
+    border-radius: 14px 0 0 14px;
+  }
+  
+  /* Status colors */
+  .mechanic-card.available::before { background: #22c55e; }
+  .mechanic-card.busy::before { background: #facc15; }
+  .mechanic-card.on\ break::before { background: #fb923c; }
+  .mechanic-card.off-duty::before { background: #9ca3af; }
+  
+  /* ====== HEADER INFO ====== */
+  .mechanic-card h3 {
+    margin: 0 0 6px;
+    font-size: 18px;
+    font-weight: 600;
+    color: #111827;
+  }
+  
+  .mechanic-card p {
+    margin: 4px 0;
+    font-size: 14px;
+    color: #4b5563;
+  }
+  
+  /* ====== WORK ORDER COUNT ====== */
+  .mechanic-card p:last-of-type {
+    margin-top: 8px;
+    font-weight: 500;
+    color: #1f2937;
+  }
+  
+  /* ====== WORK ORDER LIST ====== */
+  .workorder-list {
+    margin-top: 14px;
+    padding-top: 10px;
+    border-top: 1px solid #e5e7eb;
+  }
+  
+  .workorder-card {
+    background: #f9fafb;
+    border-radius: 8px;
+    padding: 8px 10px;
+    margin-bottom: 8px;
+    font-size: 13px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  /* ====== STATUS BADGES ====== */
+  .badge {
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+  
+  .badge.pending {
+    background: #e5e7eb;
+    color: #374151;
+  }
+  
+  .badge.in\ progress {
+    background: #bfdbfe;
+    color: #1e40af;
+  }
+  
+  .badge.completed {
+    background: #bbf7d0;
+    color: #166534;
+  }
+  
+  /* ====== FORMS ====== */
+  .mechanic-card form {
+    margin-top: 10px;
+  }
+  
+  .mechanic-card select,
+  .mechanic-card input[type="text"] {
+    width: 100%;
+    padding: 7px 9px;
+    border-radius: 6px;
+    border: 1px solid #d1d5db;
+    font-size: 13px;
+    margin-bottom: 6px;
+  }
+  
+  .mechanic-card button {
+    width: 100%;
+    padding: 7px 0;
+    border-radius: 6px;
+    border: none;
+    background: #2563eb;
+    color: white;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+  
+  .mechanic-card button:hover {
+    background: #1e40af;
+  }
+  
+  .filter-form {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.filter-form input,
+.filter-form select {
+    padding: 6px 10px;
+    font-size: 14px;
+}
+
+.filter-form button,
+.filter-form .reset-btn {
+    padding: 6px 12px;
+    font-size: 14px;
+    cursor: pointer;
+    background-color: #dddddd;
+    color: #000000;
+    border: none;
+    border-radius: 4px;
+    text-decoration: none;
+}
+
+.filter-form .reset-btn {
+    background-color: #f44336;
+}
+
+.workorder-card {
+  border: 1px solid #ddd;
+  padding: 8px 10px;
+  margin-bottom: 6px;
+  border-radius: 6px;
+  background: #fff;
+  position: relative;
+}
+
+.wo-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.wo-title {
+  font-weight: bold;
+}
+
+.view-btn {
+  text-decoration: none;
+  font-size: 0.8rem;
+  background-color: #007bff;
+  color: #fff;
+  padding: 2px 6px;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+.view-btn:hover {
+  background-color: #0056b3;
+}
+
+.wo-progress {
+  height: 6px;
+  background: #f0f0f0;
+  border-radius: 3px;
+  margin-bottom: 4px;
+  overflow: hidden;
+}
+
+.wo-progress .progress-bar {
+  height: 100%;
+  background-color: #28a745;
+  transition: width 0.3s ease;
+}
+
+
+  
+  

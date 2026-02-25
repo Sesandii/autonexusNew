@@ -112,6 +112,11 @@ header {
   color: #065f46;
 }
 
+.status.on_hold {
+  background: #ecfeff;
+  color: #970f05;
+}
+
 .status.completed {
   background: #ecfccb;
   color: #14532d;
@@ -210,27 +215,33 @@ header {
   cursor: pointer;
 }
 
-/* Toast messages */
 .toast {
-  position: fixed;
-  left: 20px;
-  bottom: 20px;
-  padding: 10px 14px;
-  border-radius: 8px;
-  box-shadow: 0 6px 22px rgba(2, 6, 23, .12);
-  z-index: 20;
-  font-weight: 500;
+  position: fixed;         /* Fixed relative to viewport */
+  top: 20px;               /* Distance from top */
+  right: 20px;             /* Distance from right */
+  background-color: #333;  /* Default dark background */
+  color: #fff;             /* White text */
+  padding: 12px 20px;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  z-index: 9999;           /* Always on top */
+  opacity: 0.95;
+  transition: all 0.3s ease;
+  max-width: 300px;
 }
 
-.toast.success {
-  background: #ecfdf5;
-  color: #ef4444;
+/* Optional: different styles per message type */
+.toast.success { background-color: #28a745; }
+.toast.danger  { background-color: #dc3545; }
+.toast.info    { background-color: #007bff; }
+.toast.warning { background-color: #ffc107; color: #000; }
+
+/* Fade out animation (optional) */
+.toast.hide {
+  opacity: 0;
+  transform: translateX(50px);
 }
 
-.toast.error {
-  background: #fff1f2;
-  color: #ef4444;
-}
 
 /* Filter bar layout */
 .table-filters {
@@ -263,4 +274,133 @@ header {
 
 .hidden {
   display: none;
+}
+
+.tiles-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-top: 25px;
+}
+
+.second-row {
+  grid-template-columns: repeat(2, 1fr);
+  max-width: 66%;
+  margin: 20px auto 0 auto; /* centers the row */
+}
+
+.info-tile {
+  background: linear-gradient(145deg, #ffffff, #f4f6f9);
+  border-radius: 16px;
+  padding: 22px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.25s ease;
+  border: 1px solid #e6e9ef;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
+}
+
+.info-tile:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.08);
+}
+
+/* Top accent line */
+.info-tile::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 4px;
+  width: 100%;
+  background: linear-gradient(to right, #f63b3b, #000000);
+}
+
+/* ============================= */
+/* TILE HEADER */
+/* ============================= */
+
+.info-tile h3 {
+  font-size: 17px;
+  font-weight: 600;
+  margin-bottom: 18px;
+  color: #1f2937;
+  letter-spacing: 0.3px;
+}
+
+/* ============================= */
+/* TILE CONTENT */
+/* ============================= */
+
+.tile-content p {
+  font-size: 14px;
+  margin: 8px 0;
+  color: #4b5563;
+}
+
+.tile-content strong {
+  color: #111827;
+}
+
+/* Summary Box */
+.summary {
+  background: #f9fafb;
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 13px;
+  margin-top: 6px;
+  border: 1px solid #e5e7eb;
+}
+
+/* ============================= */
+/* STATUS BADGES */
+/* ============================= */
+
+.status {
+  display: inline-block;
+  padding: 5px 12px;
+  border-radius: 30px;
+  font-size: 12px;
+  font-weight: 600;
+  margin-left: 6px;
+}
+
+/* Customize based on status value */
+.status.Pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.status.InProgress {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.status.Completed {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.status.Cancelled {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.tile-content p {
+  margin: 6px 0;
+  font-size: 14px;
+}
+
+.summary {
+  white-space: pre-wrap;
+  background: #f9f9f9;
+  padding: 8px;
+  border-radius: 6px;
+}
+
+.status {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
 }

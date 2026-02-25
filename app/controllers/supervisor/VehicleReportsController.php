@@ -16,12 +16,23 @@ class VehicleReportsController extends Controller
     /* =========================
        REPORT LIST
     ========================= */
-    public function index()
+
+    // Controller: app/controllers/supervisor/VehicleReportsController.php
+
+public function index()
+{
+    // Optional: you can pass data to the view if needed
+    // For now, no data is required, just show the dashboard
+
+    $this->view('supervisor/reports/index'); // the file: views/supervisor/reports/dashboard.php
+}
+
+    public function indexp()
     {
         $model = new Report();
         $reports = $model->all(); // fetch all reports
 
-        $this->view('supervisor/reports/index', [
+        $this->view('supervisor/reports/indexp', [
             'reports' => $reports
         ]);
     }
@@ -131,7 +142,7 @@ class VehicleReportsController extends Controller
     }
 
     // 4️⃣ Redirect
-    header('Location: ' . rtrim(BASE_URL, '/') . '/supervisor/reports');
+    header('Location: ' . rtrim(BASE_URL, '/') . '/supervisor/reports/indexp');
     exit;
 }
 
@@ -289,5 +300,49 @@ public function deletePhoto(int $id)
     header('Location: ' . BASE_URL . '/supervisor/reports/edit/' . $photo['report_id']);
     exit;
 }
+
+public function dailyJobs()
+{
+    $reportModel = new \app\model\supervisor\Report();
+
+    // Read filters from GET
+    $date = $_GET['report_date'] ?? null;
+    $mechanicCode = $_GET['mechanic_code'] ?? null;
+
+    // Fetch filtered daily report
+    $dailyReport = $reportModel->getDailyJobCompletion($date, $mechanicCode);
+
+    // Optionally, pass mechanics list to the view for the dropdown
+    $mechanics = $reportModel->getAllMechanics(); // You need a method for this
+
+    $this->view('supervisor/reports/daily-jobs', [
+        'dailyReport' => $dailyReport,
+        'mechanics'   => $mechanics,
+        'selectedDate' => $date,
+        'selectedMechanic' => $mechanicCode
+    ]);
+}
+
+public function mechanicActivity()
+{
+    $reportModel = new \app\model\supervisor\Report();
+
+    // Read optional filters from GET
+    $date = $_GET['date'] ?? null;
+    $mechanicCode = $_GET['mechanic_code'] ?? null;
+
+    $activity = $reportModel->getMechanicActivity($date, $mechanicCode);
+
+    // List of mechanics for dropdown filter
+    $mechanics = $reportModel->getAllMechanics();
+
+    $this->view('supervisor/reports/mechanic-activity', [
+        'activity' => $activity,
+        'mechanics' => $mechanics,
+        'selectedDate' => $date,
+        'selectedMechanic' => $mechanicCode
+    ]);
+}
+
 
 }

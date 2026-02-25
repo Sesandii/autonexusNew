@@ -30,6 +30,7 @@
         <select name="status" class="status-dropdown">
           <option value="open" <?= $job['status']==='open'?'selected':''?>>Open</option>
           <option value="in_progress" <?= $job['status']==='in_progress'?'selected':''?>>In Progress</option>
+          <option value="on_hold" <?= $job['status']==='on_hold'?'selected':''?>>On Hold</option>
           <option value="completed" <?= $job['status']==='completed'?'selected':''?>>Completed</option>
         </select>
         <button class="btn btn-primary">Update</button>

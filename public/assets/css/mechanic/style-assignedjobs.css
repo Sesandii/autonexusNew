@@ -175,3 +175,16 @@ header h1 {
   background: linear-gradient(90deg, #a71a1a, #c78181);
   transition: width 0.4s ease;
 }
+
+/* Add to your existing style-assignedjobs.css */
+.job-card.disabled {
+  opacity: 0.5;
+  pointer-events: none; /* disables clicks */
+  filter: blur(1px);
+}
+
+.job-card.on-hold {
+  border: 2px dashed orange;
+  opacity: 0.7;
+}
+

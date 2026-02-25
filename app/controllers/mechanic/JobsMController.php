@@ -16,50 +16,41 @@ class JobsMController extends Controller
     {
         if (session_status() !== PHP_SESSION_ACTIVE) session_start();
 
-        $mechanic_id = $_SESSION['user']['user_id'] ?? null;
-        if (!$mechanic_id) {
+        // Logged-in user ID
+        $user_id = $_SESSION['user']['user_id'] ?? null;
+        if (!$user_id) {
             die("Unauthorized");
         }
 
         // Fetch all jobs for display
         $allJobs = WorkOrder::getAllJobs();
 
-        foreach ($allJobs as &$job) {
+        // Fetch only this mechanic's jobs (optional)
+        $myJobs = WorkOrder::getAssignedJobs($user_id);
 
+        // Compute progress and owner
+        foreach ($allJobs as &$job) {
+            // Progress calculation
             $progress = 0;
-    
             switch ($job['status']) {
-                case 'open':
-                    $progress = 20;
-                    break;
-    
-                case 'in_progress':
-                    $progress = 50;
-                    break;
-    
-                case 'completed':
-                    $progress = 100;
-                    break;
+                case 'open': $progress = 20; break;
+                case 'in_progress': $progress = 50; break;
+                case 'completed': $progress = 100; break;
             }
-    
-            if (!empty($job['photo_count']) && $job['photo_count'] > 0) {
-                $progress += 25;
-            }
-    
-            if (!empty($job['checklist_completed']) && $job['checklist_completed'] > 0) {
-                $progress += 25;
-            }
-    
+            if (!empty($job['photo_count'])) $progress += 25;
+            if (!empty($job['checklist_completed'])) $progress += 25;
             $job['progress'] = min($progress, 100);
+
+            // Owner flag using user_id
+            // Assuming w.mechanic_id joins to users.user_id as mechanic_user_id
+            $job['owner'] = ($job['user_id'] ?? $job['mechanic_user_id'] ?? 0) == $user_id ? 'mine' : 'others';
         }
 
-        // Fetch only this mechanic's jobs for editable status
-        $myJobs = WorkOrder::getAssignedJobs($mechanic_id);
-
+        // Send data to view
         $this->view('mechanic/jobs/index', [
             'allJobs' => $allJobs,
             'myJobs' => $myJobs,
-            'mechanic_id' => $mechanic_id
+            'user_id' => $user_id
         ]);
     }
 

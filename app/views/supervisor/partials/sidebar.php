@@ -28,22 +28,22 @@
     <span class="link-text">Assigned</span>
   </a>
 
+  <a href="<?= $base ?>/supervisor/coordination"
+     class="<?= str_contains($_SERVER['REQUEST_URI'], '/coordination') ? 'nav' : '' ?>">
+     <img src="/autonexus/public/assets/img/Complaints.png"/>
+    <span class="link-text">Coordinate</span>
+  </a>
+
   <a href="<?= $base ?>/supervisor/history"
      class="<?= str_contains($_SERVER['REQUEST_URI'], '/history') ? 'nav' : '' ?>">
     <img src="/autonexus/public/assets/img/history.png"/>
     <span class="link-text">Vehicle History</span>
   </a>
 
-  <a href="<?= $base ?>/supervisor/complaints"
-     class="<?= str_contains($_SERVER['REQUEST_URI'], '/complaints') ? 'nav' : '' ?>">
-    <img src="/autonexus/public/assets/img/Complaints.png"/>
-    <span class="link-text">Complaints</span>
-  </a>
-
-  <a href="<?= $base ?>/supervisor/feedbacks"
-     class="<?= str_contains($_SERVER['REQUEST_URI'], '/feedbacks') ? 'nav' : '' ?>">
-    <img src="/autonexus/public/assets/img/Feedbacks.png"/>
-    <span class="link-text">Feedbacks</span>
+  <a href="<?= $base ?>/supervisor/complaints_feedbacks"
+     class="<?= str_contains($_SERVER['REQUEST_URI'], '/complaints_feedbacks') ? 'nav' : '' ?>">
+     <img src="/autonexus/public/assets/img/Feedbacks.png"/>
+    <span class="link-text">Feedback</span>
   </a>
 
   <a href="<?= $base ?>/supervisor/reports"
