@@ -104,7 +104,7 @@
 </section>
 
 <div class="actions">
-  <a href="<?= $base ?>/supervisor/reports" class="btn secondary">Back to Reports</a>
+  <a href="<?= $base ?>/supervisor/reports/indexp" class="btn secondary">Back to Reports</a>
 </div>
 
 <?php else: ?>

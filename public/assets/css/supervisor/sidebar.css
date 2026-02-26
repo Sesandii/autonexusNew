@@ -15,8 +15,8 @@
   
   .logo-expanded {
     display: none;
-    width: 180px;
-      height: 90px;
+    width: 170px;
+      height: 80px;
   }
   
   /* When sidebar expands */
@@ -30,18 +30,18 @@
   
   
   .sidebar {
-    width: 220px;
     background-color: #000;
     color: white;
     padding: 10px;
-    width: 70px;                 /* collapsed width */
+    width: 60px;                 /* collapsed width */
     transition: width 0.5s ease;
     overflow: hidden;
+    font-size: 13px;
   }
   
   .sidebar h2 {
     margin-bottom: 30px;
-    font-size: 22px;
+    font-size: 20px;
     text-align: center;
   }
   
@@ -76,7 +76,7 @@
   }
 
   .sidebar:hover {
-    width: 220px;
+    width: 180px;
   }
   
   
@@ -103,8 +103,6 @@
     opacity: 1;
   }
   
-  /* Icons always visible */
-  .sidebar img {
-    min-width: 20px;
-  }
+
+  
   

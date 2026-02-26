@@ -44,6 +44,7 @@
     <option value="in_progress">In Progress</option>
     <option value="completed">Completed</option>
   </select>
+  <button id="resetFilters" class="btn small">Reset</button>
 </div>
 
   </header>

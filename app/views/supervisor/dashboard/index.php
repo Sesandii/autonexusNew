@@ -9,13 +9,8 @@
 </head>
 <body>
 <?php include __DIR__ . '/../partials/sidebar.php'; ?>
-
     <main class="main-content">
       <header>
-      <div class="search-wrapper">
-  <input type="text" id="search" placeholder="Search..." class="search" autocomplete="off" />
-  <ul id="search-results" class="search-results hidden"></ul>
-</div>
         <div class="user-profile">
           <div class="user">
             <img src="/autonexus/public/assets/img/user.png" alt="User" class="user-img" />
@@ -31,30 +26,31 @@
       </header>
 
       <section class="welcome">
-      <h2>Welcome, <?= htmlspecialchars(($_SESSION['user']['first_name'] ?? '') . ' ' . ($_SESSION['user']['last_name'] ?? '')) ?></h2>
+      <h1>Welcome, <?= htmlspecialchars(($_SESSION['user']['first_name'] ?? '') . ' ' . ($_SESSION['user']['last_name'] ?? '')) ?></h1>
         <p>Here's an overview of your dashboard</p>
       </section>
-
-      <section class="cards">
+      <section class="dashboard-top">
+  <div class="dashboard-left">
+    <div class="cards">
         <div class="card green">
           <div class="card-header">
-            <h3>Workorders Done</h3>
+            <h3>Appointments Pending</h3>
           </div>
-          <p><?= (int)($stats['completed'] ?? 0) ?></p>
+          <p><?= (int)($stats['pending_appointments'] ?? 0) ?></p>
         </div>
 
         <div class="card blue">
           <div class="card-header">
-            <h3>Assigned Jobs</h3>
+            <h3>My Assigned Workorders</h3>
           </div>
-          <p><?= (int)($stats['total'] ?? 0) - (int)($stats['completed'] ?? 0) ?></p>
+          <p><?= (int)($stats['my_assigned'] ?? 0) ?></p>
         </div>
 
         <div class="card red">
           <div class="card-header">
-            <h3>Ongoing Workorders</h3>
+            <h3>In-Progress Workorders</h3>
           </div>
-          <p><?= (int)($stats['ongoing'] ?? 0) ?></p>
+          <p><?= (int)($stats['in_progress'] ?? 0) ?></p>
         </div>
 
         <div class="card purple">
@@ -63,10 +59,21 @@
           </div>
           <p><?= (int)($stats['total'] ?? 0) ?></p>
         </div>
+        </div>
+        </div>
+        <div class="dashboard-right">
+        </div>
       </section>
 
-      <section class="appointments">
-        <h3>Today's Appointments</h3>
+      <section class="dashboard-bottom">
+      <div class="table-toggle">
+  <button class="toggle-btn active" data-target="appointments">Today’s Appointments</button>
+  <button class="toggle-btn" data-target="inprogress">In-Progress Vehicles</button>
+</div>
+<section class="appointments" id="appointments">
+      <div class="table-header">
+  <h3>Today's Appointments</h3>
+</div>
         <table>
           <thead>
             <tr>
@@ -75,29 +82,69 @@
               <th>Time</th>
               <th>Service</th>
               <th>Status</th>
+<th>Action</th>
             </tr>
           </thead>
           <tbody>
-      <?php if (!empty($appointments)): ?>
-        <?php foreach ($appointments as $appt): ?>
-          <tr>
+          <?php if (!empty($appointments)): ?>
+    <?php foreach ($appointments as $appt): ?>
+        <tr>
             <td><img src="<?= $base ?>/public/assets/img/user2.png" class="user-icon" /> <?= htmlspecialchars($appt['customer_name']) ?></td>
             <td><img src="<?= $base ?>/public/assets/img/car.png" class="icon-car" /> <?= htmlspecialchars($appt['vehicle']) ?></td>
             <td><?= htmlspecialchars(date('h:i A', strtotime($appt['appointment_time']))) ?></td>
             <td><?= htmlspecialchars($appt['name']) ?></td>
             <td><?= htmlspecialchars($appt['status']) ?></td>
+            <td>
+                <!-- ✅ Pass appointment_id via GET -->
+                <a class="btn-primary"
+   href="<?= $base ?>/supervisor/workorders/create?appointment_id=<?= (int)$appt['appointment_id'] ?>">
+   Create
+</a>
+            </td>
+        </tr>
+    <?php endforeach; ?>
+<?php else: ?>
+    <tr>
+        <td colspan="6" style="text-align:center;">No appointments today</td>
+    </tr>
+<?php endif; ?>
+    </tbody>
+        </table>
+      </section>
+      <section class="appointments hidden" id="inprogress">
+  <h3>Vehicles In Progress</h3>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Vehicle</th>
+        <th>Mechanic</th>
+        <th>Started At</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <?php if (!empty($inProgressJobs)): ?>
+        <?php foreach ($inProgressJobs as $job): ?>
+          <tr>
+            <td><?= htmlspecialchars($job['vehicle']) ?></td>
+            <td><?= htmlspecialchars($job['mechanic_code']) ?></td>
+            <td><?= htmlspecialchars(date('h:i A', strtotime($job['started_at']))) ?></td>
+            <td>
+            <button class="btn-primary" onclick="location.href='/autonexus/supervisor/assignedjobs/<?= $job['work_order_id'] ?>'">Edit</button>
+            </td>
           </tr>
         <?php endforeach; ?>
       <?php else: ?>
         <tr>
-          <td colspan="5" style="text-align:center;">No appointments today</td>
+          <td colspan="4" style="text-align:center;">No vehicles in progress</td>
         </tr>
       <?php endif; ?>
     </tbody>
-        </table>
-      </section>
+  </table>
+</section>
+</section>
     </main>
-
   <script src="/autonexus/public/assets/js/supervisor/script-dashboard.js"></script>
 </body>
 </html>

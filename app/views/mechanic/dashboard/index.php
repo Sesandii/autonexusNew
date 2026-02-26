@@ -11,7 +11,6 @@
 <?php include __DIR__ . '/../partials/sidebar.php'; ?>
 <main class="main-content">
 <header>
-  <input type="text" placeholder="Search..." class="search" />
   <div class="user-profile">
     <div class="user">
       <img src="<?= $base ?>/public/assets/img/user.png" alt="User" class="user-img" />
