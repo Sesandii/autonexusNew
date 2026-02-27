@@ -1,0 +1,318 @@
+/* 
+ * AutoNexus – Customer Complaint Form Stylesheet
+ * ================================================
+ * 
+ * FILE LOCATION: public/assets/css/customer/complaint.css
+ * LOADED IN VIEW: app/views/customer/complaint/index.php
+ * 
+ * URL PATH EXPLANATION (XAMPP/Windows):
+ * -------------------------------------
+ * Project root: C:\xampp\htdocs\autonexus\
+ * RewriteBase in .htaccess: /autonexus/
+ * 
+ * This CSS is referenced as:
+ *   href="<?= BASE_URL ?>/public/assets/css/customer/complaint.css"
+ * 
+ * Which resolves to:
+ *   http://localhost/autonexus/public/assets/css/customer/complaint.css
+ * 
+ * The .htaccess file allows static files (CSS, JS, images) to pass through
+ * without being rewritten, so they are served directly by Apache.
+ */
+
+:root {
+  --brand-red: #dc2626;
+  --brand-red-light: #ef4444;
+  --brand-red-dark: #b91c1c;
+  --black: #111827;
+  --white: #ffffff;
+  --gray: #f3f4f6;
+  --gray-light: #f9fafb;
+  --muted: #6b7280;
+  --border: #e5e7eb;
+  --success: #10b981;
+  --error: #ef4444;
+  --shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+  --shadow-hover: 0 4px 16px rgba(15, 23, 42, 0.12);
+  --radius: 14px;
+  --radius-sm: 8px;
+  --transition: 0.25s ease;
+}
+
+/* =============================
+   BASE LAYOUT
+   ============================= */
+body {
+  margin: 0;
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background-color: var(--gray);
+  color: var(--black);
+  line-height: 1.6;
+}
+
+/* Container aligns with sidebar (keep in sync with sidebar width: 240px) */
+.container {
+  margin-left: 240px;
+  padding: 32px 40px 40px;
+  background: var(--gray);
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+/* Main content card */
+.main-content {
+  background: var(--white);
+  padding: 28px 28px 32px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* =============================
+   PAGE HEADER
+   ============================= */
+.page-header {
+  text-align: left;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid var(--gray);
+}
+
+.page-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--brand-red);
+  margin: 0 0 6px;
+}
+
+.page-subtitle {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+/* =============================
+   ALERT MESSAGES
+   ============================= */
+.alert {
+  padding: 12px 16px;
+  border-radius: var(--radius-sm);
+  margin-bottom: 20px;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.alert-success {
+  background-color: #d1fae5;
+  color: #065f46;
+  border: 1px solid #10b981;
+}
+
+.alert-error {
+  background-color: #fee2e2;
+  color: #991b1b;
+  border: 1px solid var(--error);
+}
+
+/* =============================
+   FORM CONTAINER & GROUPS
+   ============================= */
+.form-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 18px 26px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.full-width {
+  grid-column: 1 / -1;
+}
+
+/* =============================
+   LABELS & HINTS
+   ============================= */
+label {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--black);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.required {
+  color: var(--brand-red);
+  font-weight: 700;
+}
+
+.form-hint {
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin-top: -4px;
+}
+
+/* =============================
+   INPUT FIELDS
+   ============================= */
+input[type="text"],
+input[type="date"],
+input[type="email"],
+input[type="tel"],
+select,
+textarea {
+  padding: 10px 12px;
+  font-size: 0.9rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  transition: border-color var(--transition), box-shadow var(--transition), background 0.2s ease;
+  background-color: var(--white);
+  color: var(--black);
+  box-sizing: border-box;
+  font-family: inherit;
+}
+
+/* Read-only fields */
+input[readonly] {
+  background: var(--gray-light);
+  color: var(--muted);
+  cursor: not-allowed;
+}
+
+/* Focus states */
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--brand-red);
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.16);
+  outline: none;
+}
+
+/* Select dropdown arrow styling */
+select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b7280' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 36px;
+  cursor: pointer;
+}
+
+/* Textarea */
+textarea {
+  resize: vertical;
+  min-height: 120px;
+  line-height: 1.5;
+}
+
+/* =============================
+   BUTTON STYLES
+   ============================= */
+.actions-row {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+/* Submit button */
+.submit-btn {
+  background: var(--brand-red);
+  color: var(--white);
+  border: none;
+  padding: 11px 20px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background var(--transition), transform 0.1s ease, box-shadow 0.18s ease;
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.32);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.submit-btn i {
+  font-size: 0.95rem;
+}
+
+.submit-btn:hover {
+  background: var(--brand-red-light);
+  transform: translateY(-1px);
+  box-shadow: 0 7px 18px rgba(220, 38, 38, 0.4);
+}
+
+.submit-btn:active {
+  transform: translateY(1px);
+  box-shadow: 0 3px 8px rgba(220, 38, 38, 0.34);
+}
+
+/* Cancel button */
+.cancel-btn {
+  background: var(--white);
+  color: var(--muted);
+  border: 1px solid var(--border);
+  padding: 11px 20px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background var(--transition), border-color var(--transition), color var(--transition);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cancel-btn:hover {
+  background: var(--gray-light);
+  border-color: var(--muted);
+  color: var(--black);
+}
+
+.cancel-btn:active {
+  background: var(--gray);
+}
+
+/* =============================
+   RESPONSIVE DESIGN
+   ============================= */
+@media (max-width: 900px) {
+  .container {
+    margin-left: 220px;
+    padding: 24px;
+  }
+  
+  .form-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .container {
+    margin-left: 0;
+    padding: 20px 16px 28px;
+  }
+
+  .main-content {
+    padding: 22px 18px 26px;
+  }
+
+  .page-title {
+    font-size: 1.5rem;
+  }
+
+  .actions-row {
+    flex-direction: column-reverse;
+  }
+
+  .submit-btn,
+  .cancel-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}

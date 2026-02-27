@@ -1,6 +1,9 @@
-# Proposed MVC Layout
+# AutoNexus - Service Center Management System
 
 This folder contains a minimal MVC skeleton (no frameworks) and copies of your static assets where possible.
+
+## Customer Complaint Form
+For information about the customer complaint form setup, CSS asset paths, and troubleshooting, see [COMPLAINT_FORM_SETUP.md](./COMPLAINT_FORM_SETUP.md).
 
 ## What we did
 - Extracted your uploaded zip to: `/mnt/data/user_project_raw`
