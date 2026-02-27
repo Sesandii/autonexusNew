@@ -1,0 +1,206 @@
+/* AutoNexus – Customer Complaints Page */
+:root {
+  --brand-red: #dc2626;
+  --black: #111827;
+  --white: #ffffff;
+  --gray: #f3f4f6;
+  --muted: #6b7280;
+  --border: #e5e7eb;
+  --shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+  --radius: 14px;
+}
+
+body {
+  margin: 0;
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background-color: var(--gray);
+  color: var(--black);
+}
+
+.container {
+  margin-left: 240px;
+  padding: 32px 40px 40px;
+  background: var(--gray);
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+.main-content {
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.page-header {
+  margin-bottom: 24px;
+}
+
+.page-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--brand-red);
+  margin: 0 0 6px;
+}
+
+.page-subtitle {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+/* Flash message */
+.flash-message {
+  background: #ecfdf5;
+  border: 1px solid #6ee7b7;
+  color: #065f46;
+  padding: 12px 18px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  font-size: 0.95rem;
+}
+
+/* Cards */
+.card {
+  background: var(--white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 28px;
+  margin-bottom: 28px;
+}
+
+.card h2 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin: 0 0 20px;
+  color: var(--black);
+}
+
+/* Form */
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.full-width {
+  grid-column: 1 / -1;
+}
+
+.form-group label {
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.form-group select,
+.form-group textarea {
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-family: inherit;
+  background: var(--gray);
+  color: var(--black);
+  transition: border-color 0.2s;
+}
+
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: var(--brand-red);
+}
+
+.form-actions {
+  margin-top: 16px;
+}
+
+.btn-primary {
+  background: var(--brand-red);
+  color: var(--white);
+  border: none;
+  border-radius: 8px;
+  padding: 10px 22px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-primary:hover {
+  background: #b91c1c;
+}
+
+/* Info / empty messages */
+.info-msg {
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.info-msg a {
+  color: var(--brand-red);
+  text-decoration: underline;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 32px 16px;
+  color: var(--muted);
+}
+
+/* Table */
+.table-wrapper {
+  overflow-x: auto;
+}
+
+.complaints-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.complaints-table th,
+.complaints-table td {
+  padding: 12px 14px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+.complaints-table th {
+  font-weight: 700;
+  color: var(--muted);
+  background: var(--gray);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.complaints-table tbody tr:hover {
+  background: #fef2f2;
+}
+
+/* Badges */
+.badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.priority-low    { background: #d1fae5; color: #065f46; }
+.priority-medium { background: #fef9c3; color: #78350f; }
+.priority-high   { background: #fee2e2; color: #991b1b; }
+
+.status-open        { background: #dbeafe; color: #1e40af; }
+.status-in-progress { background: #fef9c3; color: #78350f; }
+.status-resolved    { background: #d1fae5; color: #065f46; }
+.status-closed      { background: #f3f4f6; color: #6b7280; }

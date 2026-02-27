@@ -47,5 +47,26 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // (Optional) You can add more JS here later for appointment <select> auto-fill if needed.
+  // ---- AUTO-FILL vehicle details when appointment is selected ----
+  const appointmentSelect = document.getElementById("appointment");
+  const vehicleNumberInput = document.getElementById("vehicleNumber");
+  const brandModelInput = document.getElementById("brandModel");
+  const serviceDateInput = document.getElementById("serviceDate");
+
+  if (appointmentSelect) {
+    appointmentSelect.addEventListener("change", () => {
+      const selected = appointmentSelect.options[appointmentSelect.selectedIndex];
+      if (vehicleNumberInput) vehicleNumberInput.value = selected.dataset.vehicle || "";
+      if (brandModelInput)    brandModelInput.value    = selected.dataset.model   || "";
+      if (serviceDateInput) {
+        const raw = selected.dataset.date || "";
+        if (raw) {
+          const d = new Date(raw);
+          serviceDateInput.value = isNaN(d.getTime()) ? raw : d.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
+        } else {
+          serviceDateInput.value = "";
+        }
+      }
+    });
+  }
 });

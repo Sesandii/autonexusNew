@@ -10,22 +10,20 @@ class FeedbackController extends Controller
 {
    public function index(): void
 {
-    if (method_exists($this, 'requireCustomer')) {
-        $this->requireCustomer();
-    }
+    $this->requireCustomer();
 
-    $uid = (int)($_SESSION['user_id'] ?? 0);
+    $uid = $this->userId();
     $appointmentModel = new Appointments();
 
-    // Option A: show all completed (original intent)
-    // $appointments = $appointmentModel->completedByUser($uid);
-
-    // Option B (recommended): only show completed that aren't rated yet
     $appointments = $appointmentModel->completedWithoutFeedbackByUser($uid);
 
+    $flash = $_SESSION['flash'] ?? null;
+    unset($_SESSION['flash']);
+
     $this->view('customer/feedback/index', [
-        'title' => 'Rate Your Service',
+        'title'        => 'Rate Your Service',
         'appointments' => $appointments,
+        'flash'        => $flash,
     ]);
 }
 
@@ -37,11 +35,9 @@ public function store(): void
         return;
     }
 
-    if (method_exists($this, 'requireCustomer')) {
-        $this->requireCustomer();
-    }
+    $this->requireCustomer();
 
-    $uid = (int)($_SESSION['user_id'] ?? 0);
+    $uid = $this->userId();
     $appointmentId = (int)($_POST['appointment_id'] ?? 0);
     $rating = (int)($_POST['rating'] ?? 0);
     $feedback = trim((string)($_POST['feedback'] ?? ''));
