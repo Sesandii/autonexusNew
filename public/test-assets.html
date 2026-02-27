@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Asset Path Test - AutoNexus</title>
+  
+  <!-- Test both URL patterns -->
+  <link rel="stylesheet" href="/autonexus/assets/css/customer/complaint.css">
+  
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 2rem;
+      background-color: #f5f5f5;
+    }
+    .test-info {
+      background: #fff;
+      padding: 2rem;
+      border-radius: 8px;
+      margin-bottom: 2rem;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .test-info h2 {
+      color: #28a745;
+      margin-top: 0;
+    }
+    .url-test {
+      background: #e7f3ff;
+      padding: 1rem;
+      border-left: 4px solid #007bff;
+      margin: 1rem 0;
+    }
+    .code {
+      background: #f8f9fa;
+      padding: 0.5rem;
+      border-radius: 4px;
+      font-family: monospace;
+      display: inline-block;
+    }
+  </style>
+</head>
+<body>
+  <div class="test-info">
+    <h2>✅ Asset Path Configuration Test</h2>
+    <p>If you can see styled content below, the asset routing is working correctly!</p>
+    
+    <div class="url-test">
+      <strong>URL Pattern Being Tested:</strong><br>
+      <code class="code">/autonexus/assets/css/customer/complaint.css</code>
+    </div>
+    
+    <div class="url-test">
+      <strong>Physical File Location:</strong><br>
+      <code class="code">public/assets/css/customer/complaint.css</code>
+    </div>
+    
+    <div class="url-test">
+      <strong>How It Works:</strong><br>
+      The root <code class="code">.htaccess</code> file now includes a rewrite rule that maps:<br>
+      <code class="code">/autonexus/assets/*</code> → <code class="code">/autonexus/public/assets/*</code>
+    </div>
+  </div>
+  
+  <!-- Example complaint form using the loaded CSS -->
+  <div class="complaint-form-container">
+    <h1>Customer Complaint Form</h1>
+    
+    <form>
+      <div class="form-group">
+        <label for="customerName">Customer Name</label>
+        <input type="text" id="customerName" name="customerName" placeholder="Enter your name" required>
+      </div>
+      
+      <div class="form-group">
+        <label for="vehicleNumber">Vehicle Number</label>
+        <input type="text" id="vehicleNumber" name="vehicleNumber" placeholder="e.g., ABC-1234" required>
+      </div>
+      
+      <div class="form-group">
+        <label for="complaintType">Complaint Type</label>
+        <select id="complaintType" name="complaintType" required>
+          <option value="">-- Select Type --</option>
+          <option value="service">Service Quality</option>
+          <option value="staff">Staff Behavior</option>
+          <option value="pricing">Pricing Issue</option>
+          <option value="delay">Service Delay</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <label for="description">Complaint Description</label>
+        <textarea id="description" name="description" placeholder="Please describe your complaint in detail..." required></textarea>
+      </div>
+      
+      <button type="submit" class="submit-btn">Submit Complaint</button>
+    </form>
+  </div>
+  
+  <div class="test-info">
+    <h2>Testing Instructions</h2>
+    <ol>
+      <li>Open browser DevTools (F12)</li>
+      <li>Go to the Network tab</li>
+      <li>Refresh this page</li>
+      <li>Look for <code class="code">complaint.css</code> in the network requests</li>
+      <li>Verify it returns HTTP status <strong>200 OK</strong> (not 404)</li>
+    </ol>
+    
+    <p><strong>Alternative URL Test:</strong><br>
+    You can also access the CSS file directly at:<br>
+    <code class="code">http://localhost/autonexus/assets/css/customer/complaint.css</code><br>
+    or<br>
+    <code class="code">http://localhost/autonexus/public/assets/css/customer/complaint.css</code>
+    </p>
+  </div>
+</body>
+</html>
