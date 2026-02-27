@@ -21,11 +21,13 @@ class FeedbackController extends Controller
     // $appointments = $appointmentModel->completedByUser($uid);
 
     // Option B (recommended): only show completed that aren't rated yet
+    // Returns empty array if no services available to rate
     $appointments = $appointmentModel->completedWithoutFeedbackByUser($uid);
 
+    // Pass appointments array to view - view handles empty state display
     $this->view('customer/feedback/index', [
         'title' => 'Rate Your Service',
-        'appointments' => $appointments,
+        'appointments' => $appointments, // Safe to pass empty array
     ]);
 }
 
