@@ -346,6 +346,12 @@ $router->get('/customer/book/slots',  [BookingController::class, 'slots']);
 $router->get('/customer/rate-service', [\app\controllers\customer\FeedbackController::class, 'index']);
 $router->post('/customer/rate-service', [\app\controllers\customer\FeedbackController::class, 'store']); // for saving reviews later
 
+// Customer Complaints - File a Complaint feature
+use app\controllers\customer\ComplaintController as CustomerComplaintController;
+
+$router->get('/customer/file-complaint', [CustomerComplaintController::class, 'file']);
+$router->post('/customer/complaints/submit', [CustomerComplaintController::class, 'submit']);
+
 
 
 $router->get('/customer/service-history', [\app\controllers\customer\ServiceHistoryController::class, 'index']);

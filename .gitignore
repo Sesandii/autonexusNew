@@ -1,0 +1,20 @@
+# Ignore log files
+debug.log
+*.log
+
+# Ignore vendor directory (dependencies)
+vendor/
+
+# Ignore OS specific files
+.DS_Store
+Thumbs.db
+
+# Ignore IDE specific files
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Ignore environment configuration
+.env
+.env.local

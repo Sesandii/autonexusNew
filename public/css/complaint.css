@@ -1,0 +1,278 @@
+/**
+ * complaint.css
+ * 
+ * Stylesheet for the Customer Complaint Form
+ * 
+ * This file defines the visual styling for the complaint page.
+ * It follows the same design patterns as other customer pages (like rate-service.css)
+ * to maintain visual consistency across the application.
+ * 
+ * For beginners: CSS (Cascading Style Sheets) controls how elements look on the page
+ * - Colors, spacing, fonts, borders, etc.
+ */
+
+/* ========================================
+   CSS Variables (Design Tokens)
+   ========================================
+   Variables make it easy to maintain consistent colors/spacing
+   across the entire stylesheet. Change once, updates everywhere!
+*/
+:root {
+  --brand-red: #dc2626;           /* Primary brand color (red) */
+  --brand-red-light: #ef4444;     /* Lighter shade for hover effects */
+  --black: #111827;               /* Text color (dark gray, not pure black) */
+  --white: #ffffff;               /* Background color */
+  --gray: #f3f4f6;                /* Light gray for page background */
+  --muted: #6b7280;               /* Muted gray for secondary text */
+  --border: #e5e7eb;              /* Border color for inputs */
+  --shadow: 0 2px 8px rgba(15, 23, 42, 0.08);  /* Subtle shadow for depth */
+  --radius: 14px;                 /* Border radius for rounded corners */
+  --transition: 0.25s ease;       /* Animation speed for smooth transitions */
+}
+
+/* ========================================
+   Base Layout
+   ======================================== */
+
+/* Body: Overall page styling */
+body {
+  margin: 0;                      /* Remove default margin */
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background-color: var(--gray); /* Light gray background */
+  color: var(--black);           /* Default text color */
+}
+
+/* Container: Main content area (offset for sidebar) */
+.container {
+  margin-left: 240px;            /* Sidebar width - keeps content right of sidebar */
+  padding: 32px 40px 40px;       /* Inner spacing around content */
+  background: var(--gray);       /* Match body background */
+  min-height: 100vh;             /* Minimum full viewport height */
+  box-sizing: border-box;        /* Include padding in width calculation */
+}
+
+/* Main Content Card: White card that contains the form */
+.main-content {
+  background: var(--white);      /* White background for contrast */
+  padding: 28px 28px 32px;       /* Inner spacing */
+  border-radius: var(--radius);  /* Rounded corners */
+  box-shadow: var(--shadow);     /* Subtle shadow for depth */
+  max-width: 900px;              /* Maximum width for readability */
+  margin: 0 auto;                /* Center horizontally */
+}
+
+/* ========================================
+   Page Header
+   ======================================== */
+
+.page-header {
+  text-align: left;              /* Align text to left */
+  margin-bottom: 24px;           /* Space below header */
+}
+
+.page-title {
+  font-size: 1.8rem;             /* Large title text */
+  font-weight: 700;              /* Bold */
+  color: var(--brand-red);       /* Brand red color */
+  margin: 0 0 6px;               /* Remove default margins, add bottom space */
+}
+
+.page-subtitle {
+  margin: 0;                     /* Remove default margin */
+  font-size: 0.9rem;             /* Smaller text */
+  color: var(--muted);           /* Gray color for less emphasis */
+}
+
+/* ========================================
+   Flash Messages (Success/Error alerts)
+   ======================================== */
+
+.flash-message {
+  background: #dcfce7;           /* Light green background */
+  color: #166534;                /* Dark green text */
+  padding: 12px 16px;            /* Inner spacing */
+  border-radius: 8px;            /* Rounded corners */
+  margin-bottom: 20px;           /* Space below message */
+  border-left: 4px solid #22c55e; /* Green accent border on left */
+  font-size: 0.9rem;             /* Slightly smaller text */
+}
+
+/* ========================================
+   Form Layout
+   ======================================== */
+
+/* Form Container: Grid layout for responsive form fields */
+.form-container {
+  display: grid;                                      /* CSS Grid layout */
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); 
+  /* Creates responsive columns: 
+     - At least 260px wide
+     - Fills available space equally (1fr)
+     - Auto-fits as many columns as possible
+  */
+  gap: 18px 26px;                /* Vertical and horizontal spacing between fields */
+}
+
+/* Form Group: Individual field container */
+.form-group {
+  display: flex;                 /* Flexbox layout */
+  flex-direction: column;        /* Stack label and input vertically */
+  gap: 6px;                      /* Small space between label and input */
+}
+
+/* Full Width: Make field span all columns */
+.full-width {
+  grid-column: 1 / -1;           /* Span from first to last column */
+}
+
+/* Labels: Text above input fields */
+label {
+  font-weight: 600;              /* Semi-bold */
+  font-size: 0.9rem;             /* Slightly smaller than body text */
+  color: var(--black);           /* Dark text */
+}
+
+/* Field Hint: Small helper text below inputs */
+.field-hint {
+  font-size: 0.8rem;             /* Small text */
+  color: var(--muted);           /* Gray color */
+  margin-top: -2px;              /* Pull up slightly closer to input */
+}
+
+/* ========================================
+   Form Inputs & Controls
+   ======================================== */
+
+/* Text Inputs, Select Dropdowns, and Textareas */
+input[type="text"],
+select,
+textarea {
+  padding: 9px 11px;             /* Inner spacing for text */
+  font-size: 0.9rem;             /* Readable text size */
+  border: 1px solid var(--border); /* Light gray border */
+  border-radius: 8px;            /* Rounded corners */
+  transition: border-color var(--transition), box-shadow var(--transition);
+  /* Smooth animation when border color changes */
+  background-color: #fff;        /* White background */
+  color: var(--black);           /* Dark text */
+  box-sizing: border-box;        /* Include padding in width */
+  font-family: inherit;          /* Use same font as body */
+}
+
+/* Focus State: When user clicks into input */
+input[type="text"]:focus,
+select:focus,
+textarea:focus {
+  outline: none;                 /* Remove browser default outline */
+  border-color: var(--brand-red); /* Red border when active */
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1); 
+  /* Subtle red glow around focused input */
+}
+
+/* Readonly Inputs: Cannot be edited (appointment details) */
+input[readonly] {
+  background: #f9fafb;           /* Very light gray background */
+  color: #4b5563;                /* Slightly muted text */
+  cursor: not-allowed;           /* Show "not allowed" cursor on hover */
+  border-color: #e5e7eb;         /* Keep standard border */
+}
+
+/* Textarea: Multi-line text input */
+textarea {
+  resize: vertical;              /* Allow vertical resizing only */
+  min-height: 100px;             /* Minimum height */
+  line-height: 1.5;              /* Comfortable line spacing for reading */
+}
+
+/* Select Dropdown: Dropdown menu styling */
+select {
+  cursor: pointer;               /* Show pointer cursor (clickable) */
+  appearance: none;              /* Remove default browser styling */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b7280' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+  /* Add custom dropdown arrow icon */
+  background-repeat: no-repeat;  /* Don't repeat icon */
+  background-position: right 12px center; /* Position arrow on right */
+  padding-right: 32px;           /* Make room for arrow */
+}
+
+/* ========================================
+   Submit Button
+   ======================================== */
+
+.actions-row {
+  display: flex;                 /* Flexbox for button alignment */
+  justify-content: flex-start;   /* Align button to left */
+}
+
+.submit-btn {
+  background-color: var(--brand-red); /* Brand red background */
+  color: var(--white);           /* White text */
+  font-size: 0.95rem;            /* Readable size */
+  font-weight: 600;              /* Semi-bold */
+  padding: 11px 24px;            /* Comfortable click area */
+  border: none;                  /* No border */
+  border-radius: 8px;            /* Rounded corners */
+  cursor: pointer;               /* Show pointer cursor */
+  transition: background-color var(--transition), transform 0.15s ease;
+  /* Smooth color change and subtle movement on hover */
+  display: inline-flex;          /* Inline flexbox for icon alignment */
+  align-items: center;           /* Center icon vertically */
+  gap: 8px;                      /* Space between icon and text */
+}
+
+/* Button Hover State: When mouse is over button */
+.submit-btn:hover {
+  background-color: var(--brand-red-light); /* Lighter red on hover */
+  transform: translateY(-1px);   /* Lift button up slightly */
+}
+
+/* Button Active State: When button is clicked */
+.submit-btn:active {
+  transform: translateY(0);      /* Return to normal position */
+}
+
+/* Button Icon: Style the icon inside button */
+.submit-btn i {
+  font-size: 0.9rem;             /* Slightly smaller than text */
+}
+
+/* ========================================
+   Responsive Design for Mobile
+   ======================================== */
+
+/* Tablet and smaller: Adjust layout for smaller screens */
+@media (max-width: 768px) {
+  .container {
+    margin-left: 0;              /* Remove sidebar offset */
+    padding: 20px 16px;          /* Less padding on mobile */
+  }
+
+  .main-content {
+    padding: 20px;               /* Less padding inside card */
+  }
+
+  .page-title {
+    font-size: 1.5rem;           /* Smaller title on mobile */
+  }
+
+  .form-container {
+    grid-template-columns: 1fr;  /* Single column on mobile */
+    gap: 16px;                   /* Less gap between fields */
+  }
+}
+
+/* ========================================
+   Print Styles (Optional)
+   ========================================
+   Hide interactive elements when printing
+*/
+@media print {
+  .sidebar,
+  .submit-btn {
+    display: none;               /* Hide sidebar and button when printing */
+  }
+
+  .container {
+    margin-left: 0;              /* Remove sidebar offset */
+  }
+}
