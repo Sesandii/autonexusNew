@@ -384,3 +384,17 @@ button.view-btn:hover {
 .data-section.hidden {
   display: none;
 }
+
+
+.reset-btn {
+  background: #000000;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.reset-btn:hover {
+  background: #4d4d4d;
+}

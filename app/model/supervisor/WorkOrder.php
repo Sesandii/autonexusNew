@@ -13,7 +13,6 @@ class WorkOrder
     {
         $this->pdo = db(); // global db() helper
     }
-
     // Create new work order
     public function create(array $data): int
 {
@@ -90,19 +89,40 @@ class WorkOrder
         return (int)$stmt->fetchColumn() > 0;
     }
 
-    // Available appointments (exclude ones with work orders)
-    public function getAvailableAppointments(): array
+    public function getAvailableAppointments(int $supervisorId): array
     {
-        $sql = "SELECT a.*, s.name AS service_name, c.customer_code
-                FROM appointments a
-                LEFT JOIN services s ON a.service_id = s.service_id
-                LEFT JOIN customers c ON a.customer_id = c.customer_id
-                WHERE a.status IN ('requested', 'confirmed')
-                  AND a.appointment_id NOT IN (
-                      SELECT appointment_id FROM work_orders WHERE appointment_id IS NOT NULL
-                  )
-                ORDER BY a.appointment_date DESC, a.appointment_time DESC";
-        $stmt = $this->pdo->query($sql);
+        // Step 1: Get supervisor branch
+        $stmt = $this->pdo->prepare(
+            "SELECT branch_id FROM supervisors WHERE user_id = ?"
+        );
+        $stmt->execute([$supervisorId]);
+        $branchId = $stmt->fetchColumn();
+    
+        if (!$branchId) {
+            return [];
+        }
+    
+        // Step 2: Fetch appointments only from that branch
+        $sql = "
+            SELECT a.*, 
+                   s.name AS service_name, 
+                   c.customer_code
+            FROM appointments a
+            LEFT JOIN services s ON a.service_id = s.service_id
+            LEFT JOIN customers c ON a.customer_id = c.customer_id
+            WHERE a.branch_id = ?
+              AND a.status IN ('requested', 'confirmed')
+              AND a.appointment_id NOT IN (
+                  SELECT appointment_id 
+                  FROM work_orders 
+                  WHERE appointment_id IS NOT NULL
+              )
+            ORDER BY a.appointment_date DESC, a.appointment_time DESC
+        ";
+    
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([$branchId]);
+    
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 

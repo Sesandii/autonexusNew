@@ -60,12 +60,14 @@ class Dashboard
             CONCAT(u.first_name, ' ', u.last_name) AS customer_name,
             a.appointment_time,
             s.name,
-            a.status
+            a.status,
+            w.work_order_id
         FROM appointments a
         JOIN vehicles v ON v.vehicle_id = a.vehicle_id
         JOIN customers c ON c.customer_id = a.customer_id
         JOIN users u ON u.user_id = c.user_id
         JOIN services s ON s.service_id = a.service_id
+        LEFT JOIN work_orders w ON w.appointment_id = a.appointment_id
         WHERE DATE(a.appointment_date) = CURDATE()
         ORDER BY a.appointment_time ASC
     ";
