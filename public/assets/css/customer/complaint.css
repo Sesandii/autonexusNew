@@ -1,0 +1,113 @@
+/* ========================================================================
+   Customer Complaint Form Styles
+   ======================================================================== */
+
+/* Container */
+.complaint-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Form Header */
+.complaint-container h2 {
+    color: #333;
+    margin-bottom: 1.5rem;
+    font-size: 1.8rem;
+    border-bottom: 2px solid #e74c3c;
+    padding-bottom: 0.5rem;
+}
+
+/* Form Groups */
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #555;
+    font-weight: 500;
+}
+
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #e74c3c;
+}
+
+.form-group textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
+/* Submit Button */
+.btn-submit {
+    background-color: #e74c3c;
+    color: white;
+    padding: 0.75rem 2rem;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn-submit:hover {
+    background-color: #c0392b;
+}
+
+.btn-submit:active {
+    transform: translateY(1px);
+}
+
+/* Validation Messages */
+.error-message {
+    color: #e74c3c;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+
+.success-message {
+    background-color: #d4edda;
+    color: #155724;
+    padding: 1rem;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+    border: 1px solid #c3e6cb;
+}
+
+/* Required Field Indicator */
+.required {
+    color: #e74c3c;
+    margin-left: 0.25rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .complaint-container {
+        padding: 1rem;
+        margin: 1rem;
+    }
+    
+    .complaint-container h2 {
+        font-size: 1.5rem;
+    }
+}

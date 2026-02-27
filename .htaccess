@@ -1,7 +1,16 @@
 RewriteEngine On
 RewriteBase /autonexus/
 
-# Let real files/folders pass through
+# =============================================================================
+# ASSET URL MAPPING
+# =============================================================================
+# Support cleaner URLs: /autonexus/assets/* → public/assets/*
+# This allows views to use either:
+#   <?= BASE_URL ?>/public/assets/... (explicit)  OR
+#   <?= BASE_URL ?>/assets/... (cleaner)
+RewriteRule ^assets/(.*)$ public/assets/$1 [L]
+
+# Let real files/folders pass through (handles public/assets/* pattern)
 RewriteCond %{REQUEST_FILENAME} -f [OR]
 RewriteCond %{REQUEST_FILENAME} -d
 RewriteRule ^ - [L]
@@ -9,6 +18,6 @@ RewriteRule ^ - [L]
 # Send everything else to /public/index.php
 RewriteRule ^ public/index.php [QSA,L]
 
-# Block internal folders
+# Block internal folders (app/ and config/ should not be web-accessible)
 RewriteRule ^app/ - [R=404,L]
 RewriteRule ^config/ - [R=404,L]
