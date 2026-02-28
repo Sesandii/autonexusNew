@@ -1,0 +1,136 @@
+/* Global */
+body {
+    font-family: 'Inter', sans-serif;
+    background: #f7f9fc;
+    margin: 0;
+    padding: 0;
+}
+
+.main {
+    margin-left: 260px; /* Sidebar width */
+    padding: 30px;
+}
+
+h4 {
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+.table-section {
+    background: #ffffff;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0px 4px 14px rgba(0,0,0,0.08);
+}
+
+.table-section h3 {
+    margin-bottom: 20px;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+/* Table Styling */
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+thead {
+    background: #f3f4f6;
+}
+
+thead th {
+    padding: 12px 10px;
+    text-align: left;
+    font-size: 14px;
+    font-weight: 600;
+    color: #555;
+}
+
+tbody tr {
+    border-bottom: 1px solid #e5e7eb;
+}
+
+tbody td {
+    padding: 14px 10px;
+    font-size: 15px;
+    color: #333;
+}
+
+/* Hover Effect */
+tbody tr:hover {
+    background: #f9fafb;
+}
+
+/* Status Badges */
+.status {
+    padding: 6px 12px;
+    font-size: 13px;
+    border-radius: 20px;
+    font-weight: 500;
+    display: inline-block;
+}
+
+/* Match UI colors */
+/* REQUESTED */
+.status.requested {
+    background: #e0e7ff;
+    color: #3730a3;
+}
+
+/* POSTPONED */
+.status.postponed {
+    background: #fff7cd;
+    color: #8a6d00;
+}
+
+/* WAITING */
+.status.waiting {
+    background: #fdecc8;
+    color: #b47b00;
+}
+
+/* IN SERVICE */
+.status.in-service {
+    background: #dceeff;
+    color: #1c5fa8;
+}
+
+/* COMPLETED */
+.status.completed {
+    background: #d9f5dd;
+    color: #2f8f4e;
+}
+
+/* CANCELED */
+.status.canceled {
+    background: #f9d4d4;
+    color: #c23434;
+}
+
+/* Update Button */
+.update-btn {
+    background: #e63946;
+    color: white;
+    border: none;
+    padding: 8px 18px;
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: 0.2s;
+}
+
+.update-btn:hover {
+    background: #c52f3a;
+}
+
+table th {
+    text-align: center;
+}
+
+table td {
+    text-align: center;
+}
+

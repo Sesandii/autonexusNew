@@ -1,0 +1,77 @@
+/* ===== Customer Sidebar Styles ===== */
+body{
+  margin:0;
+  font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  
+}
+.sidebar {
+  width: 240px;
+  background: #000000;
+  min-height: 100vh;
+  color: #D1D5DB;
+  padding: 20px 0;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 10;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  padding: 0 20px 30px;
+}
+
+.logo img {
+  width: 35px;
+  height: auto;
+  margin-right: 10px;
+}
+
+.brand-name {
+  color: #DC2626;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.menu li {
+  margin: 12px 0;
+}
+
+.menu a {
+  color: #D1D5DB;
+  text-decoration: none;
+  padding: 10px 20px;
+  display: block;
+  border-radius: 6px;
+  transition: background 0.3s ease, color 0.3s ease;
+  font-weight: bold;
+}
+
+.menu a:hover,
+.menu li.active a {
+  background: #DC2626;
+  color: #FFFFFF;
+}
+
+/* Offset page content so it doesn’t hide under sidebar */
+.main-content {
+  margin-left: 240px;
+  padding: 24px;
+}
+
+/* Simple responsive shrink */
+@media (max-width: 720px) {
+  .sidebar {
+    width: 210px;
+  }
+  .main-content {
+    margin-left: 210px;
+  }
+}

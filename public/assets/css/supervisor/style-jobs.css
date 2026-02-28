@@ -1,0 +1,366 @@
+/* ===========================
+   GLOBAL STYLES
+=========================== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', 'Inter', Arial, Helvetica, sans-serif;
+}
+
+body {
+  display: flex;
+  height: 100vh;
+  background-color: #f8f9fc;
+}
+
+/* ===========================
+   SIDEBAR
+=========================== */
+.logo-container {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.logo {
+  width: 180px;
+  height: 80px;
+}
+
+.sidebar {
+  width: 220px;
+  background-color: #000000;
+  color: rgb(243, 239, 239);
+  padding: 20px;
+}
+
+.sidebar h2 {
+  margin-bottom: 30px;
+  font-size: 22px;
+  text-align: center;
+}
+
+.sidebar a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 10px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  border-radius: 6px;
+  color: #d1d5db;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+
+.sidebar a img {
+  width: 20px;
+  height: 20px;
+}
+
+.sidebar a.nav,
+.sidebar a.active {
+  background-color: #1f2937;
+  color: #fff;
+}
+
+.sidebar a:hover {
+  background-color: #1f2937;
+}
+
+/* ===========================
+   MAIN CONTENT AREA
+=========================== */
+.main-content {
+  flex: 1;
+  padding: 30px;
+  overflow-y: auto;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.search {
+  width: 300px;
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.user-profile {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.user-profile img {
+  width: 20px;
+  height: 20px;
+}
+
+.icon {
+  width: 22px;
+  height: 22px;
+}
+
+.avatar-img {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+}
+
+/* ===========================
+   JOB TABLE
+=========================== */
+.job-section {
+  margin-top: 30px;
+}
+
+.job-section p {
+  font-size: 14px;
+  color: gray;
+  margin-top: 10px;
+  margin-bottom: 20px;
+}
+
+.job-section h2 {
+  font-size: 20px;
+  margin-bottom: 10px;
+  color: #111827;
+}
+
+.job-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: white;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(2, 6, 23, 0.08);
+}
+
+thead {
+  background-color: #f0f0f0;
+}
+
+th, td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+  font-size: 14px;
+}
+
+th {
+  background-color: #fafafa;
+  font-weight: 600;
+  color: #374151;
+}
+
+td small {
+  color: #6b7280;
+}
+
+/* ===========================
+   BUTTONS
+=========================== */
+.btn {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #e6e6e6;
+  background: #fff;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-red {
+  background: #ef4444;
+  color: #fff;
+  border: none;
+}
+
+.btn-red:hover {
+  background: #dc2626;
+}
+
+.btn-sm {
+  padding: 6px 8px;
+  font-size: 13px;
+}
+
+button.view-btn {
+  background-color: #dc2626;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button.view-btn:hover {
+  background-color: #1f2937;
+}
+
+.inline-form {
+  display: inline;
+}
+
+/* ===========================
+   MODAL STYLES
+=========================== */
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-dialog {
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  width: 400px;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+}
+
+.modal-close {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  font-size: 20px;
+  cursor: pointer;
+  background: none;
+  border: none;
+}
+
+.modal[aria-hidden="false"] {
+  display: flex;
+}
+
+.modal-dialog h3 {
+  margin-top: 0;
+  font-size: 18px;
+  color: #111827;
+}
+
+.modal-dialog label {
+  display: block;
+  margin-top: 12px;
+  font-weight: 600;
+  font-size: 13px;
+  color: #374151;
+}
+
+.modal-dialog input[type="text"],
+.modal-dialog select,
+.modal-dialog textarea {
+  width: 100%;
+  padding: 10px;
+  margin-top: 6px;
+  border-radius: 6px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  font-size: 14px;
+}
+
+.modal-dialog textarea {
+  min-height: 90px;
+  resize: vertical;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+
+/* Grid layout */
+.job-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 22px;
+  margin-top: 20px;
+}
+
+/* Card */
+.job-card {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 20px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.job-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.08);
+}
+
+/* Title */
+.job-title {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 14px;
+  color: #111827;
+}
+
+/* Info rows */
+.job-info {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  padding: 6px 0;
+  color: #374151;
+}
+
+.job-info span {
+  font-weight: 600;
+  color: #6b7280;
+}
+
+/* Status */
+.job-info.status {
+  margin-top: 6px;
+  padding-top: 8px;
+  border-top: 1px dashed #e5e7eb;
+  font-weight: 700;
+}
+
+/* Actions */
+.job-actions {
+  margin-top: 16px;
+  text-align: right;
+}
+
+/* View button */
+.view-btn {
+  display: inline-block;
+  padding: 8px 16px;
+  border-radius: 10px;
+  background: #2563eb;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.2s ease;
+}
+
+.view-btn:hover {
+  background: #1e40af;
+}

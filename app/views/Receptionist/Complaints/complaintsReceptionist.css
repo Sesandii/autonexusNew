@@ -1,0 +1,87 @@
+.complaint {
+  position: relative;
+  padding: 20px;
+  background: #fff;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+/* Complaint info */
+.complaint-info h3 {
+  font-size: 18px;
+  margin-bottom: 6px;
+}
+
+.complaint-info p {
+  font-size: 14px;
+  margin-bottom: 6px;
+  color: #666;
+}
+
+.complaint-info .meta {
+  font-size: 12px;
+  color: #999;
+}
+
+/* Status badge: top-left */
+.badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  padding: 5px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: bold;
+  text-align: center;
+  color: #fff;
+}
+
+.badge.open {
+  background: #e31d1a;  /* red */
+}
+
+.badge.progress {
+  background: #f39c12;  /* orange */
+}
+
+.badge.resolved {
+  background: #27ae60;  /* green */
+}
+
+.badge.canceled {
+  background: #7f8c8d;  /* gray */
+}
+
+/* Assigned status: optional, bottom-left if needed */
+.status.assigned {
+  font-size: 13px;
+  color: #666;
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+}
+
+/* Delete icon: bottom-right */
+.actions {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+}
+
+.actions .delete-btn {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 5px;
+    background-color: #f44336; /* red background */
+    color: #fff;
+    text-decoration: none; /* removes underline */
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.actions .delete-btn:hover {
+    background-color: #d32f2f; /* darker red on hover */
+}

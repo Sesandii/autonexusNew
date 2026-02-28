@@ -1,0 +1,138 @@
+body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background: #f5f6fa;
+  display: flex;
+}
+
+
+
+.main {
+  flex: 1;
+  padding: 20px 40px;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 20px;
+  font-size: 18px;
+}
+
+.profile {
+  background: #ccc;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+}
+
+.page {
+  background: #fff;
+  border-radius: 10px;
+  padding: 20px;
+}
+
+h2 {
+  margin-top: 0;
+    font-size: 24px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.summary-cards {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.card {
+  flex: 1;
+  padding: 15px;
+  border-radius: 8px;
+  background: #f3f3f3;
+}
+
+.card.total {
+  background: #f8f9fa;
+}
+
+.card.paid h3 {
+  color: green;
+}
+
+.card.pending h3 {
+  color: orange;
+}
+
+.card.overdue h3 {
+  color: red;
+}
+
+.filter-bar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.filter-bar input[type="text"],
+.filter-bar select,
+.filter-bar input[type="date"] {
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  flex: 1;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+th, td {
+  padding: 12px;
+  border: 1px solid #e0e0e0;
+  text-align: left;
+  font-size: 14px;
+}
+
+th {
+  background: #f9f9f9;
+}
+
+.status {
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-weight: bold;
+  font-size: 13px;
+  color: white;
+}
+
+.status.Paid {
+  background-color: #4CAF50;
+}
+
+.status.Pending {
+  background-color: #FFC107;
+  color: black;
+}
+
+.status.Overdue {
+  background-color: #F44336;
+}
+
+.actions {
+  font-size: 16px;
+  display: flex;
+  gap: 10px;
+}
+

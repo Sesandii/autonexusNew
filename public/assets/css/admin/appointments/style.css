@@ -1,0 +1,423 @@
+/* ===============================
+   Appointments – Layout wrapper
+   =============================== */
+/* main element for this page: <main class="main-content appointments-main"> */
+.appointments-main {
+  background: #f3f4f6;
+  min-height: 100vh;
+  padding: 24px 32px;
+}
+/* Let management.css handle page-header base styles, we just refine bits */
+.appointments-main .page-header {
+  margin-bottom: 18px;
+}
+.appointments-main .page-header-main {
+  align-items: center;
+}
+/* Subtitle under the title */
+.appointments-subtitle {
+  margin-top: 4px;
+  font-size: 0.9rem;
+  color: #6b7280;
+}
+/* ===============================
+   Filters bar
+   =============================== */
+.appointments-section {
+  margin-top: 6px;
+}
+.appointments-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  padding: 14px 16px;
+  margin-bottom: 18px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 1px 4px rgba(15, 23, 42, 0.06);
+}
+.appointments-filters .filter-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 160px;
+}
+.appointments-filters label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #4b5563;
+}
+/* Icon + input combo for search */
+.filter-input-icon {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 10px;
+  background: #f9fafb;
+  border-radius: 999px;
+  border: 1px solid #e5e7eb;
+}
+.filter-input-icon i {
+  font-size: 0.8rem;
+  color: #9ca3af;
+}
+.filter-input-icon input {
+  border: none;
+  outline: none;
+  background: transparent;
+  width: 220px;
+  font-size: 14px;
+  color: #111827;
+}
+/* Selects / date / time inputs */
+.appointments-filters select,
+.appointments-filters input[type="date"],
+.appointments-filters input[type="time"] {
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  font-size: 14px;
+  color: #111827;
+  outline: none;
+  min-width: 160px;
+}
+.appointments-filters select:focus,
+.appointments-filters input[type="date"]:focus,
+.appointments-filters input[type="time"]:focus {
+  border-color: #cf3202;
+  box-shadow: 0 0 0 2px rgba(207, 50, 2, 0.15);
+}
+/* Stack filters nicely on small screens */
+@media (max-width: 900px) {
+  .appointments-main {
+    padding: 18px 16px;
+  }
+  .appointments-filters {
+    padding: 12px;
+  }
+  .filter-input-icon input {
+    width: 100%;
+  }
+  .appointments-filters .filter-item {
+    flex: 1 1 100%;
+  }
+}
+/* ===============================
+   Cards grid
+   =============================== */
+.appointments-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+}
+/* empty state */
+.appointments-empty {
+  grid-column: 1 / -1;
+  padding: 20px 16px;
+  text-align: center;
+  font-size: 0.95rem;
+  color: #6b7280;
+  background: #ffffff;
+  border-radius: 12px;
+  border: 1px dashed #d1d5db;
+}
+.appointments-empty i {
+  margin-right: 8px;
+  color: #9ca3af;
+}
+/* ===============================
+   Appointment card
+   =============================== */
+.appointment-card {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 14px 14px 12px;
+  box-shadow: 0 1px 4px rgba(15, 23, 42, 0.06);
+  border: 1px solid #e5e7eb;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: transform 0.08s ease, box-shadow 0.12s ease,
+              border-color 0.12s ease;
+}
+.appointment-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.09);
+  border-color: #d1d5db;
+}
+/* header: customer + service + status pill */
+.appointment-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+}
+.appointment-card__customer {
+  font-weight: 600;
+  font-size: 0.98rem;
+  color: #111827;
+}
+.appointment-card__service {
+  font-size: 0.86rem;
+  color: #6b7280;
+  margin-top: 3px;
+}
+/* meta rows under header */
+.appointment-card__meta {
+  font-size: 0.86rem;
+  color: #4b5563;
+  display: grid;
+  gap: 4px;
+}
+.appointment-card__meta p {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+}
+.appointment-card__meta i {
+  font-size: 0.8rem;
+  color: #9ca3af;
+}
+/* footer actions: we reuse .chip-btn classes from management.css */
+.appointment-card__actions {
+  margin-top: 8px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 6px;
+}
+/* inline form fix */
+.inline-form {
+  display: inline-block;
+  margin: 0;
+}
+/* ===============================
+   Status pill colors
+   Uses existing .status-pill from management.css
+   =============================== */
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 98px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  border: 1px solid transparent;
+}
+/* Scheduled – calm blue */
+.status-pill--scheduled {
+  background: #e0f2fe;
+  border-color: #bfdbfe;
+  color: #1d4ed8;
+}
+/* In progress – amber/orange themed */
+.status-pill--progress {
+  background: #fef3c7;
+  border-color: #fde68a;
+  color: #92400e;
+}
+/* Completed – green */
+.status-pill--completed {
+  background: #dcfce7;
+  border-color: #bbf7d0;
+  color: #166534;
+}
+/* Cancelled – red in your scheme */
+.status-pill--cancelled {
+  background: #fee2e2;
+  border-color: #fecaca;
+  color: #b91c1c;
+}
+/* ===============================
+   Small tweaks to chip buttons
+   (we're reusing chip-btn from management.css)
+   =============================== */
+.appointment-card__actions .chip-btn {
+  font-size: 11px;
+  padding: 6px 10px;
+}
+.appointment-card__actions .chip-btn i {
+  font-size: 11px;
+}
+
+/* ================================
+   Appointment DETAILS page
+   ================================ */
+.appointments-main {
+  margin-left: 260px;
+  padding: 30px;
+  background: #f5f5f7;
+  min-height: 100vh;
+}
+/* two-column responsive layout */
+.appt-details-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 18px;
+  margin-top: 18px;
+}
+.appt-details-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 18px 20px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+}
+.appt-details-card h3 {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 10px;
+  color: #111827;
+}
+.appt-details-card .field {
+  font-size: 14px;
+  margin-bottom: 6px;
+  color: #111827;
+}
+.appt-details-card .field .label {
+  font-weight: 600;
+  color: #6b7280;
+  margin-right: 4px;
+}
+/* action buttons at bottom of details page */
+.appt-detail-actions {
+  margin-top: 20px;
+  display: flex;
+  gap: 10px;
+}
+/* Scope primary / secondary buttons to appointments pages
+   so we don't affect other admin screens */
+.appointments-main .btn-primary,
+.appointments-main .btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+}
+/* AutoNexus red as primary */
+.appointments-main .btn-primary {
+  background: #ef4444;
+  color: #ffffff;
+}
+.appointments-main .btn-primary:hover {
+  background: #dc2626;
+}
+/* soft grey secondary */
+.appointments-main .btn-secondary {
+  background: #e5e7eb;
+  color: #111827;
+}
+.appointments-main .btn-secondary:hover {
+  background: #d1d5db;
+}
+/* status pill colours already used on index page – just ensure
+   they look right inside details too */
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.status-pill--scheduled {
+  background: #e0f2fe;
+  color: #0369a1;
+}
+.status-pill--progress {
+  background: #fef9c3;
+  color: #854d0e;
+}
+.status-pill--completed {
+  background: #dcfce7;
+  color: #166534;
+}
+.status-pill--cancelled {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+/* ================================
+   Appointment EDIT form
+   ================================ */
+.appt-form-wrap {
+  margin-top: 20px;
+  max-width: 760px;
+}
+.appt-form-card {
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid #e5e7eb;
+  padding: 20px 22px;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+}
+.appt-form-row {
+  margin-bottom: 14px;
+}
+.appt-form-row label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: #4b5563;
+  margin-bottom: 4px;
+}
+.appt-form-row input,
+.appt-form-row select,
+.appt-form-row textarea {
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid #d1d5db;
+  font-size: 14px;
+  color: #111827;
+  outline: none;
+  background: #f9fafb;
+}
+.appt-form-row input:focus,
+.appt-form-row select:focus,
+.appt-form-row textarea:focus {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+  background: #ffffff;
+}
+.appt-form-row--inline {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+.appt-form-row textarea {
+  min-height: 90px;
+  resize: vertical;
+}
+.appt-form-actions {
+  margin-top: 18px;
+  display: flex;
+  gap: 10px;
+}
+/* reuse the scoped buttons */
+.appt-form-actions .btn-primary,
+.appt-form-actions .btn-secondary {
+  /* nothing extra needed, they inherit from .appointments-main rules */
+}
+/* Responsive tweaks */
+@media (max-width: 900px) {
+  .appointments-main {
+    margin-left: 0;
+    padding: 20px;
+  }
+  .appt-details-grid {
+    grid-template-columns: 1fr;
+  }
+  .appt-form-wrap {
+    max-width: 100%;
+  }
+}
