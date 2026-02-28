@@ -60,7 +60,7 @@ class ServiceHistory
                   -- Temporarily show all statuses for debugging
                   -- AND LOWER(w.status) = 'completed'
 
-                ORDER BY a.appointment_date DESC, w.completed_at DESC, w.work_order_id DESC
+                ORDER BY a.appointment_date DESC, w.work_order_id DESC
             ";
 
             $stmt = $this->pdo->prepare($sql);
@@ -91,8 +91,6 @@ class ServiceHistory
                 w.service_summary AS description,
                 w.status,
                 w.total_cost AS price,
-                w.created_at,
-                w.completed_at,
                 
                 a.appointment_id,
                 a.appointment_date AS date,
@@ -117,8 +115,6 @@ class ServiceHistory
                 CONCAT(COALESCE(mu.first_name,''), ' ', COALESCE(mu.last_name,'')) AS technician,
                 
                 b.name AS branch_name,
-                b.address AS branch_address,
-                b.phone AS branch_phone,
                 
                 CONCAT(COALESCE(cu.first_name,''), ' ', COALESCE(cu.last_name,'')) AS customer_name,
                 cu.email AS customer_email,
