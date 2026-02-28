@@ -8,7 +8,7 @@ $base = rtrim(BASE_URL, '/');
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title><?= htmlspecialchars($title ?? 'Service History') ?> - AutoNexus</title>
 
-  <link rel="stylesheet" href="<?= $base ?>/public/assets/css/customer/service-history.css">
+  <link rel="stylesheet" href="<?= $base ?>/public/assets/css/customer/service-history.css?v=<?= time() ?>">
   <link rel="stylesheet" href="<?= $base ?>/public/assets/css/customer/sidebar.css">
   <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -28,13 +28,28 @@ $base = rtrim(BASE_URL, '/');
         </div>
       </header>
 
+      <?php 
+      // Debug: Show user ID and count
+      if (isset($_SESSION['user']) || isset($_SESSION['user_id'])) {
+          $debug_user_id = $_SESSION['user']['user_id'] ?? $_SESSION['user_id'] ?? 'unknown';
+          $debug_count = count($services ?? []);
+          echo "<!-- Debug: User ID = $debug_user_id, Service Count = $debug_count -->";
+      }
+      ?>
+
       <?php if (empty($services)): ?>
         <section class="sh-empty">
           <div class="sh-empty-icon">
             <i class="fa-regular fa-folder-open"></i>
           </div>
-          <h2>No completed services yet</h2>
-          <p>Once your service jobs are marked as <strong>Completed</strong>, they will appear here.</p>
+          <h2>No service records found</h2>
+          <p>Once your service jobs are completed, they will appear here.</p>
+          <p style="font-size: 0.85rem; color: #9ca3af; margin-top: 10px;">
+            <?php 
+            $user_id = $_SESSION['user']['user_id'] ?? $_SESSION['user_id'] ?? 'unknown';
+            echo "Searching for services for user ID: " . htmlspecialchars((string)$user_id);
+            ?>
+          </p>
         </section>
       <?php else: ?>
         <section class="sh-list">
@@ -51,6 +66,7 @@ $base = rtrim(BASE_URL, '/');
             ?>
 
             <article class="sh-card">
+              <div class="sh-card-topbar"></div>
               <div class="sh-card-body">
                 <div class="sh-card-header">
                   <div>
@@ -88,17 +104,34 @@ $base = rtrim(BASE_URL, '/');
                   <p class="sh-desc"><?= htmlspecialchars($s['description']) ?></p>
                 <?php endif; ?>
 
-                <div class="sh-meta">
-                  <div class="sh-meta-item">
-                    <span class="k">Technician</span>
-                    <span class="v"><?= htmlspecialchars($s['technician'] ?? 'N/A') ?></span>
+                <div class="sh-meta-grid">
+                  <div>
+                    <div class="sh-label">Technician</div>
+                    <div class="sh-value"><?= htmlspecialchars($s['technician'] ?? 'Not assigned') ?></div>
                   </div>
 
-                  <div class="sh-meta-item">
-                    <span class="k">Cost</span>
-                    <span class="v">Rs. <?= htmlspecialchars(number_format((float)($s['price'] ?? 0), 2)) ?></span>
+                  <div>
+                    <div class="sh-label">Total Cost</div>
+                    <div class="sh-value">Rs. <?= htmlspecialchars(number_format((float)($s['price'] ?? 0), 2)) ?></div>
+                  </div>
+
+                  <div>
+                    <div class="sh-label">Work Order</div>
+                    <div class="sh-value">#<?= htmlspecialchars($s['work_order_id'] ?? 'N/A') ?></div>
+                  </div>
+
+                  <div>
+                    <div class="sh-label">Branch</div>
+                    <div class="sh-value"><?= htmlspecialchars($s['branch_name'] ?? 'Main Branch') ?></div>
                   </div>
                 </div>
+              </div>
+
+              <div class="sh-card-footer">
+                <a href="<?= $base ?>/customer/service-history/<?= (int)$s['work_order_id'] ?>" class="sh-btn-outline">
+                  <i class="fa-solid fa-file-lines"></i>
+                  View Details
+                </a>
               </div>
             </article>
           <?php endforeach; ?>

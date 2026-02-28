@@ -2,6 +2,9 @@
 declare(strict_types=1);
 session_start();
 
+// Clear OPcache (remove this line after it works)
+if (function_exists('opcache_reset')) { opcache_reset(); }
+
 date_default_timezone_set('Asia/Colombo');   // 👈 add this line
 
 define('BASE_PATH', dirname(__DIR__));              // C:\xampp\htdocs\autonexus
@@ -349,6 +352,7 @@ $router->post('/customer/rate-service', [\app\controllers\customer\FeedbackContr
 
 
 $router->get('/customer/service-history', [\app\controllers\customer\ServiceHistoryController::class, 'index']);
+$router->get('/customer/service-history/{id}', [\app\controllers\customer\ServiceHistoryController::class, 'show']);
 
 use app\controllers\customer\ServiceReminderController;
 
@@ -381,6 +385,13 @@ $router->post('/customer/profile/vehicle/delete', [\app\controllers\customer\Pro
 $router->get ('/customer/appointments',          [\app\controllers\customer\AppointmentsController::class, 'index']);
 $router->post('/customer/appointments/cancel',   [\app\controllers\customer\AppointmentsController::class, 'cancel']);   // optional action
 $router->get ('/customer/appointments/list',     [\app\controllers\customer\AppointmentsController::class, 'list']);     // optional JSON for AJAX
+
+// Customer - File Complaint
+use app\controllers\customer\FileComplaintController;
+
+$router->get('/customer/file-complaint',         [FileComplaintController::class, 'index']);
+$router->post('/customer/file-complaint/submit', [FileComplaintController::class, 'submit']);
+$router->get('/customer/complaints/history',     [FileComplaintController::class, 'history']); // optional: view complaint history
 
 /** ======================
  *  MANAGER: Dashboard

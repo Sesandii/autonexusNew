@@ -57,20 +57,27 @@ if (defined('APP_ROOT') && file_exists(APP_ROOT . '/views/layouts/customer-sideb
     }
     ?>
     
-    <!-- FIXED FORM ACTION - This was causing the 404 error -->
-    <form id="complaintForm" action="submit-complaint.php" method="POST" autocomplete="off">
+    <!-- Complaint Form -->
+    <form id="complaintForm" action="<?= $base ?>/customer/file-complaint/submit" method="POST" autocomplete="off">
         <label for="appointment">Select Appointment</label>
         <select id="appointment" name="appointment_id" required>
             <option value="">Select an appointment…</option>
             <?php if (isset($appointments) && is_array($appointments) && count($appointments) > 0): ?>
                 <?php foreach ($appointments as $a): ?>
+                    <?php 
+                        $service = htmlspecialchars($a['service_name'] ?? 'Unknown Service');
+                        $date = htmlspecialchars($a['appointment_date'] ?? '');
+                        $time = htmlspecialchars($a['appointment_time'] ?? '');
+                        $vehicle = htmlspecialchars(($a['make'] ?? '') . ' ' . ($a['model'] ?? '') . ' (' . ($a['license_plate'] ?? '') . ')');
+                        $status = htmlspecialchars($a['status'] ?? 'completed');
+                    ?>
                     <option 
                         value="<?= (int)$a['appointment_id'] ?>"
-                        data-service="<?= htmlspecialchars($a['service'] ?? '') ?>"
-                        data-date="<?= htmlspecialchars($a['date'] ?? '') ?>"
-                        data-vehicle="<?= htmlspecialchars($a['vehicle'] ?? '') ?>"
-                        data-status="<?= htmlspecialchars($a['status'] ?? '') ?>"
-                    ><?= htmlspecialchars($a['service'] ?? 'Unknown') ?> — <?= htmlspecialchars($a['date'] ?? '') ?></option>
+                        data-service="<?= $service ?>"
+                        data-date="<?= $date ?> <?= $time ?>"
+                        data-vehicle="<?= $vehicle ?>"
+                        data-status="<?= $status ?>"
+                    ><?= $service ?> — <?= $date ?></option>
                 <?php endforeach; ?>
             <?php else: ?>
                 <option value="" disabled>No completed appointments available</option>

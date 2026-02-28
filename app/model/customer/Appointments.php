@@ -191,7 +191,7 @@ public function completedWithoutFeedbackByUser(int $userId): array
     return $st->fetchAll(\PDO::FETCH_ASSOC) ?: [];
 }
 
-/** Quick ownership check used before accepting feedback */
+    /** Quick ownership check used before accepting feedback */
 public function appointmentBelongsToUserAndCompleted(int $userId, int $appointmentId): bool
 {
     $cid = $this->customerIdByUserId($userId);
@@ -205,6 +205,27 @@ public function appointmentBelongsToUserAndCompleted(int $userId, int $appointme
     $st = $this->pdo->prepare($sql);
     $st->execute(['aid' => $appointmentId, 'cid' => $cid]);
     return (bool)$st->fetchColumn();
+}
+
+/** Get a single appointment by ID */
+public function getById(int $appointmentId): ?array
+{
+    $sql = "SELECT a.*, 
+                   b.name AS branch_name,
+                   s.name AS service_name,
+                   v.license_plate, v.make, v.model,
+                   c.customer_id
+              FROM appointments a
+         LEFT JOIN branches b ON b.branch_id = a.branch_id
+         LEFT JOIN services s ON s.service_id = a.service_id
+         LEFT JOIN vehicles v ON v.vehicle_id = a.vehicle_id
+         LEFT JOIN customers c ON c.customer_id = a.customer_id
+             WHERE a.appointment_id = :aid
+             LIMIT 1";
+    $st = $this->pdo->prepare($sql);
+    $st->execute(['aid' => $appointmentId]);
+    $result = $st->fetch(PDO::FETCH_ASSOC);
+    return $result ?: null;
 }
 
 }
