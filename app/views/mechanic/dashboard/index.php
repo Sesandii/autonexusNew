@@ -24,7 +24,6 @@
     </div>
   </div>
 </header>
-
 <section class="welcome">
   <h2>Welcome, <?= htmlspecialchars(($_SESSION['user']['first_name'] ?? '') . ' ' . ($_SESSION['user']['last_name'] ?? '')) ?></h2>
   <p>Here's an overview of your dashboard</p>

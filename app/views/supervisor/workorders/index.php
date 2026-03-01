@@ -4,7 +4,6 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
     session_start();
 }
 
-
 $message = $_SESSION['message'] ?? null;
 unset($_SESSION['message']);
 
@@ -81,7 +80,6 @@ $currentSupervisorId = $_SESSION['user']['user_id'] ?? 0;
   <table class="workorders">
     <thead>
       <tr>
-        <th>ID</th>
         <th>Appointment</th>
         <th>Service</th>
         <th>Mechanic</th>
@@ -108,13 +106,11 @@ $currentSupervisorId = $_SESSION['user']['user_id'] ?? 0;
         $status = strtolower($w['status'] ?? '');
     ?>
     <tr
-        data-id="<?= $w['work_order_id'] ?>"
         data-service="<?= strtolower($w['service_name'] ?? '') ?>"
         data-mechanic="<?= strtolower($w['mechanic_code'] ?? 'unassigned') ?>"
         data-status="<?= $status ?>"
         data-owner="<?= $isOwner ? 'mine' : 'others' ?>"
     >
-        <td><?= htmlspecialchars($w['work_order_id']) ?></td>
         <td><?= htmlspecialchars(($w['appointment_date'] ?? '') . ' ' . ($w['appointment_time'] ?? '')) ?></td>
         <td><?= htmlspecialchars($w['service_name'] ?? '') ?></td>
         <td><?= htmlspecialchars($w['mechanic_code'] ?? 'Unassigned') ?></td>

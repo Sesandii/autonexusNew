@@ -15,25 +15,24 @@ class WorkOrdersController extends Controller
     }
 
     public function index()
-{
-    if (session_status() !== PHP_SESSION_ACTIVE) session_start();
-
-    $currentSupervisorId = $_SESSION['user']['user_id'] ?? null;
-
-    $m = new WorkOrder();
-
-    // ✅ Get ALL work orders (no filtering by supervisor)
-    $workOrders = $m->getAll();
-
-    $data = [
-        'workOrders'            => $workOrders,
-        'currentSupervisorId'   => $currentSupervisorId, // pass to view
-        'availableAppointments' => $m->getAvailableAppointments(),
-        'activeMechanics'       => $m->getActiveMechanics()
-    ];
-
-    $this->view('supervisor/workorders/index', $data);
-}
+    {
+        if (session_status() !== PHP_SESSION_ACTIVE) session_start();
+    
+        $currentSupervisorId = $_SESSION['user']['user_id'] ?? null;
+    
+        $m = new WorkOrder();
+    
+        $workOrders = $m->getAll();
+    
+        $data = [
+            'workOrders'            => $workOrders,
+            'currentSupervisorId'   => $currentSupervisorId,
+            'availableAppointments' => $m->getAvailableAppointments($currentSupervisorId), // ✅ FIXED
+            'activeMechanics'       => $m->getActiveMechanics()
+        ];
+    
+        $this->view('supervisor/workorders/index', $data);
+    }
 
 public function createForm()
 {
@@ -62,7 +61,9 @@ public function createForm()
         ];
     } else {
         // Existing behavior (all available appointments)
-        $availableAppointments = $m->getAvailableAppointments();
+        if (session_status() !== PHP_SESSION_ACTIVE) session_start();
+        $supervisorId = $_SESSION['user']['user_id'] ?? null;
+        $availableAppointments = $m->getAvailableAppointments($supervisorId);
         $allTemplates = [];
 
         foreach ($availableAppointments as $appt) {
@@ -232,10 +233,10 @@ if ($mechanic_id) {
 
     $checklistModel = new \app\model\supervisor\Checklist();
 
-    // Get existing checklist items for the work order
+    // Get existing checklist items
     $checklist = $checklistModel->getByWorkOrder((int)$id);
 
-    // Get service template items for this work order's service
+    // Get template items
     $serviceId = $wo['service_id'] ?? null;
     $templateItems = [];
     if ($serviceId) {
@@ -252,27 +253,29 @@ if ($mechanic_id) {
         }
     }
 
-    // Combine existing + template-only items
     $finalChecklist = array_merge($checklist, $finalChecklist);
+
+    // ✅ Get only branch-based appointments
+    $availableAppointments = $m->getAvailableAppointments($supervisor_id);
 
     // Mechanics
     $activeMechanics = $m->getActiveMechanics();
 
-    // ✅ Count active work orders per mechanic_code
+    // Count active work orders per mechanic_code
     $mechanicLimits = [];
     foreach ($activeMechanics as $mech) {
         $mechanicCode = $mech['mechanic_code'] ?? null;
         if ($mechanicCode) {
-            // Exclude current work order
-            $mechanicLimits[$mechanicCode] = $m->countActiveByMechanicCode($mechanicCode, $wo['work_order_id']);
+            $mechanicLimits[$mechanicCode] = 
+                $m->countActiveByMechanicCode($mechanicCode, $wo['work_order_id']);
         }
     }
 
     $data = [
         'wo'                    => $wo,
-        'availableAppointments' => $m->getAvailableAppointments(),
+        'availableAppointments' => $availableAppointments,
         'activeMechanics'       => $activeMechanics,
-        'mechanicLimits'        => $mechanicLimits,  // <-- new
+        'mechanicLimits'        => $mechanicLimits,
         'checklist'             => $finalChecklist
     ];
 

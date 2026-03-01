@@ -37,6 +37,7 @@
       <option value="medium">Medium</option>
       <option value="high">High</option>
     </select>
+    <button type="button" id="resetComplaints" class="reset-btn">Reset</button>
   </div>
 
   <!-- Complaints Section -->
@@ -89,12 +90,8 @@
         <option value="2">2 ★</option>
         <option value="1">1 ★</option>
       </select>
-      <select id="replyFilter">
-        <option value="">All Replies</option>
-        <option value="replied">Replied</option>
-        <option value="not-replied">Not Replied</option>
-      </select>
       <input type="date" id="dateFeedback"/>
+      <button type="button" id="resetFeedback" class="reset-btn">Reset</button>
     </div>
 
     <div class="feedback-cards">
@@ -102,7 +99,6 @@
         <?php foreach ($feedbacks as $f): ?>
           <div class="card"
                data-rating="<?= (int)$f['rating'] ?>"
-               data-replied="<?= $f['replied_status'] ? 'replied' : 'not-replied' ?>"
                data-date="<?= date('Y-m-d', strtotime($f['created_at'])) ?>">
 
             <h3><?= htmlspecialchars($f['customer_name']) ?>
@@ -113,9 +109,6 @@
             <p><strong>Service:</strong> <?= htmlspecialchars($f['service_name']) ?></p>
             <p><strong>Date:</strong> <?= htmlspecialchars($f['created_at']) ?></p>
             <p><?= htmlspecialchars($f['comment']) ?></p>
-            <span class="reply <?= ($f['replied_status'] ? 'replied' : 'not-replied') ?>">
-              <?= ($f['replied_status'] ? 'Replied' : 'Not replied yet') ?>
-            </span>
           </div>
         <?php endforeach; ?>
       <?php else: ?>
@@ -155,6 +148,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const statusComplaints = document.getElementById("statusComplaints");
   const priorityComplaints = document.getElementById("priorityComplaints");
   const complaintRows = document.querySelectorAll("#complaints .complaint-row");
+  const resetComplaints = document.getElementById("resetComplaints");
 
   function filterComplaints() {
     const searchVal = searchComplaints.value.toLowerCase();
@@ -181,39 +175,56 @@ document.addEventListener("DOMContentLoaded", function () {
   statusComplaints.addEventListener("change", filterComplaints);
   priorityComplaints.addEventListener("change", filterComplaints);
 
-  // ---- Feedback Filters ----
-  const searchFeedback = document.getElementById("searchFeedback");
-  const dateFeedback = document.getElementById("dateFeedback");
-  const ratingFilter = document.getElementById("ratingFilter");
-  const replyFilter = document.getElementById("replyFilter");
-  const feedbackCards = document.querySelectorAll("#feedbacks .card");
+  resetComplaints.addEventListener("click", () => {
+  searchComplaints.value = "";
+  dateComplaints.value = "";
+  statusComplaints.value = "";
+  priorityComplaints.value = "";
 
-  function filterFeedback() {
-    const searchVal = searchFeedback.value.toLowerCase();
-    const dateVal = dateFeedback.value;
-    const ratingVal = ratingFilter.value;
-    const replyVal = replyFilter.value;
+  complaintRows.forEach(row => {
+    row.style.display = "block";
+  });
+});
 
-    feedbackCards.forEach(card => {
-      const text = card.innerText.toLowerCase();
-      const cardDate = card.dataset.date;
-      const rating = card.dataset.rating;
-      const replied = card.dataset.replied;
 
-      const match = (!searchVal || text.includes(searchVal))
-                    && (!dateVal || cardDate === dateVal)
-                    && (!ratingVal || rating === ratingVal)
-                    && (!replyVal || replied === replyVal);
+// ---- Feedback Filters ----
+const searchFeedback = document.getElementById("searchFeedback");
+const dateFeedback = document.getElementById("dateFeedback");
+const ratingFilter = document.getElementById("ratingFilter");
+const feedbackCards = document.querySelectorAll("#feedbacks .card");
+const resetFeedback = document.getElementById("resetFeedback");
 
-      card.style.display = match ? "block" : "none";
-    });
-  }
+function filterFeedback() {
+  const searchVal = searchFeedback.value.toLowerCase();
+  const dateVal = dateFeedback.value;
+  const ratingVal = ratingFilter.value;
 
-  searchFeedback.addEventListener("keyup", filterFeedback);
-  dateFeedback.addEventListener("change", filterFeedback);
-  ratingFilter.addEventListener("change", filterFeedback);
-  replyFilter.addEventListener("change", filterFeedback);
+  feedbackCards.forEach(card => {
+    const text = card.innerText.toLowerCase();
+    const cardDate = card.dataset.date;
+    const rating = card.dataset.rating;
 
+    const match = (!searchVal || text.includes(searchVal))
+                  && (!dateVal || cardDate === dateVal)
+                  && (!ratingVal || rating === ratingVal);
+
+    card.style.display = match ? "block" : "none";
+  });
+}
+
+searchFeedback.addEventListener("keyup", filterFeedback);
+dateFeedback.addEventListener("change", filterFeedback);
+ratingFilter.addEventListener("change", filterFeedback);
+
+resetFeedback.addEventListener("click", () => {
+  searchFeedback.value = "";
+  dateFeedback.value = "";
+  ratingFilter.value = "";
+
+  feedbackCards.forEach(card => {
+    card.style.display = "block";
+  });
+});
 });
 </script>
 

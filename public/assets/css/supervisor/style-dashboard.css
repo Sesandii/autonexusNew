@@ -182,16 +182,16 @@ section.welcome {
   padding: 4px 10px;
   font-size: 15px;
   text-decoration: none;
-  background-color: #007bff;    /* nice blue background */
-  color: #fff;                  /* white text */
-  border: 1px solid #007bff;   /* matching border */
-  border-radius: 4px;           /* slightly rounded corners */
+  background-color: #007bff;   
+  color: #fff;                 
+  border: 1px solid #007bff;  
+  border-radius: 4px;           
   cursor: pointer;
   transition: background-color 0.2s, color 0.2s;
 }
 
 .btn-primary:hover {
-  background-color: #0056b3;    /* darker blue on hover */
+  background-color: #0056b3;   
   border-color: #0056b3;
   text-decoration: none;
   color: #fff;
@@ -199,10 +199,17 @@ section.welcome {
 
 .btn-primary:focus {
   outline: none;
-  box-shadow: 0 0 0 2px rgba(0,123,255,0.3); /* subtle focus ring */
+  box-shadow: 0 0 0 2px rgba(0,123,255,0.3); 
 }
 
-
+.btn-danger{
+  padding: 4px 10px;
+  font-size: 15px;
+  text-decoration: none;
+  background-color: #ff0000;   
+  color: #fff;                 
+  border: 1px solid #ff0000;  
+}
 .table-toggle{
   margin-top:20px;
 }

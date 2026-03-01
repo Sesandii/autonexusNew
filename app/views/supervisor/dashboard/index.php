@@ -96,10 +96,36 @@
             <td><?= htmlspecialchars($appt['status']) ?></td>
             <td>
                 <!-- ✅ Pass appointment_id via GET -->
-                <a class="btn-primary"
-   href="<?= $base ?>/supervisor/workorders/create?appointment_id=<?= (int)$appt['appointment_id'] ?>">
-   Create
-</a>
+                <?php if (!empty($appt['work_order_id'])): ?>
+    
+    <a class="btn-primary"
+       href="<?= $base ?>/supervisor/workorders/<?= (int)$appt['work_order_id'] ?>">
+       View
+    </a>
+
+    <a class="btn-primary"
+       href="<?= $base ?>/supervisor/workorders/<?= (int)$appt['work_order_id'] ?>/edit">
+       Edit
+    </a>
+
+    <form method="POST"
+      action="<?= $base ?>/supervisor/workorders/<?= (int)$appt['work_order_id'] ?>/delete"
+      style="display:inline"
+      onsubmit="return confirm('Delete this work order?')">
+
+    <button type="submit" class="btn-danger">
+        Delete
+    </button>
+</form>
+
+<?php else: ?>
+
+    <a class="btn-primary"
+       href="<?= $base ?>/supervisor/workorders/create?appointment_id=<?= (int)$appt['appointment_id'] ?>">
+       Create
+    </a>
+
+<?php endif; ?>
             </td>
         </tr>
     <?php endforeach; ?>
