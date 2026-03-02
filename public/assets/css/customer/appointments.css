@@ -173,6 +173,14 @@ body {
   background: var(--brand-red);
 }
 
+.appointment-card.pending::before {
+  background: #ef4444;
+}
+
+.appointment-card.ongoing::before {
+  background: #f97316;
+}
+
 .appointment-card.completed::before {
   background: #059669;
 }
@@ -235,6 +243,16 @@ body {
 
 .appointment-card.upcoming .status {
   background: #F59E0B;
+  color: #fff;
+}
+
+.appointment-card.pending .status {
+  background: #ef4444;
+  color: #fff;
+}
+
+.appointment-card.ongoing .status {
+  background: #f97316;
   color: #fff;
 }
 

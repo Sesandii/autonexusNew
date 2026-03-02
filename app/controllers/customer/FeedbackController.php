@@ -14,7 +14,7 @@ class FeedbackController extends Controller
         $this->requireCustomer();
     }
 
-    $uid = (int)($_SESSION['user_id'] ?? 0);
+    $uid = (int)($_SESSION['user']['user_id'] ?? 0);
     $appointmentModel = new Appointments();
 
     // Option A: show all completed (original intent)
@@ -41,7 +41,7 @@ public function store(): void
         $this->requireCustomer();
     }
 
-    $uid = (int)($_SESSION['user_id'] ?? 0);
+    $uid = (int)($_SESSION['user']['user_id'] ?? 0);
     $appointmentId = (int)($_POST['appointment_id'] ?? 0);
     $rating = (int)($_POST['rating'] ?? 0);
     $feedback = trim((string)($_POST['feedback'] ?? ''));
@@ -64,12 +64,11 @@ public function store(): void
     try {
         $pdo = db();
         $stmt = $pdo->prepare(
-            "INSERT INTO feedback (appointment_id, user_id, rating, comments, created_at)
-             VALUES (:a, :u, :r, :c, NOW())"
+            "INSERT INTO feedback (appointment_id, rating, comment, created_at)
+             VALUES (:a, :r, :c, NOW())"
         );
         $stmt->execute([
             'a' => $appointmentId,
-            'u' => $uid,
             'r' => $rating,
             'c' => $feedback,
         ]);

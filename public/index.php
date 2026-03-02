@@ -353,6 +353,7 @@ $router->post('/customer/rate-service', [\app\controllers\customer\FeedbackContr
 
 $router->get('/customer/service-history', [\app\controllers\customer\ServiceHistoryController::class, 'index']);
 $router->get('/customer/service-history/{id}', [\app\controllers\customer\ServiceHistoryController::class, 'show']);
+$router->get('/customer/service-history/{id}/pdf', [\app\controllers\customer\ServiceHistoryController::class, 'downloadPdf']);
 
 use app\controllers\customer\ServiceReminderController;
 
@@ -383,6 +384,7 @@ $router->post('/customer/profile/vehicle/delete', [\app\controllers\customer\Pro
 
 
 $router->get ('/customer/appointments',          [\app\controllers\customer\AppointmentsController::class, 'index']);
+$router->get ('/customer/appointments/{id}',     [\app\controllers\customer\AppointmentsController::class, 'show']);
 $router->post('/customer/appointments/cancel',   [\app\controllers\customer\AppointmentsController::class, 'cancel']);   // optional action
 $router->get ('/customer/appointments/list',     [\app\controllers\customer\AppointmentsController::class, 'list']);     // optional JSON for AJAX
 

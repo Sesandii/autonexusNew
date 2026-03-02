@@ -22,12 +22,13 @@ class AppointmentsController extends Controller
 
         // Map DB rows to the keys your view expects
         $items = array_map(function ($r) {
-            $status       = (string)($r['status'] ?? 'requested');
+            $status       = strtolower((string)($r['status'] ?? 'requested'));
             $statusClass  = match ($status) {
                 'completed' => 'completed',
                 'cancelled' => 'cancelled',
-                'ongoing'   => 'ongoing',
+                'ongoing', 'in_progress', 'in_service', 'in service' => 'ongoing',
                 'confirmed' => 'upcoming',
+                'requested', 'pending' => 'pending',
                 default     => 'upcoming',
             };
             return [
@@ -88,5 +89,29 @@ class AppointmentsController extends Controller
 
         $base = rtrim(BASE_URL, '/');
         header("Location: {$base}/customer/appointments");
+    }
+
+    public function show(int $id): void
+    {
+        if (method_exists($this, 'requireCustomer')) {
+            $this->requireCustomer();
+        }
+
+        $userId = $this->userId();
+        $model  = new Appointments();
+        
+        // Get appointment details
+        $appointment = $model->getAppointmentById($userId, $id);
+        
+        if (!$appointment) {
+            $_SESSION['flash'] = 'Appointment not found or you do not have access.';
+            header('Location: ' . rtrim(BASE_URL, '/') . '/customer/appointments');
+            exit;
+        }
+
+        $this->view('customer/appointments/show', [
+            'title'       => 'Appointment Details',
+            'appointment' => $appointment,
+        ]);
     }
 }

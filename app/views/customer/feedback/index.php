@@ -46,10 +46,6 @@ $base = rtrim(BASE_URL, '/');
           <i class="fa-regular fa-calendar-xmark"></i>
           <h3>No Services to Rate</h3>
           <p>You don't have any completed services without feedback yet.</p>
-          <a href="<?= $base ?>/customer/service-history" class="btn-secondary">
-            <i class="fa-solid fa-clock-rotate-left"></i>
-            View Service History
-          </a>
         </div>
       <?php else: ?>
 

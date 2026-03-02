@@ -118,6 +118,30 @@ $base = rtrim(BASE_URL, '/');
         padding: 16px;
       }
     }
+    
+    .download-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+      color: #ffffff;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(220, 38, 38, 0.25);
+    }
+    
+    .download-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(220, 38, 38, 0.35);
+    }
+    
+    .download-btn i {
+      font-size: 1rem;
+    }
   </style>
 </head>
 <body>
@@ -131,10 +155,20 @@ $base = rtrim(BASE_URL, '/');
           Back to Service History
         </a>
         
-        <h1>
-          <i class="fa-solid fa-file-lines"></i>
-          Service Details
-        </h1>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <h1>
+            <i class="fa-solid fa-file-lines"></i>
+            Service Details
+          </h1>
+          <?php if ($service): ?>
+          <a href="<?= $base ?>/customer/service-history/<?= (int)$service['work_order_id'] ?>/pdf" 
+             class="download-btn" 
+             title="Download PDF">
+            <i class="fa-solid fa-file-pdf"></i>
+            Download PDF
+          </a>
+          <?php endif; ?>
+        </div>
       </div>
 
       <?php if ($service): ?>
