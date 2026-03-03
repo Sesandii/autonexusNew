@@ -135,6 +135,7 @@ header h1 {
 }
 
 .focus-dropzone {
+  margin-top: 20px;
   min-height: 200px;
   border: 2px dashed #aaa;
   border-radius: 8px;

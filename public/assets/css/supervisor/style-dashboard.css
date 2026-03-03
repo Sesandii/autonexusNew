@@ -13,79 +13,8 @@ body {
 
 .main-content {
   flex: 1;
-  padding: 30px;
+  padding: 15px;
   overflow-y: auto;
-}
-
-header {
-  display: flex;
-  justify-content: flex-end; 
-  align-items: center;       
-  padding: 10px 20px;
-  background-color: #f8f9fa; 
-}
-
-.hidden {
-  display: none;
-}
-.user-menu {
-  position: relative;
-  display: inline-block;
-  cursor: pointer;
-}
-
-#user-name {
-  color: #333;
-  margin-left: 8px;
-}
-
-.dropdown {
-  position: absolute;
-  top: 35px;
-  right: 0;
-  background: #fff;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  list-style: none;
-  padding: 8px 0;
-  margin: 0;
-  width: 160px;
-  box-shadow: 0px 4px 8px rgba(0,0,0,0.1);
-  z-index: 100;
-}
-
-.dropdown li {
-  padding: 10px 15px;
-}
-
-.dropdown li a {
-  text-decoration: none;
-  color: #333;
-  display: block;
-}
-
-.dropdown li:hover {
-  background: #f4f4f4;
-}
-
-
-.user-profile {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
-
-.icon {
-  width: 20px;
-  height: 20px;
-}
-
-.user-img {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  object-fit: cover;
-  vertical-align: middle;
 }
 
 section.welcome {
@@ -98,27 +27,29 @@ section.welcome {
 }
 
 
+/* Dashboard top: cards in one row with equal width */
+/* Top section */
 .dashboard-top {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
+  width: 100%;
 }
 
+/* Cards container */
 .dashboard-left .cards {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  display: flex;
+  width: 100%;
   gap: 20px;
 }
 
-.dashboard-right {
-  background: transparent;
-  min-height: 180px;
+/* Each card */
+.dashboard-left .cards .card {
+  flex: 1 1 0;
+  max-width: 100%;
 }
 
 .card {
   background-color: #1a1a1a;
   border-radius: 10px;
-  padding: 24px;
+  padding: 15px;
   flex: 1;
   box-shadow: 0 4px 15px rgba(0,0,0,0.15);
   color: white;
@@ -144,8 +75,8 @@ section.welcome {
 }
 
 .card h3 {
-  margin-bottom: 15px;
-  font-size: 14px;
+
+  font-size: 12px;
   font-weight: 500;
   color: #d1d5db;
   text-transform: uppercase;
@@ -153,9 +84,9 @@ section.welcome {
 }
 
 .card p {
-  font-size: 36px;
+  font-size: 22px;
   font-weight: bold;
-  margin-top: 10px;
+  margin-top: 5px;
   color: #fff;
 }
 
@@ -172,43 +103,64 @@ section.welcome {
 }
 
 .hidden {
-  display: none;
+  visibility: hidden;
+  position: absolute;
+  pointer-events: none;
 }
-.dashboard-right {
-  min-height: 220px;
-}
-/* Primary Button */
-.btn-primary {
-  padding: 4px 10px;
-  font-size: 15px;
-  text-decoration: none;
-  background-color: #007bff;   
-  color: #fff;                 
-  border: 1px solid #007bff;  
-  border-radius: 4px;           
-  cursor: pointer;
-  transition: background-color 0.2s, color 0.2s;
+/* Action button container */
+.action-buttons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
 }
 
-.btn-primary:hover {
-  background-color: #0056b3;   
-  border-color: #0056b3;
+/* Base button */
+.btn {
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 13px;
   text-decoration: none;
+  border: none;
+  cursor: pointer;
+  display: inline-block;
+  text-align: center;
+  
+}
+
+/* Primary */
+.btn-primary {
+  background: #000000;
   color: #fff;
 }
 
-.btn-primary:focus {
-  outline: none;
-  box-shadow: 0 0 0 2px rgba(0,123,255,0.3); 
+.btn-primary:hover {
+  background: #535353;
 }
 
-.btn-danger{
-  padding: 4px 10px;
-  font-size: 15px;
-  text-decoration: none;
-  background-color: #ff0000;   
-  color: #fff;                 
-  border: 1px solid #ff0000;  
+/* Secondary */
+.btn-secondary {
+  background: #979797;
+  color: #000000;
+}
+
+.btn-secondary:hover {
+  background: #b8b8b8;
+}
+
+/* Danger */
+.btn-danger {
+  background: #dc2626;
+  color: #fff;
+}
+
+.btn-danger:hover {
+  background: #b91c1c;
+}
+
+/* Prevent form from stretching */
+.action-buttons form {
+  margin: 0;
 }
 .table-toggle{
   margin-top:20px;
@@ -224,7 +176,7 @@ section.welcome {
 }
 
 .toggle-btn.active {
-  background: #2c7be5;
+  background: #000000;
   color: #fff;
 }
 
@@ -252,7 +204,24 @@ section.welcome {
   justify-content: space-between;
 }
 
+.appointments {
+  width: 100%;
+}
+
+.appointments table {
+  width: 100%;
+  table-layout: fixed;
+}
+
+.appointments th,
+.appointments td {
+  text-align: left;
+  padding: 10px;
+  word-wrap: break-word;
+}
+
 table {
+  margin-top:20px;
   width: 100%;
   background-color: white;
   border-radius: 10px;
@@ -302,4 +271,37 @@ th, td {
   border-radius: 50%;
   margin-right: 8px;
   vertical-align: middle;
+}
+
+
+/* Dashboard bottom: chart left, tables right */
+.dashboard-bottom {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+.dashboard-bottom-left {
+  flex: 1;
+}
+
+.dashboard-bottom-right {
+  flex: 1;
+  min-width: 0; /* VERY IMPORTANT */
+  position: relative;
+}
+
+.dashboard-bottom-right .appointments {
+  position: absolute;
+  top: 50px; /* below toggle buttons */
+  left: 0;
+  width: 100%;
+}
+
+/* Chart container styling */
+.chart-container {
+  background: #fff;
+  padding: 15px;
+  border-radius: 6px;
+  margin-bottom: 20px;
 }

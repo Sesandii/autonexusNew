@@ -155,7 +155,7 @@ public function index()
         $model = new Report();
         $model->delete((int)$id);
 
-        header('Location: ' . rtrim(BASE_URL, '/') . '/supervisor/reports');
+        header('Location: ' . rtrim(BASE_URL, '/') . '/supervisor/reports/indexp');
         exit;
     }
 

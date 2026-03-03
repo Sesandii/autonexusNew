@@ -10,23 +10,9 @@
 <body>
 <?php include __DIR__ . '/../partials/sidebar.php'; ?>
 <main class="main-content">
-<header>
-  <div class="user-profile">
-    <div class="user">
-      <img src="<?= $base ?>/public/assets/img/user.png" alt="User" class="user-img" />
-      <div class="user-menu">
-        <span id="user-name"><?= htmlspecialchars($_SESSION['user']['first_name'] ?? 'User') ?></span>
-        <ul id="dropdown" class="dropdown hidden">
-        <li><a href="<?= $base ?>/mechanic/profile/edit">Edit Profile</a></li>
-          <li><a href="<?= $base ?>/logout">Sign Out</a></li>
-        </ul>
-      </div>
-    </div>
-  </div>
-</header>
 <section class="welcome">
   <h2>Welcome, <?= htmlspecialchars(($_SESSION['user']['first_name'] ?? '') . ' ' . ($_SESSION['user']['last_name'] ?? '')) ?></h2>
-  <p>Here's an overview of your dashboard</p>
+  <p>Here's an overview of your <span><?= htmlspecialchars($_SESSION['user']['name'] ?? 'Mechanic') ?></span> dashboard</p>
   </section>
 <section class="cards">
   <div class="card green">

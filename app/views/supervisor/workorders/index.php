@@ -82,6 +82,7 @@ $currentSupervisorId = $_SESSION['user']['user_id'] ?? 0;
       <tr>
         <th>Appointment</th>
         <th>Service</th>
+        <th>Vehicle</th>
         <th>Mechanic</th>
         <th>Expected Completion</th>
         <th>Status</th>
@@ -113,6 +114,7 @@ $currentSupervisorId = $_SESSION['user']['user_id'] ?? 0;
     >
         <td><?= htmlspecialchars(($w['appointment_date'] ?? '') . ' ' . ($w['appointment_time'] ?? '')) ?></td>
         <td><?= htmlspecialchars($w['service_name'] ?? '') ?></td>
+        <td><?= htmlspecialchars($w['vehicle'] ?? '') ?></td>
         <td><?= htmlspecialchars($w['mechanic_code'] ?? 'Unassigned') ?></td>
         <td class="countdown"
     data-start="<?= $w['job_start_time'] ?? '' ?>"
@@ -129,7 +131,7 @@ $currentSupervisorId = $_SESSION['user']['user_id'] ?? 0;
             <a class="btn small" href="<?= $base ?>/supervisor/workorders/<?= $w['work_order_id'] ?>">View</a>
             <?php if ($isOwner): ?>
                 <a class="btn small edit" href="<?= $base ?>/supervisor/workorders/<?= $w['work_order_id'] ?>/edit">Edit</a>
-                <form method="post" action="<?= $base ?>/supervisor/workorders/<?= $w['work_order_id'] ?>/delete" style="display:inline" onsubmit="return confirm('Delete this work order?')">
+                <form method="post" action="<?= $base ?>/supervisor/workorders/<?= $w['work_order_id'] ?>/delete" class="delete-form" style="display:inline">
                     <button type="submit" class="btn small danger">Delete</button>
                 </form>
             <?php else: ?>
@@ -140,6 +142,18 @@ $currentSupervisorId = $_SESSION['user']['user_id'] ?? 0;
     <?php endforeach; ?>
     </tbody>
   </table>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div id="deleteModal" class="modal-overlay">
+  <div class="modal-box">
+    <h3>Confirm Deletion</h3>
+    <p>Are you sure you want to delete this work order?</p>
+    <div class="modal-actions">
+      <button id="cancelDelete" class="btn small">Cancel</button>
+      <button id="confirmDelete" class="btn small danger">Delete</button>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -268,6 +282,27 @@ window.addEventListener('DOMContentLoaded', () => {
             toast.style.opacity = '0';
             setTimeout(() => toast.remove(), 500);
         }, 3000);
+    }
+});
+
+let formToDelete = null;
+
+document.querySelectorAll('.delete-form').forEach(form => {
+    form.addEventListener('submit', function(e) {
+        e.preventDefault(); // Stop normal submit
+        formToDelete = this;
+        document.getElementById('deleteModal').style.display = 'flex';
+    });
+});
+
+document.getElementById('cancelDelete').addEventListener('click', function() {
+    document.getElementById('deleteModal').style.display = 'none';
+    formToDelete = null;
+});
+
+document.getElementById('confirmDelete').addEventListener('click', function() {
+    if (formToDelete) {
+        formToDelete.submit();
     }
 });
 </script>

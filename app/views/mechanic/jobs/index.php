@@ -66,21 +66,12 @@ $base = rtrim(BASE_URL, '/');
      data-workorder="<?= $job['work_order_id'] ?>"
      data-owner="<?= $owner ?>">
 
-      <h3 class="job-title">Work Order <?= htmlspecialchars($job['work_order_id']) ?></h3>
-
-      <div class="job-info">
-        <span>Service</span>
-        <?= htmlspecialchars($job['name']) ?>
-      </div>
+      <h3 class="job-title"><?= htmlspecialchars($job['name']) ?> - <?= htmlspecialchars($job['make'] . ' ' . $job['model']) ?></h3>
       <div class="job-info">
         <span>Customer</span>
         <?= htmlspecialchars($job['first_name'] . ' ' . $job['last_name']) ?>
-      </div>
-      <div class="job-info">
-        <span>Vehicle</span>
-        <?= htmlspecialchars($job['make'] . ' ' . $job['model']) ?>
-      </div>
-
+  </div>
+  
       <div class="job-info timer">
         <span>Time Remaining</span>
         <strong class="job-timer">--</strong>
