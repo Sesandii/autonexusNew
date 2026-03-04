@@ -10,11 +10,7 @@ function renderTable(data) {
   if (!data.length) {
     tbody.innerHTML = `
       <tr>
-<<<<<<< HEAD
         <td colspan="5" style="text-align:center; padding:40px; color:#6B7280;">
-=======
-        <td colspan="4" style="text-align:center; padding:40px; color:#6B7280;">
->>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276
           No services found matching your criteria
         </td>
       </tr>
@@ -24,7 +20,6 @@ function renderTable(data) {
 
   data.forEach(service => {
     const tr = document.createElement("tr");
-<<<<<<< HEAD
     const statusClass = (service.status || '').replace(/\s+/g, '-').toLowerCase();
     tr.innerHTML = `
       <td>${service.type || ''}</td>
@@ -32,14 +27,6 @@ function renderTable(data) {
       <td>${service.dateBooked || ''}</td>
       <td><span class="status ${statusClass}">${service.status || ''}</span></td>
       <td>${service.estCompletion || '-'}</td>
-=======
-    const statusClass = (service.status || '').replace(/\s+/g, '.');
-    tr.innerHTML = `
-      <td>${service.type || ''}</td>
-      <td>${service.dateBooked || ''}</td>
-      <td><span class="status ${statusClass}">${service.status || ''}</span></td>
-      <td>${service.estCompletion || ''}</td>
->>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276
     `;
     tbody.appendChild(tr);
   });
@@ -69,10 +56,7 @@ async function filterServices() {
   const filtered = servicesData.filter(s => {
     const matchesSearch =
       (s.type || '').toLowerCase().includes(q.toLowerCase()) ||
-<<<<<<< HEAD
       (s.vehicle || '').toLowerCase().includes(q.toLowerCase()) ||
-=======
->>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276
       (s.dateBooked || '').includes(q.toLowerCase());
     const matchesStatus = (status === 'All') || (s.status === status);
     return matchesSearch && matchesStatus;
@@ -91,10 +75,6 @@ function initTrackServices() {
   searchInput && searchInput.addEventListener("keyup", (e) => { if (e.key === "Enter") filterServices(); });
   statusFilter && statusFilter.addEventListener("change", filterServices);
 
-<<<<<<< HEAD
-  // Apply default filter on page load (this will handle initial data loading and rendering)
-  filterServices();
-=======
   // First paint
   if (!servicesData.length) {
     // If no injected data, try to load from endpoint
@@ -109,7 +89,6 @@ function initTrackServices() {
   } else {
     renderTable(servicesData);
   }
->>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276
 }
 
 document.readyState === 'loading'

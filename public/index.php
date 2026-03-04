@@ -2,13 +2,7 @@
 declare(strict_types=1);
 session_start();
 
-<<<<<<< HEAD
-// Clear OPcache (remove this line after it works)
-if (function_exists('opcache_reset')) { opcache_reset(); }
-
-=======
->>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276
-date_default_timezone_set('Asia/Colombo');   // 👈 add this line
+date_default_timezone_set('Asia/Colombo');
 
 define('BASE_PATH', dirname(__DIR__));              // C:\xampp\htdocs\autonexus
 define('APP_ROOT', BASE_PATH . '/app');             // C:\xampp\htdocs\autonexus\app

@@ -112,7 +112,7 @@ $total = count($items);
             </div>
 
             <div class="card-footer">
-              <?php if ($statusClass === 'upcoming'): ?>
+              <?php if ($statusClass === 'upcoming' || $statusClass === 'pending'): ?>
                 <form method="post"
                       action="<?= $base ?>/customer/appointments/cancel"
                       onsubmit="return confirm('Cancel this appointment?');">
@@ -124,7 +124,14 @@ $total = count($items);
                 </form>
 
                 <a class="btn-ghost"
-                   href="<?= $base ?>/customer/booking?reschedule=<?= (int)$a['appointment_id'] ?>">
+                   href="<?= $base ?>/customer/appointments/<?= (int)$a['appointment_id'] ?>">
+                  <i class="fa-regular fa-eye"></i>
+                  View details
+                </a>
+
+              <?php elseif ($statusClass === 'ongoing'): ?>
+                <a class="btn-ghost"
+                   href="<?= $base ?>/customer/appointments/<?= (int)$a['appointment_id'] ?>">
                   <i class="fa-regular fa-eye"></i>
                   View details
                 </a>
@@ -137,14 +144,14 @@ $total = count($items);
                 </a>
 
                 <a class="btn-primary-small"
-                   href="<?= $base ?>/customer/booking?rebook=<?= (int)$a['appointment_id'] ?>">
+                   href="<?= $base ?>/customer/book?rebook=<?= (int)$a['appointment_id'] ?>">
                   <i class="fa-solid fa-rotate-right"></i>
                   Rebook
                 </a>
 
               <?php else: ?>
                 <a class="btn-primary-small"
-                   href="<?= $base ?>/customer/booking?rebook=<?= (int)$a['appointment_id'] ?>">
+                   href="<?= $base ?>/customer/book?rebook=<?= (int)$a['appointment_id'] ?>">
                   <i class="fa-solid fa-rotate-right"></i>
                   Rebook
                 </a>
@@ -171,11 +178,18 @@ $total = count($items);
 
           cards.forEach(card => {
             const status = card.getAttribute('data-status');
-            if (filter === 'all' || status === filter) {
-              card.style.display = '';
+            let show = false;
+            
+            if (filter === 'all') {
+              show = true;
+            } else if (filter === 'upcoming') {
+              // "Upcoming" includes upcoming, pending, and ongoing statuses
+              show = ['upcoming', 'pending', 'ongoing'].includes(status);
             } else {
-              card.style.display = 'none';
+              show = (status === filter);
             }
+            
+            card.style.display = show ? '' : 'none';
           });
         });
       });

@@ -14,7 +14,7 @@ class TrackServicesController extends Controller
             $this->requireCustomer();
         }
 
-        $userId = (int)($_SESSION['user_id'] ?? 0);
+        $userId = (int)($_SESSION['user']['user_id'] ?? 0);
 
         $q      = (string)($_GET['q']      ?? '');
         $status = (string)($_GET['status'] ?? 'All');
@@ -37,7 +37,7 @@ class TrackServicesController extends Controller
 
         header('Content-Type: application/json; charset=utf-8');
 
-        $userId = (int)($_SESSION['user_id'] ?? 0);
+        $userId = (int)($_SESSION['user']['user_id'] ?? 0);
         $q      = (string)($_GET['q']      ?? '');
         $status = (string)($_GET['status'] ?? 'All');
 

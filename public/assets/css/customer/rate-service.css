@@ -2,7 +2,6 @@
 :root {
   --brand-red: #dc2626;
   --brand-red-light: #ef4444;
-<<<<<<< HEAD
   --brand-red-dark: #b91c1c;
   --black: #111827;
   --white: #ffffff;
@@ -22,21 +21,10 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-=======
-  --black: #111827;
-  --white: #ffffff;
-  --gray: #f3f4f6;
-  --muted: #6b7280;
-  --border: #e5e7eb;
-  --shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
-  --radius: 14px;
-  --transition: 0.25s ease;
->>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276
 }
 
 /* Layout */
 body {
-<<<<<<< HEAD
   font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   background: linear-gradient(135deg, var(--gray-bg) 0%, #e8eef3 100%);
   color: var(--black);
@@ -47,45 +35,21 @@ body {
   margin-left: 250px;
   padding: 32px;
   min-height: 100vh;
-=======
-  margin: 0;
-  font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  background-color: var(--gray);
-  color: var(--black);
-}
-
-/* keep in sync with sidebar width */
-.container {
-  margin-left: 240px;
-  padding: 32px 40px 40px;
-  background: var(--gray);
-  min-height: 100vh;
-  box-sizing: border-box;
->>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276
 }
 
 /* Card shell */
 .main-content {
   background: var(--white);
-<<<<<<< HEAD
   padding: 32px;
   border-radius: var(--radius);
   box-shadow: var(--shadow);
   max-width: 1000px;
   margin: 0 auto;
   border: 1px solid var(--border);
-=======
-  padding: 28px 28px 32px;
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  max-width: 900px;
-  margin: 0 auto;
->>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276
 }
 
 /* Page header */
 .page-header {
-<<<<<<< HEAD
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
@@ -110,22 +74,10 @@ body {
 
 .page-title i {
   font-size: 1.8rem;
-=======
-  text-align: left;
-  margin-bottom: 24px;
-}
-
-.page-title {
-  font-size: 1.8rem;
-  font-weight: 700;
-  color: var(--brand-red);
-  margin: 0 0 6px;
->>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276
 }
 
 .page-subtitle {
   margin: 0;
-<<<<<<< HEAD
   font-size: 0.95rem;
   color: var(--muted);
   line-height: 1.5;
@@ -235,15 +187,10 @@ body {
   color: var(--brand-red);
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-=======
-  font-size: 0.9rem;
-  color: var(--muted);
->>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276
 }
 
 /* Form container */
 .form-container {
-<<<<<<< HEAD
   display: flex;
   flex-direction: column;
   gap: 32px;
@@ -286,34 +233,20 @@ body {
   border-radius: 50%;
   font-size: 0.9rem;
   font-weight: 700;
-=======
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 18px 26px;
->>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
-<<<<<<< HEAD
   gap: 8px;
 }
 
 .full-width {
   width: 100%;
-=======
-  gap: 6px;
-}
-
-.full-width {
-  grid-column: 1 / -1;
->>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276
 }
 
 label {
   font-weight: 600;
-<<<<<<< HEAD
   font-size: 0.95rem;
   color: var(--black);
 }
@@ -410,47 +343,11 @@ textarea {
 
 /* =============================
    ⭐ STAR RATING UI
-=======
-  font-size: 0.9rem;
-  color: var(--black);
-}
-
-/* Inputs */
-input[type="text"],
-select,
-textarea {
-  padding: 9px 11px;
-  font-size: 0.9rem;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  transition: border-color var(--transition), box-shadow var(--transition), background 0.2s ease;
-  background-color: #fff;
-  color: var(--black);
-  box-sizing: border-box;
-}
-
-input[readonly] {
-  background: #f9fafb;
-  color: #4b5563;
-}
-
-input:focus,
-select:focus,
-textarea:focus {
-  border-color: var(--brand-red);
-  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.16);
-  outline: none;
-}
-
-/* =============================
-   ⭐ AUTO–NEXUS STAR RATING UI
->>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276
    ============================= */
 
 .stars-wrapper {
   display: flex;
   flex-direction: column;
-<<<<<<< HEAD
   align-items: center;
   gap: 12px;
   padding: 24px;
@@ -463,26 +360,17 @@ textarea:focus {
 .stars-wrapper:hover {
   border-color: var(--warning);
   background: #fffbeb;
-=======
-  gap: 6px;
->>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276
 }
 
 .stars {
   display: flex;
-<<<<<<< HEAD
   gap: 16px;
   font-size: 2.5rem;
-=======
-  gap: 12px;
-  font-size: 1.9rem;
->>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276
   cursor: pointer;
   user-select: none;
 }
 
 .stars i {
-<<<<<<< HEAD
   color: #d1d5db;
   transition: all 0.2s ease;
 }
@@ -643,98 +531,5 @@ textarea:focus {
   .stars {
     gap: 8px;
     font-size: 1.8rem;
-=======
-  color: #d1d5db; /* default gray */
-  transition: color 0.25s ease, transform 0.2s ease;
-}
-
-/* JS-controlled filled stars (LEFT → RIGHT) */
-.stars i.active {
-  color: var(--brand-red);
-  transform: scale(1.1);
-}
-
-/* Small individual hover effect (does NOT fill others) */
-.stars i:hover {
-  transform: scale(1.15);
-}
-
-/* Rating hint text */
-.rating-hint {
-  font-size: 0.8rem;
-  color: var(--muted);
-  margin-top: -4px;
-}
-
-/* 🔒 Hard override to prevent any old right-to-left rules */
-.stars i:hover ~ i,
-.stars i.active ~ i,
-.stars i.hover,
-.stars i.hover ~ i {
-  color: #d1d5db !important;
-  transform: none !important;
-}
-
-/* Textarea */
-textarea {
-  resize: vertical;
-  min-height: 110px;
-}
-
-/* Submit button row */
-.actions-row {
-  display: flex;
-  justify-content: flex-end;
-}
-
-/* Submit button */
-.submit-btn {
-  background: var(--brand-red);
-  color: var(--white);
-  border: none;
-  padding: 11px 18px;
-  border-radius: 999px;
-  font-weight: 600;
-  font-size: 0.95rem;
-  cursor: pointer;
-  transition: background var(--transition), transform 0.1s ease, box-shadow 0.18s ease;
-  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.32);
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.submit-btn i {
-  font-size: 0.95rem;
-}
-
-.submit-btn:hover {
-  background: var(--brand-red-light);
-  transform: translateY(-1px);
-  box-shadow: 0 7px 18px rgba(220, 38, 38, 0.4);
-}
-
-.submit-btn:active {
-  transform: translateY(1px);
-  box-shadow: 0 3px 8px rgba(220, 38, 38, 0.34);
-}
-
-/* Responsive */
-@media (max-width: 900px) {
-  .container {
-    margin-left: 220px;
-    padding: 24px;
-  }
-}
-
-@media (max-width: 640px) {
-  .container {
-    margin-left: 0;
-    padding: 20px 16px 28px;
-  }
-
-  .main-content {
-    padding: 22px 18px 26px;
->>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276
   }
 }

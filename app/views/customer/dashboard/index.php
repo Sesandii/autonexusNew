@@ -76,12 +76,12 @@ $title = 'AutoNexus - Dashboard';
             <span>View Appointments</span>
           </a>
 
-          <a class="ql-card" href="<?= $base ?>/customer/track">
+          <a class="ql-card" href="<?= $base ?>/customer/track-services">
             <i class="fa-solid fa-location-dot"></i>
             <span>Track Service</span>
           </a>
 
-          <a class="ql-card" href="<?= $base ?>/customer/history">
+          <a class="ql-card" href="<?= $base ?>/customer/service-history">
             <i class="fa-solid fa-clock-rotate-left"></i>
             <span>Service History</span>
           </a>
