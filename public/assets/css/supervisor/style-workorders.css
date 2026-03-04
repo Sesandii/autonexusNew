@@ -76,7 +76,10 @@ header {
 
 
 .workorders {
+<<<<<<< HEAD
+=======
   margin-top:20px;
+>>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276
   width: 100%;
   border-collapse: collapse;
   background: #fff;
@@ -113,11 +116,14 @@ header {
   color: #065f46;
 }
 
+<<<<<<< HEAD
+=======
 .status.on_hold {
   background: #ecfeff;
   color: #970f05;
 }
 
+>>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276
 .status.completed {
   background: #ecfccb;
   color: #14532d;
@@ -216,6 +222,29 @@ header {
   cursor: pointer;
 }
 
+<<<<<<< HEAD
+/* Toast messages */
+.toast {
+  position: fixed;
+  left: 20px;
+  bottom: 20px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  box-shadow: 0 6px 22px rgba(2, 6, 23, .12);
+  z-index: 20;
+  font-weight: 500;
+}
+
+.toast.success {
+  background: #ecfdf5;
+  color: #ef4444;
+}
+
+.toast.error {
+  background: #fff1f2;
+  color: #ef4444;
+}
+=======
 .toast {
   position: fixed;         /* Fixed relative to viewport */
   top: 20px;               /* Distance from top */
@@ -243,6 +272,7 @@ header {
   transform: translateX(50px);
 }
 
+>>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276
 
 /* Filter bar layout */
 .table-filters {
@@ -275,6 +305,9 @@ header {
 
 .hidden {
   display: none;
+<<<<<<< HEAD
+}
+=======
 }
 
 .tiles-container {
@@ -445,3 +478,4 @@ header {
   from { transform: translateY(-10px); opacity: 0; }
   to { transform: translateY(0); opacity: 1; }
 }
+>>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276

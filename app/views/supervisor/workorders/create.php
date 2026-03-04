@@ -5,6 +5,10 @@
   <meta charset="utf-8">
   <title>Create Work Order</title>
   <link rel="stylesheet" href="<?= $base ?>/public/assets/css/supervisor/style-workorders.css">
+<<<<<<< HEAD
+  
+=======
+>>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276
   <link rel="stylesheet" href="<?= $base ?>/public/assets/css/supervisor/forms.css">
 </head>
 <body>
@@ -22,13 +26,25 @@
     <form method="post" action="<?= $base ?>/supervisor/workorders">
       <div class="form-grid">
 
+<<<<<<< HEAD
+=======
         <!-- Appointment Dropdown -->
+>>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276
         <div class="form-group">
           <label class="required">Appointment</label>
           <select name="appointment_id" id="appointment_id" required>
             <option value="">-- choose appointment --</option>
             <?php foreach ($availableAppointments as $a): ?>
               <option
+<<<<<<< HEAD
+    value="<?= (int)$a['appointment_id'] ?>"
+    data-service="<?= htmlspecialchars($a['service_name'] ?? '', ENT_QUOTES) ?>"
+    data-service-id="<?= (int)($a['service_id'] ?? 0) ?>"
+    data-datetime="<?= htmlspecialchars(($a['appointment_date'] ?? '') . ' ' . ($a['appointment_time'] ?? ''), ENT_QUOTES) ?>">
+    <?= (int)$a['appointment_id'] ?> — <?= htmlspecialchars($a['appointment_date'] ?? '') ?> <?= htmlspecialchars($a['appointment_time'] ?? '') ?> — <?= htmlspecialchars($a['service_name'] ?? '') ?>
+</option>
+
+=======
                 value="<?= (int)$a['appointment_id'] ?>"
                 data-service="<?= htmlspecialchars($a['service_name'] ?? '', ENT_QUOTES) ?>"
                 data-service-id="<?= (int)($a['service_id'] ?? 0) ?>"
@@ -37,11 +53,26 @@
               >
                 <?= (int)$a['appointment_id'] ?> — <?= htmlspecialchars($a['appointment_date'] ?? '') ?> <?= htmlspecialchars($a['appointment_time'] ?? '') ?> — <?= htmlspecialchars($a['service_name'] ?? '') ?>
               </option>
+>>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276
             <?php endforeach; ?>
           </select>
           <div class="help">Only “requested/confirmed” appointments are shown.</div>
         </div>
 
+<<<<<<< HEAD
+        <div class="form-group">
+          <label>Mechanic</label>
+          <select name="mechanic_id">
+            <option value="">-- unassigned --</option>
+            <?php foreach ($activeMechanics as $m): ?>
+              <option value="<?= (int)$m['mechanic_id'] ?>">
+              <?= htmlspecialchars($m['open_jobs']) ?>-<?= htmlspecialchars($m['in_progress_jobs']) ?>-<?= htmlspecialchars($m['completed_jobs']) ?> — <?= htmlspecialchars($m['mechanic_code']) ?> — <?= htmlspecialchars($m['specialization']) ?> — <?= htmlspecialchars($m['current_job']) ?>
+              </option>
+            <?php endforeach; ?>
+          </select>
+        </div>
+
+=======
         <!-- Mechanic Dropdown -->
         <div class="form-group">
           <label>Mechanic</label>
@@ -65,18 +96,35 @@
         </div>
 
         <!-- Service Display -->
+>>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276
         <div class="form-group">
           <label>Service (from appointment)</label>
           <input type="text" id="service_display" value="" readonly>
           <div class="help">This is derived from the selected appointment.</div>
+<<<<<<< HEAD
+            </div>
+
+=======
         </div>
 
         <!-- Service Summary -->
+>>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276
         <div class="form-group" style="grid-column:1/-1">
           <label>Service Summary</label>
           <textarea name="service_summary" placeholder="Notes, observations, extra work…"></textarea>
         </div>
 
+<<<<<<< HEAD
+        <div class="form-group checklist-box">
+    <label class="checklist-title">Service Checklist</label>
+
+    <ul id="checklist-display" class="checklist">
+        <li class="placeholder">Select an appointment to see the checklist</li>
+    </ul>
+</div>
+
+
+=======
         <!-- Checklist -->
         <div class="form-group checklist-box">
           <label class="checklist-title">Service Checklist</label>
@@ -86,12 +134,16 @@
         </div>
 
         <!-- Status -->
+>>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276
         <div class="form-group">
           <label>Status</label>
           <select name="status">
             <option value="open">open</option>
             <option value="in_progress">in_progress</option>
+<<<<<<< HEAD
+=======
             <option value="on_hold">on_hold</option>
+>>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276
             <option value="completed">completed</option>
           </select>
         </div>
@@ -105,6 +157,10 @@
     </form>
   </div>
 </main>
+<<<<<<< HEAD
+
+=======
+>>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276
 <script>
 (function () {
     const appt = document.getElementById('appointment_id');
@@ -134,6 +190,18 @@
         }
     }
 
+<<<<<<< HEAD
+    appt.addEventListener('change', function () {
+        const o = appt.options[appt.selectedIndex];
+        applyFromOption(o);
+    });
+
+    // If browser restores selected value
+    if (appt.value) {
+        applyFromOption(appt.options[appt.selectedIndex]);
+    }
+})();
+=======
     if (appt) {
         appt.addEventListener('change', function () {
             applyFromOption(appt.options[appt.selectedIndex]);
@@ -153,6 +221,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }, 3000); // hide after 5 seconds
     }
 });
+>>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276
 
 </script>
 

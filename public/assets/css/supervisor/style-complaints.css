@@ -360,6 +360,8 @@ button.view-btn:hover {
   font-size: 13px;
   margin: 2px 0;
 }
+<<<<<<< HEAD
+=======
 
 .table-toggle {
   display: flex;
@@ -398,3 +400,4 @@ button.view-btn:hover {
 .reset-btn:hover {
   background: #4d4d4d;
 }
+>>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276
