@@ -2,7 +2,6 @@
 declare(strict_types=1);
 
 namespace app\controllers\customer;
-
 use app\core\Controller;
 use app\model\customer\Appointments;
 
@@ -19,6 +18,7 @@ class AppointmentsController extends Controller
 
         $model = new Appointments();
         $rows  = $model->getByCustomer($userId);
+        //est
 
         // Map DB rows to the keys your view expects
         $items = array_map(function ($r) {

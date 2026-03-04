@@ -17,7 +17,7 @@ WHERE NOT EXISTS (
     SELECT 1 FROM vehicles WHERE customer_id = @customer_id AND license_plate = 'ABC-1234'
 );
 
-SET @vehicle_id = (SELECT vehicle_id FROM vehicles WHERE customer_id = @customer_id AND license_plate = 'ABC-1234' LIMIT 1);
+SET @vehicle_id = (SELECT vehicle_id FROM vehicles WHERE customer_id= @customer_id AND license_plate = 'ABC-1234' LIMIT 1);
 
 -- Step 3: Get or create service types
 SET @service_oil_change = (SELECT service_id FROM services WHERE name LIKE '%Oil Change%' LIMIT 1);
@@ -96,3 +96,4 @@ FROM work_orders w
 JOIN appointments a ON a.appointment_id = w.appointment_id
 WHERE a.customer_id = @customer_id
 ORDER BY w.work_order_id DESC;
+
