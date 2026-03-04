@@ -99,7 +99,8 @@ class AppointmentsController extends Controller
 
         $userId = $this->userId();
         $model  = new Appointments();
-        
+                 // Get appointment details
+
         // Get appointment details
          // Get appointment details
         $appointment = $model->getAppointmentById($userId, $id);
