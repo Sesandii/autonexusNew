@@ -349,12 +349,8 @@ $router->post('/customer/rate-service', [\app\controllers\customer\FeedbackContr
 
 
 $router->get('/customer/service-history', [\app\controllers\customer\ServiceHistoryController::class, 'index']);
-<<<<<<< HEAD
 $router->get('/customer/service-history/{id}', [\app\controllers\customer\ServiceHistoryController::class, 'show']);
 $router->get('/customer/service-history/{id}/pdf', [\app\controllers\customer\ServiceHistoryController::class, 'downloadPdf']);
-=======
->>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276
-
 use app\controllers\customer\ServiceReminderController;
 
 $router->get('/customer/service-reminder', [ServiceReminderController::class, 'index']);
@@ -384,7 +380,7 @@ $router->post('/customer/profile/vehicle/delete', [\app\controllers\customer\Pro
 
 
 $router->get ('/customer/appointments',          [\app\controllers\customer\AppointmentsController::class, 'index']);
-<<<<<<< HEAD
+
 $router->get ('/customer/appointments/{id}',     [\app\controllers\customer\AppointmentsController::class, 'show']);
 $router->post('/customer/appointments/cancel',   [\app\controllers\customer\AppointmentsController::class, 'cancel']);   // optional action
 $router->get ('/customer/appointments/list',     [\app\controllers\customer\AppointmentsController::class, 'list']);     // optional JSON for AJAX
@@ -400,7 +396,6 @@ $router->get('/customer/complaints/history',     [FileComplaintController::class
 $router->post('/customer/appointments/cancel',   [\app\controllers\customer\AppointmentsController::class, 'cancel']);   // optional action
 $router->get ('/customer/appointments/list',     [\app\controllers\customer\AppointmentsController::class, 'list']);     // optional JSON for AJAX
 
->>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276
 /** ======================
  *  MANAGER: Dashboard
  *  ====================== */
