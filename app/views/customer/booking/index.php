@@ -10,97 +10,17 @@ $selCode = $branch_code ?? '';
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="<?= $base ?>/public/assets/css/customer/booking.css" />
   <link rel="stylesheet" href="<?= rtrim(BASE_URL,'/') ?>/public/assets/css/home.css" />
-  <style>
-    /* Slot availability styles */
-    .session {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 4px;
-      padding: 12px 16px;
-      min-width: 80px;
-      border: 2px solid #e5e7eb;
-      border-radius: 8px;
-      background: #fff;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .session:hover:not(.is-full) {
-      border-color: #e74c3c;
-      background: #fef2f2;
-    }
-    .session.is-selected {
-      border-color: #e74c3c;
-      background: #e74c3c;
-      color: #fff;
-    }
-    .session.is-selected .slot-count {
-      color: rgba(255,255,255,0.9);
-    }
-    .session.is-full {
-      background: #fee2e2;
-      border-color: #dc2626;
-      cursor: not-allowed;
-      opacity: 0.9;
-    }
-    .session.is-full .slot-time {
-      color: #991b1b;
-      text-decoration: line-through;
-    }
-    .session.is-full .slot-count {
-      color: #dc2626;
-      font-weight: 600;
-    }
-    .slot-time {
-      font-weight: 600;
-      font-size: 1rem;
-    }
-    .slot-count {
-      font-size: 0.75rem;
-      color: #6b7280;
-    }
-    /* Legend styles */
-    .legend {
-      display: flex;
-      gap: 20px;
-      margin-top: 16px;
-      font-size: 0.85rem;
-    }
-    .lg {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .lg-dot {
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-    }
-    .available-dot {
-      background: #10b981;
-      border: 2px solid #059669;
-    }
-    .full-dot {
-      background: #dc2626;
-      border: 2px solid #991b1b;
-    }
-  </style>
 </head>
 <body>
   <div class="container">
-    <header class="page-header" style="display: flex; justify-content: space-between; align-items: flex-start;">
-      <div>
-        <h1>Book a Service</h1>
-        <p class="subtitle">
-          <?= !empty($branch_name) ? 'Selected branch: '.htmlspecialchars($branch_name) : 'Choose your preferred branch and time slot.' ?>
-        </p>
-        <?php if (!empty($flash)): ?>
-          <div class="toast show" style="position:static;margin-top:8px;opacity:1"><?= htmlspecialchars($flash) ?></div>
-        <?php endif; ?>
-      </div>
-      <a href="<?= $base ?>/customer/appointments" style="display:inline-flex;align-items:center;gap:6px;padding:10px 20px;background:#6c757d;color:#fff;text-decoration:none;border-radius:8px;font-weight:500;">
-        ← Back to Appointments
-      </a>
+    <header class="page-header">
+      <h1>Book a Service</h1>
+      <p class="subtitle">
+        <?= !empty($branch_name) ? 'Selected branch: '.htmlspecialchars($branch_name) : 'Choose your preferred branch and time slot.' ?>
+      </p>
+      <?php if (!empty($flash)): ?>
+        <div class="toast show" style="position:static;margin-top:8px;opacity:1"><?= htmlspecialchars($flash) ?></div>
+      <?php endif; ?>
     </header>
 
     <!-- Wrap everything in a POST form -->
@@ -221,10 +141,7 @@ $selCode = $branch_code ?? '';
             <div class="slot__header">Morning</div>
             <div class="slot__sessions" data-period="am">
               <?php foreach (['09:00','10:00','11:00'] as $t): ?>
-                <button type="button" class="session" data-time="<?= $t ?>">
-                  <span class="slot-time"><?= $t ?></span>
-                  <span class="slot-count">(0/3)</span>
-                </button>
+                <button type="button" class="session" data-time="<?= $t ?>"><?= $t ?></button>
               <?php endforeach; ?>
             </div>
           </div>
@@ -233,18 +150,17 @@ $selCode = $branch_code ?? '';
             <div class="slot__header">Afternoon</div>
             <div class="slot__sessions" data-period="pm">
               <?php foreach (['13:00','14:00','15:00'] as $t): ?>
-                <button type="button" class="session" data-time="<?= $t ?>">
-                  <span class="slot-time"><?= $t ?></span>
-                  <span class="slot-count">(0/3)</span>
-                </button>
+                <button type="button" class="session" data-time="<?= $t ?>"><?= $t ?></button>
               <?php endforeach; ?>
             </div>
           </div>
         </div>
 
         <div class="legend">
-          <!-- <span class="lg available"><span class="lg-dot available-dot"></span> Available</span> -->
-          <span class="lg full"><span class="lg-dot full-dot"></span> Full (3/3)</span>
+          <span class="lg available">Available</span>
+          <span class="lg reserved">Reserved</span>
+          <span class="lg ongoing">Ongoing</span>
+          <span class="lg completed">Completed</span>
         </div>
 
         <!-- holds time for POST -->
@@ -266,88 +182,32 @@ $selCode = $branch_code ?? '';
   <script src="<?= $base ?>/public/assets/js/customer/booking.js" defer></script>
   <script>
     const base = "<?= $base ?>";
-    const branchCodeInput = document.getElementById('branch_code');
-    const dateInput = document.getElementById('date');
-    const timeInput = document.getElementById('time');
-
     // 1) when a branch is picked, reload page with ?branch=CODE (to load services server-side)
     document.querySelectorAll('input[name="branch_pick"]').forEach(r => {
       r.addEventListener('change', e => {
         const code = e.target.value;
-        branchCodeInput.value = code;
+        document.getElementById('branch_code').value = code;
         window.location.href = base + '/customer/book?branch=' + encodeURIComponent(code);
       });
     });
 
-    // 2) Fetch and update slot availability
-    async function fetchSlotAvailability() {
-      const branchCode = branchCodeInput.value.trim();
-      const date = dateInput.value;
-      
-      if (!branchCode || !date) return;
-      
-      try {
-        const response = await fetch(`${base}/customer/book/slots?branch=${encodeURIComponent(branchCode)}&date=${encodeURIComponent(date)}`);
-        const slots = await response.json();
-        
-        if (slots.error) {
-          console.error('Slots error:', slots.error);
-          return;
-        }
-        
-        // Update each slot button
-        document.querySelectorAll('.session').forEach(btn => {
-          const time = btn.dataset.time;
-          const slotData = slots[time];
-          
-          if (slotData) {
-            const countEl = btn.querySelector('.slot-count');
-            countEl.textContent = `(${slotData.booked}/3)`;
-            
-            if (slotData.full) {
-              btn.classList.add('is-full');
-              btn.classList.remove('is-selected');
-              btn.disabled = true;
-              // Clear selection if this slot was selected
-              if (timeInput.value === time) {
-                timeInput.value = '';
-              }
-            } else {
-              btn.classList.remove('is-full');
-              btn.disabled = false;
-            }
-          }
-        });
-      } catch (err) {
-        console.error('Failed to fetch slot availability:', err);
-      }
-    }
-
-    // Fetch slots when date changes
-    dateInput.addEventListener('change', fetchSlotAvailability);
-    
-    // Initial fetch if branch is already selected
-    if (branchCodeInput.value && dateInput.value) {
-      fetchSlotAvailability();
-    }
-
-    // 3) time slot selection
+    // 2) time slot selection
+    const timeInput = document.getElementById('time');
     document.querySelectorAll('.session').forEach(btn => {
       btn.addEventListener('click', () => {
-        if (btn.classList.contains('is-full')) return; // Don't select full slots
         document.querySelectorAll('.session').forEach(b => b.classList.remove('is-selected'));
         btn.classList.add('is-selected');
         timeInput.value = btn.dataset.time;
       });
     });
 
-    // 4) sanity check before submit
+    // 3) sanity check before submit
     document.getElementById('bookingForm').addEventListener('submit', (e) => {
-      const branch = branchCodeInput.value.trim();
+      const branch = document.getElementById('branch_code').value.trim();
       const veh    = document.getElementById('vehicle_id')?.value || '';
       const serv   = document.getElementById('service_id')?.value || '';
-      const date   = dateInput.value;
-      const time   = timeInput.value;
+      const date   = document.getElementById('date').value;
+      const time   = document.getElementById('time').value;
       if (!branch || !veh || !serv || !date || !time) {
         e.preventDefault();
         alert('Please complete all fields (branch, vehicle, service, date & time).');

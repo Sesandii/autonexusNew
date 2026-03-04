@@ -360,3 +360,44 @@ button.view-btn:hover {
   font-size: 13px;
   margin: 2px 0;
 }
+<<<<<<< HEAD
+=======
+
+.table-toggle {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.toggle-btn {
+  padding: 10px 18px;
+  border: none;
+  background: #e5e7eb;
+  cursor: pointer;
+  border-radius: 6px;
+  font-weight: 600;
+}
+
+.toggle-btn.active {
+  background: #000000;
+  color: white;
+}
+
+.data-section.hidden {
+  display: none;
+}
+
+
+.reset-btn {
+  background: #000000;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.reset-btn:hover {
+  background: #4d4d4d;
+}
+>>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276

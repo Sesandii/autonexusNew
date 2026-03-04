@@ -14,10 +14,10 @@ class TrackServicesController extends Controller
             $this->requireCustomer();
         }
 
-        $userId = (int)($_SESSION['user']['user_id'] ?? 0);
+        $userId = (int)($_SESSION['user_id'] ?? 0);
 
         $q      = (string)($_GET['q']      ?? '');
-        $status = (string)($_GET['status'] ?? 'Pending');
+        $status = (string)($_GET['status'] ?? 'All');
 
         $model    = new ServiceTracking();
         $services = $model->searchByCustomer($userId, $q, $status);
@@ -37,9 +37,9 @@ class TrackServicesController extends Controller
 
         header('Content-Type: application/json; charset=utf-8');
 
-        $userId = (int)($_SESSION['user']['user_id'] ?? 0);
+        $userId = (int)($_SESSION['user_id'] ?? 0);
         $q      = (string)($_GET['q']      ?? '');
-        $status = (string)($_GET['status'] ?? 'Pending');
+        $status = (string)($_GET['status'] ?? 'All');
 
         $model = new ServiceTracking();
         $rows  = $model->searchByCustomer($userId, $q, $status);

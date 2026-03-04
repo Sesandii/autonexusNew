@@ -190,7 +190,11 @@
     Submit Final Report
   </button>
 
+<<<<<<< HEAD
   <a href="<?= $base ?>/supervisor/reports" class="btn secondary">
+=======
+  <a href="<?= $base ?>/supervisor/reports/indexp" class="btn secondary">
+>>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276
     Cancel
   </a>
 </div>

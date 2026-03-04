@@ -10,6 +10,7 @@
 <body>
 <?php include __DIR__ . '/../partials/sidebar.php'; ?>
 <main class="main-content">
+<<<<<<< HEAD
 <header>
   <input type="text" placeholder="Search..." class="search" />
   <div class="user-profile">
@@ -29,6 +30,11 @@
 <section class="welcome">
   <h2>Welcome, <?= htmlspecialchars(($_SESSION['user']['first_name'] ?? '') . ' ' . ($_SESSION['user']['last_name'] ?? '')) ?></h2>
   <p>Here's an overview of your dashboard</p>
+=======
+<section class="welcome">
+  <h2>Welcome, <?= htmlspecialchars(($_SESSION['user']['first_name'] ?? '') . ' ' . ($_SESSION['user']['last_name'] ?? '')) ?></h2>
+  <p>Here's an overview of your <span><?= htmlspecialchars($_SESSION['user']['name'] ?? 'Mechanic') ?></span> dashboard</p>
+>>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276
   </section>
 <section class="cards">
   <div class="card green">

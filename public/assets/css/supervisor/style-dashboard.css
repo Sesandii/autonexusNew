@@ -13,6 +13,7 @@ body {
 
 .main-content {
   flex: 1;
+<<<<<<< HEAD
   padding: 30px;
   overflow-y: auto;
 }
@@ -121,21 +122,57 @@ header {
   vertical-align: middle;
 }
 
+=======
+  padding: 15px;
+  overflow-y: auto;
+}
+
+>>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276
 section.welcome {
   margin-top: 30px;
 }
 
+<<<<<<< HEAD
 .cards {
   display: flex;
   gap: 20px;
   margin-top: 20px;
   margin-bottom: 30px;
+=======
+.welcome p{
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+
+/* Dashboard top: cards in one row with equal width */
+/* Top section */
+.dashboard-top {
+  width: 100%;
+}
+
+/* Cards container */
+.dashboard-left .cards {
+  display: flex;
+  width: 100%;
+  gap: 20px;
+}
+
+/* Each card */
+.dashboard-left .cards .card {
+  flex: 1 1 0;
+  max-width: 100%;
+>>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276
 }
 
 .card {
   background-color: #1a1a1a;
   border-radius: 10px;
+<<<<<<< HEAD
   padding: 24px;
+=======
+  padding: 15px;
+>>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276
   flex: 1;
   box-shadow: 0 4px 15px rgba(0,0,0,0.15);
   color: white;
@@ -161,8 +198,13 @@ section.welcome {
 }
 
 .card h3 {
+<<<<<<< HEAD
   margin-bottom: 15px;
   font-size: 14px;
+=======
+
+  font-size: 12px;
+>>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276
   font-weight: 500;
   color: #d1d5db;
   text-transform: uppercase;
@@ -170,9 +212,15 @@ section.welcome {
 }
 
 .card p {
+<<<<<<< HEAD
   font-size: 36px;
   font-weight: bold;
   margin-top: 10px;
+=======
+  font-size: 22px;
+  font-weight: bold;
+  margin-top: 5px;
+>>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276
   color: #fff;
 }
 
@@ -188,6 +236,7 @@ section.welcome {
   margin-bottom: 10px;
 }
 
+<<<<<<< HEAD
 .card-icon {
   width: 32px;
   height: 32px;
@@ -196,6 +245,87 @@ section.welcome {
 }
 
 /* Red accent bars for all cards */
+=======
+.hidden {
+  visibility: hidden;
+  position: absolute;
+  pointer-events: none;
+}
+/* Action button container */
+.action-buttons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+/* Base button */
+.btn {
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  display: inline-block;
+  text-align: center;
+  
+}
+
+/* Primary */
+.btn-primary {
+  background: #000000;
+  color: #fff;
+}
+
+.btn-primary:hover {
+  background: #535353;
+}
+
+/* Secondary */
+.btn-secondary {
+  background: #979797;
+  color: #000000;
+}
+
+.btn-secondary:hover {
+  background: #b8b8b8;
+}
+
+/* Danger */
+.btn-danger {
+  background: #dc2626;
+  color: #fff;
+}
+
+.btn-danger:hover {
+  background: #b91c1c;
+}
+
+/* Prevent form from stretching */
+.action-buttons form {
+  margin: 0;
+}
+.table-toggle{
+  margin-top:20px;
+}
+
+.toggle-btn {
+  padding: 8px 16px;
+  border: none;
+  background: #e0e0e0;
+  cursor: pointer;
+  border-radius: 6px;
+  margin-right: 10px;
+}
+
+.toggle-btn.active {
+  background: #000000;
+  color: #fff;
+}
+
+
+>>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276
 .green::before { 
   background-color: #dc2626;
 }
@@ -213,12 +343,37 @@ section.welcome {
 }
 
 .appointments h3 {
+<<<<<<< HEAD
+=======
+  margin-top: 15px;
+>>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276
   margin-bottom: 15px;
   display: flex;
   justify-content: space-between;
 }
 
+<<<<<<< HEAD
 table {
+=======
+.appointments {
+  width: 100%;
+}
+
+.appointments table {
+  width: 100%;
+  table-layout: fixed;
+}
+
+.appointments th,
+.appointments td {
+  text-align: left;
+  padding: 10px;
+  word-wrap: break-word;
+}
+
+table {
+  margin-top:20px;
+>>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276
   width: 100%;
   background-color: white;
   border-radius: 10px;
@@ -269,3 +424,39 @@ th, td {
   margin-right: 8px;
   vertical-align: middle;
 }
+<<<<<<< HEAD
+=======
+
+
+/* Dashboard bottom: chart left, tables right */
+.dashboard-bottom {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+.dashboard-bottom-left {
+  flex: 1;
+}
+
+.dashboard-bottom-right {
+  flex: 1;
+  min-width: 0; /* VERY IMPORTANT */
+  position: relative;
+}
+
+.dashboard-bottom-right .appointments {
+  position: absolute;
+  top: 50px; /* below toggle buttons */
+  left: 0;
+  width: 100%;
+}
+
+/* Chart container styling */
+.chart-container {
+  background: #fff;
+  padding: 15px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+}
+>>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276

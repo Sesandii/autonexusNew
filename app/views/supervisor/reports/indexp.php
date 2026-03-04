@@ -1,5 +1,4 @@
 <?php $base = rtrim(BASE_URL, '/'); ?>
-<<<<<<< HEAD
 <!doctype html>
 <html lang="en">
 <head>
@@ -16,7 +15,7 @@
 
   <div class="page-header">
     <div>
-      <h1>Job Reports</h1>
+      <h1>Vehicle Reports</h1>
       <p class="subtitle">Reports created for completed work orders.</p>
     </div>
       <a class="btn primary" href="<?= $base ?>/supervisor/reports/create">
@@ -104,9 +103,9 @@
     </a>
 
     <form method="post"
-          action="<?= rtrim(BASE_URL, '/') ?>/supervisor/reports/delete/<?= $r['report_id'] ?>"
-          style="display:inline"
-          onsubmit="return confirm('Delete this report?')">
+      action="<?= rtrim(BASE_URL, '/') ?>/supervisor/reports/delete/<?= $r['report_id'] ?>"
+      class="delete-form"
+      style="display:inline">
         <button type="submit" class="btn small danger">
             Delete
         </button>
@@ -125,6 +124,18 @@
     </tbody>
   </table>
 
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div id="deleteModal" class="modal-overlay">
+  <div class="modal-box">
+    <h3>Confirm Deletion</h3>
+    <p>Are you sure you want to delete this report?</p>
+    <div class="modal-actions">
+      <button id="cancelDelete" class="btn small">Cancel</button>
+      <button id="confirmDelete" class="btn small danger">Delete</button>
+    </div>
+  </div>
 </div>
 <script>
 document.addEventListener("DOMContentLoaded", function () {
@@ -164,49 +175,28 @@ document.addEventListener("DOMContentLoaded", function () {
     mechanicFilter.addEventListener("change", applyFilters);
     dateFilter.addEventListener("change", applyFilters);
 });
+
+let formToDelete = null;
+
+document.querySelectorAll('.delete-form').forEach(form => {
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        formToDelete = this;
+        document.getElementById('deleteModal').style.display = 'flex';
+    });
+});
+
+document.getElementById('cancelDelete').addEventListener('click', function() {
+    document.getElementById('deleteModal').style.display = 'none';
+    formToDelete = null;
+});
+
+document.getElementById('confirmDelete').addEventListener('click', function() {
+    if (formToDelete) {
+        formToDelete.submit();
+    }
+});
 </script>
 
-=======
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Daily Report | AutoNexus</title>
-  <link rel="stylesheet" href="/autonexus/public/assets/css/supervisor/style-report.css"/>
-</head>
-<body>
-<?php include __DIR__ . '/../partials/sidebar.php'; ?>
-
-<main class="main-content">
-
-<h1>Reports</h1>
-
-<div class="report-grid">
-
-  <a href="<?= BASE_URL ?>/supervisor/reports/indexp" class="report-tile">
-    <h3>Vehicle Service Report</h3>
-    <p>Completed vehicle services summary</p>
-  </a>
-
-  <a href="<?= BASE_URL ?>/supervisor/reports/daily-jobs" class="report-tile">
-  <h3>Daily Job Completion</h3>
-  <p>Shows date, completed count, and timing performance</p>
-</a>
-
-  <a href="<?= BASE_URL ?>/supervisor/reports/mechanic-activity" class="report-tile">
-    <h3>Mechanic Activity</h3>
-    <p>Jobs handled by each mechanic</p>
-  </a>
-
-  <a href="<?= BASE_URL ?>/supervisor/reports/pending-jobs" class="report-tile">
-    <h3>Pending Jobs</h3>
-    <p>Open and in-progress jobs</p>
-  </a>
-
-</div>
-</main>
->>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276
 </body>
 </html>

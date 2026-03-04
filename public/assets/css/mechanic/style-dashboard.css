@@ -17,6 +17,7 @@ body {
   overflow-y: auto;
 }
 
+<<<<<<< HEAD
 header {
   display: flex;
   justify-content: space-between;
@@ -93,6 +94,8 @@ header {
   vertical-align: middle;
 }
 
+=======
+>>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276
 section.welcome {
   margin-top: 30px;
 }

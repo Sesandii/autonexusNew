@@ -40,6 +40,11 @@ class AssignedJobsController extends Controller
                 $progress = 50;
                 break;
 
+            case 'on_hold':
+                    $progress = 50;
+                    break;
+
+
             case 'completed':
                 $progress = 100;
                 break;
@@ -83,7 +88,7 @@ class AssignedJobsController extends Controller
     // ✅ NOW $work_order_id EXISTS
     $job = $workOrderModel->getFullJobDetails($id);
     if (!$job) {
-        die("found");
+        die("404 Not found");
     }
     $checklist = $checklistModel->getByWorkOrder((int)$id);
     $job['photos'] = $photoModel->getByWorkOrder((int)$id);

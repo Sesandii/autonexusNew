@@ -1,5 +1,6 @@
 // AutoNexus - Rate Service Interaction
 document.addEventListener("DOMContentLoaded", () => {
+<<<<<<< HEAD
   
   // ========================================
   // APPOINTMENT SELECTION & AUTO-FILL
@@ -105,6 +106,18 @@ document.addEventListener("DOMContentLoaded", () => {
       const star = document.createElement("i");
       star.classList.add("fa-solid", "fa-star");
       star.dataset.value = String(i);
+=======
+  // ---- STAR RATING ----
+  const starsContainer = document.getElementById("ratingStars");
+  const ratingInput = document.getElementById("ratingInput");
+
+  if (starsContainer && ratingInput) {
+    // Create 5 stars visually left → right
+    for (let i = 1; i <= 5; i++) {
+      const star = document.createElement("i");
+      star.classList.add("fa-solid", "fa-star");
+      star.dataset.value = String(i); // "1".."5"
+>>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276
       starsContainer.appendChild(star);
     }
 
@@ -112,11 +125,16 @@ document.addEventListener("DOMContentLoaded", () => {
     let currentRating = Number(ratingInput.value) || 0;
 
     // Helper: color stars up to "rating"
+<<<<<<< HEAD
     function paintStars(rating) {
+=======
+    function paint(rating) {
+>>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276
       stars.forEach((star) => {
         const value = Number(star.dataset.value);
         star.classList.toggle("active", value <= rating);
       });
+<<<<<<< HEAD
       
       // Update text
       if (ratingText) {
@@ -131,17 +149,28 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Initial paint
     paintStars(currentRating);
+=======
+    }
+
+    // Initial paint (in case rating comes from server)
+    paint(currentRating);
+>>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276
 
     // Hover preview
     stars.forEach((star) => {
       star.addEventListener("mouseenter", () => {
         const hoverValue = Number(star.dataset.value);
+<<<<<<< HEAD
         paintStars(hoverValue);
+=======
+        paint(hoverValue); // temporarily show this rating
+>>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276
       });
 
       star.addEventListener("click", () => {
         currentRating = Number(star.dataset.value);
         ratingInput.value = String(currentRating);
+<<<<<<< HEAD
         paintStars(currentRating);
         
         // Clear validation error
@@ -240,4 +269,17 @@ document.addEventListener("DOMContentLoaded", () => {
       }, 100);
     }
   }
+=======
+        paint(currentRating); // lock in this rating
+      });
+    });
+
+    // When mouse leaves the whole stars area → restore saved rating
+    starsContainer.addEventListener("mouseleave", () => {
+      paint(currentRating);
+    });
+  }
+
+  // (Optional) You can add more JS here later for appointment <select> auto-fill if needed.
+>>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276
 });

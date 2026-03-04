@@ -535,4 +535,13 @@ margin-top: 10px;
 .btn-back:hover {
   background: #e9eef5;
   transform: translateY(-1px);
+<<<<<<< HEAD
 }
+=======
+}
+
+.btn.small {
+  padding: 6px 8px;
+  font-size: 13px;
+}
+>>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276

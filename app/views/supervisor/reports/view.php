@@ -104,7 +104,11 @@
 </section>
 
 <div class="actions">
+<<<<<<< HEAD
   <a href="<?= $base ?>/supervisor/reports" class="btn secondary">Back to Reports</a>
+=======
+  <a href="<?= $base ?>/supervisor/reports/indexp" class="btn secondary">Back to Reports</a>
+>>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276
 </div>
 
 <?php else: ?>

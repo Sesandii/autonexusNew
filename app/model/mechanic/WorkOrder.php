@@ -25,12 +25,12 @@ class WorkOrder
                 w.started_at,
                 w.completed_at,
                 w.status,
+                w.job_start_time,
                 s.base_duration_minutes,
                 s.name,
                 u.first_name,
                 u.last_name,
                 u.street_address,
-                
                 u.city,
                 u.state,
                 a.appointment_date,
@@ -74,6 +74,7 @@ class WorkOrder
             u.street_address,
             u.city,
             u.state,
+            w.paused_remaining_seconds,
             s.base_duration_minutes,
             s.name,
             a.appointment_date,
@@ -143,85 +144,147 @@ class WorkOrder
 
     /** Mechanic updates job status */
     public function setStatusMechanic(int $workOrderId, string $newStatus, int $mechanicId): void
-{
-    $stmt = $this->pdo->prepare("SELECT status, job_start_time, completed_at, mechanic_id FROM work_orders WHERE work_order_id = :id LIMIT 1");
-    $stmt->execute(['id' => $workOrderId]);
-    $row = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    if (!$row || (int)$row['mechanic_id'] !== $mechanicId) return;
-
-    $oldStatus = $row['status'];
-    $jobStart = $row['job_start_time'];
-    $completed = $row['completed_at'];
-
-    date_default_timezone_set('Asia/Colombo');
-
-    if (($oldStatus === 'open' || $oldStatus === null) && $newStatus === 'in_progress') {
-        $jobStart = date('Y-m-d H:i:s');
+    {
+        $stmt = $this->pdo->prepare("
+            SELECT status, job_start_time, completed_at, mechanic_id, paused_remaining_seconds
+            FROM work_orders 
+            WHERE work_order_id = :id 
+            LIMIT 1
+        ");
+        $stmt->execute(['id' => $workOrderId]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+        if (!$row || (int)$row['mechanic_id'] !== $mechanicId) return;
+    
+        $oldStatus = $row['status'];
+        $jobStart  = $row['job_start_time'];
+        $completed = $row['completed_at'];
+        $pausedRemaining = $row['paused_remaining_seconds'];
+    
+        date_default_timezone_set('Asia/Colombo');
+        $now = date('Y-m-d H:i:s');
+    
+        /* ================= START JOB ================= */
+        if (($oldStatus === 'open' || $oldStatus === 'on_hold') 
+            && $newStatus === 'in_progress') {
+    
+            // If resuming from pause → calculate new start time
+            if ($oldStatus === 'on_hold' && $pausedRemaining !== null) {
+    
+                // get duration
+                $durStmt = $this->pdo->prepare("
+                    SELECT s.base_duration_minutes
+                    FROM work_orders w
+                    JOIN appointments a ON w.appointment_id = a.appointment_id
+                    JOIN services s ON a.service_id = s.service_id
+                    WHERE w.work_order_id = :id
+                ");
+                $durStmt->execute(['id' => $workOrderId]);
+                $durationMin = $durStmt->fetchColumn();
+    
+                $elapsed = ($durationMin * 60) - (int)$pausedRemaining;
+    
+                $jobStart = date('Y-m-d H:i:s', strtotime("-$elapsed seconds"));
+            } 
+            else {
+                $jobStart = $now;
+            }
+    
+            $pausedRemaining = null;
+        }
+    
+        /* ================= PAUSE JOB ================= */
+        if ($newStatus === 'on_hold' && $oldStatus === 'in_progress') {
+    
+            if ($jobStart) {
+    
+                // get duration
+                $durStmt = $this->pdo->prepare("
+                    SELECT s.base_duration_minutes
+                    FROM work_orders w
+                    JOIN appointments a ON w.appointment_id = a.appointment_id
+                    JOIN services s ON a.service_id = s.service_id
+                    WHERE w.work_order_id = :id
+                ");
+                $durStmt->execute(['id' => $workOrderId]);
+                $durationMin = $durStmt->fetchColumn();
+    
+                $elapsed = time() - strtotime($jobStart);
+                $remaining = ($durationMin * 60) - $elapsed;
+    
+                $pausedRemaining = $remaining > 0 ? $remaining : 0;
+            }
+        }
+    
+        /* ================= COMPLETE JOB ================= */
+        if ($newStatus === 'completed' && $completed === null) {
+            $completed = $now;
+        }
+    
+        $sql = "UPDATE work_orders
+                SET status = :status,
+                    job_start_time = :job_start_time,
+                    paused_remaining_seconds = :paused_remaining_seconds,
+                    completed_at = :completed_at
+                WHERE work_order_id = :id";
+    
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([
+            'status' => $newStatus,
+            'job_start_time' => $jobStart,
+            'paused_remaining_seconds' => $pausedRemaining,
+            'completed_at' => $completed,
+            'id' => $workOrderId
+        ]);
     }
-
-    if ($newStatus === 'completed' && $completed === null) {
-        $completed = date('Y-m-d H:i:s');
-    }
-
-    $sql = "UPDATE work_orders
-            SET status = :status,
-                job_start_time = :job_start_time,
-                completed_at = :completed_at
-            WHERE work_order_id = :id";
-
-    $stmt = $this->pdo->prepare($sql);
-    $stmt->execute([
-        'status' => $newStatus,
-        'job_start_time' => $jobStart,
-        'completed_at' => $completed,
-        'id' => $workOrderId
-    ]);
-}
+    
 
     /** Get all jobs (mechanic tab) */
     public static function getAllJobs(): array
-    {
-        $pdo = db();
+{
+    $pdo = db();
 
-        $sql = "
-            SELECT
-                w.work_order_id,
-                w.service_summary,
-                w.started_at,
-                w.completed_at,
-                w.status,
-                s.name,
-                s.base_duration_minutes,
-                w.mechanic_id,
-                cu.first_name,
-                cu.last_name,
-                cu.street_address,
-                cu.city,
-                cu.state,
-                a.appointment_date,
-                a.appointment_time,
-                v.make,
-                v.model,
-                v.license_plate,
-                m.mechanic_code,
-                COUNT(DISTINCT p.id) AS photo_count,
-                SUM(ch.status = 'completed') AS checklist_completed
-            FROM work_orders w
-            JOIN appointments a ON w.appointment_id = a.appointment_id
-            JOIN customers c ON a.customer_id = c.customer_id
-            JOIN users cu ON c.user_id = cu.user_id
-            JOIN services s ON a.service_id = s.service_id
-            JOIN vehicles v ON a.vehicle_id = v.vehicle_id
-            JOIN mechanics m ON w.mechanic_id = m.mechanic_id
-            LEFT JOIN checklist ch ON ch.work_order_id = w.work_order_id
-            LEFT JOIN service_photos p ON p.work_order_id = w.work_order_id
-            GROUP BY work_order_id
-            ORDER BY w.started_at DESC
-        ";
+    $sql = "
+        SELECT
+            w.work_order_id,
+            w.service_summary,
+            w.started_at,
+            w.completed_at,
+            w.status,
+            s.name,
+            s.base_duration_minutes,
+            w.mechanic_id,
+            mu.user_id AS mechanic_user_id,  -- <-- add this
+            m.mechanic_code,
+            cu.first_name,
+            cu.last_name,
+            cu.street_address,
+            cu.city,
+            cu.state,
+            a.appointment_date,
+            a.appointment_time,
+            v.make,
+            v.model,
+            v.license_plate,
+            COUNT(DISTINCT p.id) AS photo_count,
+            SUM(ch.status = 'completed') AS checklist_completed
+        FROM work_orders w
+        JOIN appointments a ON w.appointment_id = a.appointment_id
+        JOIN customers c ON a.customer_id = c.customer_id
+        JOIN users cu ON c.user_id = cu.user_id
+        JOIN services s ON a.service_id = s.service_id
+        JOIN vehicles v ON a.vehicle_id = v.vehicle_id
+        JOIN mechanics m ON w.mechanic_id = m.mechanic_id
+        JOIN users mu ON m.user_id = mu.user_id       -- <-- join mechanic's user
+        LEFT JOIN checklist ch ON ch.work_order_id = w.work_order_id
+        LEFT JOIN service_photos p ON p.work_order_id = w.work_order_id
+        GROUP BY w.work_order_id
+        ORDER BY w.started_at DESC
+    ";
 
-        return $pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
-    }
+    return $pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+}
+
 
     public function getSummaryFromChecklist(int $workOrderId): array
 {
@@ -258,6 +321,24 @@ private function updateAppointmentStatus(int $appointmentId, string $workOrderSt
         'status' => $map[$workOrderStatus],
         'id'     => $appointmentId
     ]);
+}
+
+
+
+public function getByMechanicAndStatus($mechanicId, $status)
+{
+    $sql = "SELECT * FROM work_orders 
+            WHERE mechanic_id = :mechanic_id 
+            AND status = :status
+            ORDER BY created_at DESC";
+
+    $stmt = $this->db->prepare($sql);
+    $stmt->execute([
+        ':mechanic_id' => $mechanicId,
+        ':status' => $status
+    ]);
+
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
 }

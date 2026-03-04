@@ -44,6 +44,10 @@
     <option value="in_progress">In Progress</option>
     <option value="completed">Completed</option>
   </select>
+<<<<<<< HEAD
+=======
+  <button id="resetFilters" class="btn small">Reset</button>
+>>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276
 </div>
 
   </header>
@@ -57,8 +61,12 @@
      data-service="<?= strtolower($job['service_name']) ?>"
      data-mechanic="<?= strtolower($job['mechanic_code']) ?>"
      data-status="<?= strtolower($job['status']) ?>">
+<<<<<<< HEAD
               <h3>Work Order <?= $job['work_order_id'] ?></h3>
               <div class="job-info"><span>Service:</span> <?= $job['service_name'] ?></div>
+=======
+              <h3><?= $job['service_name'] ?> - <?= $job['vehicle'] ?></h3>
+>>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276
               <div class="job-info"><span>Mechanic:</span> <?= $job['mechanic_code'] ?></p></div>
               <span class="status <?= strtolower($job['status']) ?>">
               <div class="job-info"><span>Status: </span><?= $job['status'] ?></div>

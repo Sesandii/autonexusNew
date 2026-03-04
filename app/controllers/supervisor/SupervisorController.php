@@ -20,7 +20,9 @@ class SupervisorController extends Controller
 
         $data = [
             'stats'        => $model->getWorkorderStats($supervisor_id),
-            'appointments' => $model->getTodayAppointments()
+            'appointments' => $model->getTodayAppointments(),
+            'inProgressJobs' => $model->getInProgressJobs($supervisor_id),
+            'weeklyTrend' => $model->getWeeklyAppointments() // ✅ New data for chart
         ];
 
         $this->view('supervisor/dashboard/index', $data);

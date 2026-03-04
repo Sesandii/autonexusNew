@@ -45,6 +45,7 @@
         <div class="form-group">
           <label>Mechanic</label>
           <select name="mechanic_id">
+<<<<<<< HEAD
             <option value="">-- unassigned --</option>
             <?php foreach ($activeMechanics as $m): ?>
               <option value="<?= (int)$m['mechanic_id'] ?>"
@@ -54,6 +55,21 @@
             <?php endforeach; ?>
           </select>
         </div>
+=======
+    <option value="">Select Mechanic</option>
+    <?php foreach ($activeMechanics as $mech): 
+        $code = $mech['mechanic_code'] ?? '';
+        $disabled = ($mechanicLimits[$code] ?? 0) >= 5 ? 'disabled style="opacity:0.5;"' : '';
+        $selected = ($wo['mechanic_id'] ?? null) == $mech['mechanic_id'] ? 'selected' : '';
+    ?>
+        <option value="<?= $mech['mechanic_id'] ?>" <?= $selected ?> <?= $disabled ?>>
+            <?= htmlspecialchars($code . ' (' . ($mech['specialization'] ?? '-') . ')') ?>
+            <?= $disabled ? ' - Max work orders reached' : '' ?>
+        </option>
+    <?php endforeach; ?>
+</select>
+    </div>
+>>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276
 
         
 
@@ -103,7 +119,11 @@
         <div class="form-group">
           <label>Status</label>
           <select name="status">
+<<<<<<< HEAD
             <?php foreach (['open','in_progress','completed'] as $st): ?>
+=======
+            <?php foreach (['open','in_progress','on_hold','completed'] as $st): ?>
+>>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276
               <option value="<?= $st ?>"
                 <?= (($wo['status'] ?? 'open') === $st) ? 'selected' : '' ?>>
                 <?= $st ?>

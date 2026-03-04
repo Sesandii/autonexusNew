@@ -70,20 +70,5 @@ class BookingController extends Controller
         header('Location: ' . $this->baseUrl() . $dest);
     }
 
-    /** API endpoint to get slot availability for a branch/date */
-    public function slots(): void
-    {
-        header('Content-Type: application/json');
-        
-        $branchCode = trim($_GET['branch'] ?? '');
-        $date       = trim($_GET['date'] ?? '');
-
-        if (!$branchCode || !$date) {
-            echo json_encode(['error' => 'Missing branch or date']);
-            return;
-        }
-
-        $availability = (new Appointments())->getSlotAvailability($branchCode, $date);
-        echo json_encode($availability);
-    }
+    
 }

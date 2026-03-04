@@ -2,9 +2,12 @@
 declare(strict_types=1);
 session_start();
 
+<<<<<<< HEAD
 // Clear OPcache (remove this line after it works)
 if (function_exists('opcache_reset')) { opcache_reset(); }
 
+=======
+>>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276
 date_default_timezone_set('Asia/Colombo');   // 👈 add this line
 
 define('BASE_PATH', dirname(__DIR__));              // C:\xampp\htdocs\autonexus
@@ -352,8 +355,11 @@ $router->post('/customer/rate-service', [\app\controllers\customer\FeedbackContr
 
 
 $router->get('/customer/service-history', [\app\controllers\customer\ServiceHistoryController::class, 'index']);
+<<<<<<< HEAD
 $router->get('/customer/service-history/{id}', [\app\controllers\customer\ServiceHistoryController::class, 'show']);
 $router->get('/customer/service-history/{id}/pdf', [\app\controllers\customer\ServiceHistoryController::class, 'downloadPdf']);
+=======
+>>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276
 
 use app\controllers\customer\ServiceReminderController;
 
@@ -384,6 +390,7 @@ $router->post('/customer/profile/vehicle/delete', [\app\controllers\customer\Pro
 
 
 $router->get ('/customer/appointments',          [\app\controllers\customer\AppointmentsController::class, 'index']);
+<<<<<<< HEAD
 $router->get ('/customer/appointments/{id}',     [\app\controllers\customer\AppointmentsController::class, 'show']);
 $router->post('/customer/appointments/cancel',   [\app\controllers\customer\AppointmentsController::class, 'cancel']);   // optional action
 $router->get ('/customer/appointments/list',     [\app\controllers\customer\AppointmentsController::class, 'list']);     // optional JSON for AJAX
@@ -395,6 +402,11 @@ $router->get('/customer/file-complaint',         [FileComplaintController::class
 $router->post('/customer/file-complaint/submit', [FileComplaintController::class, 'submit']);
 $router->get('/customer/complaints/history',     [FileComplaintController::class, 'history']); // optional: view complaint history
 
+=======
+$router->post('/customer/appointments/cancel',   [\app\controllers\customer\AppointmentsController::class, 'cancel']);   // optional action
+$router->get ('/customer/appointments/list',     [\app\controllers\customer\AppointmentsController::class, 'list']);     // optional JSON for AJAX
+
+>>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276
 /** ======================
  *  MANAGER: Dashboard
  *  ====================== */
@@ -513,8 +525,12 @@ $router->post('/mechanic/jobs/update-status', [JobsMVController::class, 'updateS
 
 // ------------------Supervisor copy
 $router->get('/supervisor/dashboard', [\app\controllers\supervisor\SupervisorController::class, 'index']);
+<<<<<<< HEAD
 $router->get('/supervisor/complaints', [\app\controllers\supervisor\ComplaintsController::class, 'index']);
 $router->get('/supervisor/feedbacks', [\app\controllers\supervisor\SupervisorFeedbackController::class, 'index']);
+=======
+$router->get('/supervisor/complaints_feedbacks', [\app\controllers\supervisor\ComplaintsFeedbackController::class, 'index']);
+>>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276
 
 use app\controllers\supervisor\SupervisorProfileController;
 $router->get('/supervisor/profile/edit', [SupervisorProfileController::class, 'edit']);
@@ -522,6 +538,12 @@ $router->post('/supervisor/profile/update', [SupervisorProfileController::class,
 
 use app\controllers\supervisor\VehicleReportsController;
 $router->get('/supervisor/reports', [VehicleReportsController::class, 'index']);
+<<<<<<< HEAD
+=======
+$router->get('/supervisor/reports/daily-jobs', [VehicleReportsController::class, 'dailyJobs']);
+$router->get('/supervisor/reports/indexp', [VehicleReportsController::class, 'indexp']);
+$router->get('/supervisor/reports/mechanic-activity', [VehicleReportsController::class, 'mechanicActivity']);
+>>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276
 $router->get('/supervisor/reports/create', [VehicleReportsController::class, 'create']);
 $router->get('/supervisor/reports/view/{id}', [VehicleReportsController::class,'show']);
 $router->post('/supervisor/reports/store', [VehicleReportsController::class, 'store']);
@@ -530,6 +552,16 @@ $router->post('/supervisor/reports/update/{reportId}', [VehicleReportsController
 $router->post('/supervisor/reports/delete/{id}', [VehicleReportsController::class, 'delete']);
 $router->get('/supervisor/reports/delete-photo/{id}',[VehicleReportsController::class, 'deletePhoto']);
 
+<<<<<<< HEAD
+=======
+use app\controllers\supervisor\CoordinationController;
+$router->get('/supervisor/coordination', [CoordinationController::class, 'index']);
+$router->post('/supervisor/coordination/updateMechanicStatus', [CoordinationController::class, 'updateMechanicStatus']);
+$router->post('/supervisor/coordination/reportIssue', [CoordinationController::class, 'reportIssue']);
+
+
+
+>>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276
 use \app\controllers\supervisor\VehicleHistoryController;
 $router->get('/supervisor/history', [VehicleHistoryController::class, 'index']);
 $router->get('/supervisor/history/show', [VehicleHistoryController::class, 'show']);
@@ -551,7 +583,10 @@ $router->get ('/supervisor/workorders/{id}/edit', [WorkOrdersController::class, 
 $router->post('/supervisor/workorders/{id}',      [WorkOrdersController::class, 'update']);
 $router->post('/supervisor/workorders/{id}/delete', [WorkOrdersController::class, 'destroy']);
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276
 /*
 |--------------------------------------------------------------------------|
 | Normalize request path (works with or without /public in URL)

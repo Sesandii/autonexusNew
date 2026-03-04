@@ -42,11 +42,11 @@ $total = count($items);
     <section class="filters-bar">
       <span class="filters-label">Filter by status:</span>
 
-      <button class="filter-chip" data-filter="all" type="button">
+      <button class="filter-chip active" data-filter="all" type="button">
         <i class="fa-solid fa-layer-group"></i>
         All
       </button>
-      <button class="filter-chip active" data-filter="upcoming" type="button">
+      <button class="filter-chip" data-filter="upcoming" type="button">
         <i class="fa-regular fa-clock"></i>
         Upcoming
       </button>
@@ -112,7 +112,7 @@ $total = count($items);
             </div>
 
             <div class="card-footer">
-              <?php if ($statusClass === 'upcoming' || $statusClass === 'pending'): ?>
+              <?php if ($statusClass === 'upcoming'): ?>
                 <form method="post"
                       action="<?= $base ?>/customer/appointments/cancel"
                       onsubmit="return confirm('Cancel this appointment?');">
@@ -124,14 +124,7 @@ $total = count($items);
                 </form>
 
                 <a class="btn-ghost"
-                   href="<?= $base ?>/customer/appointments/<?= (int)$a['appointment_id'] ?>">
-                  <i class="fa-regular fa-eye"></i>
-                  View details
-                </a>
-
-              <?php elseif ($statusClass === 'ongoing'): ?>
-                <a class="btn-ghost"
-                   href="<?= $base ?>/customer/appointments/<?= (int)$a['appointment_id'] ?>">
+                   href="<?= $base ?>/customer/booking?reschedule=<?= (int)$a['appointment_id'] ?>">
                   <i class="fa-regular fa-eye"></i>
                   View details
                 </a>
@@ -144,14 +137,14 @@ $total = count($items);
                 </a>
 
                 <a class="btn-primary-small"
-                   href="<?= $base ?>/customer/book?rebook=<?= (int)$a['appointment_id'] ?>">
+                   href="<?= $base ?>/customer/booking?rebook=<?= (int)$a['appointment_id'] ?>">
                   <i class="fa-solid fa-rotate-right"></i>
                   Rebook
                 </a>
 
               <?php else: ?>
                 <a class="btn-primary-small"
-                   href="<?= $base ?>/customer/book?rebook=<?= (int)$a['appointment_id'] ?>">
+                   href="<?= $base ?>/customer/booking?rebook=<?= (int)$a['appointment_id'] ?>">
                   <i class="fa-solid fa-rotate-right"></i>
                   Rebook
                 </a>
@@ -169,24 +162,6 @@ $total = count($items);
       const chips = document.querySelectorAll('.filter-chip');
       const cards = document.querySelectorAll('.appointment-card');
 
-      function applyFilter(filter) {
-        cards.forEach(card => {
-          const status = card.getAttribute('data-status');
-          let show = false;
-          
-          if (filter === 'all') {
-            show = true;
-          } else if (filter === 'upcoming') {
-            // "Upcoming" includes upcoming, pending, and ongoing statuses
-            show = ['upcoming', 'pending', 'ongoing'].includes(status);
-          } else {
-            show = (status === filter);
-          }
-          
-          card.style.display = show ? '' : 'none';
-        });
-      }
-
       chips.forEach(chip => {
         chip.addEventListener('click', () => {
           const filter = chip.getAttribute('data-filter');
@@ -194,16 +169,16 @@ $total = count($items);
           chips.forEach(c => c.classList.remove('active'));
           chip.classList.add('active');
 
-          applyFilter(filter);
+          cards.forEach(card => {
+            const status = card.getAttribute('data-status');
+            if (filter === 'all' || status === filter) {
+              card.style.display = '';
+            } else {
+              card.style.display = 'none';
+            }
+          });
         });
       });
-
-      // Apply default filter on page load
-      const activeChip = document.querySelector('.filter-chip.active');
-      if (activeChip) {
-        const defaultFilter = activeChip.getAttribute('data-filter');
-        applyFilter(defaultFilter);
-      }
     });
   </script>
 </body>
