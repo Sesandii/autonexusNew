@@ -27,7 +27,7 @@ $initial = $services ?? [];
                placeholder="Search by service, vehicle plate, or date (YYYY-MM-DD)">
         <select id="statusFilter">
           <option value="All">All Statuses</option>
-          <option value="Pending">Pending</option>
+          <option value="Pending" selected>Pending</option>
           <option value="In Progress">In Progress</option>
           <option value="Completed">Completed</option>
         </select>

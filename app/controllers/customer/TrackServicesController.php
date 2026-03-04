@@ -17,7 +17,7 @@ class TrackServicesController extends Controller
         $userId = (int)($_SESSION['user']['user_id'] ?? 0);
 
         $q      = (string)($_GET['q']      ?? '');
-        $status = (string)($_GET['status'] ?? 'All');
+        $status = (string)($_GET['status'] ?? 'Pending');
 
         $model    = new ServiceTracking();
         $services = $model->searchByCustomer($userId, $q, $status);
@@ -39,7 +39,7 @@ class TrackServicesController extends Controller
 
         $userId = (int)($_SESSION['user']['user_id'] ?? 0);
         $q      = (string)($_GET['q']      ?? '');
-        $status = (string)($_GET['status'] ?? 'All');
+        $status = (string)($_GET['status'] ?? 'Pending');
 
         $model = new ServiceTracking();
         $rows  = $model->searchByCustomer($userId, $q, $status);

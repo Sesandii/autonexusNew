@@ -75,20 +75,8 @@ function initTrackServices() {
   searchInput && searchInput.addEventListener("keyup", (e) => { if (e.key === "Enter") filterServices(); });
   statusFilter && statusFilter.addEventListener("change", filterServices);
 
-  // First paint
-  if (!servicesData.length) {
-    // If no injected data, try to load from endpoint
-    if (typeof LIST_URL === 'string' && LIST_URL) {
-      fetch(LIST_URL).then(r => r.json()).then(j => {
-        servicesData = Array.isArray(j.data) ? j.data : [];
-        renderTable(servicesData);
-      }).catch(() => renderTable([]));
-    } else {
-      renderTable([]);
-    }
-  } else {
-    renderTable(servicesData);
-  }
+  // Apply default filter on page load (this will handle initial data loading and rendering)
+  filterServices();
 }
 
 document.readyState === 'loading'
