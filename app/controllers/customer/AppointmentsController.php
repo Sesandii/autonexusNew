@@ -101,6 +101,7 @@ class AppointmentsController extends Controller
         $model  = new Appointments();
         
         // Get appointment details
+         // Get appointment details
         $appointment = $model->getAppointmentById($userId, $id);
         
         if (!$appointment) {
