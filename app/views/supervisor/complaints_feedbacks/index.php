@@ -41,81 +41,82 @@
   </div>
 
   <!-- Complaints Section -->
-  <section class="data-section" id="complaints">
-    <div class="complaints-grid">
-      <?php if (!empty($complaints)): ?>
-        <?php foreach ($complaints as $c): ?>
-          <div class="complaint-row"
-               data-date="<?= htmlspecialchars($c['complaint_date']); ?>"
-               data-status="<?= strtolower($c['status']); ?>"
-               data-priority="<?= strtolower($c['priority']); ?>">
+<section class="data-section" id="complaints">
+  <div class="complaints-grid">
+    <?php if (!empty($complaints)): ?>
+      <?php foreach ($complaints as $c): ?>
+        <div class="complaint-row"
+             data-date="<?= date('Y-m-d', strtotime($c['created_at'])); ?>"
+             data-status="<?= strtolower($c['status']); ?>"
+             data-priority="<?= strtolower($c['priority']); ?>">
 
-            <div class="complaint-header">
-              <div>
-                <h3><?= htmlspecialchars($c['customer_name']); ?></h3>
-                <p class="meta">
-                  <strong>Vehicle:</strong> <?= htmlspecialchars($c['vehicle']); ?> (<?= htmlspecialchars($c['vehicle_number']); ?>)
-                  &nbsp; | &nbsp;
-                  <strong>Date:</strong> <?= htmlspecialchars($c['complaint_date']); ?> <?= htmlspecialchars($c['complaint_time']); ?>
-                </p>
-              </div>
-              <span class="priority <?= strtolower($c['priority']); ?>">
-                <?= htmlspecialchars($c['priority']); ?>
-              </span>
+          <div class="complaint-header">
+            <div>
+              <h3><?= htmlspecialchars($c['customer_name']); ?></h3>
+              <p class="meta">
+                <strong>Vehicle:</strong> <?= htmlspecialchars($c['vehicle']); ?>
+                (<?= htmlspecialchars($c['vehicle_number']); ?>)
+                &nbsp; | &nbsp;
+                <strong>Date:</strong> <?= date('Y-m-d H:i', strtotime($c['created_at'])); ?>
+              </p>
             </div>
-
-            <p class="description"><?= htmlspecialchars($c['description']); ?></p>
-
-            <div class="complaint-footer">
-              <p><strong>Status:</strong> <span class="status"><?= htmlspecialchars($c['status']); ?></span></p>
-              <p><strong>Assigned To:</strong> <?= htmlspecialchars($c['assigned_to']); ?></p>
-            </div>
+            <span class="priority <?= strtolower($c['priority']); ?>">
+              <?= htmlspecialchars($c['priority']); ?>
+            </span>
           </div>
-        <?php endforeach; ?>
-      <?php else: ?>
-        <p class="no-data">No complaints found.</p>
-      <?php endif; ?>
-    </div>
-  </section>
 
-  <!-- Feedbacks Section -->
-  <section class="data-section hidden" id="feedbacks">
-    <div id="feedback-filters" class="filter-bar">
-      <input type="text" placeholder="Search by customer, service, comment..." class="search" id="searchFeedback"/>
-      <select id="ratingFilter">
-        <option value="">All Ratings</option>
-        <option value="5">5 ★</option>
-        <option value="4">4 ★</option>
-        <option value="3">3 ★</option>
-        <option value="2">2 ★</option>
-        <option value="1">1 ★</option>
-      </select>
-      <input type="date" id="dateFeedback"/>
-      <button type="button" id="resetFeedback" class="reset-btn">Reset</button>
-    </div>
+          <p class="description"><?= htmlspecialchars($c['description']); ?></p>
 
-    <div class="feedback-cards">
-      <?php if (!empty($feedbacks)): ?>
-        <?php foreach ($feedbacks as $f): ?>
-          <div class="card"
-               data-rating="<?= (int)$f['rating'] ?>"
-               data-date="<?= date('Y-m-d', strtotime($f['created_at'])) ?>">
-
-            <h3><?= htmlspecialchars($f['customer_name']) ?>
-              <span class="rating <?= ($f['rating'] >= 4 ? 'good' : ($f['rating'] >= 2 ? 'avg' : 'bad')) ?>">
-                <?= htmlspecialchars($f['rating']) ?>/5 ★
-              </span>
-            </h3>
-            <p><strong>Service:</strong> <?= htmlspecialchars($f['service_name']) ?></p>
-            <p><strong>Date:</strong> <?= htmlspecialchars($f['created_at']) ?></p>
-            <p><?= htmlspecialchars($f['comment']) ?></p>
+          <div class="complaint-footer">
+            <p><strong>Status:</strong> <span class="status"><?= htmlspecialchars($c['status']); ?></span></p>
+            <p><strong>Assigned To:</strong> <?= htmlspecialchars($c['assigned_user_name'] ?? 'Unassigned'); ?></p>
           </div>
-        <?php endforeach; ?>
-      <?php else: ?>
-        <p>No feedbacks found.</p>
-      <?php endif; ?>
-    </div>
-  </section>
+        </div>
+      <?php endforeach; ?>
+    <?php else: ?>
+      <p class="no-data">No complaints found.</p>
+    <?php endif; ?>
+  </div>
+</section>
+
+<!-- Feedbacks Section -->
+<section class="data-section hidden" id="feedbacks">
+  <div id="feedback-filters" class="filter-bar">
+    <input type="text" placeholder="Search by customer, service, comment..." class="search" id="searchFeedback"/>
+    <select id="ratingFilter">
+      <option value="">All Ratings</option>
+      <option value="5">5 ★</option>
+      <option value="4">4 ★</option>
+      <option value="3">3 ★</option>
+      <option value="2">2 ★</option>
+      <option value="1">1 ★</option>
+    </select>
+    <input type="date" id="dateFeedback"/>
+    <button type="button" id="resetFeedback" class="reset-btn">Reset</button>
+  </div>
+
+  <div class="feedback-cards">
+    <?php if (!empty($feedbacks)): ?>
+      <?php foreach ($feedbacks as $f): ?>
+        <div class="card"
+             data-rating="<?= (int)$f['rating'] ?>"
+             data-date="<?= date('Y-m-d', strtotime($f['created_at'])) ?>">
+
+          <h3><?= htmlspecialchars($f['customer_name']); ?>
+            <span class="rating <?= ($f['rating'] >= 4 ? 'good' : ($f['rating'] >= 2 ? 'avg' : 'bad')) ?>">
+              <?= htmlspecialchars($f['rating']); ?>/5 ★
+            </span>
+          </h3>
+          <p><strong>Service:</strong> <?= htmlspecialchars($f['service_name'] ?? 'N/A'); ?></p>
+          <p><strong>Date:</strong> <?= date('Y-m-d H:i', strtotime($f['created_at'])); ?></p>
+          <p><?= htmlspecialchars($f['comment']); ?></p>
+        </div>
+      <?php endforeach; ?>
+    <?php else: ?>
+      <p>No feedbacks found.</p>
+    <?php endif; ?>
+  </div>
+</section>
 
 </main>
 

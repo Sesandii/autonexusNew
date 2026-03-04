@@ -377,7 +377,7 @@ button.view-btn:hover {
 }
 
 .toggle-btn.active {
-  background: #2563eb;
+  background: #000000;
   color: white;
 }
 

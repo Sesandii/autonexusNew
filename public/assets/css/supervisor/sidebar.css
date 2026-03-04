@@ -1,108 +1,292 @@
+/* Sidebar Container */
+.sidebar {
+  background-color: #000;
+  color: white;
+  width: 50px; /* collapsed width */
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  transition: width 0.5s ease;
+  overflow: hidden;
+  font-size: 13px;
+  padding: 10px 0;
+}
+
+/* Expand on hover */
+.sidebar:hover {
+  width: 170px;
+}
+
+/* Top Section */
+.top-section {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;   /* 🔥 This pushes bottom section down properly */
+}
+
+/* Logo */
 .logo-container {
-    height: 90px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    margin-bottom: 10px;
-  }
-  
-  /* Default (collapsed) */
-  .logo-collapsed {
-    width: 40px;
-    display: block;
-  }
-  
-  .logo-expanded {
-    display: none;
-    width: 170px;
-      height: 80px;
-  }
-  
-  /* When sidebar expands */
-  .sidebar:hover .logo-collapsed {
-    display: none;
-  }
-  
-  .sidebar:hover .logo-expanded {
-    display: block;
-  }
-  
-  
-  .sidebar {
-    background-color: #000;
-    color: white;
-    padding: 10px;
-    width: 60px;                 /* collapsed width */
-    transition: width 0.5s ease;
-    overflow: hidden;
-    font-size: 13px;
-  }
-  
-  .sidebar h2 {
-    margin-bottom: 30px;
-    font-size: 20px;
-    text-align: center;
-  }
-  
-  .sidebar a {
-    list-style:none;
-  }
-  
-  .sidebar a {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 12px 10px;
-    margin-bottom: 10px;
-    cursor: pointer;
-    border-radius: 6px;
-    color: #d1d5db;
-    text-decoration:none;
-  }
-  
-  .sidebar a img {
-    width: 20px;
-    height: 20px;
-  }
-  
-  .sidebar a.nav {
-    background-color: #1F2937;
-    color: #fff;
-  }
-  
-  .sidebar a:hover {
-    background-color: #1F2937;
-  }
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  margin-bottom: 10px;
+}
 
-  .sidebar:hover {
-    width: 180px;
-  }
-  
-  
-  /* Brand text */
-  .brand-text {
-    opacity: 0;
-    white-space: nowrap;
-    transition: opacity 0.5s ease;
-  }
-  
-  .sidebar:hover .brand-text {
-    opacity: 1;
-  }
-  
-  /* Link text hidden by default */
-  .sidebar .link-text {
-    opacity: 0;
-    white-space: nowrap;
-    transition: opacity 0.5s ease;
-  }
-  
-  
-  .sidebar:hover .link-text {
-    opacity: 1;
-  }
-  
+/* Collapsed logo */
+.logo-collapsed {
+  width: 35px;
+  display: block;
+}
 
-  
-  
+/* Expanded logo */
+.logo-expanded {
+  display: none;
+  width: 150px;
+  height: 70px;
+}
+
+/* Switch logo on hover */
+.sidebar:hover .logo-collapsed {
+  display: none;
+}
+
+.sidebar:hover .logo-expanded {
+  display: block;
+}
+
+/* Brand text */
+.brand-text {
+  opacity: 0;
+  text-align: center;
+  transition: opacity 0.5s ease;
+  margin-bottom: 20px;   /* 🔥 adds space */
+}
+.sidebar:hover .brand-text {
+  opacity: 1;
+}
+
+/* Navigation Links */
+.sidebar a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 10px;
+  margin-bottom: 5px;
+  cursor: pointer;
+  border-radius: 6px;
+  color: #d1d5db;
+  text-decoration: none;
+  transition: background 0.3s;
+  width: 100%;              
+
+}
+
+.sidebar a img {
+  width: 17px;
+  height: 17px;
+}
+
+/* Hover effect */
+.sidebar a:hover {
+  background-color: #1F2937;
+}
+
+/* Active link */
+.sidebar-menu li.active a {
+  background-color: #2c3e50;
+  color: #fff;
+  font-weight: 600;
+}
+
+/* Hide link text when collapsed */
+.sidebar .link-text {
+  opacity: 0;
+  white-space: nowrap;
+  transition: opacity 0.5s ease;
+}
+
+.sidebar:hover .link-text {
+  opacity: 1;
+}
+
+/* Sidebar Bottom Links - Full Highlight & Alignment */
+.sidebar-bottom a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 10px;      /* same as top links */
+  margin-bottom: 5px;
+  cursor: pointer;
+  border-radius: 6px;
+  color: #d1d5db;
+  text-decoration: none;
+  transition: background 0.3s;
+  width: 100%;              /* ensures full width highlight */
+}
+
+.sidebar-bottom a:hover {
+  background-color: #1F2937; /* same hover effect as top links */
+}
+
+/* Icons */
+.sidebar-bottom img {
+  width: 17px;
+  height: 17px;
+}
+
+/* Hide text when collapsed */
+.sidebar-bottom a span {
+  opacity: 0;
+  white-space: nowrap;
+  transition: opacity 0.5s ease;
+}
+
+/* Show text on hover/expanded */
+.sidebar:hover .sidebar-bottom a span {
+  opacity: 1;
+}
+
+/* Ensure alignment matches top links */
+.sidebar-bottom {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;  /* aligns left like top links */
+  padding: 15px 1px;
+}
+
+/* User Profile */
+.user-profile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.user-img {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* Hide user info when collapsed */
+.user-info {
+  opacity: 0;
+  white-space: nowrap;
+  transition: opacity 0.5s ease;
+  display: flex;
+  flex-direction: column;
+  font-size: 12px;
+}
+
+.sidebar:hover .user-info {
+  opacity: 1;
+}
+
+.user-info span {
+  color: #fff;
+  font-weight: bold;
+}
+
+.user-info a {
+  color: #9ca3af;
+  text-decoration: none;
+  font-size: 11px;
+}
+
+.user-info a:hover {
+  color: #fff;
+}
+
+/* Modal overlay */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.5); /* semi-transparent background */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  transition: opacity 0.3s ease;
+}
+
+/* Hidden by default */
+.modal.hidden {
+  display: none;
+}
+
+/* Modal box */
+.modal-content {
+  background-color: #1F2937; /* match sidebar theme */
+  color: #fff;
+  padding: 20px 25px;
+  border-radius: 10px;
+  text-align: center;
+  width: 300px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+/* Buttons container */
+.modal-buttons {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 20px;
+}
+
+/* Buttons */
+.modal-buttons .btn {
+  padding: 8px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  border: none;
+  font-weight: bold;
+  transition: background 0.2s;
+}
+
+/* Cancel button */
+.btn-cancel {
+  background-color: #9ca3af;
+  color: #000;
+}
+
+.btn-cancel:hover {
+  background-color: #d1d5db;
+}
+
+/* Confirm button */
+.btn-confirm {
+  background-color: #ef4444; /* red logout */
+  color: #fff;
+}
+
+.btn-confirm:hover {
+  background-color: #f87171;
+}
+
+/* Default link */
+.nav-links a {
+  display: flex;
+  align-items: center;
+  padding: 12px 15px;
+  border-radius: 8px;
+  transition: 0.3s ease;
+}
+
+/* Active link (IMPORTANT) */
+.nav-links a.active {
+  background-color: #2c3e50;
+  color: #fff;
+}
+
+/* Keep icon white when active */
+.nav-links a.active img {
+  filter: brightness(0) invert(1);
+}
+
+.sidebar.collapsed .nav-links a.active {
+  background-color: #2c3e50;
+}

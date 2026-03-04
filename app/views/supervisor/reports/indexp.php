@@ -15,7 +15,7 @@
 
   <div class="page-header">
     <div>
-      <h1>Job Reports</h1>
+      <h1>Vehicle Reports</h1>
       <p class="subtitle">Reports created for completed work orders.</p>
     </div>
       <a class="btn primary" href="<?= $base ?>/supervisor/reports/create">
@@ -103,9 +103,9 @@
     </a>
 
     <form method="post"
-          action="<?= rtrim(BASE_URL, '/') ?>/supervisor/reports/delete/<?= $r['report_id'] ?>"
-          style="display:inline"
-          onsubmit="return confirm('Delete this report?')">
+      action="<?= rtrim(BASE_URL, '/') ?>/supervisor/reports/delete/<?= $r['report_id'] ?>"
+      class="delete-form"
+      style="display:inline">
         <button type="submit" class="btn small danger">
             Delete
         </button>
@@ -124,6 +124,18 @@
     </tbody>
   </table>
 
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div id="deleteModal" class="modal-overlay">
+  <div class="modal-box">
+    <h3>Confirm Deletion</h3>
+    <p>Are you sure you want to delete this report?</p>
+    <div class="modal-actions">
+      <button id="cancelDelete" class="btn small">Cancel</button>
+      <button id="confirmDelete" class="btn small danger">Delete</button>
+    </div>
+  </div>
 </div>
 <script>
 document.addEventListener("DOMContentLoaded", function () {
@@ -162,6 +174,27 @@ document.addEventListener("DOMContentLoaded", function () {
     statusFilter.addEventListener("change", applyFilters);
     mechanicFilter.addEventListener("change", applyFilters);
     dateFilter.addEventListener("change", applyFilters);
+});
+
+let formToDelete = null;
+
+document.querySelectorAll('.delete-form').forEach(form => {
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        formToDelete = this;
+        document.getElementById('deleteModal').style.display = 'flex';
+    });
+});
+
+document.getElementById('cancelDelete').addEventListener('click', function() {
+    document.getElementById('deleteModal').style.display = 'none';
+    formToDelete = null;
+});
+
+document.getElementById('confirmDelete').addEventListener('click', function() {
+    if (formToDelete) {
+        formToDelete.submit();
+    }
 });
 </script>
 

@@ -58,8 +58,7 @@
      data-service="<?= strtolower($job['service_name']) ?>"
      data-mechanic="<?= strtolower($job['mechanic_code']) ?>"
      data-status="<?= strtolower($job['status']) ?>">
-              <h3>Work Order <?= $job['work_order_id'] ?></h3>
-              <div class="job-info"><span>Service:</span> <?= $job['service_name'] ?></div>
+              <h3><?= $job['service_name'] ?> - <?= $job['vehicle'] ?></h3>
               <div class="job-info"><span>Mechanic:</span> <?= $job['mechanic_code'] ?></p></div>
               <span class="status <?= strtolower($job['status']) ?>">
               <div class="job-info"><span>Status: </span><?= $job['status'] ?></div>

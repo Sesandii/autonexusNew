@@ -39,24 +39,14 @@
      data-remaining="<?= $current['paused_remaining_seconds'] ?? '' ?>">
 
       <h3 class="job-title">
-        Work Order <?= htmlspecialchars($current['work_order_id']) ?>
+      <?= htmlspecialchars($current['name']) ?> - <?= htmlspecialchars($current['make'] . ' ' . $current['model']) ?>
       </h3>
-
-      <div class="job-info">
-        <span>Service</span>
-        <?= htmlspecialchars($current['name']) ?>
-      </div>
 
       <div class="job-info">
         <span>Customer</span>
         <?= htmlspecialchars($current['first_name'] . ' ' . $current['last_name']) ?>
       </div>
-
-      <div class="job-info">
-        <span>Vehicle</span>
-        <?= htmlspecialchars($current['make'] . ' ' . $current['model']) ?>
-      </div>
-
+      
       <div class="job-info timer">
         <span>Time Remaining</span>
         <strong class="job-timer">--:--:--</strong>
