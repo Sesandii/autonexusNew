@@ -345,11 +345,13 @@ $router->get('/customer/book/slots',  [BookingController::class, 'slots']);
 
 $router->get('/customer/rate-service', [\app\controllers\customer\FeedbackController::class, 'index']);
 $router->post('/customer/rate-service', [\app\controllers\customer\FeedbackController::class, 'store']); // for saving reviews later
+$router->get('/customer/reviews', [\app\controllers\customer\FeedbackController::class, 'index']);
 
 
 
 $router->get('/customer/service-history', [\app\controllers\customer\ServiceHistoryController::class, 'index']);
-
+$router->get('/customer/service-history/{id}', [\app\controllers\customer\ServiceHistoryController::class, 'show']);
+$router->get('/customer/service-history/{id}/pdf', [\app\controllers\customer\ServiceHistoryController::class, 'downloadPdf']);
 use app\controllers\customer\ServiceReminderController;
 
 $router->get('/customer/service-reminder', [ServiceReminderController::class, 'index']);
@@ -379,103 +381,124 @@ $router->post('/customer/profile/vehicle/delete', [\app\controllers\customer\Pro
 
 
 $router->get ('/customer/appointments',          [\app\controllers\customer\AppointmentsController::class, 'index']);
+
+$router->get ('/customer/appointments/{id}',     [\app\controllers\customer\AppointmentsController::class, 'show']);
 $router->post('/customer/appointments/cancel',   [\app\controllers\customer\AppointmentsController::class, 'cancel']);   // optional action
 $router->get ('/customer/appointments/list',     [\app\controllers\customer\AppointmentsController::class, 'list']);     // optional JSON for AJAX
 
-/** ======================
- *  MANAGER: Dashboard
- *  ====================== */
-$router->get('/manager/dashboard', [\app\controllers\manager\DashboardController::class, 'index']);
+// Customer - File Complaint
+use app\controllers\customer\FileComplaintController;
 
-/** ======================
- *  MANAGER: Services & Packages (list)
- *  ====================== */
-$router->get('/manager/services', [\app\controllers\manager\ServicesController::class, 'index']);
-
-/** ======================
- *  MANAGER: Team Performance
- *  ====================== */
-$router->get('/manager/performance', [\app\controllers\manager\PerformanceController::class, 'index']);
-
-/** ======================
- *  MANAGER: Team Schedule
- *  ====================== */
-$router->get('/manager/schedule', [\app\controllers\manager\ScheduleController::class, 'index']);
-
-/** ======================
- *  MANAGER: Customer Profiles
- *  ====================== */
-$router->get('/manager/customers', [\app\controllers\manager\CustomersController::class, 'index']);
-
-/** ======================
- *  MANAGER: Vehicle History (by customer id)
- *  ====================== */
-$router->get('/manager/customers/{id}/history', [\app\controllers\manager\CustomerHistoryController::class, 'index']);
-
-/** ======================
- *  MANAGER: Complaints Management
- *  ====================== */
-$router->get('/manager/complaints', [\app\controllers\manager\ComplaintsController::class, 'index']);
-
-/** ======================
- *  MANAGER: Reports
- *  ====================== */
-$router->get('/manager/reports', [\app\controllers\manager\ReportsController::class, 'index']);
-
-/** ======================
- *  MANAGER: Appointments
- *  ====================== */
-$router->get('/manager/appointments', [\app\controllers\manager\AppointmentsController::class, 'index']);
-
-/** ======================
- *  MANAGER: Service History (by branch)
- *  ====================== */
-$router->get('/manager/servicehistory', [\app\controllers\manager\ServiceHistoryController::class, 'index']);
+$router->get('/customer/file-complaint',         [FileComplaintController::class, 'index']);
+$router->post('/customer/file-complaint/submit', [FileComplaintController::class, 'submit']);
+$router->get('/customer/complaints/history',     [FileComplaintController::class, 'history']); // optional: view complaint history
 
 
-/*Receptionist*/
-
-use app\controllers\Receptionist\ComplaintController;
-
-// Always put static routes first
-$router->get('/receptionist/complaints', [ComplaintController::class, 'index']);
-$router->get('/receptionist/complaints/new', [ComplaintController::class, 'create']);
-$router->post('/receptionist/complaints', [ComplaintController::class, 'store']);
-$router->get('/receptionist/complaints/history/{customer_name}', [ComplaintController::class, 'history']);
-$router->get('/receptionist/complaints/{id}', [ComplaintController::class, 'show']);
-$router->get('/receptionist/complaints/edit/{id}', [ComplaintController::class, 'edit']);
-$router->post('/receptionist/complaints/update/{id}', [ComplaintController::class, 'update']);
-$router->get('/receptionist/complaints/delete/{id}', [\app\controllers\Receptionist\ComplaintController::class, 'delete']);
+$router->post('/customer/appointments/cancel',   [\app\controllers\customer\AppointmentsController::class, 'cancel']);   // optional action
+$router->get ('/customer/appointments/list',     [\app\controllers\customer\AppointmentsController::class, 'list']);     // optional JSON for AJAX
 
 
+//manager 
+//
+
+//manager: Dashboard
+$router->get('/manager/dashboard', [app\controllers\Manager\DashboardController::class, 'index']);
+
+//Manager: Appointments
+$router->get('/manager/appointments', [app\controllers\Manager\AppointmentsController::class, 'index']);
+$router->get('/manager/appointments/new',         [app\controllers\Manager\AppointmentsController::class, 'create']);
+$router->get('/manager/appointments/day', [app\controllers\Manager\AppointmentsController::class, 'day']);
+$router->post('/manager/appointments/save',       [app\controllers\Manager\AppointmentsController::class, 'save']);
+$router->get('/manager/appointments/getCustomer', [app\controllers\Manager\AppointmentsController::class, 'getCustomer']);
+$router->get('/manager/appointments/getServices', [app\controllers\Manager\AppointmentsController::class, 'getServices']);
+$router->get('/manager/appointments/edit/{id}', [app\controllers\Manager\AppointmentsController::class, 'edit']);
+
+//Manager: Services
+$router->get('/manager/services',        [app\controllers\Manager\ServicesController::class, 'index']); 
+$router->get('/manager/services/create', [app\controllers\Manager\ServicesController::class,'create']);
+$router->post('/manager/services/store', [app\controllers\Manager\ServicesController::class,'store']);
+
+//Manager: Billing
+$router->get('/manager/billing', [app\controllers\Manager\BillingController::class, 'invoices']);
+$router->get('/manager/billing/downloadInvoice/{id}',[app\controllers\Manager\BillingController::class, 'downloadInvoice']);
+
+//Manager: Complaints
+$router->get('/manager/complaints',                         [app\controllers\Manager\ComplaintController::class, 'index']);
+$router->get('/manager/complaints/{complaintId}',           [app\controllers\Manager\ComplaintController::class, 'show']);
+
+//Manager: Customer Profile
+$router->get('/manager/customers',                      [app\controllers\Manager\CustomerController::class, 'index']);
+$router->get('/manager/customers/{customerId}',         [app\controllers\Manager\CustomerController::class, 'show']);
+
+// Manager: Team Schedule
+$router->get('/manager/schedule', [app\controllers\Manager\ScheduleController::class,'index']);
+$router->get('/manager/schedule/day', [app\controllers\Manager\ScheduleController::class,'day']);
+$router->get('/manager/schedule/member', [app\controllers\Manager\ScheduleController::class, 'member']);
+
+// Manager: Peformance
+$router->get('/manager/performance', [\app\controllers\Manager\PerformanceController::class,'index']);
+$router->get('/manager/performance/stats', [\app\controllers\Manager\PerformanceController::class,'stats']);
+$router->get('/manager/performance/team', [\app\controllers\Manager\PerformanceController::class,'team']);
+$router->get('/manager/performance/jobsByDay', [\app\controllers\Manager\PerformanceController::class,'jobsByDay']);
+$router->get('/manager/performance/mechanics', [\app\controllers\Manager\PerformanceController::class, 'mechanics']);
+$router->get('/manager/performance/viewMechanic',[\app\controllers\Manager\PerformanceController::class, 'viewMechanic']);
+
+// manager: reports
+
+$router->get('/manager/reports', [app\controllers\Manager\ReportController::class, 'index']);
+$router->get('/manager/reports/getFilters', [app\controllers\Manager\ReportController::class, 'getFilters']);
+$router->post('/manager/reports/generate', [app\controllers\Manager\ReportController::class, 'generate']);
+$router->post('/manager/reports/result', [app\controllers\Manager\ReportController::class, 'result']);
+
+//Receptionist: Complaints
+
+$router->get('/receptionist/complaints',                         [app\controllers\Receptionist\ComplaintController::class, 'index']);
+$router->get('/receptionist/complaints/new',                     [app\controllers\Receptionist\ComplaintController::class, 'create']);
+$router->get('/receptionist/complaints/fetchByPhone',            [app\controllers\Receptionist\ComplaintController::class, 'fetchByPhone']); // important: before dynamic
+$router->post('/receptionist/complaints',                        [app\controllers\Receptionist\ComplaintController::class, 'store']);
+$router->get('/receptionist/complaints/{complaintId}',           [app\controllers\Receptionist\ComplaintController::class, 'show']);
+$router->get('/receptionist/complaints/history/{customer_name}', [app\controllers\Receptionist\ComplaintController::class, 'history']);
+$router->get('/receptionist/complaints/edit/{id}',               [app\controllers\Receptionist\ComplaintController::class, 'edit']);
+$router->post('/receptionist/complaints/update/{id}',            [app\controllers\Receptionist\ComplaintController::class, 'update']);
+$router->get('/receptionist/complaints/delete/{id}',             [app\controllers\Receptionist\ComplaintController::class, 'delete']);
+
+//Receptionist: Appointments
+
+$router->get('/receptionist/appointments',             [app\controllers\Receptionist\AppointmentsController::class, 'index']);
+$router->get('/receptionist/appointments/new',         [app\controllers\Receptionist\AppointmentsController::class, 'create']);
+$router->get('/receptionist/appointments/day',         [app\controllers\Receptionist\AppointmentsController::class, 'day']);
+$router->post('/receptionist/appointments/save',       [app\controllers\Receptionist\AppointmentsController::class, 'save']);
+$router->get('/receptionist/appointments/getCustomer', [app\controllers\Receptionist\AppointmentsController::class, 'getCustomer']);
+$router->get('/receptionist/appointments/getServices', [app\controllers\Receptionist\AppointmentsController::class, 'getServices']);
+
+$router->get('/receptionist/appointments/edit/{id}', [app\controllers\Receptionist\AppointmentsController::class, 'edit']);
 
 
 
-$router->get('/receptionist/appointments', [app\controllers\Receptionist\AppointmentsController::class, 'index']);
-$router->get('/receptionist/appointments/new', [AppointmentsController::class, 'create']);
-$router->get('/receptionist/appointments/day', [AppointmentsController::class, 'day']); // Route to show appointments for a specific day
-$router->get('/receptionist/appointments/edit/{id}', [AppointmentsController::class, 'edit']);// Show update form
+//Receptionist: Customer Profiles
 
-use app\controllers\Receptionist\CustomerProfileController;
+$router->get('/receptionist/customers',                      [app\controllers\Receptionist\CustomerController::class, 'index']); // Customer Profiles list
+$router->get('/receptionist/customers/new',                  [app\controllers\Receptionist\CustomerController::class, 'create']); // Show new customer form
+$router->post('/receptionist/customers/store',               [app\controllers\Receptionist\CustomerController::class, 'store']);// store customer detail
+$router->get('/receptionist/customers/{customerId}',         [app\controllers\Receptionist\CustomerController::class, 'show']);
+$router->get('/receptionist/customers/edit/{customerId}',    [app\controllers\Receptionist\CustomerController::class, 'edit']);
+$router->post('/receptionist/customers/update/{customerId}', [app\controllers\Receptionist\CustomerController::class, 'updateCustomer']);
 
-// $router->get('/receptionist/customers', [CustomerProfileController::class, 'index']); // Customer Profiles list
-// $router->get('/receptionist/customers/new', [CustomerProfileController::class, 'create']); // Show new customer form
-// $router->get('/receptionist/customers/details', [CustomerProfileController::class, 'show']);
+//Receptionist: Dashboard
 
-// use app\controllers\Receptionist\ReceptionistD;
+$router->get('/receptionist/dashboard', [app\controllers\Receptionist\ReceptionistD::class, 'index']);
+//Receptionist: Services
 
-// $router->get('/receptionist/dashboard', [app\controllers\Receptionist\ReceptionistD::class, 'index']);
+$router->get('/receptionist/service', [app\controllers\Receptionist\ServiceController::class, 'index']);
 
-// use app\controllers\Receptionist\ReceptionistService;
+//Receptionist: Billing
 
-// $router->get('/receptionist/service', [app\controllers\Receptionist\ReceptionistService::class, 'index']);
-
-use app\controllers\Receptionist\BillingController;
-
-$router->get('/receptionist/billing', [app\controllers\Receptionist\BillingController::class, 'index']); // Receptionist Billing & Payments
-$router->get('/receptionist/billing/create', [BillingController::class, 'create']);
-
-
+$router->get('/receptionist/billing', [app\controllers\Receptionist\BillingController::class, 'invoices']);   // Index page
+$router->get('/receptionist/billing/create',          [app\controllers\Receptionist\BillingController::class, 'create']);
+$router->get('/receptionist/billing/invoice/{id}',    [app\controllers\Receptionist\BillingController::class, 'preview']);
+$router->post('/receptionist/billing/invoice/{id}',   [app\controllers\Receptionist\BillingController::class, 'store']); // Invoice creation page
+$router->get('/receptionist/billing/downloadInvoice/{id}',[app\controllers\Receptionist\BillingController::class, 'downloadInvoice']);
+$router->get('/receptionist/billing/paid',[app\controllers\Receptionist\BillingController::class, 'paidInvoices']);
 
 
 

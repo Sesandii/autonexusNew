@@ -10,7 +10,7 @@ function renderTable(data) {
   if (!data.length) {
     tbody.innerHTML = `
       <tr>
-        <td colspan="4" style="text-align:center; padding:40px; color:#6B7280;">
+        <td colspan="5" style="text-align:center; padding:40px; color:#6B7280;">
           No services found matching your criteria
         </td>
       </tr>
@@ -20,12 +20,13 @@ function renderTable(data) {
 
   data.forEach(service => {
     const tr = document.createElement("tr");
-    const statusClass = (service.status || '').replace(/\s+/g, '.');
+    const statusClass = (service.status || '').replace(/\s+/g, '-').toLowerCase();
     tr.innerHTML = `
       <td>${service.type || ''}</td>
+      <td>${service.vehicle || ''}</td>
       <td>${service.dateBooked || ''}</td>
       <td><span class="status ${statusClass}">${service.status || ''}</span></td>
-      <td>${service.estCompletion || ''}</td>
+      <td>${service.estCompletion || '-'}</td>
     `;
     tbody.appendChild(tr);
   });
@@ -55,6 +56,7 @@ async function filterServices() {
   const filtered = servicesData.filter(s => {
     const matchesSearch =
       (s.type || '').toLowerCase().includes(q.toLowerCase()) ||
+      (s.vehicle || '').toLowerCase().includes(q.toLowerCase()) ||
       (s.dateBooked || '').includes(q.toLowerCase());
     const matchesStatus = (status === 'All') || (s.status === status);
     return matchesSearch && matchesStatus;

@@ -116,7 +116,7 @@ class WorkOrder
                 v.model,
                 v.year,
                 v.license_plate,
-                v.mileage,
+                v.current_mileage,
                 v.color,
                 v.vin,
                 u.first_name,
