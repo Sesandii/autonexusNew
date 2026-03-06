@@ -1,0 +1,28 @@
+# Debug logs
+debug.log
+*.log
+
+# Vendor directory
+/vendor/
+
+# Environment files
+.env
+.env.local
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Cache
+*.cache
+/cache/
+
+# Compiled files
+*.compiled

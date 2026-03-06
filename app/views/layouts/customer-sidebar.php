@@ -30,8 +30,16 @@ function isActive($path, $current) { return strpos($current, $path) === 0 ? ' cl
     <!-- Service Reminder -->
     <li><a<?= isActive('/customer/service-reminder', $currentPath) ?> href="<?= $base ?>/customer/service-reminder"><i class="fa-solid fa-bell"></i> Service Reminder</a></li>
 
+<<<<<<< HEAD
+    <!-- Rate Service -->
+    <li><a<?= isActive('/customer/rate-service', $currentPath) ?> href="<?= $base ?>/customer/rate-service"><i class="fa-solid fa-star"></i> Rate Service</a></li>
+
+    <!-- File a Complaint -->
+    <li><a<?= isActive('/customer/file-complaint', $currentPath) ?> href="<?= $base ?>/customer/file-complaint"><i class="fa-solid fa-triangle-exclamation"></i> File a Complaint</a></li>
+=======
     <!-- Reviews / Feedback -->
     <li><a<?= isActive('/customer/rate-service', $currentPath) ?> href="<?= $base ?>/customer/rate-service"><i class="fa-regular fa-message"></i> Reviews</a></li>
+>>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276
 
     <!-- File a Complaint -->
     <li><a<?= isActive('/customer/file-complaint', $currentPath) ?> href="<?= $base ?>/customer/file-complaint"><i class="fa-solid fa-triangle-exclamation"></i> File a Complaint</a></li>

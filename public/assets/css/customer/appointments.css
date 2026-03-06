@@ -173,6 +173,10 @@ body {
   background: var(--brand-red);
 }
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> 9f3bba9761a3aa1448bff2f28e7a96e5bf60ec85
 .appointment-card.pending::before {
   background: #ef4444;
 }
@@ -181,6 +185,11 @@ body {
   background: #f97316;
 }
 
+<<<<<<< HEAD
+=======
+=======
+>>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276
+>>>>>>> 9f3bba9761a3aa1448bff2f28e7a96e5bf60ec85
 .appointment-card.completed::before {
   background: #059669;
 }
@@ -246,6 +255,10 @@ body {
   color: #fff;
 }
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> 9f3bba9761a3aa1448bff2f28e7a96e5bf60ec85
 .appointment-card.pending .status {
   background: #ef4444;
   color: #fff;
@@ -256,6 +269,11 @@ body {
   color: #fff;
 }
 
+<<<<<<< HEAD
+=======
+=======
+>>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276
+>>>>>>> 9f3bba9761a3aa1448bff2f28e7a96e5bf60ec85
 .appointment-card.completed .status {
   background: #059669;
   color: #fff;

@@ -23,6 +23,67 @@
     </div>
   </div>
 
+<<<<<<< HEAD
+  <div class="form-card">
+    <dl class="details">
+
+    <dt>Workorder ID</dt>
+    <dd><?= htmlspecialchars($wo['work_order_id']) ?></dd>
+
+      <dt>Appointment ID</dt>
+      <dd><?= htmlspecialchars($wo['appointment_id']) ?></dd>
+      
+      <dt>Appointment</dt>
+      <dd><?= htmlspecialchars(($wo['appointment_date'] ?? '') . ' ' . ($wo['appointment_time'] ?? '')) ?></dd>
+
+      <dt>Customer Code</dt>
+      <dd><?= htmlspecialchars($wo['customer_code'] ?? 'CUST000') ?></dd>
+
+      <dt>Customer</dt>
+      <dd><?= htmlspecialchars($wo['customer_first_name'] ?? '') . " " . htmlspecialchars($wo['customer_last_name'] ?? '') ?></dd>
+
+      <dt>License Plate</dt>
+      <dd><?= htmlspecialchars($wo['license_plate'] ?? '') ?></dd>
+
+      <dt>Vehicle</dt>
+      <dd><?= htmlspecialchars($wo['make'] ?? '') . " " . htmlspecialchars($wo['model'] ?? '')?></dd>
+
+      <dt>Service</dt>
+      <dd><?= htmlspecialchars($wo['service_name'] ?? '—') ?></dd>
+
+      <dt>Created at</dt>
+      <dd><?= htmlspecialchars($wo['started_at'] ?? '—') ?></dd>
+
+      <dt>Started at</dt>
+      <dd><?= htmlspecialchars($wo['job_start_time'] ?? '') ?></dd>
+
+      <dt>Mechanic Code</dt>
+      <dd><?= htmlspecialchars($wo['mechanic_code'] ?? '')?></dd>
+
+      <dt>Mechanic</dt>
+<dd>
+  <?php 
+    if (!empty($wo['mechanic_first_name']) || !empty($wo['mechanic_last_name'])) {
+        echo htmlspecialchars($wo['mechanic_first_name'] . ' ' . $wo['mechanic_last_name']);
+    } else {
+        echo 'Unassigned';
+    }
+  ?>
+</dd>
+
+
+      <dt>Status</dt>
+      <dd><span class="status <?= htmlspecialchars($wo['status']) ?>"><?= htmlspecialchars($wo['status']) ?></span></dd>
+
+      <dt>Actual Completion</dt>
+      <dd><?= htmlspecialchars($wo['completed_at'] ?? '—') ?></dd>
+
+      <dt>Summary</dt>
+      <dd><pre style="white-space:pre-wrap"><?= htmlspecialchars($wo['service_summary'] ?? '') ?></pre></dd>
+
+    </dl>
+  </div>
+=======
   <div class="tiles-container">
 
   <!-- WORK ORDER TILE -->
@@ -93,6 +154,7 @@
 
 </div>
 
+>>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276
 </main>
 </body>
 </html>
