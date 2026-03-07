@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 <?php
 $base = rtrim(BASE_URL, '/');
 ?>
@@ -142,5 +141,3 @@ $base = rtrim(BASE_URL, '/');
   </div>
 </body>
 </html>
-=======
->>>>>>> 9f3bba9761a3aa1448bff2f28e7a96e5bf60ec85

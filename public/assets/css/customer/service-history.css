@@ -1,8 +1,4 @@
 /* ====== Layout ====== */
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> 9f3bba9761a3aa1448bff2f28e7a96e5bf60ec85
 * {
     margin: 0;
     padding: 0;
@@ -14,11 +10,6 @@ body {
     background: #f3f4f6;
 }
 
-<<<<<<< HEAD
-=======
-=======
->>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276
->>>>>>> 9f3bba9761a3aa1448bff2f28e7a96e5bf60ec85
 .sh-layout {
     display: flex;
     min-height: 100vh;
@@ -30,17 +21,8 @@ body {
     flex: 1;
     padding: 24px;
     max-width: 1100px;
-<<<<<<< HEAD
     margin-left: 240px;
     margin-right: auto;
-=======
-<<<<<<< HEAD
-    margin-left: 240px;
-    margin-right: auto;
-=======
-    margin: 0 auto;
->>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276
->>>>>>> 9f3bba9761a3aa1448bff2f28e7a96e5bf60ec85
 }
 
 /* ====== Header ====== */
@@ -122,21 +104,12 @@ body {
     overflow: hidden;
     box-shadow: 0 8px 18px rgba(15, 23, 42, 0.04);
     border: 1px solid #e5e7eb;
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> 9f3bba9761a3aa1448bff2f28e7a96e5bf60ec85
     transition: all 0.3s ease;
 }
 
 .sh-card:hover {
     box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
     transform: translateY(-2px);
-<<<<<<< HEAD
-=======
-=======
->>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276
->>>>>>> 9f3bba9761a3aa1448bff2f28e7a96e5bf60ec85
 }
 
 .sh-card-topbar {
@@ -145,34 +118,15 @@ body {
 }
 
 .sh-card-body {
-<<<<<<< HEAD
     padding: 18px 20px 16px;
-=======
-<<<<<<< HEAD
-    padding: 18px 20px 16px;
-=======
-    padding: 16px 18px 10px;
->>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276
->>>>>>> 9f3bba9761a3aa1448bff2f28e7a96e5bf60ec85
 }
 
 .sh-card-header {
     display: flex;
     justify-content: space-between;
-<<<<<<< HEAD
     gap: 16px;
     align-items: flex-start;
     margin-bottom: 4px;
-=======
-<<<<<<< HEAD
-    gap: 16px;
-    align-items: flex-start;
-    margin-bottom: 4px;
-=======
-    gap: 12px;
-    align-items: flex-start;
->>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276
->>>>>>> 9f3bba9761a3aa1448bff2f28e7a96e5bf60ec85
 }
 
 /* vehicle + service */
@@ -190,35 +144,15 @@ body {
 }
 
 .sh-service-type {
-<<<<<<< HEAD
     margin-top: 5px;
     font-size: 0.85rem;
     padding: 4px 12px;
-=======
-<<<<<<< HEAD
-    margin-top: 5px;
-    font-size: 0.85rem;
-    padding: 4px 12px;
-=======
-    margin-top: 3px;
-    font-size: 0.85rem;
-    padding: 3px 10px;
->>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276
->>>>>>> 9f3bba9761a3aa1448bff2f28e7a96e5bf60ec85
     border-radius: 999px;
     background: #fef2f2;
     color: #b91c1c;
     display: inline-block;
-<<<<<<< HEAD
     font-weight: 500;
     border: 1px solid #fecaca;
-=======
-<<<<<<< HEAD
-    font-weight: 500;
-    border: 1px solid #fecaca;
-=======
->>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276
->>>>>>> 9f3bba9761a3aa1448bff2f28e7a96e5bf60ec85
 }
 
 /* status + chips */
@@ -232,23 +166,12 @@ body {
 .sh-chip {
     display: inline-flex;
     align-items: center;
-<<<<<<< HEAD
     gap: 5px;
     padding: 5px 11px;
-=======
-<<<<<<< HEAD
-    gap: 5px;
-    padding: 5px 11px;
-=======
-    gap: 4px;
-    padding: 4px 9px;
->>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276
->>>>>>> 9f3bba9761a3aa1448bff2f28e7a96e5bf60ec85
     border-radius: 999px;
     background: #f3f4f6;
     color: #374151;
     font-size: 0.8rem;
-<<<<<<< HEAD
     font-weight: 500;
     border: 1px solid #e5e7eb;
 }
@@ -256,27 +179,10 @@ body {
 .sh-chip i {
     font-size: 0.75rem;
     color: #6b7280;
-=======
-<<<<<<< HEAD
-    font-weight: 500;
-    border: 1px solid #e5e7eb;
-}
-
-.sh-chip i {
-    font-size: 0.75rem;
-    color: #6b7280;
-=======
-}
-
-.sh-chip i {
-    font-size: 0.8rem;
->>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276
->>>>>>> 9f3bba9761a3aa1448bff2f28e7a96e5bf60ec85
 }
 
 /* description */
 .sh-desc {
-<<<<<<< HEAD
     margin: 12px 0 0;
     padding: 10px 12px;
     font-size: 0.88rem;
@@ -285,38 +191,16 @@ body {
     border-radius: 8px;
     border-left: 3px solid #ef4444;
     line-height: 1.5;
-=======
-<<<<<<< HEAD
-    margin: 12px 0 0;
-    padding: 10px 12px;
-    font-size: 0.88rem;
-    color: #4b5563;
-    background: #f9fafb;
-    border-radius: 8px;
-    border-left: 3px solid #ef4444;
-    line-height: 1.5;
-=======
-    margin: 10px 0 8px;
-    font-size: 0.88rem;
-    color: #4b5563;
->>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276
->>>>>>> 9f3bba9761a3aa1448bff2f28e7a96e5bf60ec85
 }
 
 /* meta grid */
 .sh-meta-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> 9f3bba9761a3aa1448bff2f28e7a96e5bf60ec85
     gap: 12px 24px;
     margin-top: 12px;
     padding-top: 12px;
     border-top: 1px solid #f3f4f6;
-<<<<<<< HEAD
-=======
 }
 
 .sh-label {
@@ -326,37 +210,12 @@ body {
     text-transform: uppercase;
     letter-spacing: 0.5px;
     font-weight: 500;
-=======
-    gap: 8px 24px;
-    margin-top: 4px;
->>>>>>> 9f3bba9761a3aa1448bff2f28e7a96e5bf60ec85
-}
-
-.sh-label {
-    font-size: 0.75rem;
-    color: #9ca3af;
-<<<<<<< HEAD
-    margin-bottom: 4px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    font-weight: 500;
-=======
-    margin-bottom: 2px;
->>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276
->>>>>>> 9f3bba9761a3aa1448bff2f28e7a96e5bf60ec85
 }
 
 .sh-value {
     font-size: 0.9rem;
     color: #111827;
-<<<<<<< HEAD
     font-weight: 500;
-=======
-<<<<<<< HEAD
-    font-weight: 500;
-=======
->>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276
->>>>>>> 9f3bba9761a3aa1448bff2f28e7a96e5bf60ec85
 }
 
 /* ====== Status pills ====== */
@@ -423,38 +282,17 @@ body {
 
 /* ====== Footer & buttons ====== */
 .sh-card-footer {
-<<<<<<< HEAD
     padding: 12px 20px;
     border-top: 1px solid #f3f4f6;
     display: flex;
     justify-content: flex-end;
     background: #fafbfc;
-=======
-<<<<<<< HEAD
-    padding: 12px 20px;
-    border-top: 1px solid #f3f4f6;
-    display: flex;
-    justify-content: flex-end;
-    background: #fafbfc;
-=======
-    padding: 10px 18px 12px;
-    border-top: 1px solid #e5e7eb;
-    display: flex;
-    justify-content: flex-end;
->>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276
->>>>>>> 9f3bba9761a3aa1448bff2f28e7a96e5bf60ec85
 }
 
 .sh-btn-outline {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-<<<<<<< HEAD
-    padding: 8px 16px;
-    border-radius: 8px;
-    border: 1.5px solid #ef4444;
-=======
-<<<<<<< HEAD
     padding: 8px 16px;
     border-radius: 8px;
     border: 1.5px solid #ef4444;
@@ -465,23 +303,6 @@ body {
     text-decoration: none;
     transition: all 0.2s ease;
     cursor: pointer;
-=======
-    padding: 6px 12px;
-    border-radius: 999px;
-    border: 1px solid #ef4444;
->>>>>>> 9f3bba9761a3aa1448bff2f28e7a96e5bf60ec85
-    background: #ffffff;
-    color: #b91c1c;
-    font-size: 0.85rem;
-    font-weight: 500;
-    text-decoration: none;
-<<<<<<< HEAD
-    transition: all 0.2s ease;
-    cursor: pointer;
-=======
-    transition: background 0.15s ease, color 0.15s ease;
->>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276
->>>>>>> 9f3bba9761a3aa1448bff2f28e7a96e5bf60ec85
 }
 
 .sh-btn-outline i {
@@ -489,16 +310,11 @@ body {
 }
 
 .sh-btn-outline:hover {
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> 9f3bba9761a3aa1448bff2f28e7a96e5bf60ec85
     background: #ef4444;
     color: #ffffff;
     border-color: #dc2626;
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
-<<<<<<< HEAD
 }
 
 /* ====== Responsive ====== */
@@ -508,33 +324,11 @@ body {
     }
 }
 
-=======
-}
-
-/* ====== Responsive ====== */
-@media (max-width: 720px) {
-    .sh-main {
-        margin-left: 210px;
-    }
-}
-
-=======
-    background: #fef2f2;
-    color: #991b1b;
-}
-
-/* ====== Responsive ====== */
->>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276
->>>>>>> 9f3bba9761a3aa1448bff2f28e7a96e5bf60ec85
 @media (max-width: 768px) {
     .sh-main {
         padding: 16px;
     }
 
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> 9f3bba9761a3aa1448bff2f28e7a96e5bf60ec85
     .sh-title {
         font-size: 1.2rem;
     }
@@ -542,49 +336,24 @@ body {
     .sh-meta-grid {
         grid-template-columns: 1fr;
         gap: 10px;
-<<<<<<< HEAD
-=======
-=======
-    .sh-meta-grid {
-        grid-template-columns: 1fr;
->>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276
->>>>>>> 9f3bba9761a3aa1448bff2f28e7a96e5bf60ec85
     }
 
     .sh-card-header {
         flex-direction: column;
         align-items: flex-start;
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> 9f3bba9761a3aa1448bff2f28e7a96e5bf60ec85
         gap: 10px;
     }
 
     .sh-chip-row {
         justify-content: flex-start;
-<<<<<<< HEAD
-=======
-=======
->>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276
->>>>>>> 9f3bba9761a3aa1448bff2f28e7a96e5bf60ec85
     }
 
     .sh-card-footer {
         justify-content: flex-start;
     }
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> 9f3bba9761a3aa1448bff2f28e7a96e5bf60ec85
 
     .sh-btn-outline {
         width: 100%;
         justify-content: center;
     }
-<<<<<<< HEAD
-=======
-=======
->>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276
->>>>>>> 9f3bba9761a3aa1448bff2f28e7a96e5bf60ec85
 }

@@ -384,7 +384,7 @@ $router->post('/customer/profile/vehicle/delete', [\app\controllers\customer\Pro
 $router->get ('/customer/appointments',          [\app\controllers\customer\AppointmentsController::class, 'index']);
 
 $router->get ('/customer/appointments/{id}',     [\app\controllers\customer\AppointmentsController::class, 'show']);
-<<<<<<< HEAD
+
 $router->get ('/customer/appointments/{id}',     [\app\controllers\customer\AppointmentsController::class, 'show']);
 $router->post('/customer/appointments/cancel',   [\app\controllers\customer\AppointmentsController::class, 'cancel']);   // optional action
 $router->get ('/customer/appointments/list',     [\app\controllers\customer\AppointmentsController::class, 'list']);     // optional JSON for AJAX
@@ -396,20 +396,20 @@ $router->get('/customer/file-complaint',         [FileComplaintController::class
 $router->post('/customer/file-complaint/submit', [FileComplaintController::class, 'submit']);
 $router->get('/customer/complaints/history',     [FileComplaintController::class, 'history']); // optional: view complaint history
 
-=======
-$router->post('/customer/appointments/cancel',   [\app\controllers\customer\AppointmentsController::class, 'cancel']);   // optional action
-$router->get ('/customer/appointments/list',     [\app\controllers\customer\AppointmentsController::class, 'list']);     // optional JSON for AJAX
-
-// Customer - File Complaint
-use app\controllers\customer\FileComplaintController;
-
-$router->get('/customer/file-complaint',         [FileComplaintController::class, 'index']);
-$router->post('/customer/file-complaint/submit', [FileComplaintController::class, 'submit']);
-$router->get('/customer/complaints/history',     [FileComplaintController::class, 'history']); // optional: view complaint history
-
 
 $router->post('/customer/appointments/cancel',   [\app\controllers\customer\AppointmentsController::class, 'cancel']);   // optional action
 $router->get ('/customer/appointments/list',     [\app\controllers\customer\AppointmentsController::class, 'list']);     // optional JSON for AJAX
+
+// // Customer - File Complaint
+// use app\controllers\customer\FileComplaintController;
+
+// $router->get('/customer/file-complaint',         [FileComplaintController::class, 'index']);
+// $router->post('/customer/file-complaint/submit', [FileComplaintController::class, 'submit']);
+// $router->get('/customer/complaints/history',     [FileComplaintController::class, 'history']); // optional: view complaint history
+
+
+// $router->post('/customer/appointments/cancel',   [\app\controllers\customer\AppointmentsController::class, 'cancel']);   // optional action
+// $router->get ('/customer/appointments/list',     [\app\controllers\customer\AppointmentsController::class, 'list']);     // optional JSON for AJAX
 
 
 //manager 
@@ -433,16 +433,16 @@ $router->get('/manager/services/create', [app\controllers\Manager\ServicesContro
 $router->post('/manager/services/store', [app\controllers\Manager\ServicesController::class,'store']);
 
 //Manager: Billing
-$router->get('/manager/billing', [app\controllers\Manager\BillingController::class, 'invoices']);
-$router->get('/manager/billing/downloadInvoice/{id}',[app\controllers\Manager\BillingController::class, 'downloadInvoice']);
+// $router->get('/manager/billing', [app\controllers\Manager\BillingController::class, 'invoices']);
+// $router->get('/manager/billing/downloadInvoice/{id}',[app\controllers\Manager\BillingController::class, 'downloadInvoice']);
 
-//Manager: Complaints
-$router->get('/manager/complaints',                         [app\controllers\Manager\ComplaintController::class, 'index']);
-$router->get('/manager/complaints/{complaintId}',           [app\controllers\Manager\ComplaintController::class, 'show']);
+// //Manager: Complaints
+// $router->get('/manager/complaints',                         [app\controllers\Manager\ComplaintController::class, 'index']);
+// $router->get('/manager/complaints/{complaintId}',           [app\controllers\Manager\ComplaintController::class, 'show']);
 
-//Manager: Customer Profile
-$router->get('/manager/customers',                      [app\controllers\Manager\CustomerController::class, 'index']);
-$router->get('/manager/customers/{customerId}',         [app\controllers\Manager\CustomerController::class, 'show']);
+// //Manager: Customer Profile
+// $router->get('/manager/customers',                      [app\controllers\Manager\CustomerController::class, 'index']);
+// $router->get('/manager/customers/{customerId}',         [app\controllers\Manager\CustomerController::class, 'show']);
 
 // Manager: Team Schedule
 $router->get('/manager/schedule', [app\controllers\Manager\ScheduleController::class,'index']);
@@ -459,10 +459,10 @@ $router->get('/manager/performance/viewMechanic',[\app\controllers\Manager\Perfo
 
 // manager: reports
 
-$router->get('/manager/reports', [app\controllers\Manager\ReportController::class, 'index']);
-$router->get('/manager/reports/getFilters', [app\controllers\Manager\ReportController::class, 'getFilters']);
-$router->post('/manager/reports/generate', [app\controllers\Manager\ReportController::class, 'generate']);
-$router->post('/manager/reports/result', [app\controllers\Manager\ReportController::class, 'result']);
+// $router->get('/manager/reports', [app\controllers\Manager\ReportController::class, 'index']);
+// $router->get('/manager/reports/getFilters', [app\controllers\Manager\ReportController::class, 'getFilters']);
+// $router->post('/manager/reports/generate', [app\controllers\Manager\ReportController::class, 'generate']);
+// $router->post('/manager/reports/result', [app\controllers\Manager\ReportController::class, 'result']);
 
 //Receptionist: Complaints
 
@@ -537,12 +537,7 @@ $router->post('/mechanic/jobs/update-status', [JobsMVController::class, 'updateS
 
 // ------------------Supervisor copy
 $router->get('/supervisor/dashboard', [\app\controllers\supervisor\SupervisorController::class, 'index']);
-<<<<<<< HEAD
-$router->get('/supervisor/complaints', [\app\controllers\supervisor\ComplaintsController::class, 'index']);
-$router->get('/supervisor/feedbacks', [\app\controllers\supervisor\SupervisorFeedbackController::class, 'index']);
-=======
 $router->get('/supervisor/complaints_feedbacks', [\app\controllers\supervisor\ComplaintsFeedbackController::class, 'index']);
->>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276
 
 use app\controllers\supervisor\SupervisorProfileController;
 $router->get('/supervisor/profile/edit', [SupervisorProfileController::class, 'edit']);
@@ -550,12 +545,9 @@ $router->post('/supervisor/profile/update', [SupervisorProfileController::class,
 
 use app\controllers\supervisor\VehicleReportsController;
 $router->get('/supervisor/reports', [VehicleReportsController::class, 'index']);
-<<<<<<< HEAD
-=======
 $router->get('/supervisor/reports/daily-jobs', [VehicleReportsController::class, 'dailyJobs']);
 $router->get('/supervisor/reports/indexp', [VehicleReportsController::class, 'indexp']);
 $router->get('/supervisor/reports/mechanic-activity', [VehicleReportsController::class, 'mechanicActivity']);
->>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276
 $router->get('/supervisor/reports/create', [VehicleReportsController::class, 'create']);
 $router->get('/supervisor/reports/view/{id}', [VehicleReportsController::class,'show']);
 $router->post('/supervisor/reports/store', [VehicleReportsController::class, 'store']);
@@ -564,8 +556,6 @@ $router->post('/supervisor/reports/update/{reportId}', [VehicleReportsController
 $router->post('/supervisor/reports/delete/{id}', [VehicleReportsController::class, 'delete']);
 $router->get('/supervisor/reports/delete-photo/{id}',[VehicleReportsController::class, 'deletePhoto']);
 
-<<<<<<< HEAD
-=======
 use app\controllers\supervisor\CoordinationController;
 $router->get('/supervisor/coordination', [CoordinationController::class, 'index']);
 $router->post('/supervisor/coordination/updateMechanicStatus', [CoordinationController::class, 'updateMechanicStatus']);
@@ -573,7 +563,6 @@ $router->post('/supervisor/coordination/reportIssue', [CoordinationController::c
 
 
 
->>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276
 use \app\controllers\supervisor\VehicleHistoryController;
 $router->get('/supervisor/history', [VehicleHistoryController::class, 'index']);
 $router->get('/supervisor/history/show', [VehicleHistoryController::class, 'show']);
@@ -595,10 +584,6 @@ $router->get ('/supervisor/workorders/{id}/edit', [WorkOrdersController::class, 
 $router->post('/supervisor/workorders/{id}',      [WorkOrdersController::class, 'update']);
 $router->post('/supervisor/workorders/{id}/delete', [WorkOrdersController::class, 'destroy']);
 
-<<<<<<< HEAD
-
-=======
->>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276
 /*
 |--------------------------------------------------------------------------|
 | Normalize request path (works with or without /public in URL)
