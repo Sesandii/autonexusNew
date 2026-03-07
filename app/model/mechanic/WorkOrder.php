@@ -332,7 +332,7 @@ public function getByMechanicAndStatus($mechanicId, $status)
             AND status = :status
             ORDER BY created_at DESC";
 
-    $stmt = $this->db->prepare($sql);
+    $stmt = $this->pdo->prepare($sql);
     $stmt->execute([
         ':mechanic_id' => $mechanicId,
         ':status' => $status
