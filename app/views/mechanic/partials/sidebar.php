@@ -3,10 +3,7 @@
 <link rel="stylesheet" href="/autonexus/public/assets/css/supervisor/sidebar.css" />
 
 <div class="sidebar">
-<<<<<<< HEAD
-=======
 <div class="top-section">
->>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276
   <div class="logo-container">
     <img src="/autonexus/public/assets/img/Auto1.png" class="logo-collapsed" />
     <img src="/autonexus/public/assets/img/Auto.png" class="logo-expanded" />
@@ -38,8 +35,6 @@
     <span class="link-text">Vehicle History</span>
   </a>
 </div>
-<<<<<<< HEAD
-=======
 
 <!-- 🔥 Bottom User Section -->
 <div class="sidebar-bottom">
@@ -98,4 +93,3 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 </script>
->>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276

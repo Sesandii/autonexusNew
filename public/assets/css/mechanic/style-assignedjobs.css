@@ -135,10 +135,7 @@ header h1 {
 }
 
 .focus-dropzone {
-<<<<<<< HEAD
-=======
   margin-top: 20px;
->>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276
   min-height: 200px;
   border: 2px dashed #aaa;
   border-radius: 8px;
@@ -178,9 +175,6 @@ header h1 {
   height: 100%;
   background: linear-gradient(90deg, #a71a1a, #c78181);
   transition: width 0.4s ease;
-<<<<<<< HEAD
-}
-=======
 }
 
 /* Add to your existing style-assignedjobs.css */
@@ -195,4 +189,3 @@ header h1 {
   opacity: 0.7;
 }
 
->>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276
