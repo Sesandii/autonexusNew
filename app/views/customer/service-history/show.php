@@ -14,31 +14,40 @@ $base = rtrim(BASE_URL, '/');
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     .detail-container {
-      max-width: 900px;
+      max-width: 1100px;
       margin: 0 auto;
       padding: 24px;
     }
 
-    .detail-toolbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      flex-wrap: wrap;
-      margin-bottom: 16px;
+    .detail-hero {
+      background: #fff8f8;
+      border: 1px solid #ffe2e2;
+      border-radius: 16px;
+      padding: 24px 28px;
+      margin-bottom: 28px;
+      box-shadow: 0 10px 30px rgba(220, 38, 38, 0.05);
     }
-    
-    .detail-header {
-      margin-bottom: 24px;
+
+    .hero-subtitle {
+      font-size: 0.85rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #b91c1c;
+      font-weight: 700;
+      margin: 10px 0 6px;
     }
-    
-    .detail-header h1 {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 1.5rem;
-      color: #111827;
-      margin-bottom: 8px;
+
+    .hero-title {
+      font-size: 2rem;
+      font-weight: 800;
+      color: #0f172a;
+      margin: 0 0 10px;
+    }
+
+    .hero-desc {
+      color: #4b5563;
+      font-size: 1rem;
+      margin: 0 0 18px;
     }
     
     .back-link {
@@ -47,8 +56,8 @@ $base = rtrim(BASE_URL, '/');
       gap: 8px;
       color: #ef4444;
       text-decoration: none;
-      font-size: 0.92rem;
-      padding: 8px 12px;
+      font-size: 0.95rem;
+      padding: 10px 14px;
       border-radius: 10px;
       background: #fff7f7;
       border: 1px solid #ffe2e2;
@@ -138,13 +147,13 @@ $base = rtrim(BASE_URL, '/');
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      padding: 10px 18px;
+      padding: 12px 20px;
       background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
       color: #ffffff;
       text-decoration: none;
       border-radius: 10px;
       font-weight: 700;
-      font-size: 0.9rem;
+      font-size: 0.95rem;
       transition: all 0.25s ease;
       box-shadow: 0 6px 16px rgba(220, 38, 38, 0.2);
       white-space: nowrap;
@@ -165,27 +174,24 @@ $base = rtrim(BASE_URL, '/');
 
   <div class="sh-layout">
     <div class="detail-container">
-      <div class="detail-header">
-        <div class="detail-toolbar">
-          <a href="<?= $base ?>/customer/service-history" class="back-link">
-            <i class="fa-solid fa-arrow-left"></i>
-            Back to Service History
-          </a>
+      <div class="detail-hero">
+        <a href="<?= $base ?>/customer/service-history" class="back-link">
+          <i class="fa-solid fa-arrow-left"></i>
+          Back to Service History
+        </a>
 
-          <h1 style="margin:0;">
-            <i class="fa-solid fa-file-lines"></i>
-            Service Details
-          </h1>
+        <div class="hero-subtitle">Customer Portal</div>
+        <h1 class="hero-title">Service Details</h1>
+        <p class="hero-desc">View the completed service record, vehicle information, assigned technician, and download the service summary as a PDF.</p>
 
-          <?php if ($service): ?>
-          <a href="<?= $base ?>/customer/service-history/<?= (int)$service['work_order_id'] ?>/pdf" 
-             class="download-btn" 
-             title="Download PDF">
-            <i class="fa-solid fa-file-pdf"></i>
-            Download PDF
-          </a>
-          <?php endif; ?>
-        </div>
+        <?php if ($service): ?>
+        <a href="<?= $base ?>/customer/service-history/<?= (int)$service['work_order_id'] ?>/pdf" 
+           class="download-btn" 
+           title="Download PDF">
+          <i class="fa-solid fa-file-pdf"></i>
+          Download PDF
+        </a>
+        <?php endif; ?>
       </div>
 
       <?php if ($service): ?>
