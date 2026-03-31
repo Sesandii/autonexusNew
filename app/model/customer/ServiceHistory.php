@@ -56,9 +56,8 @@ class ServiceHistory
                 LEFT JOIN users mu    ON mu.user_id       = m.user_id
                 LEFT JOIN branches b  ON b.branch_id      = a.branch_id
 
-                WHERE c.user_id = :uid
-                  -- Temporarily show all statuses for debugging
-                  -- AND LOWER(w.status) = 'completed'
+                                WHERE c.user_id = :uid
+                                    AND LOWER(w.status) = 'completed'
 
                 ORDER BY a.appointment_date DESC, w.work_order_id DESC
             ";
