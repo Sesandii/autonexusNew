@@ -184,6 +184,7 @@ use app\controllers\admin\ServicesController;
 
 // list (you already have a UI page under /admin/admin-viewservices)
 $router->get('/admin/admin-viewservices', [ServicesController::class, 'index']);
+$router->get('/admin/services', [ServicesController::class, 'index']);
 
 // create form + submit
 $router->get('/admin/services/create',  [ServicesController::class, 'create']);
@@ -198,7 +199,7 @@ $router->post('/admin/services/{id}/delete', [ServicesController::class, 'destro
 use app\controllers\admin\PricingController;
 
 $router->get('/admin/admin-updateserviceprice',  [PricingController::class, 'index']);
-$router->post('/admin/admin-updateserviceprice', [PricingController::class, 'index']);
+$router->post('/admin/updateserviceprice', [PricingController::class, 'index']);
 
 
 
@@ -210,11 +211,21 @@ $router->get ('/admin/admin-serviceapproval/show',  [ApprovalController::class, 
 $router->get ('/admin/admin-serviceapproval/edit',  [ApprovalController::class, 'edit']);
 $router->post('/admin/admin-serviceapproval/update', [ApprovalController::class, 'update']);
 
+//better alias routes
+$router->get('/admin/serviceapproval', [ApprovalController::class, 'index']);
+$router->get('/admin/serviceapproval/show',  [ApprovalController::class, 'show']);
+$router->get('/admin/serviceapproval/edit',  [ApprovalController::class, 'edit']);
+$router->post('/admin/serviceapproval/update', [ApprovalController::class, 'update']);
+
 
 use app\controllers\admin\OngoingServicesController;
 
 $router->get('/admin/admin-ongoingservices', [OngoingServicesController::class, 'index']);
 $router->get('/admin/admin-ongoingservices/show', [OngoingServicesController::class, 'show']);
+
+//better alias
+$router->get('/admin/ongoingservices', [OngoingServicesController::class, 'index']);
+$router->get('/admin/ongoingservices/show', [OngoingServicesController::class, 'show']);
 
 
 use app\controllers\admin\ServiceHistoryController;
@@ -222,11 +233,19 @@ use app\controllers\admin\ServiceHistoryController;
 $router->get('/admin/admin-servicehistory', [ServiceHistoryController::class, 'index']);
 $router->get('/admin/admin-servicehistory/show', [ServiceHistoryController::class, 'show']);
 
+// better alias
+$router->get('/admin/servicehistory', [ServiceHistoryController::class, 'index']);
+$router->get('/admin/servicehistory/show', [ServiceHistoryController::class, 'show']);
+
 
 use app\controllers\admin\FeedbackController;
 
 $router->get('/admin/admin-viewfeedback', [FeedbackController::class, 'index']);
 $router->post('/admin/admin-viewfeedback/reply', [FeedbackController::class, 'reply']);
+
+// better alias
+$router->post('/admin/viewfeedback/reply', [FeedbackController::class, 'reply']);
+$router->get('/admin/viewfeedback', [FeedbackController::class, 'index']);
 
 
 use app\controllers\admin\NotificationsController;
@@ -236,7 +255,11 @@ $router->post('/admin/admin-notifications/send', [\app\controllers\admin\Notific
 $router->get('/admin/admin-notifications/users', [\app\controllers\admin\NotificationsController::class, 'users']); // for recipient picker
 $router->post('/admin/admin-notifications/run-daily', [\app\controllers\admin\NotificationsController::class, 'runDaily']); // optional cron trigger
 
-
+// better alias
+$router->get('/admin/notifications', [NotificationsController::class, 'index']);
+$router->post('/admin/notifications/send', [NotificationsController::class, 'send']);
+$router->get('/admin/notifications/users', [NotificationsController::class, 'users']);
+$router->post('/admin/notifications/run-daily', [NotificationsController::class, 'runDaily']);
 
 
 use app\controllers\admin\InvoicesController;
@@ -251,6 +274,14 @@ $router->get('/admin/admin-viewinvoices/show',         [InvoicesController::clas
 
 $router->get('/admin/admin-viewinvoices/download',     [InvoicesController::class, 'download']);
 
+// better alias
+$router->get('/admin/invoices',              [InvoicesController::class, 'index']);
+$router->get('/admin/invoices/create',       [InvoicesController::class, 'create']);
+$router->post('/admin/invoices/store',       [InvoicesController::class, 'store']);
+$router->get('/admin/invoices/show',         [InvoicesController::class, 'show']);
+$router->get('/admin/invoices/download',     [InvoicesController::class, 'download']);
+
+
 // optional (only if you want emailing enabled)
 // $router->get('/admin/admin-viewinvoices/email',        [InvoicesController::class, 'email']);
 
@@ -260,13 +291,15 @@ $router->get('/admin/admin-viewinvoices/download',     [InvoicesController::clas
 use app\controllers\admin\ReportsController;
 
 $router->get('/admin/admin-viewreports', [ReportsController::class, 'index']);
-
-
-
-
 $router->get('/admin/admin-viewreports',              [ReportsController::class, 'index']);
 $router->get('/admin/admin-viewreports/export',       [ReportsController::class, 'export']);
 $router->get('/admin/admin-viewreports/export-pdf',   [ReportsController::class, 'exportPdf']);
+
+// better alias
+$router->get('/admin/reports', [ReportsController::class, 'index']);
+$router->get('/admin/reports/export',       [ReportsController::class, 'export']);
+$router->get('/admin/reports/export-pdf',   [ReportsController::class, 'exportPdf']);
+
 
 
 
