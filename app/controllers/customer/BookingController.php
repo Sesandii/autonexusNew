@@ -16,12 +16,39 @@ class BookingController extends Controller
         if (method_exists($this, 'requireLogin')) $this->requireLogin();
 
         $branchCode  = trim($_GET['branch'] ?? '');
+        $rebookId    = (int)($_GET['rebook'] ?? 0);
         $bp          = new BranchPublic();
         $branches    = $bp->allActive();
         $branchName  = $branchCode ? ($bp->findNameByCode($branchCode) ?? null) : null;
 
         $userId   = (int)($this->userId());
         $vehicles = (new Vehicles())->byUserId($userId);
+
+        // Prefill data when rebooking
+        $prefill = [];
+        if ($rebookId) {
+            $appt = (new Appointments())->getAppointmentById($userId, $rebookId);
+            if ($appt) {
+                $branchCode = $branchCode ?: (string)($appt['branch_code'] ?? '');
+                $branchName = $branchCode ? ($bp->findNameByCode($branchCode) ?? $branchName) : $branchName;
+
+                $apptDate = substr((string)($appt['appointment_date'] ?? ''), 0, 10);
+                $today    = date('Y-m-d');
+                $prefillDate = ($apptDate && $apptDate >= $today) ? $apptDate : '';
+                $prefillTime = substr((string)($appt['appointment_time'] ?? ''), 0, 5);
+
+                $prefill = [
+                    'appointment_id' => $rebookId,
+                    'branch_code'    => $branchCode,
+                    'vehicle_id'     => (int)($appt['vehicle_id'] ?? 0),
+                    'service_id'     => (int)($appt['service_id'] ?? 0),
+                    'date'           => $prefillDate,
+                    'time'           => $prefillTime,
+                    'service_name'   => $appt['service_name'] ?? null,
+                    'license_plate'  => $appt['license_plate'] ?? null,
+                ];
+            }
+        }
 
         // services for selected branch (server-rendered)
         $services = [];
@@ -36,6 +63,7 @@ class BookingController extends Controller
             'branch_name' => $branchName,
             'vehicles'    => $vehicles,
             'services'    => $services,
+            'prefill'     => $prefill,
             'flash'       => $_SESSION['flash'] ?? null,
         ]);
         unset($_SESSION['flash']);
