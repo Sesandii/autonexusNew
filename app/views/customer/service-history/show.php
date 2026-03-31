@@ -18,6 +18,15 @@ $base = rtrim(BASE_URL, '/');
       margin: 0 auto;
       padding: 24px;
     }
+
+    .detail-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
     
     .detail-header {
       margin-bottom: 24px;
@@ -35,16 +44,22 @@ $base = rtrim(BASE_URL, '/');
     .back-link {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
       color: #ef4444;
       text-decoration: none;
-      font-size: 0.9rem;
-      margin-bottom: 16px;
-      font-weight: 500;
+      font-size: 0.92rem;
+      padding: 8px 12px;
+      border-radius: 10px;
+      background: #fff7f7;
+      border: 1px solid #ffe2e2;
+      font-weight: 600;
+      transition: all 0.2s ease;
     }
-    
+
     .back-link:hover {
       color: #dc2626;
+      border-color: #fca5a5;
+      box-shadow: 0 4px 12px rgba(220, 38, 38, 0.08);
     }
     
     .detail-card {
@@ -123,22 +138,23 @@ $base = rtrim(BASE_URL, '/');
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      padding: 10px 20px;
+      padding: 10px 18px;
       background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
       color: #ffffff;
       text-decoration: none;
-      border-radius: 8px;
-      font-weight: 600;
+      border-radius: 10px;
+      font-weight: 700;
       font-size: 0.9rem;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 12px rgba(220, 38, 38, 0.25);
+      transition: all 0.25s ease;
+      box-shadow: 0 6px 16px rgba(220, 38, 38, 0.2);
+      white-space: nowrap;
     }
-    
+
     .download-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 16px rgba(220, 38, 38, 0.35);
+      transform: translateY(-1px);
+      box-shadow: 0 10px 24px rgba(220, 38, 38, 0.28);
     }
-    
+
     .download-btn i {
       font-size: 1rem;
     }
@@ -150,16 +166,17 @@ $base = rtrim(BASE_URL, '/');
   <div class="sh-layout">
     <div class="detail-container">
       <div class="detail-header">
-        <a href="<?= $base ?>/customer/service-history" class="back-link">
-          <i class="fa-solid fa-arrow-left"></i>
-          Back to Service History
-        </a>
-        
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-          <h1>
+        <div class="detail-toolbar">
+          <a href="<?= $base ?>/customer/service-history" class="back-link">
+            <i class="fa-solid fa-arrow-left"></i>
+            Back to Service History
+          </a>
+
+          <h1 style="margin:0;">
             <i class="fa-solid fa-file-lines"></i>
             Service Details
           </h1>
+
           <?php if ($service): ?>
           <a href="<?= $base ?>/customer/service-history/<?= (int)$service['work_order_id'] ?>/pdf" 
              class="download-btn" 
