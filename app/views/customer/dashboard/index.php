@@ -77,7 +77,7 @@ $title = 'AutoNexus - Dashboard';
           </a>
 
           <a class="ql-card" href="<?= $base ?>/customer/track-services">
-            <i class="fa-solid fa-location-dot"></i>
+            <i class="fa-solid fa-location-crosshairs"></i>
             <span>Track Service</span>
           </a>
 

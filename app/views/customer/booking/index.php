@@ -1,6 +1,11 @@
 <?php
 $base    = rtrim(BASE_URL,'/');
 $selCode = $branch_code ?? '';
+$prefill = $prefill ?? [];
+$prefillVehicleId = (int)($prefill['vehicle_id'] ?? 0);
+$prefillServiceId = (int)($prefill['service_id'] ?? 0);
+$prefillDate      = $prefill['date'] ?? '';
+$prefillTime      = $prefill['time'] ?? '';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -143,10 +148,12 @@ $selCode = $branch_code ?? '';
             <div class="date-field" style="min-width:260px;">
               <label for="vehicle_id">Your vehicles</label><br>
               <select id="vehicle_id" name="vehicle_id" required>
-                <option value="" selected disabled>-- Choose a vehicle --</option>
+                <option value="" disabled <?= $prefillVehicleId ? '' : 'selected' ?>>-- Choose a vehicle --</option>
                 <?php foreach ($vehicles as $v):
-                  $label = trim(($v['license_plate'] ?? '') . ' — ' . ($v['make'] ?? '') . ' ' . ($v['model'] ?? '')); ?>
-                  <option value="<?= (int)$v['vehicle_id'] ?>">
+                  $label = trim(($v['license_plate'] ?? '') . ' — ' . ($v['make'] ?? '') . ' ' . ($v['model'] ?? ''));
+                  $selected = ($prefillVehicleId && (int)$v['vehicle_id'] === $prefillVehicleId) ? 'selected' : '';
+                ?>
+                  <option value="<?= (int)$v['vehicle_id'] ?>" <?= $selected ?>>
                     <?= htmlspecialchars($label) ?>
                   </option>
                 <?php endforeach; ?>
@@ -174,7 +181,7 @@ $selCode = $branch_code ?? '';
             <div class="date-field" style="min-width:320px;">
               <label for="service_id">Available services at this branch</label><br>
               <select id="service_id" name="service_id" required>
-                <option value="" selected disabled>-- Choose a service --</option>
+                <option value="" disabled <?= $prefillServiceId ? '' : 'selected' ?>>-- Choose a service --</option>
                 <?php
                   // Group by type_name as <optgroup>
                   $byType = [];
@@ -185,7 +192,8 @@ $selCode = $branch_code ?? '';
                 ?>
                   <optgroup label="<?= htmlspecialchars($type) ?>">
                     <?php foreach ($rows as $r): ?>
-                      <option value="<?= (int)$r['service_id'] ?>">
+                      <?php $sel = ($prefillServiceId && (int)$r['service_id'] === $prefillServiceId) ? 'selected' : ''; ?>
+                      <option value="<?= (int)$r['service_id'] ?>" <?= $sel ?>>
                         <?= htmlspecialchars($r['service_name']) ?> — $<?= number_format((float)$r['default_price'], 2) ?>
                       </option>
                     <?php endforeach; ?>
@@ -210,7 +218,7 @@ $selCode = $branch_code ?? '';
         <div class="date-row">
           <div class="date-field">
             <label for="date">Preferred date</label><br>
-            <input type="date" id="date" name="date" min="<?= date('Y-m-d') ?>" required>
+            <input type="date" id="date" name="date" min="<?= date('Y-m-d') ?>" value="<?= htmlspecialchars($prefillDate) ?>" required>
             <div class="notes">We’ll show available time slots for your chosen date.</div>
           </div>
         </div>
@@ -248,7 +256,7 @@ $selCode = $branch_code ?? '';
         </div>
 
         <!-- holds time for POST -->
-        <input type="hidden" name="time" id="time">
+        <input type="hidden" name="time" id="time" value="<?= htmlspecialchars($prefillTime) ?>">
       </section>
 
       <!-- STEP 5: Confirm -->
@@ -266,6 +274,8 @@ $selCode = $branch_code ?? '';
   <script src="<?= $base ?>/public/assets/js/customer/booking.js" defer></script>
   <script>
     const base = "<?= $base ?>";
+    const prefillDate  = "<?= htmlspecialchars($prefillDate, ENT_QUOTES) ?>";
+    const prefillTime  = "<?= htmlspecialchars($prefillTime, ENT_QUOTES) ?>";
     const branchCodeInput = document.getElementById('branch_code');
     const dateInput = document.getElementById('date');
     const timeInput = document.getElementById('time');
@@ -352,8 +362,13 @@ $selCode = $branch_code ?? '';
     dateInput.addEventListener('change', fetchSlotAvailability);
     
     // Initial fetch if branch is already selected
-    if (branchCodeInput.value && dateInput.value) {
-      fetchSlotAvailability();
+    if (branchCodeInput.value && (dateInput.value || prefillDate)) {
+      if (!dateInput.value && prefillDate) {
+        dateInput.value = prefillDate;
+      }
+      fetchSlotAvailability().finally(selectPrefillTime);
+    } else {
+      selectPrefillTime();
     }
 
     // 3) time slot selection
@@ -365,6 +380,16 @@ $selCode = $branch_code ?? '';
         timeInput.value = btn.dataset.time;
       });
     });
+
+    function selectPrefillTime() {
+      if (!prefillTime) return;
+      const btn = document.querySelector(`.session[data-time="${prefillTime}"]`);
+      if (btn && !btn.classList.contains('is-full')) {
+        document.querySelectorAll('.session').forEach(b => b.classList.remove('is-selected'));
+        btn.classList.add('is-selected');
+      }
+      timeInput.value = prefillTime;
+    }
 
     // 4) sanity check before submit
     document.getElementById('bookingForm').addEventListener('submit', (e) => {

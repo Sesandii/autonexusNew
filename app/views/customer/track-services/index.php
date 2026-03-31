@@ -70,7 +70,8 @@ $initial = $services ?? [];
     console.log('Initial data:', INITIAL_TRACK_DATA);
 
     // Inline JS to bypass cache
-    let servicesData = Array.isArray(window.INITIAL_TRACK_DATA) ? window.INITIAL_TRACK_DATA : [];
+    // Seed table with server-rendered data even if fetch fails
+    let servicesData = Array.isArray(INITIAL_TRACK_DATA) ? INITIAL_TRACK_DATA : [];
 
     function renderTable(data) {
       const tbody = document.querySelector("#servicesTable tbody");
@@ -114,7 +115,9 @@ $initial = $services ?? [];
           const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
           const json = await res.json();
           console.log('API response:', json);
-          renderTable(Array.isArray(json.data) ? json.data : []);
+          const data = Array.isArray(json.data) ? json.data : [];
+          servicesData = data;
+          renderTable(data);
           return;
         } catch (e) {
           console.error('Fetch error:', e);

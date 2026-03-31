@@ -266,13 +266,13 @@ public function getById(int $appointmentId): ?array
 }
 
 /** Get a single appointment by ID for a specific user (ownership check) */
-public function getAppointmentById(int $userId, int $appointmentId): ?array
+    public function getAppointmentById(int $userId, int $appointmentId): ?array
 {
     $cid = $this->customerIdByUserId($userId);
     if (!$cid) return null;
 
     $sql = "SELECT a.*, 
-                   b.name AS branch_name, b.city AS branch_city,
+                   b.name AS branch_name, b.city AS branch_city, b.branch_code,
                    s.name AS service_name, s.description AS service_description,
                    v.license_plate, v.make, v.model, v.year AS vehicle_year,
                    wo.status AS work_order_status, wo.work_order_id,
