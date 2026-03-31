@@ -64,7 +64,89 @@ $initial = $services ?? [];
     const BASE_URL  = "<?= $base ?>";
     const LIST_URL  = BASE_URL + "/customer/track-services/list";
     const INITIAL_TRACK_DATA = <?= json_encode($initial, JSON_UNESCAPED_UNICODE) ?>;
+    
+    // Debug info
+    console.log('User session:', <?= json_encode($_SESSION['user'] ?? null) ?>);
+    console.log('Initial data:', INITIAL_TRACK_DATA);
+
+    // Inline JS to bypass cache
+    let servicesData = Array.isArray(window.INITIAL_TRACK_DATA) ? window.INITIAL_TRACK_DATA : [];
+
+    function renderTable(data) {
+      const tbody = document.querySelector("#servicesTable tbody");
+      if (!tbody) return;
+      tbody.innerHTML = "";
+
+      if (!data.length) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="5" style="text-align:center; padding:40px; color:#6B7280;">
+              No services found matching your criteria
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      data.forEach(service => {
+        const tr = document.createElement("tr");
+        const statusClass = (service.status || '').replace(/\s+/g, '-').toLowerCase();
+        tr.innerHTML = `
+          <td>${service.type || ''}</td>
+          <td>${service.vehicle || ''}</td>
+          <td>${service.dateBooked || ''}</td>
+          <td><span class="status ${statusClass}">${service.status || ''}</span></td>
+          <td>${service.estCompletion || '-'}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    async function filterServices() {
+      const qEl = document.getElementById("searchInput");
+      const sEl = document.getElementById("statusFilter");
+      const q = qEl ? qEl.value.trim() : '';
+      const status = sEl ? sEl.value : 'All';
+
+      if (typeof LIST_URL === 'string' && LIST_URL) {
+        const url = `${LIST_URL}?q=${encodeURIComponent(q)}&status=${encodeURIComponent(status)}`;
+        try {
+          const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
+          const json = await res.json();
+          console.log('API response:', json);
+          renderTable(Array.isArray(json.data) ? json.data : []);
+          return;
+        } catch (e) {
+          console.error('Fetch error:', e);
+        }
+      }
+
+      const filtered = servicesData.filter(s => {
+        const matchesSearch =
+          (s.type || '').toLowerCase().includes(q.toLowerCase()) ||
+          (s.vehicle || '').toLowerCase().includes(q.toLowerCase()) ||
+          (s.dateBooked || '').includes(q.toLowerCase());
+        const matchesStatus = (status === 'All') || (s.status === status);
+        return matchesSearch && matchesStatus;
+      });
+      renderTable(filtered);
+    }
+
+    function initTrackServices() {
+      const searchBtn = document.getElementById("searchBtn");
+      const searchInput = document.getElementById("searchInput");
+      const statusFilter = document.getElementById("statusFilter");
+
+      searchBtn && searchBtn.addEventListener("click", filterServices);
+      searchInput && searchInput.addEventListener("keyup", (e) => { if (e.key === "Enter") filterServices(); });
+      statusFilter && statusFilter.addEventListener("change", filterServices);
+
+      filterServices();
+    }
+
+    document.readyState === 'loading'
+      ? document.addEventListener('DOMContentLoaded', initTrackServices)
+      : initTrackServices();
   </script>
-  <script src="<?= $base ?>/public/assets/js/customer/track-services.js"></script>
 </body>
 </html>

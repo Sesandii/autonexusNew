@@ -286,6 +286,13 @@ $selCode = $branch_code ?? '';
       
       if (!branchCode || !date) return;
       
+      // Check if selected date is today
+      const today = new Date();
+      const selectedDate = new Date(date + 'T00:00:00');
+      const isToday = selectedDate.toDateString() === today.toDateString();
+      const currentHour = today.getHours();
+      const currentMinute = today.getMinutes();
+      
       try {
         const response = await fetch(`${base}/customer/book/slots?branch=${encodeURIComponent(branchCode)}&date=${encodeURIComponent(date)}`);
         const slots = await response.json();
@@ -300,21 +307,39 @@ $selCode = $branch_code ?? '';
           const time = btn.dataset.time;
           const slotData = slots[time];
           
-          if (slotData) {
-            const countEl = btn.querySelector('.slot-count');
-            countEl.textContent = `(${slotData.booked}/3)`;
+          // Parse slot time (e.g., "09:00" -> hour=9, minute=0)
+          const [slotHour, slotMinute] = time.split(':').map(Number);
+          
+          // Check if this time slot has already passed (for today only)
+          const isPastSlot = isToday && (slotHour < currentHour || (slotHour === currentHour && slotMinute <= currentMinute));
+          
+          if (isPastSlot) {
+            // Hide the slot if it has already passed
+            btn.style.display = 'none';
+            // Clear selection if this slot was selected
+            if (timeInput.value === time) {
+              timeInput.value = '';
+            }
+          } else {
+            // Show the slot
+            btn.style.display = '';
             
-            if (slotData.full) {
-              btn.classList.add('is-full');
-              btn.classList.remove('is-selected');
-              btn.disabled = true;
-              // Clear selection if this slot was selected
-              if (timeInput.value === time) {
-                timeInput.value = '';
+            if (slotData) {
+              const countEl = btn.querySelector('.slot-count');
+              countEl.textContent = `(${slotData.booked}/3)`;
+              
+              if (slotData.full) {
+                btn.classList.add('is-full');
+                btn.classList.remove('is-selected');
+                btn.disabled = true;
+                // Clear selection if this slot was selected
+                if (timeInput.value === time) {
+                  timeInput.value = '';
+                }
+              } else {
+                btn.classList.remove('is-full');
+                btn.disabled = false;
               }
-            } else {
-              btn.classList.remove('is-full');
-              btn.disabled = false;
             }
           }
         });
