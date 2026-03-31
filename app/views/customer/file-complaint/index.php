@@ -40,8 +40,11 @@ if (defined('APP_ROOT') && file_exists(APP_ROOT . '/views/layouts/customer-sideb
 ?>
 
 <div class="complaint-container">
-    <h2><i class="fa-solid fa-triangle-exclamation"></i> File a Complaint</h2>
-    <p>We're sorry to hear about your experience. Please select the relevant appointment and tell us what went wrong.</p>
+    <div class="complaint-header">
+        <h2><i class="fa-solid fa-triangle-exclamation"></i> File a Complaint</h2>
+        <p>We're sorry to hear about your experience. Please select the relevant appointment and tell us what went wrong.</p>
+        <div class="complaint-response">We’ll review your complaint and reply via your registered email/phone. You’ll also see status updates here.</div>
+    </div>
     
     <?php
     // Display success message
