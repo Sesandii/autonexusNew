@@ -104,7 +104,7 @@ $prefillTime      = $prefill['time'] ?? '';
         <?php endif; ?>
       </div>
       <a href="<?= $base ?>/customer/appointments" style="display:inline-flex;align-items:center;gap:6px;padding:10px 20px;background:#6c757d;color:#fff;text-decoration:none;border-radius:8px;font-weight:500;">
-        ← Back to Appointments
+        Back to Appointments
       </a>
     </header>
 
