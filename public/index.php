@@ -176,24 +176,20 @@ $router->post('/admin/admin-appointments/update', [AppointmentsController::class
 $router->post('/admin/admin-appointments/delete', [AppointmentsController::class, 'delete']);
 
 
-use app\controllers\admin\ServicesController;
 
 /** ======================
  *  ADMIN: View Services (route by code)
  *  ====================== */
 
-// list (you already have a UI page under /admin/admin-viewservices)
+use app\controllers\admin\ServicesController;
+
 $router->get('/admin/admin-viewservices', [ServicesController::class, 'index']);
 $router->get('/admin/services', [ServicesController::class, 'index']);
-
-// create form + submit
-$router->get('/admin/services/create',  [ServicesController::class, 'create']);
-$router->post('/admin/services',         [ServicesController::class, 'store']);
-// NEW:
-$router->get ('/admin/services/{id}/edit',   [ServicesController::class, 'edit']);
-$router->post('/admin/services/{id}',        [ServicesController::class, 'update']);
+$router->get('/admin/services/create', [ServicesController::class, 'create']);
+$router->post('/admin/services', [ServicesController::class, 'store']);
+$router->get('/admin/services/{id}/edit', [ServicesController::class, 'edit']);
+$router->post('/admin/services/{id}', [ServicesController::class, 'update']);
 $router->post('/admin/services/{id}/delete', [ServicesController::class, 'destroy']);
-
 
 
 use app\controllers\admin\PricingController;
@@ -313,6 +309,13 @@ $router->post('/admin/admin-viewcomplaints/update', [ComplaintsController::class
 $router->get('/admin/complaints', [ComplaintsController::class, 'index']);
 $router->get('/admin/complaints/show', [ComplaintsController::class, 'show']);
 $router->post('/admin/complaints/update', [ComplaintsController::class, 'update']);
+
+
+use app\controllers\admin\QualityControlController;
+
+$router->get('/admin/quality/inspection-reports', [QualityControlController::class, 'inspectionReports']);
+$router->get('/admin/quality/final-approvals', [QualityControlController::class, 'finalApprovals']);
+$router->get('/admin/quality/dashboard', [QualityControlController::class, 'dashboard']);
 
 
 
