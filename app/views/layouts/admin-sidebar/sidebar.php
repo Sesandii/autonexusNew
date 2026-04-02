@@ -96,7 +96,7 @@ $current = $current ?? '';
     </li>
 
     <!-- Communication -->
-    <li class="menu-item has-submenu <?= in_array($current, ['feedback', 'notifications'], true) ? 'open' : '' ?>">
+    <li class="menu-item has-submenu <?= in_array($current, ['feedback', 'notifications', 'complaints'], true) ? 'open' : '' ?>">
       <button class="submenu-toggle" type="button">
         <i class="fa-regular fa-comments"></i>
         <span>Communication</span>
@@ -112,6 +112,27 @@ $current = $current ?? '';
         </li>
         <li class="<?= $current === 'complaints' ? 'active' : '' ?>">
           <a href="<?= $B ?>/admin/admin-viewcomplaints">Complaints</a>
+        </li>
+      </ul>
+    </li>
+
+    <!-- Quality Control -->
+    <li class="menu-item has-submenu <?= in_array($current, ['qc-reports', 'qc-approvals', 'qc-dashboard'], true) ? 'open' : '' ?>">
+      <button class="submenu-toggle" type="button">
+        <i class="fa-solid fa-shield-heart"></i>
+        <span>Quality Control</span>
+        <i class="fa-solid fa-chevron-right caret"></i>
+      </button>
+
+      <ul class="submenu">
+        <li class="<?= $current === 'qc-reports' ? 'active' : '' ?>">
+          <a href="<?= $B ?>/admin/quality/inspection-reports">Inspection Reports</a>
+        </li>
+        <li class="<?= $current === 'qc-approvals' ? 'active' : '' ?>">
+          <a href="<?= $B ?>/admin/quality/final-approvals">Final Approvals</a>
+        </li>
+        <li class="<?= $current === 'qc-dashboard' ? 'active' : '' ?>">
+          <a href="<?= $B ?>/admin/quality/dashboard">Quality Dashboard</a>
         </li>
       </ul>
     </li>
