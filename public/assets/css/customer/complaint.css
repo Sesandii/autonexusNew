@@ -40,25 +40,35 @@ body {
 }
 
 /* Page title */
-.complaint-container h2 {
-  display: flex;
+.complaint-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.complaint-header h2 {
+  display: inline-flex;
   align-items: center;
-  gap: 12px;
-  font-size: 1.8rem;
-  font-weight: 700;
+  gap: 10px;
+  font-size: 1.9rem;
+  font-weight: 800;
   color: var(--brand-red);
   margin: 0 0 8px;
 }
 
-.complaint-container h2 i {
+.complaint-header h2 i {
   font-size: 1.6rem;
 }
 
-.complaint-container > p {
-  margin: 0 0 28px;
-  font-size: 0.95rem;
+.complaint-header p {
+  margin: 0 0 6px;
+  font-size: 1rem;
   color: var(--muted);
-  line-height: 1.5;
+  line-height: 1.6;
+}
+
+.complaint-response {
+  font-size: 0.95rem;
+  color: #374151;
 }
 
 /* Alerts */
