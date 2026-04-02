@@ -302,7 +302,17 @@ $router->get('/admin/reports/export-pdf',   [ReportsController::class, 'exportPd
 
 
 
+use app\controllers\admin\ComplaintsController;
 
+// Old-style route
+$router->get('/admin/admin-viewcomplaints', [ComplaintsController::class, 'index']);
+$router->get('/admin/admin-viewcomplaints/show', [ComplaintsController::class, 'show']);
+$router->post('/admin/admin-viewcomplaints/update', [ComplaintsController::class, 'update']);
+
+// Clean alias routes for testing
+$router->get('/admin/complaints', [ComplaintsController::class, 'index']);
+$router->get('/admin/complaints/show', [ComplaintsController::class, 'show']);
+$router->post('/admin/complaints/update', [ComplaintsController::class, 'update']);
 
 
 
