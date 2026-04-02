@@ -58,19 +58,22 @@
  
 
         <div class="schedule">
-          <h4>Team Schedule -Today</h4>
+  <h4>Today's Appointments</h4>
+
+  <?php if (!empty($appointments)): ?>
+      <?php foreach ($appointments as $app): ?>
           <div class="task">
-            <p><b>John Smith</b> <br><span>Senior Mechanic</span><br>07:30 - 16:00</p>
+            <p>
+              <b><?= htmlspecialchars($app['first_name'] . ' ' . $app['last_name']) ?></b> <br>
+              <span><?= htmlspecialchars($app['make'] . ' ' . $app['model'] . ' (' . $app['license_plate'] . ')') ?></span><br>
+              <?= date('H:i', strtotime($app['appointment_time'])) ?>
+            </p>
           </div>
-          <div class="task">
-            <p><b>Maria Garcia</b> <br><span>Service Advisor</span><br>09:00 - 18:00</p>
-          </div>
-          <div class="task">
-            <p><b>David Lee</b> <br><span>Technician</span><br>08:00 - 16:30</p>
-          </div>
-          <div class="task">
-            <p><b>Sarah Johnson</b> <br><span>Parts Specialist</span><br>10:00 - 19:00</p>
-          </div>
+      <?php endforeach; ?>
+  <?php else: ?>
+      <p>No appointments today.</p>
+  <?php endif; ?>
+</div>
         </div>
       </div>
 

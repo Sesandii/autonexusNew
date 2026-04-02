@@ -67,3 +67,21 @@ addVehicleBtn.addEventListener('click', () => {
 vehiclesContainer.querySelectorAll('.remove-vehicle').forEach(btn => {
   btn.addEventListener('click', e => e.target.parentElement.remove());
 });
+
+document.getElementById('branch-search').addEventListener('input', function () {
+    const inputValue = this.value;
+    const options = document.querySelectorAll('#branch-list option');
+    let matched = false;
+
+    options.forEach(option => {
+        if (option.value === inputValue) {
+            document.getElementById('branch-id').value = option.dataset.id;
+            matched = true;
+        }
+    });
+
+    // Clear hidden field if invalid value typed
+    if (!matched) {
+        document.getElementById('branch-id').value = '';
+    }
+});

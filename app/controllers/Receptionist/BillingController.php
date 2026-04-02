@@ -3,85 +3,88 @@ namespace app\controllers\Receptionist;
 
 use app\core\Controller;
 use app\model\Receptionist\BillingModel;
+use FPDF\FPDF;
 
 class BillingController extends Controller
 {
     private BillingModel $billing;
 
-    public function index(): void 
-    { // This will load app/views/Receptionist/Billing/Billing.php
-     $this->view('Receptionist/Billing/billing'); 
-    }
-    
-    public function __construct($config = [])
+    public function __construct(array $config = [])
     {
         parent::__construct($config);
-
         $this->billing = new BillingModel();
     }
 
-    /** Load the invoice creation page */
+    public function invoices(): void
+{
+    $invoices = $this->billing->getInvoices();
+    $paidInvoices = $this->billing->getPaidInvoices();
+
+    $this->view('Receptionist/Billing/billing', [
+        'invoices'     => $invoices,
+        'paidInvoices' => $paidInvoices
+    ]);
+}
+
+    /** Show completed work orders */
     public function create(): void
     {
-        // Load service types for dropdown
-        $serviceTypes = $this->billing->getServiceTypes();
+        $orders = $this->billing->getCompletedWorkOrders();
 
         $this->view('Receptionist/Billing/createInvoice', [
-            'serviceTypes' => $serviceTypes
+            'orders' => $orders
         ]);
     }
 
-    /** AJAX: Fetch customer info by phone */
-    public function getCustomerData(): void
-{
-    $phone = $_GET['phone'] ?? '';
+    /** Invoice preview */
+    public function preview(int $id): void
+    {
+        $order = $this->billing->getWorkOrderForInvoice($id);
 
-    $customer = $this->billing->getCustomerByPhone($phone);
+        if (!$order) {
+            die('Work order already invoiced or invalid.');
+        }
 
-    if (!$customer) {
-        echo json_encode(["error" => "Customer not found"]);
-        return;
+        $this->view('Receptionist/Billing/invoicePreview', [
+            'order' => $order
+        ]);
     }
 
-    // fetch vehicles using user_id
-    $vehicles = $this->billing->getVehiclesByUser($customer['user_id']);
+    /** Generate invoice + lock work order */
+    public function store(int $id): void
+    {
+        $this->billing->createInvoice($id);
 
-    echo json_encode([
-        "first_name" => $customer['first_name'],
-        "last_name"  => $customer['last_name'],
-        "email"      => $customer['email'],
-        "vehicles"   => $vehicles
+        $this->redirect($this->baseUrl() . '/receptionist/billing');
+    }
+
+public function downloadInvoice(int $id): void
+{
+    $order = $this->billing->getWorkOrderForInvoice($id);
+
+    if (!$order) {
+        http_response_code(404);
+        exit('Invalid invoice');
+    }
+
+    $this->view('Receptionist/Billing/invoicePrint', [
+        'order' => $order
+    ]);
+}
+
+/**
+ * Show only PAID invoices
+ */
+public function paidInvoices(): void
+{
+    $invoices = $this->billing->getPaidInvoices();
+
+    $this->view('Receptionist/Billing/paidInvoices', [
+        'invoices' => $invoices
     ]);
 }
 
 
-    /** AJAX: Fetch services for a type */
-    public function getServicesByType(): void
-    {
-        $typeId = $_GET['type_id'] ?? 0;
-
-        $services = $this->billing->getServicesByType((int)$typeId);
-
-        echo json_encode($services);
-    }
-
-    /** AJAX: Fetch service price */
-    public function getServicePrice(): void
-    {
-        $serviceId = $_GET['service_id'] ?? 0;
-
-        $price = $this->billing->getServicePrice((int)$serviceId);
-
-        echo json_encode(["price" => $price]);
-    }
-
-        /** AJAX: Fetch all active packages */
-    public function getPackages(): void
-    {
-        $packages = $this->billing->getPackages();
-        echo json_encode($packages);
-    }
-
-
 
 }
+?>

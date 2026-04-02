@@ -43,6 +43,9 @@
   <label>Time:</label>
   <input type="time" name="complaint_time">
 
+  <label>Subject:</label>
+<input type="text" name="subject" value="<?= $complaint['subject'] ?>">
+
         <label for="description">Description:</label>
         <textarea id="description" name="description" required><?= htmlspecialchars($complaint['description']) ?></textarea>
 

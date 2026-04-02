@@ -445,9 +445,6 @@ $router->get ('/customer/appointments/list',     [\app\controllers\customer\Appo
 // $router->get ('/customer/appointments/list',     [\app\controllers\customer\AppointmentsController::class, 'list']);     // optional JSON for AJAX
 
 
-//manager 
-//
-
 //manager: Dashboard
 $router->get('/manager/dashboard', [app\controllers\Manager\DashboardController::class, 'index']);
 
@@ -466,16 +463,16 @@ $router->get('/manager/services/create', [app\controllers\Manager\ServicesContro
 $router->post('/manager/services/store', [app\controllers\Manager\ServicesController::class,'store']);
 
 //Manager: Billing
-// $router->get('/manager/billing', [app\controllers\Manager\BillingController::class, 'invoices']);
-// $router->get('/manager/billing/downloadInvoice/{id}',[app\controllers\Manager\BillingController::class, 'downloadInvoice']);
+$router->get('/manager/billing', [app\controllers\Manager\BillingController::class, 'invoices']);
+$router->get('/manager/billing/downloadInvoice/{id}',[app\controllers\Manager\BillingController::class, 'downloadInvoice']);
 
-// //Manager: Complaints
-// $router->get('/manager/complaints',                         [app\controllers\Manager\ComplaintController::class, 'index']);
-// $router->get('/manager/complaints/{complaintId}',           [app\controllers\Manager\ComplaintController::class, 'show']);
+//Manager: Complaints
+$router->get('/manager/complaints',                         [app\controllers\Manager\ComplaintController::class, 'index']);
+$router->get('/manager/complaints/{complaintId}',           [app\controllers\Manager\ComplaintController::class, 'show']);
 
-// //Manager: Customer Profile
-// $router->get('/manager/customers',                      [app\controllers\Manager\CustomerController::class, 'index']);
-// $router->get('/manager/customers/{customerId}',         [app\controllers\Manager\CustomerController::class, 'show']);
+//Manager: Customer Profile
+$router->get('/manager/customers',                      [app\controllers\Manager\CustomerController::class, 'index']);
+$router->get('/manager/customers/{customerId}',         [app\controllers\Manager\CustomerController::class, 'show']);
 
 // Manager: Team Schedule
 $router->get('/manager/schedule', [app\controllers\Manager\ScheduleController::class,'index']);
@@ -491,11 +488,10 @@ $router->get('/manager/performance/mechanics', [\app\controllers\Manager\Perform
 $router->get('/manager/performance/viewMechanic',[\app\controllers\Manager\PerformanceController::class, 'viewMechanic']);
 
 // manager: reports
-
-// $router->get('/manager/reports', [app\controllers\Manager\ReportController::class, 'index']);
-// $router->get('/manager/reports/getFilters', [app\controllers\Manager\ReportController::class, 'getFilters']);
-// $router->post('/manager/reports/generate', [app\controllers\Manager\ReportController::class, 'generate']);
-// $router->post('/manager/reports/result', [app\controllers\Manager\ReportController::class, 'result']);
+$router->get('/manager/reports', [app\controllers\Manager\ReportController::class, 'index']);
+$router->get('/manager/reports/getFilters', [app\controllers\Manager\ReportController::class, 'getFilters']);
+$router->post('/manager/reports/generate', [app\controllers\Manager\ReportController::class, 'generate']);
+$router->post('/manager/reports/result', [app\controllers\Manager\ReportController::class, 'result']);
 
 //Receptionist: Complaints
 
@@ -517,9 +513,9 @@ $router->get('/receptionist/appointments/day',         [app\controllers\Receptio
 $router->post('/receptionist/appointments/save',       [app\controllers\Receptionist\AppointmentsController::class, 'save']);
 $router->get('/receptionist/appointments/getCustomer', [app\controllers\Receptionist\AppointmentsController::class, 'getCustomer']);
 $router->get('/receptionist/appointments/getServices', [app\controllers\Receptionist\AppointmentsController::class, 'getServices']);
-
+$router->post('/receptionist/appointments/assignSupervisor', [app\controllers\Receptionist\AppointmentsController::class, 'assignSupervisor']);
 $router->get('/receptionist/appointments/edit/{id}', [app\controllers\Receptionist\AppointmentsController::class, 'edit']);
-
+$router->post('/receptionist/appointments/update', [app\controllers\Receptionist\AppointmentsController::class, 'update']);
 
 
 //Receptionist: Customer Profiles
@@ -546,6 +542,9 @@ $router->get('/receptionist/billing/invoice/{id}',    [app\controllers\Reception
 $router->post('/receptionist/billing/invoice/{id}',   [app\controllers\Receptionist\BillingController::class, 'store']); // Invoice creation page
 $router->get('/receptionist/billing/downloadInvoice/{id}',[app\controllers\Receptionist\BillingController::class, 'downloadInvoice']);
 $router->get('/receptionist/billing/paid',[app\controllers\Receptionist\BillingController::class, 'paidInvoices']);
+
+
+
 
 
 

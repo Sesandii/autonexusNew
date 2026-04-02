@@ -81,23 +81,58 @@
   font-size: 24px;
 }
 
-.form-row {
-  display: flex;
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 20px;
+  margin-top: 20px;
 }
 
-.form-group {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
+.card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.form-group input, 
-.form-group textarea {
-  padding: 10px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 18px rgba(0,0,0,0.12);
+}
+
+.card .icon {
+  font-size: 28px;
+  display: inline-block;
+  margin-bottom: 10px;
+}
+
+.card h4 {
+  margin: 0;
+  font-size: 14px;
+  color: #666;
+}
+
+.card h2 {
+  margin: 8px 0;
+  font-size: 20px;
+  color: #222;
+}
+
+.card p {
+  margin: 0;
+  font-weight: bold;
+}
+
+.card .green {
+  color: red;
+}
+
+.card small {
+  display: block;
+  margin-top: 8px;
+  color: #999;
 }
 
 .modal-footer button {

@@ -1,0 +1,167 @@
+
+
+.header-bar {
+  display: flex;
+  justify-content: space-between; /* pushes h1 left, button right */
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+/* Header title styling (optional) */
+.header-bar h1 {
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0;
+}
+
+/* Create Invoice button styling */
+.create-btn {
+  background-color: red;
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.create-btn:hover {
+  background-color: red;
+}
+
+
+
+.tab-nav {
+  background-color: #f1f5f9;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.tab-list {
+  list-style: none;
+  display: flex;
+  margin: 0;
+  padding: 0;
+}
+
+.tab-item {
+  flex: 1;
+  padding: 12px 20px;
+  text-align: center;
+  cursor: pointer;
+  font-weight: 500;
+  color: #374151;
+  transition: background 0.3s, color 0.3s;
+}
+
+.tab-item:hover {
+  background-color: #e2e8f0;
+}
+
+.tab-item.active {
+  background-color: red;
+  color: white;
+}
+
+.tab-content {
+  display: none;
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  margin-bottom: 20px;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  font-family: 'Inter', sans-serif;
+}
+
+thead {
+  background: #f4f4f6;
+}
+
+th {
+  text-align: left;
+  padding: 12px;
+  font-size: 13px;
+  color: #666;
+  font-weight: 600;
+}
+
+td {
+  padding: 12px;
+  border-bottom: 1px solid #eee;
+  font-size: 14px;
+  color: #333;
+}
+
+tbody tr:hover {
+  background: #fafafa; /* subtle hover effect */
+}
+
+.total {
+  margin-top: 12px;
+  font-weight: bold;
+  text-align: right;
+  color: #111;
+}
+
+/* Vehicle Section */
+.invoice-list {
+  margin-top: 20px;
+}
+
+#T_history {
+  margin-top: 20px;
+}
+
+
+.search-filter {
+  display: flex;
+  justify-content: space-between;  /* pushes search to left, select to right */
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.search-bar {
+  width: 500px;
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  outline: none;
+}
+
+.search-bar:focus {
+  border-color: #007bff;
+}
+
+.search-filter select {
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  background-color: white;
+  cursor: pointer;
+}
+
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+}

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Add Service Package</title>
+  <link rel="stylesheet" href="addToTeam.css" />
+</head>
+<body>
+    <div class="sidebar">
+    <div class="logo">
+      <img src="../../Images/logo.png" alt="AutoNexus Logo">
+      <h2>AUTONEXUS</h2>
+      <p>VEHICLE SERVICE</p>
+    </div>
+    <ul class="menu">
+      <li><a href="../Dashboard/dashboard.html">Dashboard</a></li>
+      <li><a href="../Schedule/Schedule.html">Team Schedule</a></li>
+      <li class="active"><a href="../Services/Services.html">Service & Packages</a></li>
+      <li><a href="../Complaints/complaints.html">Complaints</a></li>
+      <li><a href="../Team Performance/Performance.html">Team Performance</a></li>
+      <li><a href="../Customer Profile/Profile.html">Customer Profiles</a></li>
+      <li><a href="../Reports/Report.html">Reports</a></li>
+    </ul>
+  </div>
+
+  <div class="main">
+
+  <div class="modal">
+    <div class="modal-header">
+      <h2>Add Team members</h2>
+      <span class="close-button">&times;</span>
+    </div>
+
+    <div class="modal-body">
+      <div class="form-group">
+        <label>Name</label>
+        <input type="text" placeholder="Enter the Name" />
+      </div>
+
+      <div class="form-group">
+            <label>Designation</label>
+            <input type="text" placeholder="Enter the role"/> 
+        </div>
+
+        <div class="form-group">
+            <label>Contact Number</label>
+            <input type="number" placeholder="071-222-222-2222"/> 
+        </div>
+
+        <div class="form-group">
+            <label>Email</label>
+            <input type="email" placeholder="abc@gmail.com"/> 
+        </div>
+
+        <div class="form-group">
+            <label>Age</label> 
+            <input type="number" placeholder="Enter the age"/> 
+        </div>
+
+        <div class="form-group">
+            <label>Date of Birth</label>
+            <input type="number" placeholder="Enter the age"/> 
+        </div>
+
+
+        <div class="form-group">
+        <label>Gender</label>
+        </div>
+        <div class="gender-options">
+        <label>
+            <input type="radio" name="gender" value="male">
+            Male
+        </label>
+        <label>
+            <input type="radio" name="gender" value="female">
+            Female
+        </label>
+        </div>
+        </div>
+ 
+
+
+    <div class="modal-footer">
+      <button class="cancel-button">Cancel</button>
+      <button class="save-button">Save</button>
+    </div>
+  </div>
+
+  <script src="addToTeam.js"></script>
+</body>
+</html>

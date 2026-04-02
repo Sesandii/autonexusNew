@@ -45,8 +45,7 @@
 
       <!-- Complaint Details -->
       <div class="complaint">
-        <p class="date">Submitted on <strong><?= date('M d, Y', strtotime($complaint['complaint_date'])) ?></strong></p>
-        <p><?= nl2br(htmlspecialchars($complaint['description'])) ?></p>
+       <p class="date">Submitted on <strong><?= date('M d, Y', strtotime($complaint['created_at'])) ?></strong></p> <p><?= nl2br(htmlspecialchars($complaint['description'])) ?></p>
 
         <div class="tags">
           <p><strong>Priority:</strong> <?= htmlspecialchars($complaint['priority']) ?></p>
