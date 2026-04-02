@@ -110,6 +110,9 @@ $current = $current ?? '';
         <li class="<?= $current === 'notifications' ? 'active' : '' ?>">
           <a href="<?= $B ?>/admin/admin-notifications">Notifications</a>
         </li>
+        <li class="<?= $current === 'complaints' ? 'active' : '' ?>">
+          <a href="<?= $B ?>/admin/admin-viewcomplaints">Complaints</a>
+        </li>
       </ul>
     </li>
 
