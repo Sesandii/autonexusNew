@@ -49,11 +49,15 @@ class FileComplaintController extends Controller {
         $user_id = $this->userId();
 
         // Validate input
-        $appointment_id = $_POST['appointment_id'] ?? null;
+        $appointment_id = isset($_POST['appointment_id']) ? (int)$_POST['appointment_id'] : 0;
         $description = trim($_POST['complaint'] ?? '');
+        $allowedPriorities = ['Low', 'Medium', 'High'];
         $priority = $_POST['priority'] ?? 'Medium';
+        if (!in_array($priority, $allowedPriorities, true)) {
+            $priority = 'Medium';
+        }
 
-        if (empty($appointment_id)) {
+        if ($appointment_id <= 0) {
             $_SESSION['complaint_error'] = 'Please select an appointment';
             header('Location: ' . BASE_URL . '/customer/file-complaint');
             exit;
@@ -61,6 +65,13 @@ class FileComplaintController extends Controller {
 
         if (empty($description) || strlen($description) < 10) {
             $_SESSION['complaint_error'] = 'Please provide a detailed description (at least 10 characters)';
+            header('Location: ' . BASE_URL . '/customer/file-complaint');
+            exit;
+        }
+
+        // Prevent IDOR: customer can only file complaints for their own completed appointments.
+        if (!$this->appointmentModel->appointmentBelongsToUserAndCompleted($user_id, $appointment_id)) {
+            $_SESSION['complaint_error'] = 'Invalid appointment selected';
             header('Location: ' . BASE_URL . '/customer/file-complaint');
             exit;
         }
