@@ -1,101 +1,166 @@
-<?php $B = rtrim(BASE_URL, '/'); ?>
+<?php
+$B = rtrim(BASE_URL, '/');
+$current = $current ?? '';
+?>
 
 <aside class="sidebar">
   <h2 class="logo">AutoNexus</h2>
+
   <ul class="menu">
     <!-- Dashboard -->
-    <li class="menu-item <?php if($current=='dashboard') echo 'active'; ?>">
-      <a href="<?= BASE_URL ?>/admin-dashboard">
-    <i class="fa-solid fa-gauge"></i>
-    <span>Dashboard</span>
-</a>
-
+    <li class="menu-item <?= $current === 'dashboard' ? 'active' : '' ?>">
+      <a href="<?= $B ?>/admin-dashboard">
+        <i class="fa-solid fa-gauge"></i>
+        <span>Dashboard</span>
+      </a>
     </li>
 
-    <!-- Manage Users -->
-    <li class="menu-item has-submenu">
-      <button class="submenu-toggle">
-        <i class="fa-solid fa-users-gear"></i>
-        <span>Manage Users</span>
+    <!-- Operations -->
+    <li class="menu-item has-submenu <?= in_array($current, ['appointments', 'approval', 'progress', 'history'], true) ? 'open' : '' ?>">
+      <button class="submenu-toggle" type="button">
+        <i class="fa-solid fa-gear"></i>
+        <span>Operations</span>
         <i class="fa-solid fa-chevron-right caret"></i>
       </button>
 
       <ul class="submenu">
-        <li class="<?php if($current=='customers') echo 'active'; ?>">
-          <a href="<?= BASE_URL ?>/admin/customers">Customers</a>
+        <li class="<?= $current === 'appointments' ? 'active' : '' ?>">
+          <a href="<?= $B ?>/admin/appointments">Appointments</a>
         </li>
-        <li class="<?php if($current=='service-managers') echo 'active'; ?>">
-          <a href="<?= BASE_URL ?>/admin/service-managers">Service Managers</a>
-
+        <li class="<?= $current === 'approval' ? 'active' : '' ?>">
+          <a href="<?= $B ?>/admin/admin-serviceapproval">Service Approval</a>
         </li>
-        <li class="<?php if($current=='supervisors') echo 'active'; ?>">
-         <a href="<?= BASE_URL ?>/admin/supervisors">Workshop Supervisors</a>
+        <li class="<?= $current === 'progress' ? 'active' : '' ?>">
+          <a href="<?= $B ?>/admin/admin-ongoingservices">Service Progress</a>
         </li>
-        <li class="<?php if($current=='mechanics') echo 'active'; ?>">
-          <a href="<?= BASE_URL ?>/admin/mechanics">Mechanics</a>
+        <li class="<?= $current === 'history' ? 'active' : '' ?>">
+          <a href="<?= $B ?>/admin/admin-servicehistory">Service History</a>
         </li>
-       <li class="<?php if(($current ?? '')==='receptionists') echo 'active'; ?>">
-  <a href="<?= rtrim(BASE_URL,'/') ?>/admin/viewreceptionist">Receptionists</a>
-</li>
-
       </ul>
     </li>
 
-    <!-- Other menu items -->
-    <li class="menu-item <?php if($current=='branches') echo 'active'; ?>">
-      <a href="<?= $B ?>/admin/branches"><i class="fa-solid fa-diagram-project"></i><span>Manage Branches</span></a>
+    <!-- Management -->
+    <li class="menu-item has-submenu <?= in_array($current, ['branches', 'services', 'pricing', 'customers', 'service-managers', 'supervisors', 'mechanics', 'receptionists'], true) ? 'open' : '' ?>">
+      <button class="submenu-toggle" type="button">
+        <i class="fa-solid fa-layer-group"></i>
+        <span>Management</span>
+        <i class="fa-solid fa-chevron-right caret"></i>
+      </button>
+
+      <ul class="submenu">
+        <li class="<?= $current === 'branches' ? 'active' : '' ?>">
+          <a href="<?= $B ?>/admin/branches">Branches</a>
+        </li>
+
+        <!-- Services -->
+        <li class="submenu-group <?= in_array($current, ['services', 'pricing'], true) ? 'open' : '' ?>">
+          <button class="submenu-toggle submenu-toggle--inner" type="button">
+            <span>Services</span>
+            <i class="fa-solid fa-chevron-right caret"></i>
+          </button>
+          <ul class="submenu submenu--inner">
+            <li class="<?= $current === 'services' ? 'active' : '' ?>">
+              <a href="<?= $B ?>/admin/admin-viewservices">View Services</a>
+            </li>
+            <li class="<?= $current === 'pricing' ? 'active' : '' ?>">
+              <a href="<?= $B ?>/admin/admin-updateserviceprice">Pricing Management</a>
+            </li>
+          </ul>
+        </li>
+
+        <!-- Manage Users -->
+        <li class="submenu-group <?= in_array($current, ['customers', 'service-managers', 'supervisors', 'mechanics', 'receptionists'], true) ? 'open' : '' ?>">
+          <button class="submenu-toggle submenu-toggle--inner" type="button">
+            <span>Manage Users</span>
+            <i class="fa-solid fa-chevron-right caret"></i>
+          </button>
+          <ul class="submenu submenu--inner">
+            <li class="<?= $current === 'customers' ? 'active' : '' ?>">
+              <a href="<?= $B ?>/admin/customers">Customers</a>
+            </li>
+            <li class="<?= $current === 'service-managers' ? 'active' : '' ?>">
+              <a href="<?= $B ?>/admin/service-managers">Service Managers</a>
+            </li>
+            <li class="<?= $current === 'supervisors' ? 'active' : '' ?>">
+              <a href="<?= $B ?>/admin/supervisors">Workshop Supervisors</a>
+            </li>
+            <li class="<?= $current === 'mechanics' ? 'active' : '' ?>">
+              <a href="<?= $B ?>/admin/mechanics">Mechanics</a>
+            </li>
+            <li class="<?= $current === 'receptionists' ? 'active' : '' ?>">
+              <a href="<?= $B ?>/admin/viewreceptionist">Receptionists</a>
+            </li>
+          </ul>
+        </li>
+      </ul>
     </li>
 
-    <li class="menu-item <?php if($current=='services') echo 'active'; ?>">
-      <a data-e2e="nav-services" href="<?= rtrim(BASE_URL,'/') ?>/admin/admin-viewservices"><i class="fa-solid fa-screwdriver-wrench"></i><span>Service Management</span></a>
+    <!-- Communication -->
+    <li class="menu-item has-submenu <?= in_array($current, ['feedback', 'notifications'], true) ? 'open' : '' ?>">
+      <button class="submenu-toggle" type="button">
+        <i class="fa-regular fa-comments"></i>
+        <span>Communication</span>
+        <i class="fa-solid fa-chevron-right caret"></i>
+      </button>
+
+      <ul class="submenu">
+        <li class="<?= $current === 'feedback' ? 'active' : '' ?>">
+          <a href="<?= $B ?>/admin/admin-viewfeedback">Feedback</a>
+        </li>
+        <li class="<?= $current === 'notifications' ? 'active' : '' ?>">
+          <a href="<?= $B ?>/admin/admin-notifications">Notifications</a>
+        </li>
+        <li class="<?= $current === 'complaints' ? 'active' : '' ?>">
+          <a href="<?= $B ?>/admin/admin-viewcomplaints">Complaints</a>
+        </li>
+      </ul>
     </li>
 
-    <li class="menu-item <?php if($current=='pricing') echo 'active'; ?>">
-      <a href="<?= rtrim(BASE_URL,'/') ?>/admin/admin-updateserviceprice"><i class="fa-solid fa-dollar-sign"></i><span>Pricing Management</span></a>
+    <!-- Finance & Analytics -->
+    <li class="menu-item has-submenu <?= in_array($current, ['invoices', 'reports'], true) ? 'open' : '' ?>">
+      <button class="submenu-toggle" type="button">
+        <i class="fa-solid fa-chart-column"></i>
+        <span>Finance & Analytics</span>
+        <i class="fa-solid fa-chevron-right caret"></i>
+      </button>
+
+      <ul class="submenu">
+        <li class="<?= $current === 'invoices' ? 'active' : '' ?>">
+          <a href="<?= $B ?>/admin/admin-viewinvoices">Invoices</a>
+        </li>
+        <li class="<?= $current === 'reports' ? 'active' : '' ?>">
+          <a href="<?= $B ?>/admin/admin-viewreports">Reports</a>
+        </li>
+      </ul>
     </li>
 
-    <li class="menu-item <?php if($current=='approval') echo 'active'; ?>">
-      <a href="<?= rtrim(BASE_URL,'/') ?>/admin/admin-serviceapproval"><i class="fa-solid fa-clipboard-check"></i><span>Service Approval</span></a>
-    </li>
-
-   
-
-    <li class="menu-item <?php if($current=='appointments') echo 'active'; ?>">
-  <a href="<?= rtrim(BASE_URL,'/') ?>/admin/admin-appointments"><i class="fa-solid fa-calendar-check"></i><span>Appointments</span>
-  </a>
-</li>
-
-    <li class="menu-item <?php if($current=='progress') echo 'active'; ?>">
-      <a href="<?= rtrim(BASE_URL,'/') ?>/admin/admin-ongoingservices"><i class="fa-solid fa-heart-pulse"></i><span>Service Progress</span></a>
-    </li>
-
-    <li class="menu-item <?php if($current=='history') echo 'active'; ?>">
-      <a href="<?= rtrim(BASE_URL,'/') ?>/admin/admin-servicehistory"><i class="fa-solid fa-clock-rotate-left"></i><span>Service History</span></a>
-    </li>
-
-    <li class="menu-item <?php if($current=='feedback') echo 'active'; ?>">
-      <a href="<?= rtrim(BASE_URL,'/') ?>/admin/admin-viewfeedback"><i class="fa-regular fa-message"></i><span>Feedback</span></a>
-    </li>
-
-    <li class="menu-item <?php if($current=='notifications') echo 'active'; ?>">
-       <a href="<?= rtrim(BASE_URL,'/') ?>/admin/admin-notifications"><i class="fa-regular fa-bell"></i><span>Notifications</span></a>
-    </li>
-
-    <li class="menu-item <?php if($current=='reports') echo 'active'; ?>">
-      <a href="<?= rtrim(BASE_URL,'/') ?>/admin/admin-viewreports"><i class="fa-solid fa-chart-column"></i><span>Reports</span></a>
-    </li>
-
-    <li class="menu-item <?php if($current=='invoices') echo 'active'; ?>">
-      <a href="<?= rtrim(BASE_URL,'/') ?>/admin/admin-viewinvoices"><i class="fa-solid fa-file-invoice-dollar"></i><span>Invoices</span></a>
-    </li>
-    <li class="menu-item <?php if(($current ?? '')==='logout') echo 'active'; ?>">
-      <a href="<?= rtrim(BASE_URL, '/') ?>/logout">
-        <i class="fa-solid fa-right-from-bracket"></i><span>Log Out</span>
+    <!-- Profile -->
+    <li class="menu-item <?= $current === 'profile' ? 'active' : '' ?>">
+      <a href="<?= $B ?>/admin/profile">
+        <i class="fa-solid fa-user"></i>
+        <span>Profile</span>
       </a>
     </li>
 
-
-
-    
+    <!-- Logout -->
+    <li class="menu-item <?= $current === 'logout' ? 'active' : '' ?>">
+      <a href="<?= $B ?>/logout">
+        <i class="fa-solid fa-right-from-bracket"></i>
+        <span>Log Out</span>
+      </a>
+    </li>
   </ul>
 </aside>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  document.querySelectorAll('.submenu-toggle').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      const parent = btn.closest('.has-submenu, .submenu-group');
+      if (parent) {
+        parent.classList.toggle('open');
+      }
+    });
+  });
+});
+</script>

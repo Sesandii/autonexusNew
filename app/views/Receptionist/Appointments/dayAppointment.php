@@ -16,8 +16,8 @@
 <div class="main">
 
     <!-- Page Title -->
-    <h4>Appointments</h4>
-
+    
+<h4 id="appointments-header">Appointments</h4>
     <!-- TABLE SECTION WRAPPER (Required for your CSS) -->
     <div class="table-section">
 
@@ -30,7 +30,7 @@
                     <th>Service</th>
                     <th>Branch</th>
                     <th>Status</th>
-                    <th>Notes</th>
+                    <th>Assigned to</th>
                     <th>Action</th>
                 </tr>
             </thead>
@@ -54,18 +54,46 @@
                             <?= htmlspecialchars($app['status']) ?>
                         </span>
                         </td>
+<td>
+<?php if (empty($app['assigned_to'])): ?>
+    <form method="POST" action="<?= BASE_URL ?>/receptionist/appointments/assignSupervisor">
+        <!-- Send appointment ID -->
+        <input type="hidden" name="appointment_id" value="<?= $app['appointment_id'] ?>">
+        <!-- Keep the current date so we can redirect back to the same day -->
+        <input type="hidden" name="date" value="<?= htmlspecialchars($date) ?>">
 
-                        <td><?= htmlspecialchars($app['notes'] ?? '-') ?></td>
+        <!-- Supervisor dropdown -->
+        <select name="supervisor_id" required>
+            <option value="">-- Select Supervisor --</option>
+            <?php foreach ($app['supervisors'] as $sup): ?>
+                <option value="<?= $sup['supervisor_id'] ?>">
+                    <?= htmlspecialchars($sup['first_name'] . ' ' . $sup['last_name']) ?>
+                </option>
+            <?php endforeach; ?>
+        </select>
 
+        <button class="assign-btn">Assign</button>
+    </form>
+<?php else: ?>
+    <?php 
+        // Show the assigned supervisor's name
+        // If the assigned supervisor is not in the available list (maybe fully booked), just show "Assigned"
+        $assigned = array_filter($app['supervisors'], fn($s) => $s['supervisor_id'] == $app['assigned_to']);
+        if ($assigned) {
+            $assignedName = reset($assigned)['first_name'] . ' ' . reset($assigned)['last_name'];
+        } else {
+            // If not found in supervisors list, fetch from DB or fallback
+            $assignedName = "Assigned";
+        }
+    ?>
+    <?= htmlspecialchars($assignedName) ?>
+<?php endif; ?>
+</td>
                         <td>
-                            <button class="update-btn"
-                                data-id="<?= $app['appointment_id'] ?>"
-                                data-time="<?= $app['appointment_time'] ?>"
-                                data-customer="<?= htmlspecialchars($app['first_name'] . ' ' . $app['last_name']) ?>"
-                                data-vehicle="<?= htmlspecialchars($app['make'] . ' ' . $app['model'] . ' (' . $app['license_plate'] . ')') ?>"
-                                data-service="<?= htmlspecialchars($app['service_name']) ?>"
-                                data-status="<?= htmlspecialchars($app['status']) ?>">
-                                Update
+                            <button class="update-btn">
+                                <a href="<?= BASE_URL ?>/receptionist/appointments/edit/<?= $app['appointment_id'] ?>" class="update-btn">
+    Update
+</a>
                             </button>
                         </td>
                     </tr>
@@ -77,8 +105,6 @@
     </div> <!-- .table-section -->
 
 </div> <!-- .main -->
-
-<script src="<?= BASE_URL ?>/public/assets/js/receptionist/dayAppointment.js"></script>
 
 </body>
 </html>

@@ -47,6 +47,8 @@
 
   <label>Time:</label>
   <input type="time" name="complaint_time">
+  <label>Subject:</label>
+<input type="text" name="subject">
 
   <label>Description:</label>
   <textarea name="description" rows="4"></textarea>

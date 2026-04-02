@@ -1,103 +1,150 @@
 <?php
-// app/views/manager/dashboard/dashboard.php
-$base = rtrim(BASE_URL, '/');
+$activePage = 'dashboard';
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AutoNexus • Manager Dashboard</title>
+  <title>AutoNexus Dashboard</title>
 
-  <!-- Manager styles -->
-  <link rel="stylesheet" href="<?= $base ?>/public/assets/css/manager/dashboard.css">
+  <link rel="stylesheet" href="<?= BASE_URL ?>/public/assets/css/receptionist/sidebar.css">
+  <link rel="stylesheet" href="<?= BASE_URL ?>/public/assets/css/receptionist/dashboard/dashboard.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 
-   <link rel="stylesheet" href="<?= $base ?>/public/assets/css/manager/sidebar.css">
-  
-  
-  <!-- (Optional) Icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* Status styling (if not already in CSS file) */
+    .open {
+        color: #ff9800;
+        font-weight: 600;
+    }
+
+    .in_progress {
+        color: #2196f3;
+        font-weight: 600;
+    }
+
+    .completed {
+        color: #4caf50;
+        font-weight: 600;
+    }
+
+    .empty {
+        text-align: center;
+        color: #999;
+        padding: 15px;
+    }
+  </style>
 </head>
 <body>
-  <?php include APP_ROOT . '/views/layouts/managersidebar.php'; ?>
- 
 
-  <div class="main">
-    <div class="topbar">
-      
-      <div class="user">
-        <span class="user-icon">👤</span>
-        <span class="username">Ana Bell</span>
-        <span class="bell">🔔</span>
-      </div>
-    </div>
+<?php include APP_ROOT . '/views/layouts/manager-sidebar.php'; ?>
 
-    <div class="cards">
-      <div class="card">
-        <span class="icon">⚙️</span>
-        <h4>Pending Services</h4>
-        <h2>5</h2>
-        <p class="green">14.5% from last month</p>
-      </div>
-      <div class="card">
-        <span class="icon">⚙️</span>
-        <h4>Ongoing Services</h4>
-        <h2>10</h2>
-        <p class="green">14.5% from last month</p>
-      </div>
-      <div class="card">
-        <span class="icon">📅</span>
-        <h4>Appointments Today</h4>
-        <h2>12</h2>
-      </div>
-    </div>
+<div class="main">
 
-    <div class="content">
-      <div class="activities">
-        <h3>Recent Activities</h3>
-        <table>
-          <thead>
-            <tr>
-              <th>Vehicle</th>
-              <th>Service</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>CAB 1895 <br> Toyota Aqua</td>
-              <td>Oil changing + Brake inspection</td>
-              <td class="pending">Pending</td>
-            </tr>
-            <tr>
-              <td>NDB 7195 <br> Nissan Leaf</td>
-              <td>Oil changing + Brake inspection</td>
-              <td class="progress">In Progress</td>
-            </tr>
-            <tr>
-              <td>NDB 7195 <br> Nissan Leaf</td>
-              <td>Oil changing + Brake inspection</td>
-              <td class="completed">Completed</td>
-            </tr>
-            <tr>
-              <td>NDB 7195 <br> Nissan Leaf</td>
-              <td>Oil changing + Brake inspection</td>
-              <td class="progress">In Progress</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div class="quick-links">
-        <h3>Quick Links</h3>
-        <div class="links">
-          <div class="link">👨‍🔧<br>Add Mechanic</div>
-          <div class="link">⚙️<br>Add Services</div>
-          <div class="link">📅<br>View Schedule</div>
-          <div class="link">📊<br>View Performance</div>
-        </div>
-      </div>
+  <!-- Topbar -->
+  <div class="topbar">
+    <input type="text" placeholder="Enter Vehicle Number">
+    <div class="user">
+      <span class="user-icon">👤</span>
+      <span class="username">Ana Bell</span>
+      <span class="bell">🔔</span>
     </div>
   </div>
+
+  <!-- Dashboard Cards -->
+  <div class="cards">
+
+    <div class="card">
+      <span class="icon">⚙️</span>
+      <h4>Pending Services</h4>
+      <h2><?= $pendingCount ?? 0 ?></h2>
+    </div>
+
+    <div class="card">
+      <span class="icon">⚙️</span>
+      <h4>Ongoing Services</h4>
+      <h2><?= $ongoingCount ?? 0 ?></h2>
+    </div>
+
+    <div class="card">
+      <span class="icon">📅</span>
+      <h4>Appointments Today</h4>
+      <h2><?= $todayAppointments ?? 0 ?></h2>
+    </div>
+
+  </div>
+
+  <!-- Main Content -->
+  <div class="content">
+
+    <!-- Recent Activities -->
+    <div class="activities">
+      <h3>Recent Activities</h3>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Vehicle</th>
+            <th>Service</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <?php if (!empty($recentActivities)): ?>
+              <?php foreach ($recentActivities as $activity): ?>
+                  <tr>
+                      <td>
+                          <?= htmlspecialchars($activity['vehicle_number']) ?><br>
+                          <?= htmlspecialchars($activity['model']) ?>
+                      </td>
+                      <td>
+                          <?= htmlspecialchars($activity['service_summary']) ?>
+                      </td>
+                      <td class="<?= htmlspecialchars($activity['status']) ?>">
+                          <?= ucfirst(str_replace('_', ' ', $activity['status'])) ?>
+                      </td>
+                  </tr>
+              <?php endforeach; ?>
+          <?php else: ?>
+              <tr>
+                  <td colspan="3" class="empty">No recent activities found.</td>
+              </tr>
+          <?php endif; ?>
+        </tbody>
+
+      </table>
+    </div>
+
+    <!-- Quick Links -->
+    <div class="quick-links">
+      <h3>Quick Links</h3>
+
+      <div class="links">
+
+        <a href="<?= BASE_URL ?>/receptionist/customers/new" class="link-block">
+          <div class="link">👨‍🔧<br>Add New Customer</div>
+        </a>
+
+        <a href="<?= BASE_URL ?>/receptionist/appointments/new" class="link-block">
+          <div class="link">⚙️<br>Add New Appointment</div>
+        </a>
+
+        <a href="<?= BASE_URL ?>/receptionist/invoices/new" class="link-block">
+          <div class="link">📅<br>Create Invoice</div>
+        </a>
+
+        <a href="<?= BASE_URL ?>/receptionist/complaints/new" class="link-block">
+          <div class="link">📊<br>New Complaint</div>
+        </a>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
 </body>
 </html>

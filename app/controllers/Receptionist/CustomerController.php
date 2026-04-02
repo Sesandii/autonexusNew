@@ -4,6 +4,7 @@ namespace app\controllers\Receptionist;
 use app\core\Controller;
 use app\model\Receptionist\CustomerModel;
 
+use PDO; // <-- Add this at the to
 class CustomerController extends Controller
 {
     public function __construct(array $config = [])
@@ -27,10 +28,18 @@ class CustomerController extends Controller
             'customers' => $customers
         ]);
     }
-    public function create(): void
+   public function create(): void
 {
-    // Load the form view to add a new customer
-    $this->view('receptionist/Customer Profile/newCustomer');
+    $db = db(); // your PDO instance
+
+    // Fetch all active branches from the DB
+    $stmt = $db->query("SELECT branch_id, name, city FROM branches WHERE status = 'active' ORDER BY name ASC");
+    $branches = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // Load the form view with branches
+    $this->view('receptionist/Customer Profile/newCustomer', [
+        'branches' => $branches
+    ]);
 }
 
 public function store(): void

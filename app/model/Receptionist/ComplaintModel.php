@@ -51,22 +51,20 @@ class ComplaintModel extends Model {
     }
 
     $stmt = $this->pdo->prepare("
-        INSERT INTO complaints
-        (customer_id, user_id, vehicle_id, complaint_date, complaint_time, description, priority, status, assigned_to)
-        VALUES (:customer_id, :user_id, :vehicle_id, :complaint_date, :complaint_time, :description, :priority, :status, :assigned_to)
-    ");
+    INSERT INTO complaints
+    (customer_id, vehicle_id, subject, description, priority, status, assigned_to_user_id)
+    VALUES (:customer_id, :vehicle_id, :subject, :description, :priority, :status, :assigned_to)
+");
 
     $stmt->execute([
-        ':customer_id'    => $data['customer_id'],
-        ':user_id'        => $user_id,
-        ':vehicle_id'     => $data['vehicle_id'],
-        ':complaint_date' => $data['complaint_date'] ?? null,
-        ':complaint_time' => $data['complaint_time'] ?? null,
-        ':description'    => $data['description'] ?? '',
-        ':priority'       => $data['priority'] ?? 'Medium',
-        ':status'         => $data['status'] ?? 'Open',
-        ':assigned_to'    => $data['assigned_to'] ?? null
-    ]);
+    ':customer_id' => $data['customer_id'],
+    ':vehicle_id'  => $data['vehicle_id'],
+    ':subject'     => $data['subject'] ?? 'General Complaint',
+    ':description' => $data['description'] ?? '',
+    ':priority'    => $data['priority'] ?? 'Medium',
+    ':status'      => $data['status'] ?? 'Open',
+    ':assigned_to' => $data['assigned_to'] ?? null
+]);
 
     return (int)$this->pdo->lastInsertId();
 }
@@ -112,20 +110,22 @@ class ComplaintModel extends Model {
     // 3️⃣ Find complaint by ID
    public function find(int $id): ?array {
     $stmt = $this->pdo->prepare("
-        SELECT 
-            comp.*,
-            CONCAT(u.first_name, ' ', u.last_name) AS customer_name,
-            u.phone,
-            u.email,
-            CONCAT(v.make, ' ', v.model) AS vehicle,
-            v.license_plate AS vehicle_number
-        FROM complaints comp
-        LEFT JOIN customers c ON comp.customer_id = c.customer_id
-        LEFT JOIN users u ON c.user_id = u.user_id
-        LEFT JOIN vehicles v ON comp.vehicle_id = v.vehicle_id
-        WHERE comp.complaint_id = :id
-        LIMIT 1
-    ");
+    SELECT 
+        comp.*,
+        CONCAT(u.first_name, ' ', u.last_name) AS customer_name,
+        u.phone,
+        u.email,
+        CONCAT(v.make, ' ', v.model) AS vehicle,
+        v.license_plate AS vehicle_number,
+        CONCAT(a.first_name, ' ', a.last_name) AS assigned_to
+    FROM complaints comp
+    LEFT JOIN customers c ON comp.customer_id = c.customer_id
+    LEFT JOIN users u ON c.user_id = u.user_id
+    LEFT JOIN vehicles v ON comp.vehicle_id = v.vehicle_id
+    LEFT JOIN users a ON comp.assigned_to_user_id = a.user_id
+    WHERE comp.complaint_id = :id
+    LIMIT 1
+");
     $stmt->execute([':id' => $id]);
     $complaint = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -178,32 +178,29 @@ class ComplaintModel extends Model {
 
 
     // 6️⃣ Update complaint
-    public function update(int $id, array $data): bool {
+public function update(int $id, array $data): bool {
+
     $stmt = $this->pdo->prepare("
         UPDATE complaints SET
-            customer_id    = :customer_id,
-            user_id        = :user_id,
-            vehicle_id     = :vehicle_id,
-            complaint_date = :complaint_date,
-            complaint_time = :complaint_time,
-            description    = :description,
-            priority       = :priority,
-            status         = :status,
-            assigned_to    = :assigned_to
+            customer_id = :customer_id,
+            vehicle_id = :vehicle_id,
+            subject = :subject,
+            description = :description,
+            priority = :priority,
+            status = :status,
+            assigned_to_user_id = :assigned_to
         WHERE complaint_id = :id
     ");
 
     $result = $stmt->execute([
-        ':customer_id'    => $data['customer_id'],
-        ':user_id'        => $data['user_id'],
-        ':vehicle_id'     => $data['vehicle_id'],
-        ':complaint_date' => $data['complaint_date'] ?? null,
-        ':complaint_time' => $data['complaint_time'] ?? null,
-        ':description'    => $data['description'] ?? '',
-        ':priority'       => $data['priority'] ?? 'Medium',
-        ':status'         => $data['status'] ?? 'Open',
-        ':assigned_to'    => $data['assigned_to'] ?? null,
-        ':id'             => $id
+        ':customer_id' => $data['customer_id'],
+        ':vehicle_id'  => $data['vehicle_id'],
+        ':subject'     => $data['subject'] ?? 'General Complaint',
+        ':description' => $data['description'] ?? '',
+        ':priority'    => $data['priority'] ?? 'Medium',
+        ':status'      => $data['status'] ?? 'Open',
+        ':assigned_to' => $data['assigned_to'] ?? null,
+        ':id'          => $id
     ]);
 
     if (!$result) {

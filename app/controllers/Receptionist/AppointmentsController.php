@@ -4,20 +4,28 @@ namespace app\controllers\Receptionist;
 use app\core\Controller;
 use app\model\Receptionist\AppointmentModel;
 
+use PDO;
 class AppointmentsController extends Controller
 {
 
     public function index()
 {
-    // If you want to fetch real data:
-    // $appointments = $this->appointmentModel->getAllAppointments();
+    $appointmentModel = new AppointmentModel(db());
+    $date = date('Y-m-d'); // today
+    $appointments = $appointmentModel->getAppointmentsByDate($date);
 
-    // For now, use dummy data or leave empty
-    $appointments = [];
+    foreach ($appointments as &$app) {
+    $app['supervisors'] = $appointmentModel->getAvailableSupervisors(
+    $app['branch_id'], 
+    $app['appointment_date'], 
+    5 // max appointments per day
+);
+}
 
     $this->view('receptionist/Appointments/appointment', [
         'appointments' => $appointments
     ]);
+    
 }
 
 
@@ -43,9 +51,30 @@ class AppointmentsController extends Controller
     
 public function day()
 {
-    $date = $_GET['date'] ?? date('Y-m-d'); // default today if no date
+    $date = $_GET['date'] ?? date('Y-m-d'); // default today
     $appointmentModel = new \app\model\Receptionist\AppointmentModel(db());
+
+    // Check if a supervisor assignment was submitted
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['appointment_id'], $_POST['supervisor_id'])) {
+        $appointmentModel->assignSupervisorToAppointment(
+            (int)$_POST['appointment_id'], 
+            (int)$_POST['supervisor_id']
+        );
+        // Redirect to avoid resubmission
+        header("Location: " . $_SERVER['REQUEST_URI']);
+        exit;
+    }
+
+    // Fetch appointments
     $appointments = $appointmentModel->getAppointmentsByDate($date);
+
+    foreach ($appointments as &$app) {
+        $app['supervisors'] = $appointmentModel->getAvailableSupervisors(
+            $app['branch_id'], 
+            $app['appointment_date'], 
+            5 // max appointments per day
+        );
+    }
 
     $this->view('receptionist/Appointments/dayAppointment', [
         'appointments' => $appointments,
@@ -53,16 +82,6 @@ public function day()
     ]);
 }
 
-
-
-public function edit($id)
-{
-
-
-    $this->view('receptionist/Appointments/updateApp', [
-        'appointment' => $appointment
-    ]);
-}
 
 public function getCustomer()
 {
@@ -177,7 +196,104 @@ public function getAppointmentsByDate(): void
     exit;
 }
 
+public function assignSupervisor(): void
+{
+    try {
+        $appointment_id = $_POST['appointment_id'] ?? null;
+        $supervisor_id = $_POST['supervisor_id'] ?? null;
+        $date = $_POST['date'] ?? date('Y-m-d'); // capture the current date
 
+        if (!$appointment_id || !$supervisor_id) {
+            throw new \Exception("Missing appointment or supervisor ID");
+        }
+
+        $appointmentModel = new AppointmentModel(db());
+        $success = $appointmentModel->assignSupervisorToAppointment((int)$appointment_id, (int)$supervisor_id);
+
+        if (!$success) {
+            throw new \Exception("Failed to assign supervisor.");
+        }
+
+        // Redirect back to the same day's appointments page
+        header("Location: " . BASE_URL . "/receptionist/appointments/day?date=" . $date);
+        exit;
+
+    } catch (\Throwable $e) {
+        // Simple error display
+        die("Error: " . $e->getMessage());
+    }
+}
+
+public function edit($id)
+{
+    $appointmentModel = new AppointmentModel(db());
+
+    $appointment = $appointmentModel->getAppointmentById($id);
+    $services = $appointmentModel->getAllServices();
+
+    $stmt = db()->prepare("SELECT branch_id, name FROM branches WHERE status='active' ORDER BY name ASC");
+    $stmt->execute();
+    $branches = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // 👇 Use your existing method
+    $supervisors = $appointmentModel->getSupervisorsByBranch($appointment['branch_id']);
+
+    $this->view('receptionist/Appointments/updateApp', [
+        'appointment' => $appointment,
+        'services' => $services,
+        'branches' => $branches,
+        'supervisors' => $supervisors
+    ]);
+}
+
+public function update(): void
+{
+    header('Content-Type: application/json');
+
+    try {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            throw new \Exception("Invalid request method");
+        }
+
+        $appointmentModel = new AppointmentModel(db());
+
+        $data = [
+            'appointment_id'   => $_POST['appointment_id'] ?? null,
+            'service_id'       => $_POST['service_id'] ?? null,
+            'branch_id'        => $_POST['branch_id'] ?? null,
+            'appointment_date' => $_POST['appointment_date'] ?? null,
+            'appointment_time' => $_POST['appointment_time'] ?? null,
+            'status'           => $_POST['status'] ?? null,
+            'notes'            => $_POST['notes'] ?? null,
+            'assigned_to'      => $_POST['assigned_to'] ?? null
+        ];
+
+        foreach (['appointment_id','service_id','branch_id','appointment_date','appointment_time','status'] as $field) {
+            if (empty($data[$field])) {
+                throw new \Exception("Missing field: $field");
+            }
+        }
+
+        $success = $appointmentModel->updateAppointment($data);
+
+        if (!$success) {
+            throw new \Exception("Failed to update appointment.");
+        }
+
+        echo json_encode([
+            'success' => true,
+            'message' => 'Appointment updated successfully'
+        ]);
+
+    } catch (\Throwable $e) {
+        echo json_encode([
+            'success' => false,
+            'message' => $e->getMessage()
+        ]);
+    }
+
+    exit;
+}
 
 }
 ?>

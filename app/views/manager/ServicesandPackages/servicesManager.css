@@ -1,0 +1,86 @@
+body {
+  background: #f6f7fa;
+  color: #333;
+  font-family: 'Inter', sans-serif;
+}
+
+.header-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.header-bar h1 {
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.tab-nav {
+  background-color: #f1f5f9;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.tab-list {
+  list-style: none;
+  display: flex;
+  margin: 0;
+  padding: 0;
+}
+
+.tab-item {
+  flex: 1;
+  padding: 12px 20px;
+  text-align: center;
+  cursor: pointer;
+  font-weight: 500;
+  color: #374151;
+  transition: background 0.3s, color 0.3s;
+}
+
+.tab-item:hover {
+  background-color: #e2e8f0;
+}
+
+.tab-item.active {
+  background-color: red;
+  color: white;
+}
+
+.tab-content {
+  display: none;
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  margin-bottom: 20px;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+.packages {
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.packages table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.packages th, .packages td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+
+.price {
+  color: red;
+}

@@ -1,19 +1,10 @@
-
-
-.main {
-  flex: 1;
-  padding: 30px;
-  display: flex;
-  flex-direction: column;
-  overflow-y: auto; 
-  margin-left: 280px;
-}
-
+/* General card styling */
+/* Header spacing */
 header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 30px; /* increase from 20px to 40px for more space */
 }
 
 header h1 {
@@ -21,27 +12,9 @@ header h1 {
   font-weight: bold;
 }
 
-.filters {
-  display: flex;
-  gap: 10px;
-}
-
-.filters select {
-  padding: 8px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-}
-
-/* Stats Grid */
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 15px;
-  margin-bottom: 20px;
-}
 
 .card {
-  background: white;
+  background: #fff;
   padding: 15px;
   border-radius: 10px;
   box-shadow: 0 2px 5px rgba(0,0,0,0.05);
@@ -59,45 +32,65 @@ header h1 {
   color: #111;
 }
 
+/* Stats Grid */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.stats-grid .card {
+  width: 100%; /* fill grid column */
+}
+
+/* Revenue card growth text */
 .card.revenue .growth {
   font-size: 12px;
   color: green;
   margin-top: 5px;
 }
 
-/* Chart */
-.content-grid {
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: 20px;
+
+/* =====================
+   Chart + Team Table Layout
+===================== */
+.chart-table-container {
+  display: flex;           /* put chart and table side by side */
+  gap: 20px;               /* space between chart and table */
+  align-items: flex-start; /* top align */
+  margin-bottom: 30px;
 }
 
+/* Chart Card */
 .chart {
-  padding: 20px;
+  flex: 0 0 60%;           /* 60% of container width */
+  max-width: 720px;
+  background: #fff;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
 }
 
-.bar-chart {
-  display: flex;
-  align-items: flex-end;
-  gap: 12px;
-  height: 200px;
-  margin-top: 15px;
+.chart h3 {
+  margin-bottom: 15px;
+  font-size: 16px;
+  color: #666;
 }
 
-.bar {
-  width: 40px;
-  text-align: center;
-  font-size: 12px;
-  color: #333;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  align-items: center;
+.chart canvas {
+  width: 100% !important;  /* fill chart card width */
+  height: auto !important; /* keep aspect ratio */
+  display: block;
 }
 
-/* Team Table */
+/* Team Table Card */
 .team-table {
+  flex: 1;                 /* remaining space (~40%) */
+  background: #fff;
   padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
 }
 
 .team-table table {

@@ -7,6 +7,9 @@
    <link rel="stylesheet" href="<?= BASE_URL ?>/public/assets/css/receptionist/sidebar.css">
   <link rel="stylesheet" href="<?= BASE_URL ?>/public/assets/css/receptionist/billing.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+ <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+
 </head>
 
 <body>
@@ -38,19 +41,43 @@
           <option>Partially Paid</option>
         </select>
       </div>
-      <table>
-        <thead>
-          <tr>
+     <table>
+    <thead>
+        <tr>
             <th>Invoice ID</th>
             <th>Customer</th>
             <th>Vehicle</th>
             <th>Date</th>
             <th>Amount</th>
             <th>Actions</th>
-    
-          </tr>
-        </thead>
+        </tr>
+    </thead>
+    <tbody>
+        <?php if(!empty($invoices)): ?>
+            <?php foreach($invoices as $inv): ?>
+                <tr>
+                    <td><?= htmlspecialchars($inv['invoice_no']) ?></td>
+                    <td><?= htmlspecialchars($inv['first_name'].' '.$inv['last_name']) ?></td>
+                    <td><?= htmlspecialchars($inv['vehicle_no'].' ('.$inv['make'].' '.$inv['model'].')') ?></td>
+                    <td><?= htmlspecialchars($inv['issued_at']) ?></td>
+                    <td>Rs. <?= number_format($inv['grand_total'], 2) ?></td>
+<td>
+   <a href="<?= BASE_URL ?>/receptionist/billing/downloadInvoice/<?= $inv['work_order_id'] ?>"
+   target="_blank"
+   title="Print Invoice">
+    <i class="fas fa-print"></i>
+</a> </td>
+
+         </tr>
+            <?php endforeach; ?>
+        <?php else: ?>
+            <tr>
+                <td colspan="6" style="text-align:center;">No invoices found</td>
+            </tr>
+        <?php endif; ?>
+    </tbody>
 </table>
+
 </div>
 </section>
 
@@ -77,8 +104,42 @@
         </tr>
       </thead>
       <tbody>
-        <!-- Transaction data goes here -->
-      </tbody>
+<?php if (!empty($paidInvoices)): ?>
+    <?php foreach ($paidInvoices as $txn): ?>
+        <tr>
+            <td><?= htmlspecialchars($txn['invoice_no']) ?></td>
+
+            <td>
+                <?= htmlspecialchars($txn['first_name'] . ' ' . $txn['last_name']) ?>
+            </td>
+
+            <td>
+                <?= htmlspecialchars($txn['vehicle_no']) ?>
+                (<?= htmlspecialchars($txn['make'] . ' ' . $txn['model']) ?>)
+            </td>
+
+            <td>
+                <?= date('Y-m-d', strtotime($txn['issued_at'])) ?>
+            </td>
+
+            <td>
+                Rs. <?= number_format($txn['grand_total'], 2) ?>
+            </td>
+
+            <td>
+                <span class="badge badge-success">Paid</span>
+            </td>
+        </tr>
+    <?php endforeach; ?>
+<?php else: ?>
+    <tr>
+        <td colspan="6" style="text-align:center;">
+            No paid transactions found
+        </td>
+    </tr>
+<?php endif; ?>
+</tbody>
+
     </table>
   </div>
 </section>

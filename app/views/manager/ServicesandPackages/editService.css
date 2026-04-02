@@ -1,0 +1,297 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
+}
+
+body {
+  display: flex;
+  background: #f6f7fa;
+  color: #333;
+}
+
+.sidebar .logo img {
+  width: 80%;      
+  max-width: 200px; 
+  height: auto;    
+  display: block;
+  margin: 0 auto;  
+}
+
+.sidebar {
+  position: fixed;
+  top: 0;        /* stick to very top */
+  left: 0;
+  width: 280px;
+  background: #000;
+  color: #fff;
+  padding: 0px;
+  min-height: 100vh;
+}
+
+.sidebar .logo {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.sidebar .logo h2 {
+  color: #ffffff;
+  margin: 5px 0 0;
+}
+
+.sidebar .logo p {
+  font-size: 12px;
+  letter-spacing: 1px;
+}
+
+.sidebar .menu {
+  list-style: none;
+  margin-top: 20px;
+}
+
+.sidebar .menu li {
+  padding: 20px 40px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  color: #ccc;
+  border-radius: 0px;
+}
+
+.sidebar .menu li.active,
+.sidebar .menu li:hover {
+  background: #2a2d34;
+}
+
+.sidebar .menu li a {
+  color: inherit;        /* matches li text color */
+  text-decoration: none; /* removes underline */
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
+
+.main {
+  flex: 1;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto; 
+  margin-left: 280px;
+}
+
+.header {
+  display: flex;
+}
+
+
+/*.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.modal-header h2 {
+  font-size: 18px;
+  margin: 0;
+}
+
+.close-button {
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.form-group {
+  display: flex;
+  gap: 25px;
+  align-items: center;   /* vertically centers items */
+/*  margin-bottom: 15px;
+}
+
+
+.form-group label {
+  width: 150px;          /* fixed width for label */
+/*  margin-right: 0px;
+  font-weight: 600;
+}
+
+input[type="text"],
+input[type="number"] {
+  flex: 1;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background-color: #f5f5f5;
+  font-size: 14px;
+}
+
+.service-items-container {
+  flex-direction: row;
+}
+
+.service-items {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.add-item {
+  background: none;
+  border: none;
+  color: #d32f2f;
+  font-weight: bold;
+  font-size: 14px;
+  cursor: pointer;
+  margin-top: 10px;
+  align-self: flex-start;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+  gap: 10px;
+}
+
+.cancel-button {
+  background: none;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.save-button {
+  background-color: #d32f2f;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+}
+*/
+/* Modal box styling */
+.modal {
+  background-color: #fff;
+  padding: 24px;
+  border-radius: 10px;
+  width:95%;
+  height: 90%;
+  max-width: 800px;
+  margin: 40px auto;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  transition: height 0.3s ease;
+}
+
+/* Header and footer */
+.modal-header,
+.modal-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-header h2 {
+  margin: 0;
+}
+
+.modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Form group */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Inline price fields */
+.form-group input[type="number"] {
+  max-width: 100%;
+}
+
+.form-group label {
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.form-group input {
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+}
+
+.service-items{
+  display: flex;
+  align-items: center;   /* vertically centers ❌ with input */
+  gap: 10px;
+  margin-bottom: 8px;
+  width: 75%;
+}
+
+.service-item-input {
+  flex: 1;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 6px
+}
+
+.remove-item {
+  cursor: pointer;
+  color: red;
+  font-size: 20px;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+
+
+/* Add Item button */
+.add-item {
+  align-self: flex-start;
+  background: none;
+  border: none;
+  color: red;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 5px;
+}
+
+/* Buttons */
+.modal-footer button {
+  padding: 10px 20px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.cancel-button {
+  background-color: #ccc;
+}
+
+.save-button {
+  background-color: red;
+  color: white;
+}

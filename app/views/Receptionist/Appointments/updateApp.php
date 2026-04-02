@@ -19,40 +19,64 @@ $activePage = 'appointments';
 <div class="main">
     <div class="details-section">
       <h3>Appointment Details</h3>
-          <label>Customer:</label>
-          <input type="text" id="customer">
+         <input type="text" id="customer" value="<?= htmlspecialchars($appointment['first_name'] . ' ' . $appointment['last_name']) ?>" readonly>
+<input type="text" id="phone" value="<?= htmlspecialchars($appointment['phone']) ?>" readonly>
+<input type="text" id="vehicle-number" value="<?= htmlspecialchars($appointment['license_plate']) ?>" readonly>
+<input type="text" id="vehicle" value="<?= htmlspecialchars($appointment['make'] . ' ' . $appointment['model']) ?>" readonly>
 
-          <label>Phone:</label>
-          <input type="text" id="phone">
+<label>Service:</label>
+<select id="service">
+    <?php foreach ($services as $service): ?>
+        <option value="<?= $service['service_id'] ?>" <?= $appointment['service_id'] == $service['service_id'] ? 'selected' : '' ?>>
+            <?= htmlspecialchars($service['name']) ?>
+        </option>
+    <?php endforeach; ?>
+</select>
 
-          <label>Vehicle Number:</label>
-          <input type="text" id="vehicle-number">
+<label>Branch:</label>
+<select id="branch">
+    <?php foreach ($branches as $branch): ?>
+        <option value="<?= $branch['branch_id'] ?>" <?= $appointment['branch_id'] == $branch['branch_id'] ? 'selected' : '' ?>>
+            <?= htmlspecialchars($branch['name']) ?>
+        </option>
+    <?php endforeach; ?>
+</select>
 
-          <label>Vehicle:</label>
-          <input type="text" id="vehicle">
+<label>Date:</label>
+<input type="date" id="Date" value="<?= $appointment['appointment_date'] ?>">
 
-          <label>Service:</label>
-          <input type="text" id="service">
+<label>Time:</label>
+<input type="time" id="Time" value="<?= $appointment['appointment_time'] ?>">
 
-          <label>Date:</label>
-          <input type="date" id="Date">
+<label>Status:</label>
+<select id="status">
+    <?php
+    $statuses = ['requested', 'confirmed', 'in_service', 'completed', 'cancelled'];
+    foreach ($statuses as $statusOption):
+    ?>
+        <option value="<?= $statusOption ?>" <?= $appointment['status'] == $statusOption ? 'selected' : '' ?>>
+            <?= $statusOption ?>
+        </option>
+    <?php endforeach; ?>
+</select>
+<label>Assigned To:</label>
+<select id="assigned_to">
+    <option value="">-- Select Supervisor --</option>
+    <?php foreach ($supervisors as $sup): ?>
+        <option value="<?= $sup['supervisor_id'] ?>"
+            <?= $appointment['assigned_to'] == $sup['supervisor_id'] ? 'selected' : '' ?>>
+            <?= htmlspecialchars($sup['first_name'] . ' ' . $sup['last_name']) ?>
+        </option>
+    <?php endforeach; ?>
+</select>
+<label>Notes: </label>
+<textarea id="notes"><?= htmlspecialchars($appointment['notes']) ?></textarea>
 
-          <label>Time:</label>
-          <input type="time" id="Time">
-
-          <label>Status:</label>
-          <select id="status">
-            <option>Not Arrived</option>
-            <option>Waiting</option>
-            <option>In Service</option>
-            <option>Completed</option>
-            <option>Canceled</option>
-          </select>
-
-       <div class="modal-footer">
-      <button class="cancel-button">Cancel</button>
-      <button class="save-button">Save</button>
-    </div>
+<div class="modal-footer">
+    <button class="cancel-button">Cancel</button>
+    <button class="save-button" data-id="<?= $appointment['appointment_id'] ?>">Save</button>
+</div>
+       
   </div>
 
     </div>

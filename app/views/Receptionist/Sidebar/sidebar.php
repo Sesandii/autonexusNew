@@ -30,7 +30,7 @@ $activePage = in_array($section, $sections) ? $section : '';
 
 <div class="sidebar">
     <div class="logo">
-        <img src="<?= BASE_URL ?>/public/Images/logo.png" alt="AutoNexus Logo" width="240">
+        <img src="<?= BASE_URL ?>/public/assets/img/logo.png" alt="AutoNexus Logo" width="240">
         <h2>AUTONEXUS</h2>
     </div>
 
