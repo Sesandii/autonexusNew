@@ -17,7 +17,6 @@ class ComplaintsController extends Controller
         $this->complaints = new Complaints();
     }
 
-    /** GET /admin/admin-viewcomplaints */
     public function index(): void
     {
         $filters = [
@@ -26,23 +25,29 @@ class ComplaintsController extends Controller
             'priority'    => trim($_GET['priority'] ?? ''),
             'branch_id'   => trim($_GET['branch_id'] ?? ''),
             'assigned_to' => trim($_GET['assigned_to'] ?? ''),
+            'sla'         => trim($_GET['sla'] ?? ''),
         ];
 
-        $records = $this->complaints->list($filters);
-        $branches = $this->complaints->getBranches();
+        $records         = $this->complaints->list($filters);
+        $branches        = $this->complaints->getBranches();
         $assignableUsers = $this->complaints->getAssignableUsers();
+        $summary         = $this->complaints->summaryCards();
+        $analytics       = $this->complaints->analytics();
+        $assignmentQueue = $this->complaints->assignmentQueue();
 
         $this->view('admin/admin-viewcomplaints/index', [
             'records'         => $records,
             'branches'        => $branches,
             'assignableUsers' => $assignableUsers,
             'filters'         => $filters,
+            'summary'         => $summary,
+            'analytics'       => $analytics,
+            'assignmentQueue' => $assignmentQueue,
             'pageTitle'       => 'Complaints',
             'current'         => 'complaints',
         ]);
     }
 
-    /** GET /admin/admin-viewcomplaints/show?id=1 */
     public function show(): void
     {
         $id = (int)($_GET['id'] ?? 0);
@@ -70,7 +75,6 @@ class ComplaintsController extends Controller
         ]);
     }
 
-    /** POST /admin/admin-viewcomplaints/update */
     public function update(): void
     {
         $id = (int)($_POST['complaint_id'] ?? 0);
@@ -81,12 +85,19 @@ class ComplaintsController extends Controller
             return;
         }
 
-        $status = trim((string)($_POST['status'] ?? 'open'));
-        $priority = trim((string)($_POST['priority'] ?? 'medium'));
-        $assignedTo = $_POST['assigned_to_user_id'] ?? null;
+        $status         = trim((string)($_POST['status'] ?? 'open'));
+        $priority       = trim((string)($_POST['priority'] ?? 'medium'));
+        $assignedTo     = $_POST['assigned_to_user_id'] ?? null;
         $resolutionNote = trim((string)($_POST['resolution_note'] ?? ''));
 
-        $allowedStatuses = ['open', 'in_progress', 'resolved', 'closed'];
+        if (isset($_POST['reopen']) && $_POST['reopen'] === '1') {
+            $status = 'open';
+            $resolutionNote = $resolutionNote !== ''
+                ? $resolutionNote
+                : 'Complaint reopened by admin.';
+        }
+
+        $allowedStatuses   = ['open', 'in_progress', 'resolved', 'closed'];
         $allowedPriorities = ['low', 'medium', 'high'];
 
         if (!in_array($status, $allowedStatuses, true)) {
