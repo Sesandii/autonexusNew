@@ -143,3 +143,134 @@ body {
 .has-submenu.open .submenu { display: block; }
 .has-submenu.open .caret { transform: rotate(90deg); }
 
+/* .sidebar {
+  width: 280px;
+  min-height: 100vh;
+  background: #000;
+  color: #fff;
+  padding: 20px 16px;
+  overflow-y: auto;
+} */
+
+.logo {
+  color: #fff;
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 24px;
+}
+
+.menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.menu-item,
+.submenu li,
+.submenu-group {
+  list-style: none;
+}
+
+.menu-item > a,
+.submenu-toggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: none;
+  background: transparent;
+  color: #fff;
+  text-decoration: none;
+  padding: 14px 16px;
+  border-radius: 18px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  text-align: left;
+  transition: 0.2s ease;
+}
+
+.menu-item > a:hover,
+.submenu-toggle:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.menu-item.active > a {
+  background: #f3f4f6;
+  color: #eceef0;
+  font-weight: 700;
+}
+
+.menu-item.active > a i {
+  color: #ef4444;
+}
+
+.has-submenu > .submenu-toggle .caret,
+.submenu-group > .submenu-toggle .caret {
+  margin-left: auto;
+  transition: transform 0.2s ease;
+  color: #94a3b8;
+}
+
+.has-submenu.open > .submenu-toggle .caret,
+.submenu-group.open > .submenu-toggle .caret {
+  transform: rotate(90deg);
+}
+
+.submenu {
+  display: none;
+  margin: 6px 0 10px 12px;
+  padding-left: 12px;
+  border-left: 1px solid rgba(255,255,255,0.08);
+}
+
+.has-submenu.open > .submenu,
+.submenu-group.open > .submenu {
+  display: block;
+}
+
+.submenu li a,
+.submenu-toggle--inner {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: #e5e7eb;
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-size: 14px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: 0.2s ease;
+}
+
+.submenu li a:hover,
+.submenu-toggle--inner:hover {
+  background: rgba(255,255,255,0.06);
+  color: #fff;
+}
+
+.submenu li.active > a {
+  background: #f3f4f6;
+  color: #111827;
+  font-weight: 700;
+}
+
+.submenu-group > .submenu-toggle--inner {
+  color: #f9fafb;
+  font-weight: 600;
+}
+
+.submenu--inner {
+  margin-top: 6px;
+  margin-left: 10px;
+  padding-left: 10px;
+  border-left: 1px dashed rgba(255,255,255,0.10);
+}
+
+.submenu-group.open > .submenu-toggle--inner .caret {
+  transform: rotate(90deg);
+}
