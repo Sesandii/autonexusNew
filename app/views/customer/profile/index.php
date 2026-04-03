@@ -24,7 +24,9 @@
       $username = (string)($profile['username'] ?? '—');
       $email = (string)($profile['email'] ?? '—');
       $role = (string)($profile['role'] ?? 'Customer');
-      $avatar = $base . '/public/assets/img/User.PNG';
+      $avatar = !empty($profile['profile_picture'])
+        ? $base . '/public/' . ltrim((string)$profile['profile_picture'], '/')
+        : $base . '/public/assets/img/User.PNG';
     ?>
 
     <div class="profile-shell">

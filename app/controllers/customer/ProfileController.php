@@ -51,16 +51,55 @@ class ProfileController extends Controller
 
         $userId = $this->userId();
 
+        $model = new Profile();
+        $current = $model->getProfile($userId);
+
         $first = trim($_POST['first_name'] ?? '');
         $last  = trim($_POST['last_name'] ?? '');
         $phone = trim($_POST['phone'] ?? '');
-        $alt   = trim($_POST['alt_phone'] ?? '');
+        $alt   = (string)($current['alt_phone'] ?? '');
         $addr  = trim($_POST['street_address'] ?? '');
         $city  = trim($_POST['city'] ?? '');
         $state = trim($_POST['state'] ?? '');
 
-        $model = new Profile();
-        $ok = $model->updateProfileFull($userId, $first, $last, $phone, $alt, $addr, $city, $state);
+        $profilePicturePath = null;
+        if (!empty($_FILES['profile_picture']['name']) && ($_FILES['profile_picture']['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_OK) {
+            $tmpName = (string)($_FILES['profile_picture']['tmp_name'] ?? '');
+            $fileName = (string)($_FILES['profile_picture']['name'] ?? '');
+            $fileType = (string)($_FILES['profile_picture']['type'] ?? '');
+
+            $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+            if (!in_array($fileType, $allowedTypes, true)) {
+                $_SESSION['flash'] = 'Profile picture must be a JPG, PNG, GIF, or WEBP image.';
+                header('Location: ' . rtrim(BASE_URL,'/') . '/customer/profile/edit');
+                exit;
+            }
+
+            $ext = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+            if (!in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp'], true)) {
+                $_SESSION['flash'] = 'Profile picture must be a JPG, PNG, GIF, or WEBP image.';
+                header('Location: ' . rtrim(BASE_URL,'/') . '/customer/profile/edit');
+                exit;
+            }
+
+            $uploadDir = dirname(__DIR__, 3) . '/public/assets/img/profile_pictures/';
+            if (!is_dir($uploadDir)) {
+                mkdir($uploadDir, 0777, true);
+            }
+
+            $newFileName = 'profile_' . $userId . '_' . time() . '.' . $ext;
+            $targetPath  = $uploadDir . $newFileName;
+
+            if (!move_uploaded_file($tmpName, $targetPath)) {
+                $_SESSION['flash'] = 'Failed to upload profile picture.';
+                header('Location: ' . rtrim(BASE_URL,'/') . '/customer/profile/edit');
+                exit;
+            }
+
+            $profilePicturePath = 'assets/img/profile_pictures/' . $newFileName;
+        }
+
+        $ok = $model->updateProfileFull($userId, $first, $last, $phone, $alt, $addr, $city, $state, $profilePicturePath);
 
         $_SESSION['flash'] = $ok ? 'Profile updated.' : 'Failed to update profile.';
         header('Location: ' . rtrim(BASE_URL,'/') . '/customer/profile');

@@ -35,7 +35,7 @@ class Profile
     {
         // Your users schema
         $sql = "SELECT user_id, username, first_name, last_name, email, phone, alt_phone,
-                       street_address, city, state, role, status, created_at
+                       street_address, city, state, profile_picture, role, status, created_at
                   FROM users
                  WHERE user_id = :uid
                  LIMIT 1";
@@ -47,19 +47,28 @@ class Profile
     // update with more fields
     public function updateProfileFull(
         int $userId, string $first, string $last, string $phone,
-        string $alt, string $addr, string $city, string $state
+        string $alt, string $addr, string $city, string $state,
+        ?string $profilePicture = null
     ): bool {
+        $sets = [
+            'first_name     = :fn',
+            'last_name      = :ln',
+            'phone          = :ph',
+            'alt_phone      = :alt',
+            'street_address = :addr',
+            'city           = :city',
+            'state          = :state',
+        ];
+
+        if ($profilePicture !== null && $profilePicture !== '') {
+            $sets[] = 'profile_picture = :profile_picture';
+        }
+
         $sql = "UPDATE users
-                   SET first_name     = :fn,
-                       last_name      = :ln,
-                       phone          = :ph,
-                       alt_phone      = :alt,
-                       street_address = :addr,
-                       city           = :city,
-                       state          = :state
+                   SET " . implode(",\n                       ", $sets) . "
                  WHERE user_id        = :uid";
         $st = $this->pdo->prepare($sql);
-        return $st->execute([
+        $params = [
             'fn'   => $first,
             'ln'   => $last,
             'ph'   => $phone,
@@ -67,8 +76,14 @@ class Profile
             'addr' => $addr,
             'city' => $city,
             'state'=> $state,
-            'uid'  => $userId
-        ]);
+            'uid'  => $userId,
+        ];
+
+        if ($profilePicture !== null && $profilePicture !== '') {
+            $params['profile_picture'] = $profilePicture;
+        }
+
+        return $st->execute($params);
     }
 
     public function getVehicles(int $userId): array
