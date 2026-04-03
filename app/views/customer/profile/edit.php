@@ -23,6 +23,8 @@
       $fullName = trim(($profile['first_name'] ?? '') . ' ' . ($profile['last_name'] ?? ''));
       $username = (string)($profile['username'] ?? 'customer');
       $email = (string)($profile['email'] ?? '—');
+      $role = (string)($profile['role'] ?? '—');
+      $status = (string)($profile['status'] ?? '—');
       $avatar = !empty($profile['profile_picture'])
         ? $base . '/public/' . ltrim((string)$profile['profile_picture'], '/')
         : $base . '/public/assets/img/User.PNG';
@@ -60,6 +62,15 @@
           </label>
           <label>Profile Picture
             <input type="file" name="profile_picture" accept="image/jpeg,image/png,image/gif,image/webp">
+          </label>
+        </div>
+
+        <div class="grid edit-grid">
+          <label>Role
+            <input type="text" value="<?= htmlspecialchars($role) ?>" readonly>
+          </label>
+          <label>Status
+            <input type="text" value="<?= htmlspecialchars($status) ?>" readonly>
           </label>
         </div>
 
