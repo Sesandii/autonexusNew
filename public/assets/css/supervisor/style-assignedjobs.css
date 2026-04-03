@@ -19,15 +19,26 @@ body {
 
 header {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
+    align-items: center;
+    justify-content: flex-start; 
+    gap: 15px; 
+    margin-bottom: 25px;
+    flex-wrap: wrap;
+    margin-top: 25px;
+}
+
+.search, 
+.filters select, 
+.btn.small {
+    height: 42px; /* Fixed height for perfect alignment */
+    box-sizing: border-box; /* Includes padding/border in the height */
+    font-size: 14px;
 }
 
 .search {
-  width: 300px;
-  padding: 8px;
-  border-radius: 8px;
+  flex: 0 1 300px;
+  padding: 0 12px;
+  border-radius: 6px;
   border: 1px solid #ccc;
 }
 
@@ -445,23 +456,16 @@ margin-top: 10px;
 
 .filters {
   display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin: 15px 0 25px;
+  gap: 10px;
   align-items: center;
 }
 
 /* Dropdowns */
 .filters select {
-  min-width: 180px;
-  padding: 10px 14px;
-  border-radius: 8px;
-  border: 1px solid #d1d5db;
-  background-color: #ffffff;
-  font-size: 14px;
-  color: #374151;
-  cursor: pointer;
-  transition: all 0.2s ease;
+  padding: 0 30px 0 12px; /* Leaves room for the arrow icon */
+  border: 1px solid #cbd5e0;
+  border-radius: 6px;
+  background-color: #fff;
 }
 
 /* Hover */
@@ -540,4 +544,79 @@ margin-top: 10px;
 .btn.small {
   padding: 6px 8px;
   font-size: 13px;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: none; /* IMPORTANT */
+  justify-content: center;
+  align-items: center;
+  background: rgba(0,0,0,0.5);
+  z-index: 99999;
+}
+
+.modal-box {
+  background: #ffffff;
+  color: #000000;
+  padding: 20px;
+  border-radius: 10px;
+  width: 300px;
+  text-align: center;
+}
+
+.modal-actions {
+  margin-top: 15px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.breadcrumb-text {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  font-size: 0.8rem;
+  color: #718096; /* Muted grey for secondary info */
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 500;
+}
+
+.breadcrumb-text .sep {
+  color: #cbd5e0; /* Even lighter grey for the arrow */
+  font-weight: 400;
+}
+
+.breadcrumb-text .active-page {
+  color: #f05a5a; /* Red accent to show current location */
+  font-weight: 600;
+}
+
+#resetFilters.btn {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+  border: 1px solid #000000 !important;
+  transition: background-color 0.2s ease;
+}
+
+/* Hover effect so users know it's clickable */
+#resetFilters.btn:hover {
+  background-color: #333333 !important;
+  border-color: #333333 !important;
 }

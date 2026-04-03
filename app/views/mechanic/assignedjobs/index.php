@@ -19,6 +19,10 @@
 <?php include __DIR__ . '/../partials/sidebar.php'; ?>
 
 <main class="main">
+<div class="breadcrumb-text">
+    Mechanic <span class="sep">&gt;</span> 
+    Assigned Jobs <span class="sep"></span>
+  </div>
 
 <section class="job-section">
 <h2>Current Job</h2>

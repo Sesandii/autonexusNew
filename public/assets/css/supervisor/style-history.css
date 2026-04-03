@@ -23,12 +23,6 @@ header {
   align-items: center;
 }
 
-h2 {
-  margin-top: 10px;
-  font-size: 30px;
-  margin-bottom: 20px;
-}
-
 .search {
   width: 300px;
   padding: 8px;
@@ -149,10 +143,11 @@ h2 {
   margin-top: 20p;
   font-weight: 500;
   transition: 0.3s;
+  cursor: pointer;
 }
 
 .btn:hover {
-  background-color: #005fa3;
+  background-color: #646464;
 }
 
 .tiles {
@@ -212,20 +207,6 @@ h2 {
   color: #666;
   font-size: 1rem;
   margin-top: 40px;
-}
-
-.back-btn {
-  background-color: #000000;
-  color: white;
-  border: none;
-  padding: 10px 18px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 15px;
-  transition: background 0.2s ease;
-}
-.back-btn:hover {
-  background-color: #484949;
 }
 
 .card {
@@ -316,24 +297,6 @@ h2 {
   color: #16a34a;
 }
 
-/* Back button */
-.back-btn {
-  margin-top: 10px;
-  padding: 10px 20px;
-  background: #1f2933;
-  color: #ffffff;
-  border: none;
-  border-radius: 10px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.2s ease;
-}
-
-.back-btn:hover {
-  background: #374151;
-}
-
 .details-wrapper {
   display: grid;
   grid-template-columns: repeat(2, 1fr); /* 2 tiles per row */
@@ -345,3 +308,26 @@ h2 {
 .details-wrapper .card {
   width: 100%;
 }
+
+.breadcrumb-text {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  font-size: 0.8rem;
+  color: #718096; /* Muted grey for secondary info */
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 500;
+}
+
+.breadcrumb-text .sep {
+  color: #cbd5e0; /* Even lighter grey for the arrow */
+  font-weight: 400;
+}
+
+.breadcrumb-text .active-page {
+  color: #f05a5a; /* Red accent to show current location */
+  font-weight: 600;
+}
+

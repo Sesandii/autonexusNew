@@ -11,6 +11,11 @@
 <?php include __DIR__ . '/../partials/sidebar.php'; ?>
 
 <main class="container">
+<div class="breadcrumb-text">
+    Supervisor <span class="sep">&gt;</span> 
+    Work Orders <span class="sep">&gt;</span>
+    <span class="active-page">Create</span>
+  </div>
   <div class="page-header">
     <div>
       <h1>Create Work Order</h1>
@@ -26,7 +31,7 @@
         <div class="form-group">
           <label class="required">Appointment</label>
           <select name="appointment_id" id="appointment_id" required>
-            <option value="">-- choose appointment --</option>
+            <option value="">-- Choose Appointment --</option>
             <?php foreach ($availableAppointments as $a): ?>
               <option
                 value="<?= (int)$a['appointment_id'] ?>"
@@ -39,31 +44,57 @@
               </option>
             <?php endforeach; ?>
           </select>
-          <div class="help">Only “requested/confirmed” appointments are shown.</div>
+          <div class="help">Only “requested” appointments are shown.</div>
         </div>
 
         <!-- Mechanic Dropdown -->
         <div class="form-group">
-          <label>Mechanic</label>
-              
-          <select name="mechanic_id" id="mechanicSelect">
-    <option value="">Select Mechanic</option>
-    <?php foreach ($activeMechanics as $mech):
-        $code = $mech['mechanic_code'] ?? '';
-        $spec = $mech['specialization'] ?? '';
-        $activeCount = $mechanicLimits[$code] ?? 0;
-        $disabled = $activeCount >= 5 ? 'disabled' : '';
-        $style = $activeCount >= 5 ? 'opacity:0.5; filter: blur(1px);' : '';
-    ?>
-        <option value="<?= $mech['mechanic_id'] ?>" <?= $disabled ?> style="<?= $style ?>">
-            <?= htmlspecialchars($code . ' (' . $spec . ')') ?>
-            <?= $activeCount >= 5 ? '⚠ Full' : '' ?>
-        </option>
-    <?php endforeach; ?>
-</select>
+    <label class="required">Mechanic</label>
+    <select name="mechanic_id" id="mechanicSelect">
+        <option value="">-- Select Mechanic --</option>
+        <?php foreach ($activeMechanics as $mech):
+            $code = $mech['mechanic_code'] ?? '';
+            $spec = $mech['specialization'] ?? '';
+            $status = $mech['status'] ?? 'Available';
+            
+            // Check if this was pre-selected from the URL
+            $isSelected = (isset($selectedMechanicId) && $selectedMechanicId == $mech['mechanic_id']);
+            
+            // 1. REMOVE FROM DROPDOWN: If Off-Duty (Skip this iteration)
+            // We allow it only if it's the specific one pre-selected from the board
+            if ($status === 'Off-Duty' && !$isSelected) continue;
 
-        </div>
+            // 2. CAPACITY CHECK: Highlight Red if 5+ jobs
+            $activeCount = $mechanicLimits[$code] ?? 0;
+            $isFull = ($activeCount >= 5);
+            
+            // 3. DEFINE STYLES
+            $style = "";
+            $isDisabledAttr = "";
+            $labelSuffix = "";
 
+            if ($status === 'On Break') {
+                // BLUR: Apply visual filter and opacity
+                $style = "filter: blur(1px); opacity: 0.5;";
+                $labelSuffix = " (On Break)";
+                $isDisabledAttr = "disabled";
+            } elseif ($isFull) {
+                // RED HIGHLIGHT: For capacity warning
+                $style = "filter:  opacity: 0.5; background-color: #eeeeee; color: #999;";
+                $labelSuffix = " ⚠ Full";
+                // Disable selection for full mechanics unless they were specifically assigned
+                if (!$isSelected) $isDisabledAttr = "disabled";
+            }
+        ?>
+            <option value="<?= $mech['mechanic_id'] ?>" 
+                <?= $isSelected ? 'selected' : '' ?> 
+                <?= $isDisabledAttr ?>
+                style="<?= $style ?>">
+                <?= htmlspecialchars($code . ' (' . $spec . ')') . $labelSuffix ?>
+            </option>
+        <?php endforeach; ?>
+    </select>
+</div>
         <!-- Service Display -->
         <div class="form-group">
           <label>Service (from appointment)</label>
@@ -71,24 +102,11 @@
           <div class="help">This is derived from the selected appointment.</div>
         </div>
 
-        <!-- Service Summary -->
-        <div class="form-group" style="grid-column:1/-1">
-          <label>Service Summary</label>
-          <textarea name="service_summary" placeholder="Notes, observations, extra work…"></textarea>
-        </div>
-
-        <!-- Checklist -->
-        <div class="form-group checklist-box">
-          <label class="checklist-title">Service Checklist</label>
-          <ul id="checklist-display" class="checklist">
-            <li class="placeholder">Select an appointment to see the checklist</li>
-          </ul>
-        </div>
-
         <!-- Status -->
         <div class="form-group">
-          <label>Status</label>
+          <label class="required">Status</label>
           <select name="status">
+          <option value="">-- Select Status --</option>
             <option value="open">open</option>
             <option value="in_progress">in_progress</option>
             <option value="on_hold">on_hold</option>
@@ -96,8 +114,22 @@
           </select>
         </div>
 
-      </div>
+        <!-- Service Summary -->
+        <div class="form-group summary-group">
+    <label>Service Summary</label>
+    <textarea name="service_summary" placeholder="Notes, observations, extra work…"></textarea>
+</div>
 
+<div class="form-group">
+    <label>Service Checklist</label>
+    
+    <div class="checklist-box">
+        <ul id="checklist-display" class="checklist">
+            <li class="placeholder">Select an appointment to see the checklist</li>
+        </ul>
+    </div>
+</div>
+      </div>
       <div class="form-actions">
         <a class="btn" href="<?= $base ?>/supervisor/workorders">Cancel</a>
         <button class="btn primary" type="submit">Save</button>

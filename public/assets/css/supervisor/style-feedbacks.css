@@ -99,54 +99,187 @@ button.view-btn:hover {
   border-radius: 6px;
 }
 
-.feedback-cards {
+/* Card Container */
+.feedback-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr); /* 2 columns */
-  gap: 20px; /* space between tiles */
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 20px;
+  padding: 20px 0;
 }
 
-.feedback-cards .card {
+.feedback-card {
   background: #fff;
-  padding: 15px;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  transition: transform 0.2s ease;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+  border: 1px solid #eee;
+  font-family: 'Inter', sans-serif;
 }
 
-.feedback-cards .card:hover {
-  transform: translateY(-5px);
-}
-
-
-.card h3 {
+/* Header & Rating */
+.card-header {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 8px;
-  font-size: 16px;
+  align-items: flex-start;
+  margin-bottom: 15px;
 }
 
-.rating {
-  font-size: 12px;
-  padding: 2px 6px;
-  border-radius: 4px;
+/* FORCE VISIBILITY - Add this to your style-feedbacks.css */
+
+.feedback-card .user-info {
+  text-align: left !important;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
 }
 
-.rating.good { color: green; }
-.rating.bad { color: red; }
-.rating.avg { color: orange; }
+/* The Customer Name */
+.feedback-card .customer-name {
+  color: #000000 !important; /* Pure Black */
+  font-size: 17px !important;
+  font-weight: 800 !important;
+  margin: 0 0 12px 0 !important;
+  display: block !important;
+}
 
-.reply {
+/* The Service, Branch, and Date labels */
+.feedback-card .detail-item {
+  color: #333333 !important; /* Dark Grey */
+  font-size: 0.95rem !important;
+  margin: 5px 0 !important;
+  line-height: 1.4 !important;
+  display: block !important;
+}
+
+/* The Bold Labels (Service:, Branch:, etc.) */
+.feedback-card .detail-item strong {
+  color: #000000 !important;
+  font-weight: 700 !important;
+  margin-right: 5px !important;
+}
+
+/* Ensure the card background is white so dark text shows up */
+.feedback-card {
+  background-color: #ffffff !important;
+  border: 1px solid #e0e0e0 !important;
+}
+
+
+/* --- Rating Badge Colors --- */
+.rating-badge {
+  padding: 6px 14px !important;
+  border-radius: 20px !important;
+  font-weight: 800 !important;
+  font-size: 0.9rem !important;
+  color: white !important; /* White text on the colored backgrounds */
+  display: inline-block !important;
+}
+
+.rate-green { background-color: #5cb85c !important; }  /* Green for 4, 5 */
+.rate-yellow { background-color: #f0ad4e !important; } /* Yellow/Orange for 2, 3 */
+.rate-red { background-color: #d9534f !important; }    /* Red for 1 */
+
+/* --- Visibility Fix for User Info --- */
+.feedback-card {
+  background: #ffffff !important;
+  border: 1px solid #e0e0e0 !important;
+  color: #333 !important; /* Ensure default text is dark */
+}
+
+/* Force Customer Name Visibility */
+.feedback-card .customer-name {
+  color: #1a1a1a !important; 
+  font-weight: 800 !important;
+  font-size: 1.2rem !important;
+  margin-bottom: 8px !important;
+  display: block !important;
+  visibility: visible !important;
+}
+
+/* Force Detail Items Visibility (Service, Branch, Date) */
+.feedback-card .detail-item {
+  color: #444444 !important;
+  font-size: 0.95rem !important;
+  margin: 4px 0 !important;
+  display: block !important;
+  visibility: visible !important;
+}
+
+.feedback-card .detail-item strong {
+  color: #000000 !important;
+  font-weight: 700 !important;
+}
+
+/* Force Comment Visibility */
+.feedback-card .comment-text {
+  color: #555555 !important;
+  font-style: italic !important;
+  margin: 15px 0 !important;
+  display: block !important;
+}
+
+.stars {
+  display: inline-block;
+  color: #ff6b6b; /* Reddish stars per image */
+  font-size: 1.2rem;
+}
+
+.star.filled { color: #ff6b6b; }
+.star:not(.filled) { color: #ddd; }
+
+/* Comment Body */
+.comment-text {
+  font-size: 1rem;
+  color: #555;
+  margin: 15px 0;
+}
+
+/* Reply Section */
+.reply-status {
+  color: #5cb85c;
+  font-size: 0.85rem;
   display: block;
-  margin-top: 10px;
-  font-size: 12px;
+  margin-bottom: 10px;
 }
 
-.replied {
-  color: green;
+.reply-label {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 5px;
 }
 
-.not-replied {
-  color: gray;
+.current-reply {
+  font-size: 0.9rem;
+  margin-bottom: 10px;
+}
+
+.reply-input {
+  width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 10px;
+  font-family: inherit;
+  resize: vertical;
+  min-height: 60px;
+  margin-bottom: 15px;
+}
+
+.update-reply-btn {
+  background-color: #f05a5a;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background 0.2s;
+}
+
+.update-reply-btn:hover {
+  background-color: #d94848;
 }
 
 .page-header {

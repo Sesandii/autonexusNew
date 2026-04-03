@@ -1,14 +1,15 @@
 <?php $base = rtrim(BASE_URL, '/'); ?>
 
 <link rel="stylesheet" href="<?= $base ?>/public/assets/css/supervisor/sidebar.css" />
-
 <?php
-$currentUri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-$basePath = parse_url(BASE_URL, PHP_URL_PATH);
-
 function isActive($route) {
-    global $currentUri, $basePath;
-    return str_starts_with($currentUri, $basePath . $route) ? 'active' : '';
+    $current = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+
+    // normalize (remove trailing slash)
+    $current = rtrim($current, '/');
+    $route   = rtrim($route, '/');
+
+    return str_starts_with($current, $route) ? 'active' : '';
 }
 ?>
 
@@ -24,43 +25,43 @@ function isActive($route) {
 
     <div class="nav-links">
       <a href="<?= $base ?>/supervisor/dashboard"
-         class="<?= isActive('/autonexus/supervisor/dashboard') ?>">
+         class="<?= isActive('/supervisor/dashboard') ?>">
         <img src="<?= $base ?>/public/assets/img/dashboard.png"/>
         <span class="link-text">Dashboard</span>
       </a>
 
       <a href="<?= $base ?>/supervisor/workorders"
-         class="<?= isActive('/autonexus/supervisor/workorders') ?>">
+      class="<?= isActive('/supervisor/workorders') ?>">
         <img src="<?= $base ?>/public/assets/img/jobs.png"/>
         <span class="link-text">Work Orders</span>
       </a>
 
       <a href="<?= $base ?>/supervisor/assignedjobs"
-         class="<?= isActive('/autonexus/supervisor/assignedjobs') ?>">
+         class="<?= isActive('/supervisor/assignedjobs') ?>">
         <img src="<?= $base ?>/public/assets/img/assigned.png"/>
         <span class="link-text">Assigned</span>
       </a>
 
       <a href="<?= $base ?>/supervisor/coordination"
-         class="<?= isActive('/autonexus/supervisor/coordination') ?>">
+         class="<?= isActive('/supervisor/coordination') ?>">
         <img src="<?= $base ?>/public/assets/img/Complaints.png"/>
         <span class="link-text">Coordinate</span>
       </a>
 
       <a href="<?= $base ?>/supervisor/history"
-         class="<?= isActive('/autonexus/supervisor/history') ?>">
+         class="<?= isActive('/supervisor/history') ?>">
         <img src="<?= $base ?>/public/assets/img/history.png"/>
         <span class="link-text">Vehicle History</span>
       </a>
 
       <a href="<?= $base ?>/supervisor/complaints_feedbacks"
-         class="<?= isActive('/autonexus/supervisor/complaints_feedbacks') ?>">
+         class="<?= isActive('/supervisor/complaints_feedbacks') ?>">
         <img src="<?= $base ?>/public/assets/img/Feedbacks.png"/>
         <span class="link-text">Feedback</span>
       </a>
 
       <a href="<?= $base ?>/supervisor/reports"
-         class="<?= isActive('/autonexus/supervisor/reports') ?>">
+         class="<?= isActive('/supervisor/reports') ?>">
         <img src="<?= $base ?>/public/assets/img/Inspection.png"/>
         <span class="link-text">Report</span>
       </a>
@@ -69,7 +70,8 @@ function isActive($route) {
 
   <!-- 🔥 Bottom User Section -->
   <div class="sidebar-bottom">
-  <a href="<?= $base ?>/supervisor/profile/edit">
+  <a href="<?= $base ?>/supervisor/profile/edit"
+  class="<?= isActive('/supervisor/profile/edit')?>">
     <img src="<?= $base ?>/public/assets/img/user.png" />
     <span>Edit Profile</span>
   </a>

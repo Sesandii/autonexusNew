@@ -28,6 +28,11 @@
 <?php include __DIR__ . '/../partials/sidebar.php'; ?>
 
 <main class="main-content">
+<div class="breadcrumb-text">
+    Supervisor <span class="sep">&gt;</span> 
+    Reports <span class="sep">&gt;</span> 
+    Daily Job Report <span class="sep"></span> 
+  </div>
   <header>
     <h1>Daily Job Completion Report</h1>
   </header>

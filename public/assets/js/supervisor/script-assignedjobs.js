@@ -4,10 +4,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const mechanicFilter = document.getElementById("mechanicFilter");
     const statusFilter = document.getElementById("statusFilter");
     const jobCards = document.querySelectorAll(".job-card");
-<<<<<<< HEAD
-=======
     const resetBtn = document.getElementById("resetFilters");
->>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276
 
     function filterJobs() {
         const searchText = searchInput.value.toLowerCase().trim();
@@ -18,11 +15,12 @@ document.addEventListener("DOMContentLoaded", function () {
         jobCards.forEach(card => {
             const workOrder = card.dataset.workorder;
             const service = card.dataset.service;
+            const vehicle = card.dataset.vehicle;
             const mechanic = card.dataset.mechanic;
             const status = card.dataset.status;
 
             const matchesSearch =
-                workOrder.includes(searchText) ||
+            vehicle.includes(searchText) ||
                 service.includes(searchText);
 
             const matchesService =
@@ -40,18 +38,13 @@ document.addEventListener("DOMContentLoaded", function () {
                 : "none";
         });
     }
-<<<<<<< HEAD
-=======
     
   
->>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276
 
     searchInput.addEventListener("keyup", filterJobs);
     serviceFilter.addEventListener("change", filterJobs);
     mechanicFilter.addEventListener("change", filterJobs);
     statusFilter.addEventListener("change", filterJobs);
-<<<<<<< HEAD
-=======
 
     resetBtn.addEventListener("click", function () {
         searchInput.value = "";
@@ -61,5 +54,4 @@ document.addEventListener("DOMContentLoaded", function () {
         filterJobs(); // ✅ correct function name
     });
     
->>>>>>> bc21bfd776db2147cd644a47aeb727bb8ca3d276
 });

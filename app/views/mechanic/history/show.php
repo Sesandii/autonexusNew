@@ -10,10 +10,15 @@
 <body>
 <?php include __DIR__ . '/../partials/sidebar.php'; ?>
 <div class="main-content">
+<div class="breadcrumb-text">
+    Mechanic <span class="sep">&gt;</span> 
+    Vehicle History <span class="sep">&gt;</span> 
+    <?= htmlspecialchars($vehicle['license_plate']) ?> <span class="sep"></span> 
+  </div>
 <header class="page-header">
     <div>
       <?php if (!empty($vehicle)): ?>
-        <h1><?= htmlspecialchars($vehicle['make'] . ' ' . $vehicle['model']) ?> (<?= htmlspecialchars($vehicle['license_plate']) ?>)</h1>
+        <h1><?= htmlspecialchars($vehicle['make'] . ' ' . $vehicle['model']) ?></h1>
         <p class="subtitle">Owner: <?= htmlspecialchars($vehicle['owner_name'] ?? 'Unknown') ?></p>
       <?php else: ?>
         <h1>Vehicle Not Found</h1>

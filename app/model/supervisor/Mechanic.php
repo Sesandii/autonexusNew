@@ -1,17 +1,4 @@
 <?php
-
-/*class Mechanic
-{
-    private $db;
-    public function __construct($db) { $this->db = $db; }
-
-    public function allActive()
-    {
-        $stmt = $this->db->query("SELECT * FROM mechanics WHERE status = 'Available'");
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-}
-*/
 namespace app\model\supervisor;
 use PDO;
 
@@ -33,16 +20,16 @@ class Mechanic {
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function updateStatus($mechanicId, $status)
+    public function updateStatus($code, $status)
 {
     $stmt = $this->pdo->prepare("
         UPDATE mechanics
         SET status = :status
-        WHERE mechanic_id = :id
+        WHERE mechanic_code = :code
     ");
     return $stmt->execute([
         ':status' => $status,
-        ':id' => $mechanicId
+        ':code' => $code
     ]);
 }
 

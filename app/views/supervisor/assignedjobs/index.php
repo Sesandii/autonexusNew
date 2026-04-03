@@ -11,12 +11,16 @@
 <?php include __DIR__ . '/../partials/sidebar.php'; ?>
 
   <main class="main">
+  <div class="breadcrumb-text">
+    Supervisor <span class="sep">&gt;</span> 
+    Assigned Jobs <span class="sep"></span> 
+  </div>
 
   <h1>Assigned Jobs</h1>
       <p>Here are all jobs already assigned to mechanics</p>
 
     <header>
-    <input type="text" id="jobSearch" placeholder="Search by Work Order or Service..." class="search" />
+    <input type="text" id="jobSearch" placeholder="Search by Service or Vehicle" class="search" />
     <div class="filters">
   <select id="serviceFilter">
     <option value="">All Services</option>
@@ -42,6 +46,7 @@
     <option value="">All Statuses</option>
     <option value="open">Open</option>
     <option value="in_progress">In Progress</option>
+    <option value="on_hold">On Hold</option>
     <option value="completed">Completed</option>
   </select>
   <button id="resetFilters" class="btn small">Reset</button>
@@ -56,6 +61,7 @@
             <div class="job-card"
      data-workorder="<?= $job['work_order_id'] ?>"
      data-service="<?= strtolower($job['service_name']) ?>"
+     data-vehicle="<?= strtolower($job['vehicle']) ?>" 
      data-mechanic="<?= strtolower($job['mechanic_code']) ?>"
      data-status="<?= strtolower($job['status']) ?>">
               <h3><?= $job['service_name'] ?> - <?= $job['vehicle'] ?></h3>

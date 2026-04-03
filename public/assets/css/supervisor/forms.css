@@ -24,7 +24,7 @@
   border:1px solid var(--border);
   border-radius:10px;
   box-shadow:var(--shadow);
-  padding:18px;
+  padding:20px;
 }
 
 /* ---------- Grid layout ---------- */
@@ -42,6 +42,38 @@
 /* ---------- Groups & labels ---------- */
 .form-group{display:flex;flex-direction:column;}
 .form-group.inline{flex-direction:row;align-items:center;gap:10px}
+/* Ensure labels look identical across both columns */
+.form-group label {
+  display: block;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: #000000; /* Adjust to match your exact blue tone */
+}
+
+/* The box itself (without the title inside) */
+.checklist-box {
+  background: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 15px;
+  min-height: 120px; /* Match height of textarea if possible */
+}
+
+/* Remove default list styling */
+.checklist {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* Style for the placeholder/items inside the box */
+.checklist li {
+  padding: 10px;
+  background: #f8f9fa;
+  border-radius: 6px;
+  margin-bottom: 5px;
+  color: #666;
+}
 label{
   font-weight:600;color:var(--ink);
   margin-bottom:6px;
@@ -67,7 +99,7 @@ select, textarea{
   transition:border-color .15s ease, box-shadow .15s ease;
 }
 
-textarea{min-height:110px;resize:vertical;}
+textarea{min-height:150px;resize:vertical;}
 select{appearance:none;background-image:
   linear-gradient(45deg, transparent 50%, #9aa4b2 50%),
   linear-gradient(135deg, #9aa4b2 50%, transparent 50%),
@@ -123,10 +155,26 @@ legend{padding:0 6px;color:#475569;font-weight:600;font-size:13px}
 .input-addon > input:focus{box-shadow:none}
 
 /* ---------- Actions bar ---------- */
-.form-actions{
-  display:flex;justify-content:flex-end;gap:10px;margin-top:18px;
-  position:sticky;bottom:0;background:linear-gradient(#ffffffcc, #ffffffcc);
-  padding-top:10px;
+.form-actions {
+  /* Layout */
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  
+  /* Spacing */
+  margin-top: 30px; /* Gives some space after the last form element */
+  padding: 20px 0;
+  
+  /* Position - This removes the 'sticky' behavior */
+  position: relative; 
+  bottom: auto;
+  
+  /* Aesthetics - Removing the gradient/line background */
+  background: transparent; 
+  border-top: 1px solid #eee; /* Optional: a light line to separate from form */
+  
+  /* Reset any z-index issues */
+  z-index: 1;
 }
 
 /* Reuse your existing .btn styles; add a subtle loading style */
@@ -168,15 +216,6 @@ legend{padding:0 6px;color:#475569;font-weight:600;font-size:13px}
   border: 1px solid #e5e7eb;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
   margin-top: 15px;
-}
-
-/* Title */
-.checklist-title {
-  display: block;
-  font-weight: 600;
-  font-size: 14px;
-  margin-bottom: 10px;
-  color: #111827;
 }
 
 /* Checklist list */
@@ -242,7 +281,8 @@ legend{padding:0 6px;color:#475569;font-weight:600;font-size:13px}
 .checklist-item {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
+  margin-bottom: 12px;
 }
 
 /* Input field */
@@ -264,19 +304,32 @@ legend{padding:0 6px;color:#475569;font-weight:600;font-size:13px}
 
 /* Remove button */
 .btn-remove {
-  background: #fee2e2;
-  color: #b91c1c;
-  border: none;
-  border-radius: 8px;
-  padding: 8px 10px;
-  font-size: 14px;
-  cursor: pointer;
-  transition: background 0.2s ease;
+  /* Reset all defaults */
+  all: unset !important;
+  appearance: none !important;
+  
+  /* Dimensions and Centering */
+  width: 40px !important;
+  height: 40px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  
+  /* Colors and Shape */
+  background-color: #ffe5e5 !important; /* Soft red background */
+  border-radius: 8px !important;
+  cursor: pointer !important;
+  
+  /* Icon scaling */
+  font-size: 1.2rem !important;
+  line-height: 1 !important;
+  
+  transition: background-color 0.2s ease, transform 0.1s ease !important;
 }
 
-/* Remove hover */
 .btn-remove:hover {
-  background: #fecaca;
+  background-color: #ffd1d1 !important;
+  transform: scale(1.05);
 }
 
 /* Add button */

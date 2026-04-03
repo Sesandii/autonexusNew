@@ -10,6 +10,12 @@
 <body>
 <?php include __DIR__ . '/../partials/sidebar.php'; ?>
   <main class="main">
+  <div class="breadcrumb-text">
+    Supervisor <span class="sep">&gt;</span> 
+    Assigned Jobs <span class="sep">&gt;</span> 
+    #<?= htmlspecialchars($job['work_order_id']) ?> <span class="sep">&gt;</span> 
+    <span class="active-page">Edit</span>
+  </div>
     <header>
       <h1>Job Details</h1>
     </header>
@@ -143,10 +149,10 @@
 
                             <?php if ($item['status'] === 'completed'): ?>
                                 <input type="hidden" name="status" value="pending">
-                                <button type="submit" class="btn-action undo">↩ Undo</button>
+                                <button type="submit" class="btn-action undo">Undo</button>
                             <?php else: ?>
                                 <input type="hidden" name="status" value="completed">
-                                <button type="submit" class="btn-action done">✔ Done</button>
+                                <button type="submit" class="btn-action done">Done</button>
                             <?php endif; ?>
                         </form>
                     </td>
@@ -187,14 +193,14 @@
                     >
                     <!-- DELETE -->
                     <form
-                        action="/autonexus/supervisor/assignedjobs/deletePhoto"
-                        method="POST"
-                        onsubmit="return confirm('Delete this photo?');"
-                    >
-                        <input type="hidden" name="photo_id" value="<?= $photo['id'] ?>">
-                        <input type="hidden" name="work_order_id" value="<?= $job['work_order_id'] ?>">
-                        <button type="submit" class="btn danger small">Delete</button>
-                    </form>
+    action="/autonexus/supervisor/assignedjobs/deletePhoto"
+    method="POST"
+    class="deleteForm"
+>
+    <input type="hidden" name="photo_id" value="<?= $photo['id'] ?>">
+    <input type="hidden" name="work_order_id" value="<?= $job['work_order_id'] ?>">
+    <button type="submit" class="btn danger small">Delete</button>
+</form>
                 </div>
             <?php endforeach; ?>
         </div>
@@ -223,6 +229,18 @@
     <img id="modalImage" style="max-width:90%; max-height:90%; border-radius:10px;">
 </div>
 
+<!-- Delete Confirmation Modal -->
+<div id="deleteModal" class="modal-overlay">
+  <div class="modal-box">
+    <h3>Confirm Deletion</h3>
+    <p>Are you sure you want to delete this photo?</p>
+    <div class="modal-actions">
+      <button id="cancelDelete" class="btn small">Cancel</button>
+      <button id="confirmDelete" class="btn small danger">Delete</button>
+    </div>
+  </div>
+</div>
+
 <script>
 function openModal(src) {
     document.getElementById('modalImage').src = src;
@@ -232,6 +250,31 @@ function openModal(src) {
 function closeModal() {
     document.getElementById('imageModal').style.display = 'none';
 }
+
+let formToSubmit = null;
+
+// Handle delete button click
+document.querySelectorAll('.deleteForm').forEach(form => {
+    form.addEventListener('submit', function(e) {
+        e.preventDefault(); // STOP normal submit
+        formToSubmit = this; // store current form
+        document.getElementById('deleteModal').style.display = 'flex';
+    });
+});
+
+// Cancel button
+document.getElementById('cancelDelete').addEventListener('click', function() {
+    document.getElementById('deleteModal').style.display = 'none';
+    formToSubmit = null;
+});
+
+// Confirm delete
+document.getElementById('confirmDelete').addEventListener('click', function() {
+    if (formToSubmit) {
+        formToSubmit.submit(); // submit the correct form
+    }
+});
+
 </script>
 
 

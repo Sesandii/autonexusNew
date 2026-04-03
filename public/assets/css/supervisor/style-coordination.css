@@ -22,7 +22,7 @@ font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   .main-content h1 {
     font-size: 30px;
     margin-bottom: 20px;
-    color: #1f2937;
+    color: #000000;
   }
   
   /* ====== BOARD LAYOUT ====== */
@@ -92,41 +92,58 @@ font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
     border-top: 1px solid #e5e7eb;
   }
   
-  .workorder-card {
-    background: #f9fafb;
-    border-radius: 8px;
-    padding: 8px 10px;
+  .workorder-card-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
     margin-bottom: 8px;
-    font-size: 13px;
+}
+
+.workorder-card {
     display: flex;
-    justify-content: space-between;
+    justify-content: space-between; /* Spreads Time, Status, and Service across the card */
     align-items: center;
-  }
-  
-  /* ====== STATUS BADGES ====== */
-  .badge {
-    padding: 3px 8px;
-    border-radius: 12px;
-    font-size: 11px;
-    font-weight: 600;
-    text-transform: uppercase;
-  }
-  
-  .badge.pending {
-    background: #e5e7eb;
-    color: #374151;
-  }
-  
-  .badge.in\ progress {
-    background: #bfdbfe;
-    color: #1e40af;
-  }
-  
-  .badge.completed {
-    background: #bbf7d0;
-    color: #166534;
-  }
-  
+    background: #fff;
+    padding: 15px 20px;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    transition: background 0.2s ease;
+}
+
+.workorder-card:hover {
+    background-color: #cacaca;
+}
+
+/* Time: Stacked slightly or side-by-side depending on space */
+.wo-time {
+    flex: 0 0 100px;
+    font-size: 0.75rem;
+    color: #333;
+    line-height: 1.4;
+}
+
+/* Status: Plain text, uppercase, bold */
+.wo-status {
+    flex: 1;
+    text-align: center;
+    font-weight: 700;
+    font-size: 0.55rem;
+    letter-spacing: 0.5px;
+}
+
+/* Color coding for the text status only */
+.wo-status.in_progress { color: #333; } /* In your image, it looks like dark text */
+.wo-status.open { color: #555; }
+
+/* Service: Right-aligned text */
+.wo-service {
+    flex: 0 0 80px;
+    text-align: right;
+    font-size: 0.7rem;
+    color: #333;
+    font-weight: 500;
+    line-height: 1.2;
+}
   /* ====== FORMS ====== */
   .mechanic-card form {
     margin-top: 10px;
@@ -142,23 +159,34 @@ font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
     margin-bottom: 6px;
   }
   
-  .mechanic-card button {
+  .update-btn, .assign-btn {
     width: 100%;
     padding: 7px 0;
     border-radius: 6px;
     border: none;
-    background: #2563eb;
     color: white;
     font-size: 13px;
     font-weight: 600;
     cursor: pointer;
     transition: background 0.2s ease;
   }
-  
-  .mechanic-card button:hover {
-    background: #1e40af;
+
+  .update-btn{
+    background: #eb2525;
+  }
+
+  .assign-btn{
+    background: #000000;
   }
   
+  .mechanic-card .update-btn:hover {
+    background: #ff6c6c;
+  }
+  
+  .mechanic-card .assign-btn:hover {
+    background: #747474;
+  }
+
   .filter-form {
     display: flex;
     gap: 10px;
@@ -170,22 +198,6 @@ font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 .filter-form select {
     padding: 6px 10px;
     font-size: 14px;
-}
-
-.filter-form button,
-.filter-form .reset-btn {
-    padding: 6px 12px;
-    font-size: 14px;
-    cursor: pointer;
-    background-color: #dddddd;
-    color: #000000;
-    border: none;
-    border-radius: 4px;
-    text-decoration: none;
-}
-
-.filter-form .reset-btn {
-    background-color: #f44336;
 }
 
 .workorder-card {
@@ -211,7 +223,7 @@ font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 .view-btn {
   text-decoration: none;
   font-size: 0.8rem;
-  background-color: #007bff;
+  background-color: #000000;
   color: #fff;
   padding: 2px 6px;
   border-radius: 4px;
@@ -219,7 +231,7 @@ font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .view-btn:hover {
-  background-color: #0056b3;
+  background-color: #414141;
 }
 
 .wo-progress {
@@ -236,6 +248,40 @@ font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   transition: width 0.3s ease;
 }
 
+#reset-filters.btn {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+  border: 10px solid #000000 !important;
+  transition: background-color 0.2s ease;
+  border-radius: 8px;
+}
 
+/* Hover effect so users know it's clickable */
+#reset-filters.btn:hover {
+  background-color: #333333 !important;
+  border-color: #333333 !important;
+}
   
   
+.breadcrumb-text {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  font-size: 0.8rem;
+  color: #718096; /* Muted grey for secondary info */
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 500;
+}
+
+.breadcrumb-text .sep {
+  color: #cbd5e0; /* Even lighter grey for the arrow */
+  font-weight: 400;
+}
+
+.breadcrumb-text .active-page {
+  color: #f05a5a; /* Red accent to show current location */
+  font-weight: 600;
+}
+
