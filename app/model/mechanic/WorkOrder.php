@@ -116,7 +116,7 @@ class WorkOrder
                 v.model,
                 v.year,
                 v.license_plate,
-                v.current_mileage,
+                v.mileage,
                 v.color,
                 v.vin,
                 u.first_name,
@@ -332,7 +332,7 @@ public function getByMechanicAndStatus($mechanicId, $status)
             AND status = :status
             ORDER BY created_at DESC";
 
-    $stmt = $this->pdo->prepare($sql);
+    $stmt = $this->db->prepare($sql);
     $stmt->execute([
         ':mechanic_id' => $mechanicId,
         ':status' => $status

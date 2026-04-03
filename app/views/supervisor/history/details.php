@@ -9,6 +9,12 @@
 <body>
 <?php include __DIR__ . '/../partials/sidebar.php'; ?>
 <div class="main-content">
+<div class="breadcrumb-text">
+    Supervisor <span class="sep">&gt;</span> 
+    Vehicle History <span class="sep">&gt;</span> 
+    <?= htmlspecialchars($details['license_plate']) ?> <span class="sep">&gt;</span> 
+    <span class="active-page">Details</span>
+  </div>
 <header class="page-header">
   <h1>Vehicle Service Details</h1>
 </header>
@@ -27,7 +33,8 @@
   <!-- Appointment Info -->
   <div class="card info-card">
     <h3 class="card-title">Appointment Information</h3>
-    <p><b>Date:</b> <?= htmlspecialchars($details['appointment_date']) ?> at <?= htmlspecialchars($details['appointment_time']) ?></p>
+    <p><b>Date:</b> <?= htmlspecialchars($details['appointment_date']) ?></p>
+    <p><b>Time:</b> <?= htmlspecialchars($details['appointment_time']) ?></p>
     <p><b>Status:</b> <span class="status"><?= htmlspecialchars($details['appointment_status']) ?></span></p>
     <p><b>Notes:</b> <?= htmlspecialchars($details['notes'] ?? 'None') ?></p>
   </div>
@@ -43,17 +50,18 @@
   <!-- Work Order Info -->
   <div class="card info-card">
     <h3 class="card-title">Work Order Information</h3>
-    <p><b>Mechanic ID:</b> <?= htmlspecialchars($details['mechanic_id'] ?? '—') ?></p>
+    <p><b>Mechanic ID:</b> <?= htmlspecialchars($details['mechanic_code'] ?? '—') ?></p>
     <p><b>Summary:</b> <?= htmlspecialchars($details['service_summary'] ?? '—') ?></p>
     <p><b>Total Cost:</b> <span class="price">Rs. <?= htmlspecialchars($details['total_cost'] ?? '0') ?></span></p>
     <p><b>Status:</b> <span class="status"><?= htmlspecialchars($details['work_order_status'] ?? '—') ?></span></p>
-    <p><b>Started:</b> <?= htmlspecialchars($details['started_at'] ?? '—') ?></p>
+    <p><b>Created:</b> <?= htmlspecialchars($details['started_at'] ?? '—') ?></p>
+    <p><b>Started:</b> <?= htmlspecialchars($details['job_start_time'] ?? '—') ?></p>
     <p><b>Completed:</b> <?= htmlspecialchars($details['completed_at'] ?? '—') ?></p>
   </div>
 
 </div>
 
-<button onclick="history.back()" class="back-btn">← Back</button>
+<a onclick="history.back()" class="btn">Back</a>
 
 </div>
 

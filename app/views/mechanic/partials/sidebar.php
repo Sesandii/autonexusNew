@@ -1,8 +1,20 @@
 <?php $base = rtrim(BASE_URL, '/'); ?>
 
 <link rel="stylesheet" href="/autonexus/public/assets/css/supervisor/sidebar.css" />
+<?php
+function isActive($route) {
+    $current = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
-<div class="sidebar">
+    // normalize (remove trailing slash)
+    $current = rtrim($current, '/');
+    $route   = rtrim($route, '/');
+
+    return str_starts_with($current, $route) ? 'active' : '';
+}
+?>
+
+<div class="sidebar"> 
+
 <div class="top-section">
   <div class="logo-container">
     <img src="/autonexus/public/assets/img/Auto1.png" class="logo-collapsed" />
@@ -11,34 +23,37 @@
 
   <h2 class="brand-text">AUTONEXUS</h2>
 
+  <div class="nav-links">
   <a href="<?= $base ?>/mechanic/dashboard"
-     class="<?= ($_SERVER['REQUEST_URI'] === '/autonexus/supervisor/dashboard') ? 'nav' : '' ?>">
+     class="<?= isActive('/mechanic/dashboard') ?>">
     <img src="/autonexus/public/assets/img/dashboard.png"/>
     <span class="link-text">Dashboard</span>
   </a>
 
   <a href="<?= $base ?>/mechanic/jobs"
-     class="<?= str_contains($_SERVER['REQUEST_URI'], '/jobs') ? 'nav' : '' ?>">
+  class="<?= isActive('/mechanic/jobs') ?>">
     <img src="/autonexus/public/assets/img/jobs.png"/>
     <span class="link-text">Jobs</span>
   </a>
 
   <a href="<?= $base ?>/mechanic/assignedjobs"
-     class="<?= str_contains($_SERVER['REQUEST_URI'], '/assignedjobs') ? 'nav' : '' ?>">
+    class="<?= isActive('/mechanic/assignedjobs') ?>">
     <img src="/autonexus/public/assets/img/assigned.png"/>
     <span class="link-text">Assigned</span>
   </a>
 
   <a href="<?= $base ?>/mechanic/history"
-     class="<?= str_contains($_SERVER['REQUEST_URI'], '/history') ? 'nav' : '' ?>">
+  class="<?= isActive('/mechanic/history') ?>">
     <img src="/autonexus/public/assets/img/history.png"/>
     <span class="link-text">Vehicle History</span>
   </a>
 </div>
+</div>
 
 <!-- 🔥 Bottom User Section -->
 <div class="sidebar-bottom">
-  <a href="<?= $base ?>/mechanic/profile/edit">
+  <a href="<?= $base ?>/mechanic/profile/edit"
+  class="<?= isActive('/mechanic/profile/edit') ?>">
     <img src="<?= $base ?>/public/assets/img/user.png" />
     <span>Edit Profile</span>
   </a>

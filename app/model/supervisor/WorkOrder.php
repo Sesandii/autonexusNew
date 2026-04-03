@@ -134,6 +134,7 @@ class WorkOrder
             m.mechanic_id,
             m.mechanic_code,
             m.specialization,
+            m.status,
 
             -- Count of open jobs
             SUM(CASE WHEN w.status = 'open' THEN 1 ELSE 0 END) AS open_jobs,
@@ -198,7 +199,7 @@ class WorkOrder
     {
         $sql = "SELECT w.*, a.appointment_date, a.appointment_time,
                        s.service_id, s.name AS service_name, s.default_price, s.base_duration_minutes,
-                       m.mechanic_code, v.license_plate, v.model, v.make,
+                       m.mechanic_code, v.license_plate, v.model, v.make,v.color,
                        c.customer_code, u.first_name AS customer_first_name, u.last_name AS customer_last_name, mu.first_name AS mechanic_first_name,mu.last_name AS mechanic_last_name
                 FROM work_orders w
                 LEFT JOIN appointments a ON w.appointment_id = a.appointment_id
@@ -702,7 +703,7 @@ public function hasActiveInProgressJob(int $mechanicId): bool
 
 public function getScheduledWorkOrdersByMechanicCode(string $mechanicCode)
 {
-    $sql = "SELECT wo.*, s.base_duration_minutes
+    $sql = "SELECT wo.*, s.base_duration_minutes, s.name
             FROM work_orders wo
             JOIN mechanics m ON wo.mechanic_id = m.mechanic_id
             JOIN appointments a ON wo.appointment_id = a.appointment_id

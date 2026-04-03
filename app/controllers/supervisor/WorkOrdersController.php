@@ -195,7 +195,7 @@ if ($mechanic_id) {
         }
     }
 
-    $this->flash('success', 'Work order and checklist created.');
+    $this->flash('success', 'Work order created.');
     header('Location: ' . rtrim(BASE_URL,'/') . '/supervisor/workorders');
     exit;
 }

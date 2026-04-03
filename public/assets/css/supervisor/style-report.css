@@ -257,7 +257,7 @@ textarea{
 
 .report-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(4, 1fr); /* 4 tiles in one row */
   gap: 20px;
   margin-top: 20px;
 }
@@ -274,17 +274,23 @@ textarea{
 
 /* Individual report tile */
 .report-tile {
-  display: block;
+  display: flex;
+  flex-direction: column;
   background: #f8f9fa;
   border: 1px solid #ddd;
   border-radius: 12px;
-  padding: 25px 20px;
+  padding: 240px 20px;
   text-decoration: none;
   color: #333;
   transition: all 0.3s ease;
   box-shadow: 0 2px 5px rgba(0,0,0,0.08);
   height: 150px;
   position: relative;
+  width: 100%;
+  justify-content: center;   /* vertical center */
+  align-items: center;       /* horizontal center */
+  text-align: center;        /* center text */
+
 }
 
 /* Hover effect */
@@ -297,7 +303,7 @@ textarea{
 /* Tile title */
 .report-tile h3 {
   margin: 0 0 10px;
-  font-size: 1.3rem;
+  font-size: 30px;
 }
 
 /* Tile description */

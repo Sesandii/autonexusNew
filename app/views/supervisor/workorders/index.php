@@ -22,12 +22,18 @@ $currentSupervisorId = $_SESSION['user']['user_id'] ?? 0;
 <?php include __DIR__ . '/../partials/sidebar.php'; ?>
 
 <?php if (!empty($message)): ?>
-    <div class="toast <?= htmlspecialchars($message['type']) ?>">
-        <?= htmlspecialchars($message['text']) ?>
+    <div class="toast-container">
+        <div class="toast-message <?= $message['type'] ?>">
+            <?= $message['text'] ?>
+        </div>
     </div>
 <?php endif; ?>
 
 <div class="container">
+<div class="breadcrumb-text">
+    Supervisor <span class="sep">&gt;</span> 
+    Work Orders <span class="sep"></span>
+  </div>
   <div class="page-header">
     <div class="header">
       <h1>Work Orders</h1>
@@ -38,7 +44,7 @@ $currentSupervisorId = $_SESSION['user']['user_id'] ?? 0;
 
   <!-- Filters -->
   <div class="table-filters">
-    <input type="text" id="idFilter" placeholder="Search by Work Order ID, Service" class="filter-input">
+    <input type="text" id="idFilter" placeholder="Search by Vehicle, Service...." class="filter-input">
 
     <select id="serviceFilter">
       <option value="">All Services</option>
@@ -107,11 +113,13 @@ $currentSupervisorId = $_SESSION['user']['user_id'] ?? 0;
         $status = strtolower($w['status'] ?? '');
     ?>
     <tr
-        data-service="<?= strtolower($w['service_name'] ?? '') ?>"
-        data-mechanic="<?= strtolower($w['mechanic_code'] ?? 'unassigned') ?>"
-        data-status="<?= $status ?>"
-        data-owner="<?= $isOwner ? 'mine' : 'others' ?>"
-    >
+    data-service="<?= strtolower($w['service_name'] ?? '') ?>"
+    data-mechanic="<?= strtolower($w['mechanic_code'] ?? 'unassigned') ?>"
+    data-status="<?= $status ?>"
+    data-owner="<?= $isOwner ? 'mine' : 'others' ?>"
+    data-vehicle="<?= strtolower($w['vehicle'] ?? '') ?>"
+    data-supervisor="<?= strtolower($w['supervisor_code'] ?? '') ?>"
+>
         <td><?= htmlspecialchars(($w['appointment_date'] ?? '') . ' ' . ($w['appointment_time'] ?? '')) ?></td>
         <td><?= htmlspecialchars($w['service_name'] ?? '') ?></td>
         <td><?= htmlspecialchars($w['vehicle'] ?? '') ?></td>
@@ -232,30 +240,49 @@ document.addEventListener("DOMContentLoaded", function () {
     const ownerFilter = document.getElementById("ownerFilter");
     const resetBtn = document.getElementById("resetFilters");
     const rows = document.querySelectorAll(".workorders tbody tr");
+    applyFilters();
 
     function applyFilters() {
-        const searchVal = searchInput.value.trim().toLowerCase();
-        const serviceVal = serviceFilter.value;
-        const mechanicVal = mechanicFilter.value;
-        const statusVal = statusFilter.value;
-        const ownerVal = ownerFilter.value;
+    const searchVal = searchInput.value.trim().toLowerCase();
+    const serviceVal = serviceFilter.value;
+    const mechanicVal = mechanicFilter.value;
+    const statusVal = statusFilter.value; // The value from the <select id="statusFilter">
+    const ownerVal = ownerFilter.value;
 
-        rows.forEach(row => {
-            const rowId = (row.dataset.id || "").toLowerCase();
-            const rowService = (row.dataset.service || "").toLowerCase();
-            const rowMechanic = (row.dataset.mechanic || "").toLowerCase();
-            const rowStatus = (row.dataset.status || "").toLowerCase();
-            const rowOwner = (row.dataset.owner || "").toLowerCase();
+    rows.forEach(row => {
+        const rowService = (row.dataset.service || "").toLowerCase();
+        const rowMechanic = (row.dataset.mechanic || "").toLowerCase();
+        const rowStatus = (row.dataset.status || "").toLowerCase();
+        const rowOwner = (row.dataset.owner || "").toLowerCase();
+        const rowVehicle = (row.dataset.vehicle || "").toLowerCase();
+        const rowSupervisor = (row.dataset.supervisor || "").toLowerCase();
 
-            const matchSearch = !searchVal || rowId.includes(searchVal) || rowService.includes(searchVal);
-            const matchService = !serviceVal || rowService === serviceVal;
-            const matchMechanic = !mechanicVal || rowMechanic === mechanicVal;
-            const matchStatus = !statusVal || rowStatus === statusVal;
-            const matchOwner = !ownerVal || rowOwner === ownerVal;
+        // Search Bar Logic
+        const matchSearch = !searchVal || 
+                            rowVehicle.includes(searchVal) || 
+                            rowService.includes(searchVal) || 
+                            rowSupervisor.includes(searchVal) || 
+                            rowMechanic.includes(searchVal);
 
-            row.style.display = (matchSearch && matchService && matchMechanic && matchStatus && matchOwner) ? "" : "none";
-        });
-    }
+        // --- ARCHIVE LOGIC START ---
+        let matchStatus;
+        if (statusVal) {
+            // If the user SPECIFICALLY selects a status (including "completed"), show only that
+            matchStatus = rowStatus === statusVal;
+        } else {
+            // DEFAULT STATE: If no status is chosen, show everything EXCEPT completed
+            matchStatus = rowStatus !== 'completed';
+        }
+        // --- ARCHIVE LOGIC END ---
+
+        const matchService = !serviceVal || rowService === serviceVal;
+        const matchMechanic = !mechanicVal || rowMechanic === mechanicVal;
+        const matchOwner = !ownerVal || rowOwner === ownerVal;
+
+        // Apply visibility
+        row.style.display = (matchSearch && matchService && matchMechanic && matchStatus && matchOwner) ? "" : "none";
+    });
+}
 
     searchInput.addEventListener("keyup", applyFilters);
     serviceFilter.addEventListener("change", applyFilters);

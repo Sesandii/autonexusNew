@@ -10,6 +10,10 @@
 <body>
 <?php include __DIR__ . '/../partials/sidebar.php'; ?>
 <div class="main-content">
+<div class="breadcrumb-text">
+    Mechanic <span class="sep">&gt;</span> 
+    Vehicle History <span class="sep"></span> 
+  </div>
 <header class="page-header">
   
       <h1>Vehicle History</h1>

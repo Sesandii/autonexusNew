@@ -12,6 +12,11 @@
 <?php include __DIR__ . '/../partials/sidebar.php'; ?>
 
 <div class="container">
+<div class="breadcrumb-text">
+    Supervisor <span class="sep">&gt;</span> 
+    Reports <span class="sep">&gt;</span> 
+    Vehicle Report <span class="sep"></span> 
+  </div>
 
   <div class="page-header">
     <div>

@@ -55,11 +55,11 @@ class CoordinationController {
     public function updateMechanicStatus()
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $mechanicId = $_POST['mechanic_id'];
-            $status = $_POST['status'];
+            $mechanicCode = $_POST['mechanic_code'] ?? null;
+            $status = $_POST['status'] ?? null;
 
             // Use the already initialized model
-            $updated = $this->mechanicModel->updateStatus($mechanicId, $status);
+            $updated = $this->mechanicModel->updateStatus($mechanicCode, $status);
 
             if ($updated) {
                 header('Location: /autonexus/supervisor/coordination');

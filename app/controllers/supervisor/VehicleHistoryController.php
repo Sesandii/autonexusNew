@@ -55,9 +55,6 @@ class VehicleHistoryController extends Controller
         'appointments' => $appointments
     ]);
 }
-
-
-
     /**
      * ✅ Show detailed info for a specific appointment
      * Example URL: /supervisor/history/details/12

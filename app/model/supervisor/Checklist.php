@@ -115,7 +115,23 @@ public function deleteById(int $id): void
     $stmt->execute([$id]);
 }
 
-
+/**
+ * Get checklist counts to calculate progress
+ */
+public function getProgressCounts(int $workOrderId): array
+{
+    $sql = "
+        SELECT 
+            COUNT(*) as total,
+            SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) as completed
+        FROM checklist 
+        WHERE work_order_id = ?
+    ";
+    
+    $stmt = $this->pdo->prepare($sql);
+    $stmt->execute([$workOrderId]);
+    return $stmt->fetch(PDO::FETCH_ASSOC) ?: ['total' => 0, 'completed' => 0];
+}
 
 }
 

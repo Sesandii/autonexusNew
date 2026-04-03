@@ -11,6 +11,10 @@
 <body>
 <?php include __DIR__ . '/../partials/sidebar.php'; ?>
 <main class="main-content">
+<div class="breadcrumb-text">
+    Supervisor <span class="sep">&gt;</span> 
+    Complaints & Feedbacks <span class="sep"></span> 
+  </div>
   <!-- Toggle Buttons -->
   <header class="page-header">
   <h1>Customer Complaints & Feedbacks</h1>
@@ -37,7 +41,7 @@
       <option value="medium">Medium</option>
       <option value="high">High</option>
     </select>
-    <button type="button" id="resetComplaints" class="reset-btn">Reset</button>
+    <button type="button" id="resetComplaints" class="btn reset">Reset</button>
   </div>
 
   <!-- Complaints Section -->
@@ -82,40 +86,62 @@
 <!-- Feedbacks Section -->
 <section class="data-section hidden" id="feedbacks">
   <div id="feedback-filters" class="filter-bar">
-    <input type="text" placeholder="Search by customer, service, comment..." class="search" id="searchFeedback"/>
+    <input type="text" placeholder="Search by customer, service..." class="search" id="searchFeedback"/>
     <select id="ratingFilter">
       <option value="">All Ratings</option>
-      <option value="5">5 ★</option>
-      <option value="4">4 ★</option>
-      <option value="3">3 ★</option>
-      <option value="2">2 ★</option>
-      <option value="1">1 ★</option>
+      <option value="5">5/5 </option>
+      <option value="4">4/5 </option>
+      <option value="3">3/5 </option>
+      <option value="2">2/5 </option>
+      <option value="1">1/5 </option>
     </select>
     <input type="date" id="dateFeedback"/>
     <button type="button" id="resetFeedback" class="reset-btn">Reset</button>
   </div>
 
-  <div class="feedback-cards">
+  <div class="feedback-grid">
     <?php if (!empty($feedbacks)): ?>
-      <?php foreach ($feedbacks as $f): ?>
-        <div class="card"
-             data-rating="<?= (int)$f['rating'] ?>"
-             data-date="<?= date('Y-m-d', strtotime($f['created_at'])) ?>">
+        <?php foreach ($feedbacks as $f): ?>
+            <div class="feedback-card" 
+                 data-rating="<?= (int)$f['rating'] ?>" 
+                 data-date="<?= date('Y-m-d', strtotime($f['created_at'])) ?>">
+                
+                <div class="card-header">
+                    <div class="user-info">
+                        <h3 class="customer-name"><?= htmlspecialchars($f['customer_name']); ?></h3>
+                        <p class="detail-item"><strong>Service:</strong> <?= htmlspecialchars($f['service_name'] ?? 'N/A'); ?></p>
+                        <p class="detail-item"><strong>Branch:</strong> <?= htmlspecialchars($f['name'] ?? 'Colombo'); ?></p>
+                        <p class="detail-item"><strong>Date:</strong> <?= date('M j, Y', strtotime($f['created_at'])); ?></p>
+                    </div>
+                    <div class="rating-container">
+    <?php 
+        // Determine color class based on rating
+        $ratingClass = 'rate-red'; // Default 1
+        if ($f['rating'] >= 4) {
+            $ratingClass = 'rate-green';
+        } elseif ($f['rating'] >= 2) {
+            $ratingClass = 'rate-yellow';
+        }
+    ?>
+    <span class="rating-badge <?= $ratingClass ?>">
+        <?= htmlspecialchars($f['rating']); ?>/5
+    </span>
+</div>
+                </div>
 
-          <h3><?= htmlspecialchars($f['customer_name']); ?>
-            <span class="rating <?= ($f['rating'] >= 4 ? 'good' : ($f['rating'] >= 2 ? 'avg' : 'bad')) ?>">
-              <?= htmlspecialchars($f['rating']); ?>/5 ★
-            </span>
-          </h3>
-          <p><strong>Service:</strong> <?= htmlspecialchars($f['service_name'] ?? 'N/A'); ?></p>
-          <p><strong>Date:</strong> <?= date('Y-m-d H:i', strtotime($f['created_at'])); ?></p>
-          <p><?= htmlspecialchars($f['comment']); ?></p>
-        </div>
-      <?php endforeach; ?>
+                <p class="comment-text">"<?= htmlspecialchars($f['comment']); ?>"</p>
+
+                <div class="reply-section">
+                    <span class="reply-status">Replied</span>
+                    <label class="reply-label">Your Reply:</label>
+                    <p class="current-reply"><?= htmlspecialchars($f['reply_text']); ?></p>
+                </div>
+            </div>
+        <?php endforeach; ?>
     <?php else: ?>
-      <p>No feedbacks found.</p>
+        <p class="no-data">No feedbacks found.</p>
     <?php endif; ?>
-  </div>
+</div>
 </section>
 
 </main>

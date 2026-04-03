@@ -12,6 +12,12 @@
 <?php include __DIR__ . '/../partials/sidebar.php'; ?>
 
 <main class="main-content">
+<div class="breadcrumb-text">
+    Supervisor <span class="sep">&gt;</span> 
+    Reports <span class="sep">&gt;</span> 
+    Vehicle Report <span class="sep"></span> 
+    <span class="active-page">Create</span>
+  </div>
 
 <?php if (!empty($completedOrders)): ?>
   <!-- Step 1: Choose a completed work order -->

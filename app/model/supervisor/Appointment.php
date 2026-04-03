@@ -92,11 +92,14 @@ public function getAppointmentDetails($appointmentId)
             -- Customer Info
             c.customer_code,
 
+            -- Mechanic Info
+            m.mechanic_code,
+
             -- Work Order Info
-            wo.mechanic_id,
             wo.service_summary,
             wo.total_cost,
             wo.status AS work_order_status,
+            wo.job_start_time,
             wo.started_at,
             wo.completed_at,
 
@@ -114,6 +117,7 @@ public function getAppointmentDetails($appointmentId)
         LEFT JOIN customers c ON a.customer_id = c.customer_id
         LEFT JOIN work_orders wo ON a.appointment_id = wo.appointment_id
         LEFT JOIN vehicles v ON a.vehicle_id = v.vehicle_id
+        LEFT JOIN mechanics m ON wo.mechanic_id = m.mechanic_id
         WHERE a.appointment_id = :id
     ";
 

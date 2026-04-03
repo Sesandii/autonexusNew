@@ -10,6 +10,12 @@
 <body>
 <?php include __DIR__ . '/../partials/sidebar.php'; ?>
   <div class="main">
+  <div class="breadcrumb-text">
+    Mechanic <span class="sep">&gt;</span> 
+    Jobs <span class="sep">&gt;</span> 
+    <?= htmlspecialchars($job['work_order_id']) ?> <span class="sep"></span> 
+    <span class="active-page">View</span>
+  </div>
 <h1>Info</h1>
   <div class="job-section">
 <div class="job-card">

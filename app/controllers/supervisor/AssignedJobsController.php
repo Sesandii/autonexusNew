@@ -24,7 +24,7 @@ class AssignedJobsController extends Controller
     }
 
     $m = new WorkOrder();
-
+    $checklistModel = new Checklist(); // Initialize the Checklist model
     $workOrders = $m->getAssigned($supervisor_id);
 
     foreach ($workOrders as &$job) {
@@ -54,10 +54,14 @@ class AssignedJobsController extends Controller
             $progress += 25;
         }
 
-        if (!empty($job['checklist_completed']) && $job['checklist_completed'] > 0) {
-            $progress += 25;
+        $counts = $checklistModel->getProgressCounts((int)$job['work_order_id']);
+        
+        if ($counts['total'] > 0) {
+            // Each item is worth (25 / total) percent
+            $itemWeight = 25 / $counts['total'];
+            $checklistProgress = $counts['completed'] * $itemWeight;
+            $progress += $checklistProgress;
         }
-
         $job['progress'] = min($progress, 100);
     }
 
@@ -144,9 +148,9 @@ public function uploadPhoto()
     }
 
     // ✅ Validate image type
-    $allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+    $allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp'];
     if (!in_array($file['type'], $allowedTypes)) {
-        die('Only JPG and PNG allowed');
+        die('JPG, WEBP, PNG, JPEG allowed');
     }
 
     // ✅ Generate safe file name

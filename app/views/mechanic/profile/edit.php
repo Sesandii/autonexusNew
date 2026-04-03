@@ -11,6 +11,10 @@
 <?php include __DIR__ . '/../partials/sidebar.php'; ?>
 
 <main class="container">
+<div class="breadcrumb-text">
+    Mechanic<span class="sep">&gt;</span> 
+    Edit Profile <span class="sep"></span> 
+  </div>
 <div class="page-header">
   <h2>Edit Profile</h2>
 

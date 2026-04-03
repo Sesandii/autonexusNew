@@ -11,6 +11,11 @@
 <body>
 <?php include __DIR__ . '/../partials/sidebar.php'; ?>
 <main class="main-content">
+<div class="breadcrumb-text">
+    Supervisor <span class="sep">&gt;</span> 
+    Reports <span class="sep">&gt;</span> 
+    Mechanic Report <span class="sep"></span> 
+  </div>
 <header>
     <h1>Mechanic Report</h1>
 </header>

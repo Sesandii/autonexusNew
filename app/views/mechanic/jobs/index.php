@@ -20,6 +20,10 @@ $base = rtrim(BASE_URL, '/');
 <?php include __DIR__ . '/../partials/sidebar.php'; ?>
 
 <main class="main-content">
+<div class="breadcrumb-text">
+    Mechanic <span class="sep">&gt;</span> 
+    Jobs <span class="sep"></span> 
+  </div>
 <header class="job-header">
   <h1>Ongoing Jobs</h1>
 
@@ -49,6 +53,7 @@ $base = rtrim(BASE_URL, '/');
 </header>
 
 <section class="job-section">
+  
   <p>Overview of all ongoing jobs</p>
   <div class="job-grid">
   <?php foreach ($allJobs as $job): ?>

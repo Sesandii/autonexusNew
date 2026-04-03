@@ -39,7 +39,8 @@ class Complaint
             s.service_id,
             s.name AS service_name
         FROM complaints c
-        LEFT JOIN users u ON c.customer_id = u.user_id
+        LEFT JOIN customers cx ON c.customer_id = cx.customer_id
+        LEFT JOIN users u ON cx.user_id = u.user_id
         LEFT JOIN vehicles v ON c.vehicle_id = v.vehicle_id
         LEFT JOIN branches b ON c.branch_id = b.branch_id
         LEFT JOIN users au ON c.assigned_to_user_id = au.user_id
