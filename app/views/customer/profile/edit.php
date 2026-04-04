@@ -20,7 +20,6 @@
     <?php endif; ?>
 
     <?php
-      $fullName = trim(($profile['first_name'] ?? '') . ' ' . ($profile['last_name'] ?? ''));
       $username = (string)($profile['username'] ?? 'customer');
       $email = (string)($profile['email'] ?? '—');
       $role = (string)($profile['role'] ?? '—');
@@ -36,9 +35,10 @@
 
         <div class="profile-hero-text">
           <h1>Edit Profile</h1>
-          <p class="username">Update your personal details</p>
+          <p class="hero-subtitle">Update your personal details</p>
 
           <div class="profile-badges">
+            <span class="badge user"><i class="fa fa-user"></i> <?= htmlspecialchars($username) ?></span>
             <span class="badge mail"><i class="fa fa-envelope"></i> <?= htmlspecialchars($email) ?></span>
           </div>
         </div>
@@ -46,6 +46,15 @@
 
       <form class="form-card edit-form" method="post" action="<?= $base ?>/customer/profile/update" enctype="multipart/form-data">
         <div class="form-section-title">Personal Information</div>
+
+        <div class="grid edit-grid">
+          <label>Username
+            <input type="text" name="username" value="<?= htmlspecialchars($profile['username'] ?? '') ?>" required>
+          </label>
+          <label>Email
+            <input type="email" name="email" value="<?= htmlspecialchars($profile['email'] ?? '') ?>" required>
+          </label>
+        </div>
 
         <div class="grid edit-grid">
           <label>First Name
@@ -60,12 +69,21 @@
           <label>Phone
             <input type="text" name="phone" value="<?= htmlspecialchars($profile['phone'] ?? '') ?>">
           </label>
-          <label>Profile Picture
-            <input type="file" name="profile_picture" accept="image/jpeg,image/png,image/gif,image/webp">
+          <label>Alt Phone
+            <input type="text" name="alt_phone" value="<?= htmlspecialchars($profile['alt_phone'] ?? '') ?>">
           </label>
         </div>
 
         <div class="grid edit-grid">
+          <label>Profile Picture
+            <input type="file" name="profile_picture" accept="image/jpeg,image/png,image/gif,image/webp">
+          </label>
+          <label>State
+            <input type="text" name="state" value="<?= htmlspecialchars($profile['state'] ?? '') ?>">
+          </label>
+        </div>
+
+        <div class="grid edit-grid form-readonly">
           <label>Role
             <input type="text" value="<?= htmlspecialchars($role) ?>" readonly>
           </label>

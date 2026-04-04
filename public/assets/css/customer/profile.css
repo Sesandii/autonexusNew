@@ -113,13 +113,34 @@ body {
   color: rgba(255,255,255,0.8);
 }
 
+.hero-subtitle {
+  margin: 8px 0 10px;
+  font-size: 0.95rem;
+  color: rgba(255,255,255,0.8);
+}
+
 .edit-hero {
   min-height: 132px;
+  align-items: flex-start;
+  padding-top: 24px;
 }
 
 .edit-hero .profile-avatar {
   width: 92px;
   height: 92px;
+}
+
+.edit-hero .profile-hero-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 92px;
+}
+
+.badge.user {
+  background: rgba(255,255,255,0.16);
+  color: #f3f4f6;
+  border: 1px solid rgba(255,255,255,0.18);
 }
 
 .profile-badges {
@@ -300,6 +321,10 @@ body {
 
 .address-grid {
   grid-template-columns: 1.2fr 0.8fr;
+}
+
+.edit-form .form-readonly input[readonly] {
+  background: #f6f7fb;
 }
 
 .span-2 {

@@ -46,11 +46,21 @@ class Profile
 
     // update with more fields
     public function updateProfileFull(
-        int $userId, string $first, string $last, string $phone,
-        string $alt, string $addr, string $city, string $state,
+        int $userId,
+        string $username,
+        string $email,
+        string $first,
+        string $last,
+        string $phone,
+        string $alt,
+        string $addr,
+        string $city,
+        string $state,
         ?string $profilePicture = null
     ): bool {
         $sets = [
+            'username       = :username',
+            'email          = :email',
             'first_name     = :fn',
             'last_name      = :ln',
             'phone          = :ph',
@@ -69,6 +79,8 @@ class Profile
                  WHERE user_id        = :uid";
         $st = $this->pdo->prepare($sql);
         $params = [
+            'username' => $username,
+            'email'    => $email,
             'fn'   => $first,
             'ln'   => $last,
             'ph'   => $phone,

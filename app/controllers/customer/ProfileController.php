@@ -54,10 +54,12 @@ class ProfileController extends Controller
         $model = new Profile();
         $current = $model->getProfile($userId);
 
+        $username = trim($_POST['username'] ?? ($current['username'] ?? ''));
+        $email = trim($_POST['email'] ?? ($current['email'] ?? ''));
         $first = trim($_POST['first_name'] ?? '');
         $last  = trim($_POST['last_name'] ?? '');
         $phone = trim($_POST['phone'] ?? '');
-        $alt   = (string)($current['alt_phone'] ?? '');
+        $alt   = trim($_POST['alt_phone'] ?? ($current['alt_phone'] ?? ''));
         $addr  = trim($_POST['street_address'] ?? '');
         $city  = trim($_POST['city'] ?? '');
         $state = trim($_POST['state'] ?? '');
@@ -99,7 +101,19 @@ class ProfileController extends Controller
             $profilePicturePath = 'assets/img/profile_pictures/' . $newFileName;
         }
 
-        $ok = $model->updateProfileFull($userId, $first, $last, $phone, $alt, $addr, $city, $state, $profilePicturePath);
+        $ok = $model->updateProfileFull(
+            $userId,
+            $username,
+            $email,
+            $first,
+            $last,
+            $phone,
+            $alt,
+            $addr,
+            $city,
+            $state,
+            $profilePicturePath
+        );
 
         $_SESSION['flash'] = $ok ? 'Profile updated.' : 'Failed to update profile.';
         header('Location: ' . rtrim(BASE_URL,'/') . '/customer/profile');
