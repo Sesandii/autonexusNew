@@ -54,8 +54,6 @@ class ProfileController extends Controller
         $model = new Profile();
         $current = $model->getProfile($userId);
 
-        $username = trim($_POST['username'] ?? ($current['username'] ?? ''));
-        $email = trim($_POST['email'] ?? ($current['email'] ?? ''));
         $first = trim($_POST['first_name'] ?? '');
         $last  = trim($_POST['last_name'] ?? '');
         $phone = trim($_POST['phone'] ?? '');
@@ -103,8 +101,6 @@ class ProfileController extends Controller
 
         $ok = $model->updateProfileFull(
             $userId,
-            $username,
-            $email,
             $first,
             $last,
             $phone,

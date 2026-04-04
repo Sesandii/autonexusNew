@@ -47,12 +47,12 @@
       <form class="form-card edit-form" method="post" action="<?= $base ?>/customer/profile/update" enctype="multipart/form-data">
         <div class="form-section-title">Personal Information</div>
 
-        <div class="grid edit-grid">
+        <div class="grid edit-grid form-readonly">
           <label>Username
-            <input type="text" name="username" value="<?= htmlspecialchars($profile['username'] ?? '') ?>" required>
+            <input type="text" value="<?= htmlspecialchars($profile['username'] ?? '') ?>" readonly>
           </label>
           <label>Email
-            <input type="email" name="email" value="<?= htmlspecialchars($profile['email'] ?? '') ?>" required>
+            <input type="text" value="<?= htmlspecialchars($profile['email'] ?? '') ?>" readonly>
           </label>
         </div>
 
