@@ -9,24 +9,8 @@ $base = rtrim(BASE_URL,'/');
   <title><?= htmlspecialchars($title ?? 'AutoNexus', ENT_QUOTES) ?></title>
 
   <link rel="stylesheet" href="<?= $base ?>/public/assets/css/customer/registered-home.css" />
-  <link rel="stylesheet" href="<?= $base ?>/public/assets/css/customer/sidebar.css" />
-
-  <style>
-    .customer-main-shell {
-      margin-left: 240px;
-    }
-
-    @media (max-width: 720px) {
-      .customer-main-shell {
-        margin-left: 210px;
-      }
-    }
-  </style>
 </head>
 <body>
-  <?php include APP_ROOT . '/views/layouts/customer-sidebar.php'; ?>
-
-  <div class="customer-main-shell">
   <!-- NAVBAR -->
   <header class="site-header">
     <div class="container header-inner">
@@ -180,6 +164,5 @@ $base = rtrim(BASE_URL,'/');
 
   <script>const BASE_URL = "<?= $base ?>";</script>
   <script src="<?= $base ?>/public/assets/js/registered-home.js"></script>
-  </div>
 </body>
 </html>

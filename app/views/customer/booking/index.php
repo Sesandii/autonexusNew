@@ -14,7 +14,6 @@ $prefillTime      = $prefill['time'] ?? '';
   <title><?= htmlspecialchars($title ?? 'Book Service') ?></title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="<?= $base ?>/public/assets/css/customer/booking.css" />
-  <link rel="stylesheet" href="<?= $base ?>/public/assets/css/customer/sidebar.css" />
   <link rel="stylesheet" href="<?= rtrim(BASE_URL,'/') ?>/public/assets/css/home.css" />
   <style>
     /* Slot availability styles */
@@ -90,23 +89,10 @@ $prefillTime      = $prefill['time'] ?? '';
       background: #dc2626;
       border: 2px solid #991b1b;
     }
-
-    .customer-main-content {
-      margin-left: 240px;
-    }
-
-    @media (max-width: 720px) {
-      .customer-main-content {
-        margin-left: 210px;
-      }
-    }
   </style>
 </head>
 <body>
-  <?php include APP_ROOT . '/views/layouts/customer-sidebar.php'; ?>
-
-  <div class="customer-main-content">
-    <div class="container">
+  <div class="container">
     <header class="page-header" style="display: flex; justify-content: space-between; align-items: flex-start;">
       <div>
         <h1>Book a Service</h1>
@@ -281,7 +267,6 @@ $prefillTime      = $prefill['time'] ?? '';
       </section>
 
     </form>
-    </div>
   </div>
 
   <div class="toast" id="toast">Booking created!</div>
