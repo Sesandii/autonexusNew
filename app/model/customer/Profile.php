@@ -164,6 +164,24 @@ class Profile
         }
     }
 
+    public function licensePlateExists(string $licensePlate, ?int $excludeVehicleId = null): bool
+    {
+        $sql = "SELECT COUNT(*)
+                  FROM vehicles
+                 WHERE UPPER(license_plate) = UPPER(:plate)";
+
+        $params = ['plate' => $licensePlate];
+        if ($excludeVehicleId !== null && $excludeVehicleId > 0) {
+            $sql .= " AND vehicle_id <> :vid";
+            $params['vid'] = $excludeVehicleId;
+        }
+
+        $st = $this->pdo->prepare($sql);
+        $st->execute($params);
+
+        return (int)$st->fetchColumn() > 0;
+    }
+
   public function deleteVehicleOwnedBy(int $userId, int $vehicleId): bool
 {
     $cid = $this->customerIdByUserId($userId);
