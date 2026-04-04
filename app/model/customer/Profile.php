@@ -46,8 +46,14 @@ class Profile
 
     // update with more fields
     public function updateProfileFull(
-        int $userId, string $first, string $last, string $phone,
-        string $alt, string $addr, string $city, string $state,
+        int $userId,
+        string $first,
+        string $last,
+        string $phone,
+        string $alt,
+        string $addr,
+        string $city,
+        string $state,
         ?string $profilePicture = null
     ): bool {
         $sets = [
@@ -156,6 +162,24 @@ class Profile
                 'cid'   => $cid,
             ]);
         }
+    }
+
+    public function licensePlateExists(string $licensePlate, ?int $excludeVehicleId = null): bool
+    {
+        $sql = "SELECT COUNT(*)
+                  FROM vehicles
+                 WHERE UPPER(license_plate) = UPPER(:plate)";
+
+        $params = ['plate' => $licensePlate];
+        if ($excludeVehicleId !== null && $excludeVehicleId > 0) {
+            $sql .= " AND vehicle_id <> :vid";
+            $params['vid'] = $excludeVehicleId;
+        }
+
+        $st = $this->pdo->prepare($sql);
+        $st->execute($params);
+
+        return (int)$st->fetchColumn() > 0;
     }
 
   public function deleteVehicleOwnedBy(int $userId, int $vehicleId): bool

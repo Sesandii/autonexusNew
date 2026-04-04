@@ -16,12 +16,26 @@ if (!empty($branch_name)) {
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <link rel="stylesheet" href="<?= $base ?>/public/assets/css/customer/available-services.css" />
+  <link rel="stylesheet" href="<?= $base ?>/public/assets/css/customer/sidebar.css" />
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <style>
+    .customer-main-shell {
+      margin-left: 240px;
+    }
+
+    @media (max-width: 720px) {
+      .customer-main-shell {
+        margin-left: 210px;
+      }
+    }
+  </style>
 </head>
 <body>
+  <?php include APP_ROOT . '/views/layouts/customer-sidebar.php'; ?>
 
-
+  <div class="customer-main-shell">
 
   <!-- HERO -->
   <header class="hero">
@@ -144,6 +158,7 @@ if (!empty($branch_name)) {
   </main>
 
   <footer class="footer">© <?= date('Y') ?> AutoNexus — Drive Smarter.</footer>
+  </div>
 
   <script>const BASE_URL="<?= $base ?>"; const BRANCH_CODE="<?= htmlspecialchars($branch_code ?? '') ?>";</script>
   <script src="<?= $base ?>/public/assets/js/customer/available-services.js"></script>

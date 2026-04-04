@@ -24,6 +24,12 @@
       $username = (string)($profile['username'] ?? '—');
       $email = (string)($profile['email'] ?? '—');
       $role = (string)($profile['role'] ?? 'Customer');
+      $status = (string)($profile['status'] ?? '—');
+      $phone = (string)($profile['phone'] ?? '—');
+      $altPhone = (string)($profile['alt_phone'] ?? '—');
+      $streetAddress = (string)($profile['street_address'] ?? '—');
+      $city = (string)($profile['city'] ?? '—');
+      $state = (string)($profile['state'] ?? '—');
       $avatar = !empty($profile['profile_picture'])
         ? $base . '/public/' . ltrim((string)$profile['profile_picture'], '/')
         : $base . '/public/assets/img/User.PNG';
@@ -34,9 +40,8 @@
         <img class="profile-avatar" src="<?= $avatar ?>" alt="Profile photo">
 
         <div class="profile-hero-text">
-          <h1><?= htmlspecialchars($fullName ?: $username) ?></h1>
+          <h1><?= htmlspecialchars($fullName ?: 'Customer Profile') ?></h1>
           <p class="username">@<?= htmlspecialchars($username) ?></p>
-
           <div class="profile-badges">
             <span class="badge role"><i class="fa fa-user"></i> Customer</span>
             <span class="badge mail"><i class="fa fa-envelope"></i> <?= htmlspecialchars($email) ?></span>
@@ -53,14 +58,15 @@
           <h2>Profile Information</h2>
 
           <div class="info-table">
-            <div class="info-row"><span>Username</span><span><?= htmlspecialchars($username) ?></span></div>
+            <div class="info-row"><span>User ID</span><span><?= htmlspecialchars((string)($profile['user_id'] ?? '—')) ?></span></div>
             <div class="info-row"><span>Full Name</span><span><?= htmlspecialchars($fullName ?: '—') ?></span></div>
-            <div class="info-row"><span>Email</span><span><?= htmlspecialchars($email) ?></span></div>
-            <div class="info-row"><span>Phone</span><span><?= htmlspecialchars($profile['phone'] ?? '—') ?></span></div>
-            <div class="info-row"><span>Street Address</span><span><?= htmlspecialchars($profile['street_address'] ?? '—') ?></span></div>
-            <div class="info-row"><span>City / State</span><span><?= htmlspecialchars(trim(($profile['city'] ?? '') . ' ' . ($profile['state'] ?? ''))) ?: '—' ?></span></div>
+            <div class="info-row"><span>Phone</span><span><?= htmlspecialchars($phone) ?></span></div>
+            <div class="info-row"><span>Alt Phone</span><span><?= htmlspecialchars($altPhone) ?></span></div>
+            <div class="info-row"><span>Street Address</span><span><?= htmlspecialchars($streetAddress) ?></span></div>
+            <div class="info-row"><span>City</span><span><?= htmlspecialchars($city) ?></span></div>
+            <div class="info-row"><span>State</span><span><?= htmlspecialchars($state) ?></span></div>
             <div class="info-row"><span>Role</span><span><?= htmlspecialchars($role) ?></span></div>
-            <div class="info-row"><span>Status</span><span><?= htmlspecialchars($profile['status'] ?? '—') ?></span></div>
+            <div class="info-row"><span>Status</span><span><?= htmlspecialchars($status) ?></span></div>
           </div>
         </section>
 

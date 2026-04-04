@@ -57,7 +57,7 @@ class ProfileController extends Controller
         $first = trim($_POST['first_name'] ?? '');
         $last  = trim($_POST['last_name'] ?? '');
         $phone = trim($_POST['phone'] ?? '');
-        $alt   = (string)($current['alt_phone'] ?? '');
+        $alt   = trim($_POST['alt_phone'] ?? ($current['alt_phone'] ?? ''));
         $addr  = trim($_POST['street_address'] ?? '');
         $city  = trim($_POST['city'] ?? '');
         $state = trim($_POST['state'] ?? '');
@@ -99,7 +99,17 @@ class ProfileController extends Controller
             $profilePicturePath = 'assets/img/profile_pictures/' . $newFileName;
         }
 
-        $ok = $model->updateProfileFull($userId, $first, $last, $phone, $alt, $addr, $city, $state, $profilePicturePath);
+        $ok = $model->updateProfileFull(
+            $userId,
+            $first,
+            $last,
+            $phone,
+            $alt,
+            $addr,
+            $city,
+            $state,
+            $profilePicturePath
+        );
 
         $_SESSION['flash'] = $ok ? 'Profile updated.' : 'Failed to update profile.';
         header('Location: ' . rtrim(BASE_URL,'/') . '/customer/profile');
@@ -121,6 +131,7 @@ class ProfileController extends Controller
         $this->view('customer/profile/vehicle_form', [
             'title'   => $vehId ? 'Edit Vehicle' : 'Add Vehicle',
             'vehicle' => $vehicle,
+            'errors'  => [],
             'flash'   => $_SESSION['flash'] ?? null,
         ]);
         unset($_SESSION['flash']);
@@ -132,16 +143,71 @@ class ProfileController extends Controller
         $this->requireCustomer();
 
         $userId = $this->userId();
-        $data = [
-            'vehicle_id'    => $_POST['vehicle_id'] ?? null,
-            'license_plate' => trim($_POST['license_plate'] ?? ''),
-            'make'          => trim($_POST['make'] ?? ''),
-            'model'         => trim($_POST['model'] ?? ''),
-            'year'          => (int)($_POST['year'] ?? 0),
-            'color'         => trim($_POST['color'] ?? ''),
-        ];
+        $vehicleId = isset($_POST['vehicle_id']) && $_POST['vehicle_id'] !== '' ? (int)$_POST['vehicle_id'] : null;
+        $currentYear = (int)date('Y');
+
+        $licensePlate = strtoupper(trim((string)($_POST['license_plate'] ?? '')));
+        $make = trim((string)($_POST['make'] ?? ''));
+        $modelName = trim((string)($_POST['model'] ?? ''));
+        $yearRaw = trim((string)($_POST['year'] ?? ''));
+        $color = trim((string)($_POST['color'] ?? ''));
+
+        $errors = [];
+
+        if ($licensePlate === '') {
+            $errors['license_plate'] = 'License plate is required.';
+        }
+
+        if ($make === '') {
+            $errors['make'] = 'Brand is required.';
+        }
+
+        if ($modelName === '') {
+            $errors['model'] = 'Model is required.';
+        }
+
+        if ($yearRaw === '') {
+            $errors['year'] = 'Year is required.';
+        } elseif (!ctype_digit($yearRaw)) {
+            $errors['year'] = 'Year must contain only numbers.';
+        } else {
+            $yearInt = (int)$yearRaw;
+            if ($yearInt < 1950 || $yearInt > ($currentYear + 1)) {
+                $errors['year'] = 'Year must be between 1950 and ' . ($currentYear + 1) . '.';
+            }
+        }
 
         $model = new Profile();
+        if ($licensePlate !== '' && $model->licensePlateExists($licensePlate, $vehicleId)) {
+            $errors['license_plate'] = 'This license plate is already registered.';
+        }
+
+        if (!empty($errors)) {
+            $this->view('customer/profile/vehicle_form', [
+                'title'   => $vehicleId ? 'Edit Vehicle' : 'Add Vehicle',
+                'vehicle' => [
+                    'vehicle_id'    => $vehicleId,
+                    'license_plate' => $licensePlate,
+                    'make'          => $make,
+                    'model'         => $modelName,
+                    'year'          => $yearRaw,
+                    'color'         => $color,
+                ],
+                'errors'  => $errors,
+                'flash'   => null,
+            ]);
+            return;
+        }
+
+        $data = [
+            'vehicle_id'    => $vehicleId,
+            'license_plate' => $licensePlate,
+            'make'          => $make,
+            'model'         => $modelName,
+            'year'          => (int)$yearRaw,
+            'color'         => $color,
+        ];
+
         $ok = $model->saveVehicle($userId, $data);
 
         $_SESSION['flash'] = $ok ? 'Vehicle saved.' : 'Failed to save vehicle.';
