@@ -425,6 +425,11 @@ $router->get ('/customer/appointments/list',     [\app\controllers\customer\Appo
 // $router->post('/customer/appointments/cancel',   [\app\controllers\customer\AppointmentsController::class, 'cancel']);   // optional action
 // $router->get ('/customer/appointments/list',     [\app\controllers\customer\AppointmentsController::class, 'list']);     // optional JSON for AJAX
 
+$router->get('/customer/payments', [\app\controllers\customer\PaymentsController::class, 'index']);
+$router->get('/customer/payments/checkout/{id}', [\app\controllers\customer\PaymentsController::class, 'checkout']);
+$router->get('/customer/payments/success', [\app\controllers\customer\PaymentsController::class, 'success']);
+$router->get('/customer/payments/cancel', [\app\controllers\customer\PaymentsController::class, 'cancel']);
+$router->post('/stripe/webhook', [\app\controllers\customer\PaymentsController::class, 'webhook']);
 
 //manager: Dashboard
 $router->get('/manager/dashboard', [app\controllers\Manager\DashboardController::class, 'index']);

@@ -23,16 +23,18 @@ public function completedWorkOrders(): array
     $sql = "
         SELECT
             wo.work_order_id,
-            wo.total_cost,
             wo.completed_at,
-
             a.appointment_date,
             a.appointment_time,
-
             u.first_name,
             u.last_name,
-
-            s.name AS service_name
+            s.name AS service_name,
+            s.default_price,
+            CASE
+                WHEN wo.total_cost IS NOT NULL AND wo.total_cost > 0
+                    THEN wo.total_cost
+                ELSE s.default_price
+            END AS total_cost
         FROM work_orders wo
         JOIN appointments a ON a.appointment_id = wo.appointment_id
         JOIN customers c ON c.customer_id = a.customer_id
@@ -52,6 +54,44 @@ public function completedWorkOrders(): array
  * ============================ */
 public function create(array $data): int
 {
+    $workOrderId = (int)$data['work_order_id'];
+    $discount = (float)($data['discount'] ?? 0);
+
+    $stmt = $this->db->prepare("
+        SELECT
+            wo.work_order_id,
+            CASE
+                WHEN wo.total_cost IS NOT NULL AND wo.total_cost > 0
+                    THEN wo.total_cost
+                ELSE s.default_price
+            END AS total_amount
+        FROM work_orders wo
+        JOIN appointments a ON a.appointment_id = wo.appointment_id
+        JOIN services s ON s.service_id = a.service_id
+        LEFT JOIN invoices i ON i.work_order_id = wo.work_order_id
+        WHERE wo.work_order_id = :work_order_id
+          AND wo.status = 'completed'
+          AND i.invoice_id IS NULL
+        LIMIT 1
+    ");
+    $stmt->execute(['work_order_id' => $workOrderId]);
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$row) {
+        throw new \Exception('Invalid work order or invoice already exists.');
+    }
+
+    $totalAmount = (float)$row['total_amount'];
+
+    if ($discount < 0) {
+        $discount = 0;
+    }
+    if ($discount > $totalAmount) {
+        $discount = $totalAmount;
+    }
+
+    $grandTotal = $totalAmount - $discount;
+
     $sql = "
         INSERT INTO invoices (
             work_order_id,
@@ -71,7 +111,13 @@ public function create(array $data): int
     ";
 
     $stmt = $this->db->prepare($sql);
-    $stmt->execute($data);
+    $stmt->execute([
+        'work_order_id' => $workOrderId,
+        'invoice_no'    => $data['invoice_no'],
+        'total_amount'  => $totalAmount,
+        'discount'      => $discount,
+        'grand_total'   => $grandTotal,
+    ]);
 
     return (int)$this->db->lastInsertId();
 }
