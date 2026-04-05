@@ -17,6 +17,3 @@ const BASE_URL  = '/autonexus';
 //For Payment Gateway
 const APP_URL = 'http://localhost';
 
-const STRIPE_SECRET_KEY      = '';
-const STRIPE_PUBLISHABLE_KEY = '';
-const STRIPE_WEBHOOK_SECRET  = '';
