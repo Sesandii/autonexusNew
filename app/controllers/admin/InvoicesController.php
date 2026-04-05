@@ -64,21 +64,18 @@ class InvoicesController extends Controller
      * STORE INVOICE
      * ============================ */
     public function store(): void
-    {
-        $data = [
-            'work_order_id' => (int)($_POST['work_order_id'] ?? 0),
-            'invoice_no'    => 'INV-' . time(),
-            'total_amount'  => (float)($_POST['total_amount'] ?? 0),
-            'discount'      => (float)($_POST['discount'] ?? 0),
-            'grand_total'   => (float)($_POST['grand_total'] ?? 0),
-        ];
+{
+    $data = [
+        'work_order_id' => (int)($_POST['work_order_id'] ?? 0),
+        'invoice_no'    => 'INV-' . time(),
+        'discount'      => (float)($_POST['discount'] ?? 0),
+    ];
 
-        $this->invoice->create($data);
+    $this->invoice->create($data);
 
-        header('Location: ' . rtrim(BASE_URL,'/') . '/admin/admin-viewinvoices');
-        exit;
-    }
-
+    header('Location: ' . rtrim(BASE_URL,'/') . '/admin/admin-viewinvoices');
+    exit;
+}
     /* ============================
      * DOWNLOAD PDF
      * URL: /admin/admin-viewinvoices/download?id=#

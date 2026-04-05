@@ -38,6 +38,14 @@ function isActive($path, $current) { return strpos($current, $path) === 0 ? ' cl
     <!-- Profile -->
     <li><a<?= isActive('/customer/profile', $currentPath) ?> href="<?= $base ?>/customer/profile"><i class="fa fa-user"></i> Profile</a></li>
 
+    <!-- Payments -->
+    <li>
+    <a href="<?= rtrim(BASE_URL, '/') ?>/customer/payments">
+        <i class="fa-solid fa-credit-card"></i>
+        <span>Payments</span>
+    </a>
+</li>
+
     <!-- Logout -->
    <li><a href="<?= rtrim(BASE_URL, '/') ?>/logout"><i class="fa fa-sign-out"></i> Logout</a></li>
 

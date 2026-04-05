@@ -95,12 +95,14 @@ class ComposerStaticInitac2d307f4ed514763a8119f3523066bb
         '4af1dca6db8c527c6eed27bff85ff0e5' => __DIR__ . '/..' . '/thecodingmachine/safe/generated/yaz.php',
         'fe43ca06499ac37bc2dedd823af71eb5' => __DIR__ . '/..' . '/thecodingmachine/safe/generated/zip.php',
         '356736db98a6834f0a886b8d509b0ecd' => __DIR__ . '/..' . '/thecodingmachine/safe/generated/zlib.php',
+        'd92f49fe138fde4e7a3ec6f988960524' => __DIR__ . '/..' . '/stripe/stripe-php/lib/version_check.php',
     );
 
     public static $prefixLengthsPsr4 = array (
         'S' => 
         array (
             'Svg\\' => 4,
+            'Stripe\\' => 7,
             'Sabberworm\\CSS\\' => 15,
         ),
         'P' => 
@@ -125,6 +127,10 @@ class ComposerStaticInitac2d307f4ed514763a8119f3523066bb
         'Svg\\' => 
         array (
             0 => __DIR__ . '/..' . '/dompdf/php-svg-lib/src/Svg',
+        ),
+        'Stripe\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/stripe/stripe-php/lib',
         ),
         'Sabberworm\\CSS\\' => 
         array (
