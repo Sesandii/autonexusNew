@@ -226,9 +226,9 @@ $router->get('/admin/admin-viewfeedback', [FeedbackController::class, 'index']);
 $router->post('/admin/admin-viewfeedback/reply', [FeedbackController::class, 'reply']);
 
 
-use app\controllers\admin\NotificationsController;
+// use app\controllers\admin\NotificationsController;
 
-$router->get('/admin/admin-notifications', [NotificationsController::class, 'index']);
+$router->get('/admin/admin-notifications', [\app\controllers\admin\NotificationsController::class, 'index']);
 $router->post('/admin/admin-notifications/send', [\app\controllers\admin\NotificationsController::class, 'send']);
 $router->get('/admin/admin-notifications/users', [\app\controllers\admin\NotificationsController::class, 'users']); // for recipient picker
 $router->post('/admin/admin-notifications/run-daily', [\app\controllers\admin\NotificationsController::class, 'runDaily']); // optional cron trigger
@@ -284,6 +284,19 @@ use app\controllers\admin\QualityControlController;
 $router->get('/admin/quality/inspection-reports', [QualityControlController::class, 'inspectionReports']);
 $router->get('/admin/quality/final-approvals', [QualityControlController::class, 'finalApprovals']);
 $router->get('/admin/quality/dashboard', [QualityControlController::class, 'dashboard']);
+
+
+use app\controllers\admin\StaffController;
+
+$router->get('/admin/admin-viewstaff', [StaffController::class, 'index']);
+$router->post('/admin/admin-viewstaff/update-status', [StaffController::class, 'updateStatus']);
+$router->post('/admin/admin-viewstaff/transfer', [StaffController::class, 'transfer']);
+
+use app\controllers\admin\PaymentsController;
+$router->get('/admin/admin-viewpayments', [PaymentsController::class, 'index']);
+$router->post('/admin/admin-viewpayments/store', [PaymentsController::class, 'store']);
+$router->post('/admin/admin-viewpayments/cancel-invoice', [PaymentsController::class, 'cancelInvoice']);
+
 
 
 

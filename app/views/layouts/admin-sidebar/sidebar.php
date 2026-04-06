@@ -40,7 +40,7 @@ $current = $current ?? '';
     </li>
 
     <!-- Management -->
-    <li class="menu-item has-submenu <?= in_array($current, ['branches', 'services', 'pricing', 'customers', 'service-managers', 'supervisors', 'mechanics', 'receptionists'], true) ? 'open' : '' ?>">
+    <li class="menu-item has-submenu <?= in_array($current, ['branches', 'services', 'pricing', 'customers', 'service-managers', 'staff', 'supervisors', 'mechanics', 'receptionists'], true) ? 'open' : '' ?>">
       <button class="submenu-toggle" type="button">
         <i class="fa-solid fa-layer-group"></i>
         <span>Management</span>
@@ -69,12 +69,15 @@ $current = $current ?? '';
         </li>
 
         <!-- Manage Users -->
-        <li class="submenu-group <?= in_array($current, ['customers', 'service-managers', 'supervisors', 'mechanics', 'receptionists'], true) ? 'open' : '' ?>">
+        <li class="submenu-group <?= in_array($current, ['customers', 'service-managers', 'staff', 'supervisors', 'mechanics', 'receptionists'], true) ? 'open' : '' ?>">
           <button class="submenu-toggle submenu-toggle--inner" type="button">
             <span>Manage Users</span>
             <i class="fa-solid fa-chevron-right caret"></i>
           </button>
           <ul class="submenu submenu--inner">
+            <li class="<?= $current === 'staff' ? 'active' : '' ?>">
+              <a href="<?= $B ?>/admin/admin-viewstaff">Staff Management</a>
+            </li>
             <li class="<?= $current === 'customers' ? 'active' : '' ?>">
               <a href="<?= $B ?>/admin/customers">Customers</a>
             </li>
@@ -138,7 +141,7 @@ $current = $current ?? '';
     </li>
 
     <!-- Finance & Analytics -->
-    <li class="menu-item has-submenu <?= in_array($current, ['invoices', 'reports'], true) ? 'open' : '' ?>">
+    <li class="menu-item has-submenu <?= in_array($current, ['invoices', 'payments', 'reports'], true) ? 'open' : '' ?>">
       <button class="submenu-toggle" type="button">
         <i class="fa-solid fa-chart-column"></i>
         <span>Finance & Analytics</span>
@@ -146,6 +149,9 @@ $current = $current ?? '';
       </button>
 
       <ul class="submenu">
+        <li class="<?= $current === 'payments' ? 'active' : '' ?>">
+          <a href="<?= $B ?>/admin/admin-viewpayments">Payments</a>
+        </li>
         <li class="<?= $current === 'invoices' ? 'active' : '' ?>">
           <a href="<?= $B ?>/admin/admin-viewinvoices">Invoices</a>
         </li>
