@@ -39,6 +39,7 @@ public function update()
         'street_address'  => $_POST['street_address'] ?? null,
         'city'            => $_POST['city'] ?? null,
         'state'           => $_POST['state'] ?? null,
+        'role'            => $_POST['role'] ?? null,
     ];
 
     // Only update password if entered
@@ -52,8 +53,22 @@ public function update()
     // Update session name
     $_SESSION['user']['name'] = $data['first_name'] . ' ' . $data['last_name'];
 
-    header('Location: ' . BASE_URL . '/supervisor/dashboard');
+    $this->flash('success', 'Details updated.');
+
+    header('Location: ' . BASE_URL . '/supervisor/profile/edit');
     exit;
+}
+
+private function flash(string $type, string $text): void
+{
+    if (session_status() !== PHP_SESSION_ACTIVE) {
+        session_start();
+    }
+
+    $_SESSION['message'] = [
+        'type' => $type,
+        'text' => $text
+    ];
 }
 
 }

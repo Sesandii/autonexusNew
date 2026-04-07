@@ -1,5 +1,4 @@
 <?php $base = rtrim(BASE_URL, '/'); ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -62,28 +61,52 @@
   <div class="grid-row three-columns">
   <div class="report-card">
     <h2>Final Inspection</h2>
-    <p><strong>Inspection Notes:</strong></p>
-    <p><?= nl2br(htmlspecialchars($report['inspection_notes'] ?? '-')) ?></p>
-    <p><strong>Quality Rating:</strong> <?= (int)($report['quality_rating'] ?? 0) ?>/5 </p>
-    <p><strong>Checklist Confirmation:</strong></p>
-    <ul>
-      <li><?= $report['checklist_verified'] ? ' Tasks verified' : ' Tasks not verified' ?></li>
-      <li><?= $report['test_driven'] ? ' Vehicle test driven' : ' Not test driven' ?></li>
-      <li><?= $report['concerns_addressed'] ? ' Customer concerns addressed' : ' Not addressed' ?></li>
-    </ul>
-  </div>
+    <div class="inspection-details">
+        <p><strong>Inspection Notes:</strong></p>
+        <div class="notes-box"><?= nl2br(htmlspecialchars($report['inspection_notes'] ?? '-')) ?></div>
+        
+        <div class="rating-section">
+            <p><strong>Quality Rating:</strong></p>
+            <div class="rating-stars">
+                <?= str_repeat('<span class="star active">★</span>', (int)$report['quality_rating']) ?>
+                <?= str_repeat('<span class="star inactive">★</span>', 5 - (int)$report['quality_rating']) ?>
+            </div>
+        </div>
 
-  <!-- Work Photos -->
-  <?php if (!empty($photos)): ?>
-  <div class="report-card">
+        <p><strong>Checklist Confirmation:</strong></p>
+        <ul class="professional-checklist">
+            <li class="<?= $report['checklist_verified'] ? 'checked' : 'unchecked' ?>">
+                <div class="status-icon"></div> 
+                <span class="text">Tasks verified</span>
+            </li>
+            <li class="<?= $report['test_driven'] ? 'checked' : 'unchecked' ?>">
+                <div class="status-icon"></div> 
+                <span class="text">Vehicle test driven</span>
+            </li>
+            <li class="<?= $report['concerns_addressed'] ? 'checked' : 'unchecked' ?>">
+                <div class="status-icon"></div> 
+                <span class="text">Customer concerns addressed</span>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<div class="report-card">
     <h2>Work Photos</h2>
     <div class="photo-gallery">
-      <?php foreach ($photos as $photo): ?>
-        <img src="<?= $base ?>/public/<?= htmlspecialchars($photo['file_path']) ?>" alt="Report Photo"/>
-      <?php endforeach; ?>
+        <?php if (!empty($photos)): ?>
+            <?php foreach ($photos as $photo): ?>
+                <div class="photo-item">
+                    <img src="<?= $base ?>/public/<?= htmlspecialchars($photo['file_path']) ?>" 
+                         alt="Report Photo" 
+                         onclick="openLightbox(this.src)"/>
+                </div>
+            <?php endforeach; ?>
+        <?php else: ?>
+            <p class="dim-text text-center">No photos uploaded for this report.</p>
+        <?php endif; ?>
     </div>
-  </div>
-  <?php endif; ?>
+</div>
 
   <!-- Final Report -->
   <div class="report-card">
@@ -111,6 +134,43 @@
   <p style="text-align:center;">Report details not found.</p>
 <?php endif; ?>
 
+<div id="imageModal" class="modal-lightbox" onclick="closeLightbox()">
+  <span class="close-cursor">&times;</span>
+  <div class="modal-content-container">
+    <img id="bigImage" src="">
+  </div>
+</div>
+
 </main>
+<script>
+function openLightbox(imageSrc) {
+    const modal = document.getElementById("imageModal");
+    const bigImg = document.getElementById("bigImage");
+    
+    // Set the source of the big image to the one clicked
+    bigImg.src = imageSrc;
+    
+    // Show the modal
+    modal.style.display = "flex";
+    
+    // Disable scrolling on the main page while viewing
+    document.body.style.overflow = "hidden";
+}
+
+function closeLightbox() {
+    const modal = document.getElementById("imageModal");
+    modal.style.display = "none";
+    
+    // Re-enable scrolling
+    document.body.style.overflow = "auto";
+}
+
+// Also close if the user presses the 'Escape' key
+document.addEventListener('keydown', function(event) {
+    if (event.key === "Escape") {
+        closeLightbox();
+    }
+});
+</script>
 </body>
 </html>

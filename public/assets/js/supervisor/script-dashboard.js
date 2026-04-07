@@ -91,3 +91,38 @@ function drawWeeklyChart() {
 }
 
 document.addEventListener('DOMContentLoaded', drawWeeklyChart);
+
+document.addEventListener('DOMContentLoaded', function() {
+  const deleteModal = document.getElementById('deleteModal');
+  const cancelBtn = document.getElementById('cancelDelete');
+  const confirmBtn = document.getElementById('confirmDelete');
+  let formToSubmit = null;
+
+  // Listen for clicks on the document to catch forms even if tables toggle
+  document.addEventListener('submit', function(e) {
+      if (e.target.classList.contains('delete-form')) {
+          e.preventDefault(); // Stop immediate PHP execution
+          formToSubmit = e.target;
+          deleteModal.classList.add('show');
+      }
+  });
+
+  // Close logic
+  const closeModal = () => {
+      deleteModal.classList.remove('show');
+      formToSubmit = null;
+  };
+
+  cancelBtn.addEventListener('click', closeModal);
+
+  confirmBtn.addEventListener('click', function() {
+      if (formToSubmit) {
+          formToSubmit.submit(); // Now the PHP delete actually runs
+      }
+  });
+
+  // Close if clicking the dark background
+  deleteModal.addEventListener('click', function(e) {
+      if (e.target === deleteModal) closeModal();
+  });
+});

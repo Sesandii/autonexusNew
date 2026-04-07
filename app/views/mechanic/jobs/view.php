@@ -61,7 +61,7 @@
   <div class="info-row"><span class="label">Model:</span> <span><?= htmlspecialchars($job['model']) ?></span></div>
   <div class="info-row"><span class="label">Year:</span> <span><?= htmlspecialchars($job['year']) ?></span></div>
   <div class="info-row"><span class="label">License:</span> <span><?= htmlspecialchars($job['license_plate']) ?></span></div>
-  <div class="info-row"><span class="label">Mileage:</span> <span><?= htmlspecialchars($job['mileage']) ?></span></div>
+  <div class="info-row"><span class="label">Mileage:</span> <span><?= htmlspecialchars($job['current_mileage']) ?></span></div>
   <div class="info-row"><span class="label">Color:</span> <span><?= htmlspecialchars($job['color']) ?></span></div>
   <div class="info-row"><span class="label">VIN:</span> <span><?= htmlspecialchars($job['vin']) ?></span></div>
 </div>
