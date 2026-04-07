@@ -12,7 +12,7 @@ include 'helpers.php';
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><?= htmlspecialchars($pageTitle ?? 'Complaints') ?></title>
   <link rel="stylesheet" href="<?= $B ?>/app/views/layouts/admin-sidebar/styles.css">
-  <link rel="stylesheet" href="<?= $B ?>/app/views/layouts/admin-shared/management.css">
+  <!-- <link rel="stylesheet" href="<?= $B ?>/app/views/layouts/admin-shared/management.css"> -->
   <link rel="stylesheet" href="<?= $B ?>/app/views/admin/admin-viewcomplaints/style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -21,7 +21,10 @@ include 'helpers.php';
   <?php include APP_ROOT . '/views/layouts/admin-sidebar/sidebar.php'; ?>
 
   <main class="main-content">
-    <h1 class="page-title">Complaints Management</h1>
+   <div class="page-header">
+  <h1 class="page-title">Complaints</h1>
+  <p class="muted" style="margin:0;">Track complaints, assignments, SLA status, and resolutions.</p>
+</div>
 
     <section class="cards">
       <div class="card-mini">
@@ -109,8 +112,8 @@ include 'helpers.php';
           </select>
         </div>
         <div>
-          <button class="btn btn-dark" type="submit">Filter</button>
-          <a class="btn btn-light" href="<?= $B ?>/admin/admin-viewcomplaints">Reset</a>
+          <button class="btn btn-dark" type="submit">Apply</button>
+          <a class="btn btn-light" href="<?= $B ?>/admin/admin-viewcomplaints">Clear</a>
         </div>
       </form>
     </section>

@@ -13,7 +13,7 @@ include 'helpers.php';
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><?= htmlspecialchars($pageTitle ?? 'Complaint Details') ?></title>
   <link rel="stylesheet" href="<?= $B ?>/app/views/layouts/admin-sidebar/styles.css">
-  <link rel="stylesheet" href="<?= $B ?>/app/views/layouts/admin-shared/management.css">
+  <!-- <link rel="stylesheet" href="<?= $B ?>/app/views/layouts/admin-shared/management.css"> -->
   <link rel="stylesheet" href="<?= $B ?>/app/views/admin/admin-viewcomplaints/style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -28,7 +28,8 @@ include 'helpers.php';
         <span>›</span>
         <span>Complaint #<?= (int) $r['complaint_id'] ?></span>
       </div>
-      <h1 style="margin:0;">Complaint Details</h1>
+      <h1 class="page-title" style="margin:0;">Complaint #<?= (int) $r['complaint_id'] ?></h1>
+<p class="muted" style="margin:6px 0 0;">View details, update handling, and manage resolution notes.</p>
     </div>
 
     <div class="grid-two">
