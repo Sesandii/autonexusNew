@@ -78,7 +78,7 @@ class Complaints
 
         if (!empty($filters['branch_id'])) {
             $where[] = "cp.branch_id = ?";
-            $params[] = (int)$filters['branch_id'];
+            $params[] = (int) $filters['branch_id'];
         }
 
         if (!empty($filters['assigned_to'])) {
@@ -86,7 +86,7 @@ class Complaints
                 $where[] = "cp.assigned_to_user_id IS NULL";
             } else {
                 $where[] = "cp.assigned_to_user_id = ?";
-                $params[] = (int)$filters['assigned_to'];
+                $params[] = (int) $filters['assigned_to'];
             }
         }
 
@@ -217,17 +217,17 @@ class Complaints
         }
 
         $this->decorateComplaint($row);
-        $row['timeline'] = $this->extractTimeline((string)($row['description'] ?? ''));
+        $row['timeline'] = $this->extractTimeline((string) ($row['description'] ?? ''));
 
         return $row;
     }
 
     public function update(int $id, array $data): bool
     {
-        $status         = $data['status'] ?? 'open';
-        $priority       = $data['priority'] ?? 'medium';
-        $assignedTo     = $data['assigned_to_user_id'] ?? null;
-        $resolutionNote = trim((string)($data['resolution_note'] ?? ''));
+        $status = $data['status'] ?? 'open';
+        $priority = $data['priority'] ?? 'medium';
+        $assignedTo = $data['assigned_to_user_id'] ?? null;
+        $resolutionNote = trim((string) ($data['resolution_note'] ?? ''));
 
         $resolvedAt = null;
         if (in_array($status, ['resolved', 'closed'], true)) {
@@ -245,7 +245,7 @@ class Complaints
                 return false;
             }
 
-            $existingDescription = (string)($existing['description'] ?? '');
+            $existingDescription = (string) ($existing['description'] ?? '');
             $stampLabel = in_array($status, ['resolved', 'closed'], true) ? 'Resolution Note' : 'Admin Note';
             $stamp = '[' . date('Y-m-d H:i') . '] ' . $stampLabel . ': ' . $resolutionNote;
             $newDescription = rtrim($existingDescription) . "\n\n" . $stamp;
@@ -265,12 +265,12 @@ class Complaints
         $stmt = $this->pdo->prepare($sql);
 
         return $stmt->execute([
-            ':status'              => $status,
-            ':priority'            => $priority,
+            ':status' => $status,
+            ':priority' => $priority,
             ':assigned_to_user_id' => $assignedTo !== '' ? $assignedTo : null,
-            ':resolved_at'         => $resolvedAt,
-            ':description'         => $newDescription,
-            ':id'                  => $id,
+            ':resolved_at' => $resolvedAt,
+            ':description' => $newDescription,
+            ':id' => $id,
         ]);
     }
 
@@ -315,23 +315,23 @@ class Complaints
         $row = $this->pdo->query($sql)->fetch(PDO::FETCH_ASSOC) ?: [];
 
         return [
-            'total_count'      => (int)($row['total_count'] ?? 0),
-            'open_count'       => (int)($row['open_count'] ?? 0),
-            'progress_count'   => (int)($row['progress_count'] ?? 0),
-            'done_count'       => (int)($row['done_count'] ?? 0),
-            'urgent_open_count'=> (int)($row['urgent_open_count'] ?? 0),
-            'unassigned_count' => (int)($row['unassigned_count'] ?? 0),
+            'total_count' => (int) ($row['total_count'] ?? 0),
+            'open_count' => (int) ($row['open_count'] ?? 0),
+            'progress_count' => (int) ($row['progress_count'] ?? 0),
+            'done_count' => (int) ($row['done_count'] ?? 0),
+            'urgent_open_count' => (int) ($row['urgent_open_count'] ?? 0),
+            'unassigned_count' => (int) ($row['unassigned_count'] ?? 0),
         ];
     }
 
     public function analytics(): array
     {
         return [
-            'by_branch'   => $this->analyticsByBranch(),
-            'by_staff'    => $this->analyticsByStaff(),
-            'by_service'  => $this->analyticsByService(),
+            'by_branch' => $this->analyticsByBranch(),
+            'by_staff' => $this->analyticsByStaff(),
+            'by_service' => $this->analyticsByService(),
             'by_priority' => $this->analyticsByPriority(),
-            'by_status'   => $this->analyticsByStatus(),
+            'by_status' => $this->analyticsByStatus(),
         ];
     }
 
@@ -371,66 +371,50 @@ class Complaints
 
     private function analyticsByBranch(): array
     {
-        $sql = "
-            SELECT
-                COALESCE(b.name, 'Unassigned Branch') AS label,
-                COUNT(*) AS total
-            FROM complaints cp
-            LEFT JOIN branches b ON b.branch_id = cp.branch_id
-            GROUP BY COALESCE(b.name, 'Unassigned Branch')
-            ORDER BY total DESC, label ASC
-        ";
-        return $this->pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+        return $this->queryAnalytics(
+            "SELECT COALESCE(b.name, 'Unassigned Branch') AS label, COUNT(*) AS total
+             FROM complaints cp LEFT JOIN branches b ON b.branch_id = cp.branch_id
+             GROUP BY COALESCE(b.name, 'Unassigned Branch') ORDER BY total DESC, label ASC"
+        );
     }
 
     private function analyticsByStaff(): array
     {
-        $sql = "
-            SELECT
-                COALESCE(CONCAT(u.first_name, ' ', u.last_name), 'Unassigned') AS label,
-                COUNT(*) AS total
-            FROM complaints cp
-            LEFT JOIN users u ON u.user_id = cp.assigned_to_user_id
-            GROUP BY COALESCE(CONCAT(u.first_name, ' ', u.last_name), 'Unassigned')
-            ORDER BY total DESC, label ASC
-        ";
-        return $this->pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+        return $this->queryAnalytics(
+            "SELECT COALESCE(CONCAT(u.first_name, ' ', u.last_name), 'Unassigned') AS label, COUNT(*) AS total
+             FROM complaints cp LEFT JOIN users u ON u.user_id = cp.assigned_to_user_id
+             GROUP BY COALESCE(CONCAT(u.first_name, ' ', u.last_name), 'Unassigned') ORDER BY total DESC, label ASC"
+        );
     }
 
     private function analyticsByService(): array
     {
-        $sql = "
-            SELECT
-                COALESCE(s.name, 'No Appointment Service') AS label,
-                COUNT(*) AS total
-            FROM complaints cp
-            LEFT JOIN appointments a ON a.appointment_id = cp.appointment_id
-            LEFT JOIN services s ON s.service_id = a.service_id
-            GROUP BY COALESCE(s.name, 'No Appointment Service')
-            ORDER BY total DESC, label ASC
-        ";
-        return $this->pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+        return $this->queryAnalytics(
+            "SELECT COALESCE(s.name, 'No Appointment Service') AS label, COUNT(*) AS total
+             FROM complaints cp LEFT JOIN appointments a ON a.appointment_id = cp.appointment_id
+             LEFT JOIN services s ON s.service_id = a.service_id
+             GROUP BY COALESCE(s.name, 'No Appointment Service') ORDER BY total DESC, label ASC"
+        );
     }
 
     private function analyticsByPriority(): array
     {
-        $sql = "
-            SELECT priority AS label, COUNT(*) AS total
-            FROM complaints
-            GROUP BY priority
-            ORDER BY FIELD(priority, 'high', 'medium', 'low')
-        ";
-        return $this->pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+        return $this->queryAnalytics(
+            "SELECT priority AS label, COUNT(*) AS total FROM complaints
+             GROUP BY priority ORDER BY FIELD(priority, 'high', 'medium', 'low')"
+        );
     }
 
     private function analyticsByStatus(): array
     {
-        $sql = "
-            SELECT status AS label, COUNT(*) AS total
-            FROM complaints
-            GROUP BY status
-            ORDER BY FIELD(status, 'open', 'in_progress', 'resolved', 'closed')
-        ";
+        return $this->queryAnalytics(
+            "SELECT status AS label, COUNT(*) AS total FROM complaints
+             GROUP BY status ORDER BY FIELD(status, 'open', 'in_progress', 'resolved', 'closed')"
+        );
+    }
+
+    private function queryAnalytics(string $sql): array
+    {
         return $this->pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
     }
 
@@ -470,12 +454,12 @@ class Complaints
 
     private function decorateComplaint(array &$row): void
     {
-        $createdAt = (string)($row['created_at'] ?? '');
+        $createdAt = (string) ($row['created_at'] ?? '');
         $resolvedAt = $row['resolved_at'] ?? null;
-        $priority = (string)($row['priority'] ?? 'medium');
-        $status = (string)($row['status'] ?? 'open');
+        $priority = (string) ($row['priority'] ?? 'medium');
+        $status = (string) ($row['status'] ?? 'open');
 
-        $ageHours = $createdAt ? max(0, (int)floor((time() - strtotime($createdAt)) / 3600)) : 0;
+        $ageHours = $createdAt ? max(0, (int) floor((time() - strtotime($createdAt)) / 3600)) : 0;
         $row['age_hours'] = $ageHours;
         $row['aging_label'] = $this->formatAging($ageHours);
 
@@ -497,7 +481,7 @@ class Complaints
         $row['can_reopen'] = in_array($status, ['resolved', 'closed'], true) ? 1 : 0;
         $row['is_resolvedish'] = in_array($status, ['resolved', 'closed'], true) ? 1 : 0;
         $row['resolution_time_label'] = ($resolvedAt && $createdAt)
-            ? $this->formatAging(max(0, (int)floor((strtotime((string)$resolvedAt) - strtotime($createdAt)) / 3600)))
+            ? $this->formatAging(max(0, (int) floor((strtotime((string) $resolvedAt) - strtotime($createdAt)) / 3600)))
             : '—';
     }
 
@@ -516,7 +500,7 @@ class Complaints
             $limit = 48;
         }
 
-        $ageHours = max(0, (int)floor((time() - strtotime($createdAt)) / 3600));
+        $ageHours = max(0, (int) floor((time() - strtotime($createdAt)) / 3600));
         $left = $limit - $ageHours;
 
         if ($left < 0) {
@@ -537,7 +521,7 @@ class Complaints
         }
 
         $days = intdiv($hours, 24);
-        $rem  = $hours % 24;
+        $rem = $hours % 24;
 
         if ($rem === 0) {
             return $days . 'd';
@@ -559,8 +543,8 @@ class Complaints
 
             if (preg_match('/^\[(.*?)\]\s*(Admin Note|Resolution Note)\:\s*(.+)$/i', $line, $m)) {
                 $timeline[] = [
-                    'stamp'   => $m[1],
-                    'type'    => $m[2],
+                    'stamp' => $m[1],
+                    'type' => $m[2],
                     'message' => $m[3],
                 ];
             }
