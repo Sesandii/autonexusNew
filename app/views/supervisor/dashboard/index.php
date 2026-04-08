@@ -156,10 +156,23 @@
     </div>
   </section>
 
+  <!-- Delete Confirmation Modal -->
+<div id="deleteModal" class="modal-overlay">
+  <div class="modal-box">
+    <h3>Confirm Deletion</h3>
+    <p>Are you sure you want to delete this work order?</p>
+    <div class="modal-actions">
+      <button id="cancelDelete" class="btn small">Cancel</button>
+      <button id="confirmDelete" class="btn small danger">Delete</button>
+    </div>
+  </div>
+</div>
+
 </main>
 
 <script>
   window.weeklyAppointments = <?= json_encode($weeklyTrend) ?>;
+  
 </script>
 <script src="/autonexus/public/assets/js/supervisor/script-dashboard.js"></script>
 </body>

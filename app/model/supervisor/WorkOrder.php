@@ -111,7 +111,7 @@ class WorkOrder
             LEFT JOIN services s ON a.service_id = s.service_id
             LEFT JOIN customers c ON a.customer_id = c.customer_id
             WHERE a.branch_id = ?
-              AND a.status IN ('requested', 'confirmed')
+              AND a.status IN ('confirmed')
               AND a.appointment_id NOT IN (
                   SELECT appointment_id 
                   FROM work_orders 
@@ -383,7 +383,7 @@ public function getFullJobDetails($id)
             v.license_plate,
             v.year,
             v.color,
-            v.mileage,
+            v.current_mileage,
 
             -- Mechanic
             m.mechanic_code,
@@ -523,31 +523,36 @@ public function getServiceSummaryFromChecklist(int $workOrderId): array
     return $stmt->fetchAll(\PDO::FETCH_ASSOC);
 }
 
-public function getCompletedWorkOrdersWithoutReport(): array
+
+public function getCompletedWorkOrdersWithoutReport(int $supervisorId): array
 {
     $sql = "
         SELECT w.work_order_id, a.customer_id, a.appointment_date, a.appointment_time, 
-               v.license_plate AS vehicle_number,
+               v.license_plate AS vehicle_number,s.name,
                u.first_name AS customer_first_name,
                u.last_name AS customer_last_name
         FROM work_orders w
         INNER JOIN appointments a ON w.appointment_id = a.appointment_id
         INNER JOIN users u ON a.customer_id = u.user_id
+        INNER JOIN services s ON a.service_id = s.service_id
         INNER JOIN vehicles v ON a.vehicle_id = v.vehicle_id
         LEFT JOIN reports r ON w.work_order_id = r.work_order_id
-        WHERE w.status = 'completed' AND r.report_id IS NULL
+        WHERE w.status = 'completed' 
+          AND r.report_id IS NULL 
+          AND w.supervisor_id = :supervisor_id
         ORDER BY a.appointment_date DESC, a.appointment_time DESC
     ";
 
     $stmt = $this->pdo->prepare($sql);
-    $stmt->execute();
+    $stmt->execute([':supervisor_id' => $supervisorId]);
     return $stmt->fetchAll(\PDO::FETCH_ASSOC);
 }
+
 
 private function updateAppointmentStatus(int $appointmentId, string $workOrderStatus): void
 {
     $map = [
-        'open'        => 'confirmed',
+        'open'        => 'assigned',
         'in_progress' => 'in_service',
         'completed'   => 'completed',
     ];
@@ -688,17 +693,23 @@ public function updateMechanicStatus(string $mechanicCode): void
     ]);
 }
 
-public function hasActiveInProgressJob(int $mechanicId): bool
+public function hasActiveInProgressJob(int $mechanicId, int $excludeWorkOrderId = 0): bool
 {
+    // We add 'AND work_order_id != :exclude_id' so that when editing 
+    // an 'in_progress' job, it doesn't count itself as a conflict.
     $sql = "SELECT COUNT(*) 
             FROM work_orders 
             WHERE mechanic_id = :mid 
-            AND status = 'in_progress'";
+            AND status = 'in_progress'
+            AND work_order_id != :exclude_id";
 
     $stmt = $this->pdo->prepare($sql);
-    $stmt->execute([':mid' => $mechanicId]);
+    $stmt->execute([
+        ':mid' => $mechanicId,
+        ':exclude_id' => $excludeWorkOrderId
+    ]);
 
-    return $stmt->fetchColumn() > 0;
+    return (int)$stmt->fetchColumn() > 0;
 }
 
 public function getScheduledWorkOrdersByMechanicCode(string $mechanicCode)

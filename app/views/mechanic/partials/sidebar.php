@@ -50,17 +50,18 @@ function isActive($route) {
 </div>
 </div>
 
-<!-- 🔥 Bottom User Section -->
+<!-- Bottom User Section -->
 <div class="sidebar-bottom">
+
   <a href="<?= $base ?>/mechanic/profile/edit"
   class="<?= isActive('/mechanic/profile/edit') ?>">
     <img src="<?= $base ?>/public/assets/img/user.png" />
-    <span>Edit Profile</span>
+    <span class="link-text">Edit Profile</span>
   </a>
 
   <a href="<?= $base ?>/logout" id="logout-link">
     <img src="<?= $base ?>/public/assets/img/logout.png" />
-    <span>Sign Out</span>
+    <span class="link-text">Sign Out</span>
 </a>
 </div>
  <!-- Logout Confirmation Modal -->

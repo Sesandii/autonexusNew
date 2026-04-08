@@ -22,19 +22,24 @@
 <?php if (!empty($completedOrders)): ?>
   <!-- Step 1: Choose a completed work order -->
   <div class="form-section">
-    <h2>Select Completed Work Order</h2>
-    <form method="get" action="<?= $base ?>/supervisor/reports/create">
-      <select name="id" required>
-        <option value="">-- Select Work Order --</option>
-        <?php foreach ($completedOrders as $wo): ?>
-          <option value="<?= $wo['work_order_id'] ?>">
-            <?= htmlspecialchars($wo['work_order_id']) ?>
-          </option>
-        <?php endforeach; ?>
-      </select>
+  <h2>Select Completed Work Order</h2>
+  <form method="get" action="<?= $base ?>/supervisor/reports/create">
+    <select name="id" required>
+      <option value="">-- Select Work Order --</option>
+      <?php foreach ($completedOrders as $wo): ?>
+        <option value="<?= $wo['work_order_id'] ?>">
+          <?= htmlspecialchars($wo['vehicle_number']) ?> (<?= htmlspecialchars($wo['customer_first_name'] ?? 'N/A') ?>)
+        </option>
+      <?php endforeach; ?>
+    </select>
+    
+    <div class="form-actions" style="margin-top: 15px; display: flex; gap: 10px;">
       <button type="submit" class="btn primary">Select</button>
-    </form>
-  </div>
+      
+      <a href="<?= $base ?>/supervisor/reports/indexp" class="btn secondary" style="text-decoration: none; display: inline-block; text-align: center;">Back</a>
+    </div>
+  </form>
+</div>
 
 <?php elseif (!empty($workOrder)): ?>
   <!-- Step 2: Show report form for selected work order -->
@@ -50,8 +55,8 @@
     <div class="card-content">
       <div class="info-grid">
         <div>
-          <p class="label">Job ID</p>
-          <p class="value"><?= htmlspecialchars($workOrder['work_order_id']) ?></p>
+          <p class="label">Service</p>
+          <p class="value"><?= htmlspecialchars($workOrder['service_name']) ?></p>
         </div>
         <div>
           <p class="label">Vehicle Number</p>
@@ -72,7 +77,6 @@
 <div class="card">
   <div class="card-header">
     <h2>Service Summary</h2>
-    <a href="#" class="job-log-link">View full job log</a>
   </div>
   <div class="card-content">
     <table>
@@ -80,7 +84,6 @@
         <tr>
           <th>Service Task</th>
           <th>Status</th>
-          <th>Notes</th>
         </tr>
       </thead>
       <tbody>
@@ -137,7 +140,14 @@
 <!-- Attach Photo -->
 <div class="form-section">
   <h2>Attach Work Photo</h2>
-  <input type="file" name="work_images[]" multiple accept=".png,.jpg,.jpeg,.gif">
+  <div class="upload-container">
+    <label for="image-upload" class="btn secondary" style="cursor: pointer; display: inline-block;">
+       Upload Photo
+    </label>
+    <input type="file" id="image-upload" name="work_images[]" multiple accept="image/*" style="display: none;">
+    
+    <div id="preview-grid" class="preview-grid"></div>
+  </div>
 </div>
 
 <!-- Final Report -->
@@ -153,16 +163,40 @@
 </div>
 <!-- Actions -->
 <div class="actions">
-  <button type="submit" name="status" value="draft" class="btn secondary">Save as Draft</button>
-  <button type="submit" name="status" value="submitted" class="btn primary">Submit Final Report</button>
-</div>
+    <button type="button" onclick="history.back()" class="btn secondary">
+        Cancel & Go Back
+    </button>
 
+    <button type="submit" name="status" value="draft" class="btn btn-draft">
+        Save as Draft
+    </button>
+
+    <button type="submit" name="status" value="submitted" class="btn primary">
+        Submit Final Report
+    </button>
+</div>
 </form>
 
 <?php else: ?>
   <p>No completed work orders available.</p>
+  <button onclick="history.back()" class="btn secondary">Back</button>
 <?php endif; ?>
 
+<div id="imageModal" class="image-modal">
+  <span class="close-modal">&times;</span>
+  <img class="modal-content" id="modalImg">
+</div>
+
+<div id="deleteModal" class="modal-overlay" style="display: none;">
+  <div class="modal-box">
+    <h3>Confirm Deletion</h3>
+    <p>Are you sure you want to delete this photo?</p>
+    <div class="modal-actions">
+      <button id="cancelDelete" class="btn secondary">Cancel</button>
+      <button id="confirmDelete" class="btn danger">Delete</button>
+    </div>
+  </div>
+</div>
 </main>
 
 <script src="/autonexus/public/assets/js/supervisor/script-report.js"></script>

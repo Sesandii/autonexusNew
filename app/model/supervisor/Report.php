@@ -46,30 +46,34 @@ class Report
     }
 
     public function all(): array
-    {
-        $sql = "
-            SELECT 
-                r.*,
-                w.work_order_id,
-                v.license_plate,
-                u.first_name, 
-                u.last_name,
-                m.mechanic_code
-            FROM reports r
-            JOIN work_orders w ON r.work_order_id = w.work_order_id
-            JOIN appointments a ON w.appointment_id = a.appointment_id
-            LEFT JOIN vehicles v ON a.vehicle_id = v.vehicle_id
-            LEFT JOIN customers c ON a.customer_id = c.customer_id
-            LEFT JOIN users u ON c.user_id = u.user_id
-            LEFT JOIN mechanics m ON w.mechanic_id = m.mechanic_id
-            ORDER BY r.created_at DESC
-        ";
+{
+    $sql = "
+        SELECT 
+            r.*,
+            w.work_order_id,
+            CONCAT(v.make, ' ', v.model) AS vehicle,
+            CONCAT(u.first_name, ' ', u.last_name) AS customer_name,
+            su.supervisor_code,
+            su.user_id AS supervisor_id,  /* <--- ADD THIS LINE HERE */
+            s.name,
+            m.mechanic_code
+        FROM reports r
+        JOIN work_orders w ON r.work_order_id = w.work_order_id
+        JOIN appointments a ON w.appointment_id = a.appointment_id
+        LEFT JOIN vehicles v ON a.vehicle_id = v.vehicle_id
+        LEFT JOIN services s ON a.service_id = s.service_id
+        LEFT JOIN supervisors su ON w.supervisor_id = su.user_id
+        LEFT JOIN customers c ON a.customer_id = c.customer_id
+        LEFT JOIN users u ON c.user_id = u.user_id
+        LEFT JOIN mechanics m ON w.mechanic_id = m.mechanic_id
+        ORDER BY r.created_at DESC
+    ";
 
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute();
+    $stmt = $this->pdo->prepare($sql);
+    $stmt->execute();
 
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
 
     /* =====================================================
        CREATE / UPDATE / DELETE
@@ -299,5 +303,6 @@ public function getMechanicActivity(): array
     $stmt = $this->pdo->query($sql);
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
+
 
 }
