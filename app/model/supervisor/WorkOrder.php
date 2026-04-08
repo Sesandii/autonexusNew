@@ -528,28 +528,28 @@ public function getServiceSummaryFromChecklist(int $workOrderId): array
 }
 
 
-public function getCompletedWorkOrdersWithoutReport(int $supervisorId): array
+public function getCompletedWorkOrdersWithoutReport(int $branchId)
 {
+    $db = db();
     $sql = "
-        SELECT w.work_order_id, a.customer_id, a.appointment_date, a.appointment_time, 
-               v.license_plate AS vehicle_number,s.name,
-               u.first_name AS customer_first_name,
-               u.last_name AS customer_last_name
+        SELECT 
+            w.work_order_id,
+            v.license_plate AS vehicle_number,
+            u.first_name AS customer_first_name
         FROM work_orders w
-        INNER JOIN appointments a ON w.appointment_id = a.appointment_id
-        INNER JOIN users u ON a.customer_id = u.user_id
-        INNER JOIN services s ON a.service_id = s.service_id
-        INNER JOIN vehicles v ON a.vehicle_id = v.vehicle_id
-        LEFT JOIN reports r ON w.work_order_id = r.work_order_id
-        WHERE w.status = 'completed' 
-          AND r.report_id IS NULL 
-          AND w.supervisor_id = :supervisor_id
-        ORDER BY a.appointment_date DESC, a.appointment_time DESC
+        JOIN appointments a ON w.appointment_id = a.appointment_id
+        JOIN vehicles v ON a.vehicle_id = v.vehicle_id
+        -- New link to reach customer names
+        JOIN customers c ON a.customer_id = c.customer_id
+        JOIN users u ON c.user_id = u.user_id
+        WHERE a.branch_id = ? 
+          AND w.status = 'completed'
+          AND w.work_order_id NOT IN (SELECT work_order_id FROM reports)
     ";
-
-    $stmt = $this->pdo->prepare($sql);
-    $stmt->execute([':supervisor_id' => $supervisorId]);
-    return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    
+    $stmt = $db->prepare($sql);
+    $stmt->execute([$branchId]);
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
 
@@ -681,21 +681,33 @@ public function getMechanicById(int $mechanicId): ?array
 
 // In app/model/supervisor/WorkOrder.php
 
+// app/model/supervisor/WorkOrder.php
+// app/model/supervisor/WorkOrder.php
+
 public function updateMechanicStatus(string $mechanicCode): void
 {
-    // Count active work orders for this mechanic
+    // 1. Get the current status to avoid overwriting "On Break" or "Off-Duty"
+    $stmt = $this->pdo->prepare("SELECT status FROM mechanics WHERE mechanic_code = ?");
+    $stmt->execute([$mechanicCode]);
+    $currentStatus = strtolower($stmt->fetchColumn() ?: 'available');
+
+    // 2. Count active work orders
     $activeCount = $this->countActiveByMechanicCode($mechanicCode);
 
-    // Update status in mechanics table
-    $status = $activeCount >= 5 ? 'busy' : 'available';
+    // 3. Only auto-toggle if they are currently 'available' or 'busy'
+    // This prevents overwriting a manual "On Break" status set by the mechanic
+    if ($currentStatus === 'available' || $currentStatus === 'busy') {
+        $newStatus = ($activeCount >= 5) ? 'busy' : 'available';
 
-    $sql = "UPDATE mechanics SET status = :status WHERE mechanic_code = :code";
-    $stmt = $this->pdo->prepare($sql);
-    $stmt->execute([
-        ':status' => $status,
-        ':code'   => $mechanicCode
-    ]);
+        $sql = "UPDATE mechanics SET status = :status WHERE mechanic_code = :code";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([
+            ':status' => $newStatus,
+            ':code'   => $mechanicCode
+        ]);
+    }
 }
+
 
 public function hasActiveInProgressJob(int $mechanicId, int $excludeWorkOrderId = 0): bool
 {

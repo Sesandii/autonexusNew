@@ -50,50 +50,48 @@
         <!-- Mechanic Dropdown -->
         <div class="form-group">
     <label class="required">Mechanic</label>
-    <select name="mechanic_id" id="mechanicSelect">
-        <option value="">-- Select Mechanic --</option>
-        <?php foreach ($activeMechanics as $mech):
-            $code = $mech['mechanic_code'] ?? '';
-            $spec = $mech['specialization'] ?? '';
-            $status = $mech['status'] ?? 'Available';
-            
-            // Check if this was pre-selected from the URL
-            $isSelected = (isset($selectedMechanicId) && $selectedMechanicId == $mech['mechanic_id']);
-            
-            // 1. REMOVE FROM DROPDOWN: If Off-Duty (Skip this iteration)
-            // We allow it only if it's the specific one pre-selected from the board
-            if ($status === 'Off-Duty' && !$isSelected) continue;
+    <select name="mechanic_id" id="mechanic_id" class="form-control">
+    <option value="">-- Select Mechanic --</option>
+    <?php foreach ($activeMechanics as $mech): 
+        // Normalize status for reliable comparison
+        $rawStatus = $mech['status'] ?? 'available';
+        $status = strtolower($rawStatus); 
+        $isSelected = ($selectedMechanicId == $mech['mechanic_id']);
+        
+        // Default UI states
+        $style = "";
+        $labelSuffix = "";
+        $isDisabledAttr = "";
 
-            // 2. CAPACITY CHECK: Highlight Red if 5+ jobs
-            $activeCount = $mechanicLimits[$code] ?? 0;
-            $isFull = ($activeCount >= 5);
+        // Logic for specialized statuses
+        if ($status === 'on break') {
+            $style = "filter: blur(1px); opacity: 0.5; color: #999;";
+            $labelSuffix = " (On Break)";
+            // Only disable if it's NOT the currently assigned mechanic
+            if (!$isSelected) $isDisabledAttr = "disabled"; 
             
-            // 3. DEFINE STYLES
-            $style = "";
-            $isDisabledAttr = "";
-            $labelSuffix = "";
-
-            if ($status === 'On Break') {
-                // BLUR: Apply visual filter and opacity
-                $style = "filter: blur(1px); opacity: 0.5;";
-                $labelSuffix = " (On Break)";
-                $isDisabledAttr = "disabled";
-            } elseif ($isFull) {
-                // RED HIGHLIGHT: For capacity warning
-                $style = "filter:  opacity: 0.5; background-color: #eeeeee; color: #999;";
-                $labelSuffix = " ⚠ Full";
-                // Disable selection for full mechanics unless they were specifically assigned
-                if (!$isSelected) $isDisabledAttr = "disabled";
-            }
-        ?>
-            <option value="<?= $mech['mechanic_id'] ?>" 
-                <?= $isSelected ? 'selected' : '' ?> 
+        } elseif ($status === 'busy') {
+            $labelSuffix = " (Busy - 5+ Jobs)";
+            // We keep them enabled so supervisors can still assign if urgent
+            $style = "color: #d9534f; font-weight: bold;"; 
+            
+        } elseif ($status === 'off-duty') {
+            // Hide off-duty mechanics entirely unless they are already assigned to this WO
+            if (!$isSelected) continue; 
+            $labelSuffix = " (Off-Duty)";
+            $isDisabledAttr = "disabled";
+        }
+    ?>
+        <option value="<?= $mech['mechanic_id'] ?>" 
+                style="<?= $style ?>" 
                 <?= $isDisabledAttr ?>
-                style="<?= $style ?>">
-                <?= htmlspecialchars($code . ' (' . $spec . ')') . $labelSuffix ?>
-            </option>
-        <?php endforeach; ?>
-    </select>
+                <?= $isSelected ? 'selected' : '' ?>>
+            <?= htmlspecialchars($mech['mechanic_code']) ?> - 
+            <?= htmlspecialchars($mech['first_name'] . ' ' . $mech['last_name']) ?> 
+            <?= $labelSuffix ?>
+        </option>
+    <?php endforeach; ?>
+</select>
 </div>
         <!-- Service Display -->
         <div class="form-group">

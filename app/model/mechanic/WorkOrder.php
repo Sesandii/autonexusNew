@@ -25,7 +25,8 @@ class WorkOrder
                 w.started_at,
                 w.completed_at,
                 w.status,
-                w.job_start_time,
+                w.job_start_time,           
+                w.paused_remaining_seconds,
                 s.base_duration_minutes,
                 s.name,
                 u.first_name,
@@ -74,6 +75,7 @@ class WorkOrder
             u.street_address,
             u.city,
             u.state,
+            w.job_start_time,           
             w.paused_remaining_seconds,
             s.base_duration_minutes,
             s.name,
@@ -89,7 +91,10 @@ class WorkOrder
         FROM work_orders w
         JOIN appointments a ON w.appointment_id = a.appointment_id
         JOIN vehicles v ON a.vehicle_id = v.vehicle_id
-        JOIN users u ON a.customer_id = u.user_id
+        -- FIXED JOIN PATH
+        JOIN customers c ON a.customer_id = c.customer_id
+        JOIN users u ON c.user_id = u.user_id
+        -- END FIX
         JOIN services s ON a.service_id = s.service_id
         JOIN mechanics m ON w.mechanic_id = m.mechanic_id
         LEFT JOIN service_photos wp ON w.work_order_id = wp.work_order_id
@@ -97,51 +102,54 @@ class WorkOrder
         WHERE w.mechanic_id IN ($placeholders)
         GROUP BY w.work_order_id
         ORDER BY w.started_at DESC ";
+        
     $stmt = $pdo->prepare($sql);
     $stmt->execute($mechanic_ids);
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
     /** Get single job */
     public static function getSingleJob(int $work_order_id): ?array
-    {
-        $pdo = db();
+{
+    $pdo = db();
 
-        $sql = "
-            SELECT
-                w.*,
-                a.appointment_date,
-                a.appointment_time,
-                a.notes,
-                v.make,
-                v.model,
-                v.year,
-                v.license_plate,
-                v.current_mileage,
-                v.color,
-                v.vin,
-                u.first_name,
-                u.last_name,
-                u.street_address,
-                u.city,
-                u.state,
-                u.phone,
-                m.mechanic_code AS assigned_mechanic_code,
-                m.mechanic_id
-            FROM work_orders w
-            JOIN appointments a ON w.appointment_id = a.appointment_id
-            JOIN vehicles v ON a.vehicle_id = v.vehicle_id
-            JOIN services s ON a.service_id = s.service_id
-            JOIN users u ON a.customer_id = u.user_id
-            JOIN mechanics m ON w.mechanic_id = m.mechanic_id
-            WHERE w.work_order_id = :id
-            LIMIT 1
-        ";
+    $sql = "
+        SELECT
+            w.*,
+            a.appointment_date,
+            a.appointment_time,
+            a.branch_id,
+            a.notes,
+            v.make,
+            v.model,
+            v.year,
+            v.license_plate,
+            v.current_mileage,
+            v.color,
+            v.vin,
+            u.first_name,
+            u.last_name,
+            u.street_address,
+            u.city,
+            u.state,
+            u.phone,
+            m.mechanic_code AS assigned_mechanic_code,
+            m.mechanic_id
+        FROM work_orders w
+        JOIN appointments a ON w.appointment_id = a.appointment_id
+        JOIN vehicles v ON a.vehicle_id = v.vehicle_id
+        JOIN services s ON a.service_id = s.service_id
+        -- Corrected path to the users table
+        JOIN customers c ON a.customer_id = c.customer_id
+        JOIN users u ON c.user_id = u.user_id
+        JOIN mechanics m ON w.mechanic_id = m.mechanic_id
+        WHERE w.work_order_id = :id
+        LIMIT 1
+    ";
 
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute(['id' => $work_order_id]);
-        return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
-    }
-
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute(['id' => $work_order_id]);
+    return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
+}
     /** Mechanic updates job status */
     public function setStatusMechanic(int $workOrderId, string $newStatus, int $mechanicId): void
     {
@@ -240,10 +248,12 @@ class WorkOrder
     
 
     /** Get all jobs (mechanic tab) */
-    public static function getAllJobs(): array
+    public static function getAllJobs(?int $branchId = null): array
 {
     $pdo = db();
-
+    $params = [];
+    
+    // Start the base SQL
     $sql = "
         SELECT
             w.work_order_id,
@@ -251,23 +261,22 @@ class WorkOrder
             w.started_at,
             w.completed_at,
             w.status,
+            w.job_start_time,           
+            w.paused_remaining_seconds,
             s.name,
             s.base_duration_minutes,
             w.mechanic_id,
-            mu.user_id AS mechanic_user_id,  -- <-- add this
+            mu.user_id AS mechanic_user_id,
             m.mechanic_code,
             cu.first_name,
             cu.last_name,
-            cu.street_address,
-            cu.city,
-            cu.state,
             a.appointment_date,
             a.appointment_time,
             v.make,
             v.model,
             v.license_plate,
             COUNT(DISTINCT p.id) AS photo_count,
-            SUM(ch.status = 'completed') AS checklist_completed
+            SUM(CASE WHEN ch.status = 'completed' THEN 1 ELSE 0 END) AS checklist_completed
         FROM work_orders w
         JOIN appointments a ON w.appointment_id = a.appointment_id
         JOIN customers c ON a.customer_id = c.customer_id
@@ -275,14 +284,21 @@ class WorkOrder
         JOIN services s ON a.service_id = s.service_id
         JOIN vehicles v ON a.vehicle_id = v.vehicle_id
         JOIN mechanics m ON w.mechanic_id = m.mechanic_id
-        JOIN users mu ON m.user_id = mu.user_id       -- <-- join mechanic's user
+        JOIN users mu ON m.user_id = mu.user_id
         LEFT JOIN checklist ch ON ch.work_order_id = w.work_order_id
-        LEFT JOIN service_photos p ON p.work_order_id = w.work_order_id
-        GROUP BY w.work_order_id
-        ORDER BY w.started_at DESC
-    ";
+        LEFT JOIN service_photos p ON p.work_order_id = w.work_order_id ";
 
-    return $pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+    // Add branch filter only if ID is passed
+    if ($branchId !== null) {
+        $sql .= " WHERE a.branch_id = :branch_id ";
+        $params['branch_id'] = $branchId;
+    }
+
+    $sql .= " GROUP BY w.work_order_id ORDER BY w.started_at DESC";
+
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute($params);
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
 
@@ -340,5 +356,22 @@ public function getByMechanicAndStatus($mechanicId, $status)
 
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
+
+
+public function getProgressCounts(int $workOrderId): array
+{
+    $sql = "
+        SELECT 
+            COUNT(*) as total,
+            SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) as completed
+        FROM checklist 
+        WHERE work_order_id = ?
+    ";
+    
+    $stmt = $this->pdo->prepare($sql);
+    $stmt->execute([$workOrderId]);
+    return $stmt->fetch(PDO::FETCH_ASSOC) ?: ['total' => 0, 'completed' => 0];
+}
+
 
 }
