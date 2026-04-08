@@ -41,7 +41,7 @@
       <option value="medium">Medium</option>
       <option value="high">High</option>
     </select>
-    <button type="button" id="resetComplaints" class="btn reset">Reset</button>
+    <button type="button" id="resetComplaints" class="reset-btn">Reset</button>
   </div>
 
   <!-- Complaints Section -->
@@ -215,42 +215,52 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 // ---- Feedback Filters ----
+// ---- Feedback Filters ----
 const searchFeedback = document.getElementById("searchFeedback");
 const dateFeedback = document.getElementById("dateFeedback");
 const ratingFilter = document.getElementById("ratingFilter");
-const feedbackCards = document.querySelectorAll("#feedbacks .card");
+// FIX: Changed ".card" to ".feedback-card" to match your HTML
+const feedbackCards = document.querySelectorAll(".feedback-card"); 
 const resetFeedback = document.getElementById("resetFeedback");
 
 function filterFeedback() {
-  const searchVal = searchFeedback.value.toLowerCase();
-  const dateVal = dateFeedback.value;
-  const ratingVal = ratingFilter.value;
+    const searchVal = searchFeedback.value.toLowerCase();
+    const dateVal = dateFeedback.value;
+    const ratingVal = ratingFilter.value;
 
-  feedbackCards.forEach(card => {
-    const text = card.innerText.toLowerCase();
-    const cardDate = card.dataset.date;
-    const rating = card.dataset.rating;
+    feedbackCards.forEach(card => {
+        // Use textContent for better performance than innerText
+        const text = card.textContent.toLowerCase();
+        const cardDate = card.dataset.date;
+        const cardRating = card.dataset.rating;
 
-    const match = (!searchVal || text.includes(searchVal))
-                  && (!dateVal || cardDate === dateVal)
-                  && (!ratingVal || rating === ratingVal);
+        // Compare filters
+        const matchesSearch = !searchVal || text.includes(searchVal);
+        const matchesDate   = !dateVal   || cardDate === dateVal;
+        const matchesRating = !ratingVal || cardRating === ratingVal;
 
-    card.style.display = match ? "block" : "none";
-  });
+        if (matchesSearch && matchesDate && matchesRating) {
+            card.style.display = "block";
+        } else {
+            card.style.display = "none";
+        }
+    });
 }
 
-searchFeedback.addEventListener("keyup", filterFeedback);
+// Event Listeners for real-time filtering
+searchFeedback.addEventListener("input", filterFeedback); // 'input' is better than 'keyup' for catch-all
 dateFeedback.addEventListener("change", filterFeedback);
 ratingFilter.addEventListener("change", filterFeedback);
 
+// Reset functionality
 resetFeedback.addEventListener("click", () => {
-  searchFeedback.value = "";
-  dateFeedback.value = "";
-  ratingFilter.value = "";
-
-  feedbackCards.forEach(card => {
-    card.style.display = "block";
-  });
+    searchFeedback.value = "";
+    dateFeedback.value = "";
+    ratingFilter.value = "";
+    
+    feedbackCards.forEach(card => {
+        card.style.display = "block";
+    });
 });
 });
 </script>
