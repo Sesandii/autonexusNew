@@ -8,19 +8,16 @@ use app\model\supervisor\User;
 class SupervisorProfileController extends Controller
 {
 
-public function edit()
-{
-    if (session_status() !== PHP_SESSION_ACTIVE) session_start();
-
-    $userId = $_SESSION['user']['user_id'];
-
-    $userModel = new User();
-    $user = $userModel->findById($userId);
-
-    $this->view('supervisor/profile/edit', [
-        'user' => $user
-    ]);
-}
+    public function edit()
+    {
+        if (session_status() !== PHP_SESSION_ACTIVE) session_start();
+        $userId = $_SESSION['user']['user_id'];
+    
+        $userModel = new User();
+        $user = $userModel->findSupervisorProfile($userId);
+    
+        $this->view('supervisor/profile/edit', ['user' => $user]);
+    }
 
 
 public function update()

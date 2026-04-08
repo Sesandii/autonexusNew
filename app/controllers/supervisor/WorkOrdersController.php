@@ -15,100 +15,103 @@ class WorkOrdersController extends Controller
     }
 
     public function index()
-    {
-        if (session_status() !== PHP_SESSION_ACTIVE) session_start();
-    
-        $currentSupervisorId = $_SESSION['user']['user_id'] ?? null;
-    
-        $m = new WorkOrder();
-    
-        $workOrders = $m->getAll();
-    
-        $data = [
-            'workOrders'            => $workOrders,
-            'currentSupervisorId'   => $currentSupervisorId,
-            'availableAppointments' => $m->getAvailableAppointments($currentSupervisorId), // ✅ FIXED
-            'activeMechanics'       => $m->getActiveMechanics()
-        ];
-    
-        $this->view('supervisor/workorders/index', $data);
-    }
-
-public function createForm()
 {
-    $m = new WorkOrder();
-    $checklistModel = new Checklist();
-
-    // Appointment coming from dashboard
-    $appointmentId = $_GET['appointment_id'] ?? null;
-
-    if ($appointmentId) {
-        // Fetch only the selected appointment
-        $appointment = $m->getAppointmentById($appointmentId);
-
-        if (!$appointment) {
-            // Safety fallback if invalid appointment
-            header("Location: " . BASE_URL . "/supervisor/dashboard");
-            exit;
-        }
-
-        $availableAppointments = [$appointment];
-
-        // Load checklist template for this service only
-        $serviceId = (int) $appointment['service_id'];
-        $allTemplates = [
-            $serviceId => $checklistModel->createFromServiceTemplateArray($serviceId)
-        ];
-    } else {
-        // Existing behavior (all available appointments)
-        if (session_status() !== PHP_SESSION_ACTIVE) session_start();
-        $supervisorId = $_SESSION['user']['user_id'] ?? null;
-        $availableAppointments = $m->getAvailableAppointments($supervisorId);
-        $allTemplates = [];
-
-        foreach ($availableAppointments as $appt) {
-            $serviceId = (int)($appt['service_id'] ?? 0);
-            if ($serviceId > 0 && !isset($allTemplates[$serviceId])) {
-                $allTemplates[$serviceId] =
-                    $checklistModel->createFromServiceTemplateArray($serviceId);
-            }
-        }
-    }
-
-    // Mechanics
-    $activeMechanics = $m->getActiveMechanics();
-
-    // ✅ Count active work orders per mechanic_code
-    $mechanicLimits = [];
-    foreach ($activeMechanics as $mech) {
-        $mechanicCode = $mech['mechanic_code'] ?? null;
-        if ($mechanicCode) {
-            $mechanicLimits[$mechanicCode] = $m->countActiveByMechanicCode($mechanicCode);
-        }
-    }
-
-    // Pre-selected mechanic (from coordination page)
-    $selectedMechanicId   = $_GET['mechanic_id'] ?? null;
-    $selectedMechanicSpec = $_GET['mechanic_spec'] ?? null;
-
-    // ✅ Flash message
     if (session_status() !== PHP_SESSION_ACTIVE) session_start();
-    $message = $_SESSION['message'] ?? null;
-    unset($_SESSION['message']);
+    
+    $currentSupervisorId = $_SESSION['user']['user_id'] ?? null;
+    $branchId = $_SESSION['user']['branch_id'] ?? null;
+
+    if (!$branchId) {
+        // Optional: handle cases where a user isn't assigned to a branch
+        die("Error: No branch assigned to this user.");
+    }
+
+    $m = new WorkOrder();
+
+    // Pass the branchId here
+    $workOrders = $m->getAll((int)$branchId);
 
     $data = [
-        'availableAppointments' => $availableAppointments,
-        'activeMechanics'       => $activeMechanics,
-        'mechanicLimits'        => $mechanicLimits,  // <-- new: pass counts to view
-        'selectedMechanicId'    => $selectedMechanicId,
-        'selectedMechanicSpec'  => $selectedMechanicSpec,
-        'allTemplates'          => $allTemplates,
-        'selectedAppointmentId' => $appointmentId, // Use in view for read-only display
-        'message'               => $message,       
+        'workOrders'            => $workOrders,
+        'currentSupervisorId'   => $currentSupervisorId,
+        'availableAppointments' => $m->getAvailableAppointments($currentSupervisorId),
+        'activeMechanics'       => $m->getActiveMechanicsByBranch($branchId)
     ];
 
-    $this->view('supervisor/workorders/create', $data);
+    $this->view('supervisor/workorders/index', $data);
 }
+
+    public function createForm()
+    {
+        $m = new WorkOrder();
+        $checklistModel = new Checklist();
+        
+        if (session_status() !== PHP_SESSION_ACTIVE) session_start();
+        
+        // 1. Get Supervisor's branch from the session
+        // This assumes your login process stores the branch_id in the session
+        $branchId = $_SESSION['user']['branch_id'] ?? null;
+    
+        // Appointment coming from dashboard
+        $appointmentId = $_GET['appointment_id'] ?? null;
+    
+        if ($appointmentId) {
+            $appointment = $m->getAppointmentById($appointmentId);
+            if (!$appointment) {
+                header("Location: " . BASE_URL . "/supervisor/dashboard");
+                exit;
+            }
+            $availableAppointments = [$appointment];
+            $serviceId = (int) $appointment['service_id'];
+            $allTemplates = [
+                $serviceId => $checklistModel->createFromServiceTemplateArray($serviceId)
+            ];
+        } else {
+            $supervisorId = $_SESSION['user']['user_id'] ?? null;
+            $availableAppointments = $m->getAvailableAppointments($supervisorId);
+            $allTemplates = [];
+    
+            foreach ($availableAppointments as $appt) {
+                $serviceId = (int)($appt['service_id'] ?? 0);
+                if ($serviceId > 0 && !isset($allTemplates[$serviceId])) {
+                    $allTemplates[$serviceId] = $checklistModel->createFromServiceTemplateArray($serviceId);
+                }
+            }
+        }
+    
+        // 2. Fetch mechanics ONLY for the supervisor's branch
+        // We update the method call to pass $branchId
+        $activeMechanics = $m->getActiveMechanicsByBranch($branchId);
+    
+        // Count active work orders per mechanic_code
+        $mechanicLimits = [];
+        foreach ($activeMechanics as $mech) {
+            $mechanicCode = $mech['mechanic_code'] ?? null;
+            if ($mechanicCode) {
+                $mechanicLimits[$mechanicCode] = $m->countActiveByMechanicCode($mechanicCode);
+            }
+        }
+    
+        // Pre-selected mechanic (from coordination page)
+        $selectedMechanicId   = $_GET['mechanic_id'] ?? null;
+        $selectedMechanicSpec = $_GET['mechanic_spec'] ?? null;
+    
+        $message = $_SESSION['message'] ?? null;
+        unset($_SESSION['message']);
+    
+        $data = [
+            'availableAppointments' => $availableAppointments,
+            'activeMechanics'       => $activeMechanics,
+            'mechanicLimits'        => $mechanicLimits,
+            'selectedMechanicId'    => $selectedMechanicId,
+            'selectedMechanicSpec'  => $selectedMechanicSpec,
+            'allTemplates'          => $allTemplates,
+            'selectedAppointmentId' => $appointmentId,
+            'message'               => $message,       
+        ];
+    
+        $this->view('supervisor/workorders/create', $data);
+    }
 
 
 public function store()
@@ -195,6 +198,17 @@ if ($mechanic_id) {
         }
     }
 
+    $apptData = $m->getAppointmentById($appointment_id);
+$vehicleId = $apptData['vehicle_id'] ?? null;
+
+// ... existing code: $workOrderId = $m->create([...]);
+
+$appt = $m->getAppointmentById($appointment_id);
+if ($appt && !empty($appt['vehicle_id'])) {
+    $vStatus = ($status === 'completed') ? 'available' : 'in_service';
+    $m->updateVehicleStatus((int)$appt['vehicle_id'], $vStatus);
+}
+
     $this->flash('success', 'Work order created.');
     header('Location: ' . rtrim(BASE_URL,'/') . '/supervisor/workorders');
     exit;
@@ -221,6 +235,9 @@ if ($mechanic_id) {
 {
     if (session_status() !== PHP_SESSION_ACTIVE) session_start();
     $supervisor_id = $_SESSION['user']['user_id'] ?? null;
+    
+    // 1. Get the branch ID from the session
+    $branchId = $_SESSION['user']['branch_id'] ?? null;
 
     $m = new WorkOrder();
     $wo = $m->find((int)$id);
@@ -243,7 +260,7 @@ if ($mechanic_id) {
         $templateItems = $checklistModel->getTemplateByService($serviceId);
     }
 
-    // Merge template with existing checklist items
+    // Merge template logic
     $finalChecklist = [];
     $existingNames = array_column($checklist, 'item_name');
 
@@ -252,14 +269,13 @@ if ($mechanic_id) {
             $finalChecklist[] = ['item_name' => $t['step_name']];
         }
     }
-
     $finalChecklist = array_merge($checklist, $finalChecklist);
 
-    // ✅ Get only branch-based appointments
+    // Get only branch-based appointments
     $availableAppointments = $m->getAvailableAppointments($supervisor_id);
 
-    // Mechanics
-    $activeMechanics = $m->getActiveMechanics();
+    // 2. Updated: Get ONLY mechanics for the supervisor's branch
+    $activeMechanics = $m->getActiveMechanicsByBranch($branchId);
 
     // Count active work orders per mechanic_code
     $mechanicLimits = [];
@@ -274,7 +290,7 @@ if ($mechanic_id) {
     $data = [
         'wo'                    => $wo,
         'availableAppointments' => $availableAppointments,
-        'activeMechanics'       => $activeMechanics,
+        'activeMechanics'       => $activeMechanics, // Now filtered by branch
         'mechanicLimits'        => $mechanicLimits,
         'checklist'             => $finalChecklist
     ];
@@ -450,6 +466,14 @@ if ($newStatus !== $currentStatus) {
                 ]);
             }
         }
+
+        // ... existing code: $m->setStatusFromActor((int)$id, $newStatus, $supervisor_id);
+
+$vehicleId = $m->getVehicleIdByWorkOrder((int)$id);
+if ($vehicleId) {
+    $vStatus = ($newStatus === 'completed') ? 'available' : 'in_service';
+    $m->updateVehicleStatus($vehicleId, $vStatus);
+}
     
         $this->flash('success', 'Work order updated.');
         header('Location: ' . rtrim(BASE_URL,'/') . '/supervisor/workorders');
@@ -498,6 +522,16 @@ if ($newStatus !== $currentStatus) {
         }
     }
 
+
+    // Fetch vehicle ID before the record is gone
+$vehicleId = $m->getVehicleIdByWorkOrder((int)$id);
+
+// ... existing code: $m->delete((int)$id, $supervisor_id);
+
+if ($vehicleId) {
+    $m->updateVehicleStatus($vehicleId, 'available');
+}
+
     $this->flash('success', 'Work order deleted.');
     header('Location: ' . rtrim(BASE_URL,'/') . '/supervisor/workorders'); 
     exit;
@@ -517,5 +551,11 @@ private function flash(string $type, string $text): void
     ];
 }
 
+
+public function updateVehicleStatus($vehicleId, $status)
+{
+    $stmt = db()->prepare("UPDATE vehicles SET status = ? WHERE vehicle_id = ?");
+    return $stmt->execute([$status, $vehicleId]);
+}
 
 }

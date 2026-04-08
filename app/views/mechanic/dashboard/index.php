@@ -15,13 +15,13 @@
   <p>Here's an overview of your <span><?= htmlspecialchars($_SESSION['user']['name'] ?? 'Mechanic') ?></span> dashboard</p>
   </section>
 <section class="cards">
-  <div class="card green">
+
+<div class="card green">
     <div class="card-header">
-      <h3>Jobs Done</h3>
+        <h3>Appointments Pending</h3>
     </div>
-    <p><?= $stats['completed'] ?? 0 ?></p>
-    <span class="change"></span>
-  </div>
+    <p><?= $branch_pending ?? 0 ?></p>
+</div>
 
   <div class="card blue">
     <div class="card-header">
@@ -33,7 +33,7 @@
 
   <div class="card red">
     <div class="card-header">
-      <h3>Ongoing Jobs</h3>
+      <h3>In-Progress Jobs</h3>
     </div>
     <p><?= $stats['ongoing'] ?? 0 ?></p>
     <span class="change"></span>
@@ -41,11 +41,22 @@
 
   <div class="card purple">
     <div class="card-header">
-      <h3>Total Jobs</h3>
+      <h3>on-hold Jobs</h3>
     </div>
-    <p><?= $stats['total'] ?? 0 ?></p>
+    <p><?= $stats['onhold'] ?? 0 ?></p>
     <span class="change"></span>
   </div>
+
+
+  <div class="card green">
+    <div class="card-header">
+      <h3>Completed Jobs</h3>
+    </div>
+    <p><?= $stats['completed'] ?? 0 ?></p>
+    <span class="change"></span>
+  </div>
+
+  
 </section>
 
 <section class="appointments">

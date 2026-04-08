@@ -17,6 +17,7 @@
   </div>
   <header class="page-header">
       <h1>Vehicle History</h1>
+      <p class="subtitle">Search and view previous services of a vehicle.</p>
 </header>
   <form method="GET" action="<?= $base ?>/supervisor/history/show" class="search-box">
     <div>
@@ -35,8 +36,6 @@
       <button type="submit" class="btn primary">Search</button>
     </div>
   </form>
-
-  <p class="subtitle">Search and view previous services of a vehicle.</p>
 </div>
 
 </body>

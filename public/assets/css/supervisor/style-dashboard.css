@@ -103,6 +103,7 @@ section.welcome {
 }
 
 .hidden {
+  display: none;
   visibility: hidden;
   position: absolute;
   pointer-events: none;
@@ -274,28 +275,76 @@ th, td {
 }
 
 
-/* Dashboard bottom: chart left, tables right */
-.dashboard-bottom {
+/* Container for Side-by-Side layout */
+.dashboard-grid-container {
   display: flex;
   gap: 20px;
+  margin-top: 20px;
   align-items: flex-start;
 }
 
-.dashboard-bottom-left {
-  flex: 1;
+.dashboard-tables-column {
+  flex: 7; /* Takes up 70% space */
 }
 
-.dashboard-bottom-right {
-  flex: 1;
-  min-width: 0; /* VERY IMPORTANT */
-  position: relative;
+.dashboard-quick-links-column {
+  flex: 3; /* Takes up 30% space */
+  background: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
 }
 
-.dashboard-bottom-right .appointments {
-  position: absolute;
-  top: 50px; /* below toggle buttons */
-  left: 0;
+/* Quick Links Grid - 2 columns */
+.quick-links-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin-top: 15px;
+}
+
+.q-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 10px;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  text-decoration: none;
+  color: #333;
+  transition: all 0.3s ease;
+  text-align: center;
+}
+
+.q-link:hover {
+  background: #f8f9ff;
+  border-color: #3498db;
+  transform: translateY(-3px);
+}
+
+.q-link img {
+  width: 32px;
+  height: 32px;
+  margin-bottom: 8px;
+}
+
+.q-link span {
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+/* Graph Row at the bottom */
+.dashboard-graph-row {
+  margin-top: 20px;
   width: 100%;
+}
+
+.chart-card {
+  background: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
 }
 
 /* Chart container styling */
@@ -350,4 +399,30 @@ th, td {
   display: flex;
   justify-content: space-around; /* Better spacing for two buttons */
   gap: 10px;
+}
+
+/* Update the icon styling */
+.q-icon {
+  font-size: 24px;      /* Icon Size */
+  margin-bottom: 10px;  /* Space below icon */
+  color: #db3434;      /* Theme color (adjust to your preference) */
+  transition: color 0.3s ease;
+}
+
+/* Optional: Change icon color on hover */
+.q-link:hover .q-icon {
+  color: #ff9090;
+}
+
+/* Ensure the link remains a flex container */
+.q-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 15px;
+  border: 1px solid #eee;
+  border-radius: 10px;
+  text-decoration: none;
+  background-color: #f9f9f9;
 }

@@ -164,13 +164,14 @@ class WorkOrder
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
     // Get all work orders for this supervisor
-    public function getAll(): array
+    // Update your getAll method to accept branchId
+public function getAll(int $branchId): array
 {
     $sql = "SELECT w.*, 
                    a.appointment_date, 
                    a.appointment_time,
                    s.name AS service_name, 
-                    CONCAT(v.make, ' ', v.model) AS vehicle,
+                   CONCAT(v.make, ' ', v.model) AS vehicle,
                    s.base_duration_minutes,
                    m.mechanic_code, 
                    p.supervisor_code,
@@ -186,10 +187,13 @@ class WorkOrder
             LEFT JOIN vehicles v ON a.vehicle_id = v.vehicle_id
             LEFT JOIN customers c ON a.customer_id = c.customer_id
             LEFT JOIN users u ON c.user_id = u.user_id
+            -- NEW: Join to filter by the supervisor's branch
+            INNER JOIN supervisors sup_owner ON w.supervisor_id = sup_owner.user_id
+            WHERE sup_owner.branch_id = :branch_id
             ORDER BY w.work_order_id DESC";
 
     $stmt = $this->pdo->prepare($sql);
-    $stmt->execute(); // ✅ REQUIRED
+    $stmt->execute(['branch_id' => $branchId]); 
 
     return $stmt->fetchAll(\PDO::FETCH_ASSOC);
 }
@@ -809,6 +813,56 @@ public function resumeFromPaused(int $id)
     ");
 
     $stmt->execute([$id]);
+}
+
+
+/**
+ * Update the status of a vehicle (Available / In-Service)
+ */
+public function updateVehicleStatus(int $vehicleId, string $status): bool
+{
+    $sql = "UPDATE vehicles SET status = :status WHERE vehicle_id = :id";
+    $stmt = $this->pdo->prepare($sql);
+    return $stmt->execute([
+        ':status' => $status,
+        ':id'     => $vehicleId
+    ]);
+}
+
+/**
+ * Get vehicle ID directly from a work order ID
+ * Useful for the update() and destroy() methods in the controller
+ */
+public function getVehicleIdByWorkOrder(int $workOrderId): ?int
+{
+    $sql = "SELECT a.vehicle_id 
+            FROM work_orders w
+            JOIN appointments a ON w.appointment_id = a.appointment_id
+            WHERE w.work_order_id = :id 
+            LIMIT 1";
+    $stmt = $this->pdo->prepare($sql);
+    $stmt->execute([':id' => $workOrderId]);
+    return $stmt->fetchColumn() ?: null;
+}
+
+public function getActiveMechanicsByBranch(?int $branchId): array
+{
+    if (!$branchId) return []; // Safety check
+
+    $sql = "
+        SELECT 
+            m.*, 
+            u.first_name, 
+            u.last_name 
+        FROM mechanics m
+        INNER JOIN users u ON m.user_id = u.user_id
+        WHERE m.branch_id = ?
+        ORDER BY m.mechanic_code ASC
+    ";
+    
+    $stmt = $this->pdo->prepare($sql);
+    $stmt->execute([$branchId]);
+    return $stmt->fetchAll(\PDO::FETCH_ASSOC);
 }
 
 

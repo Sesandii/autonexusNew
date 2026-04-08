@@ -84,6 +84,7 @@ class Report
         $sql = "
         INSERT INTO reports (
             work_order_id,
+            supervisor_id,
             inspection_notes,
             quality_rating,
             checklist_verified,
@@ -95,6 +96,7 @@ class Report
             created_at
         ) VALUES (
             :work_order_id,
+            :supervisor_id,
             :inspection_notes,
             :quality_rating,
             :checklist_verified,

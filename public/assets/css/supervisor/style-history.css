@@ -127,7 +127,7 @@ header {
 }
 
 .subtitle {
-  font-size: 24px;        /* make text large */
+        /* make text large */
     font-weight: 600;
     color: #555;
     text-align: center;

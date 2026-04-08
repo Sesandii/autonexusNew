@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Auto Nexus Dashboard</title>
   <link rel="stylesheet" href="/autonexus/public/assets/css/supervisor/style-dashboard.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
 <?php include __DIR__ . '/../partials/sidebar.php'; ?>
@@ -49,112 +50,130 @@
   </section>
 
   <!-- Chart + toggle tables section -->
-  <section class="dashboard-bottom">
-    <div class="dashboard-bottom-left">
-      <!-- Chart -->
-      <div class="chart-container">
-        <h3>Daily / Weekly Appointments Trend</h3>
-        <canvas id="weekly-chart" width="500" height="210"></canvas>
-      </div>
-    </div>
-
-    <div class="dashboard-bottom-right">
-      <!-- Toggle buttons -->
+  <section class="dashboard-grid-container">
+    
+  <div class="dashboard-tables-column">
+  <div class="table-card">
+    <div class="table-header">
       <div class="table-toggle">
         <button class="toggle-btn active" data-target="appointments">Today’s Appointments</button>
         <button class="toggle-btn" data-target="inprogress">In-Progress Vehicles</button>
       </div>
+      
+    </div>
 
-      <!-- Today’s Appointments -->
-      <section class="appointments" id="appointments">
-        <table>
-          <thead>
-            <tr>
-              <th>Client</th>
-              <th>Vehicle</th>
-              <th>Time</th>
-              <th>Service</th>
-              <th>Status</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            <?php if (!empty($appointments)): ?>
-              <?php foreach ($appointments as $appt): ?>
+    <div class="table-wrapper" id="appointments">
+      <table>
+        <thead>
+          <tr>
+            <th>Client</th>
+            <th>Vehicle</th>
+            <th>Time</th>
+            <th>Service</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <?php if (!empty($appointments)): ?>
+            <?php foreach ($appointments as $appt): ?>
               <tr>
                 <td><img src="<?= $base ?>/public/assets/img/user2.png" class="user-icon" /> <?= htmlspecialchars($appt['customer_name']) ?></td>
                 <td><img src="<?= $base ?>/public/assets/img/car.png" class="icon-car" /> <?= htmlspecialchars($appt['vehicle']) ?></td>
                 <td><?= htmlspecialchars(date('h:i A', strtotime($appt['appointment_time']))) ?></td>
                 <td><?= htmlspecialchars($appt['name']) ?></td>
-                <td><?= htmlspecialchars($appt['status']) ?></td>
+                <td><span class="status-badge <?= strtolower($appt['status']) ?>"><?= htmlspecialchars($appt['status']) ?></span></td>
                 <td>
-  <?php if (!empty($appt['work_order_id'])): ?>
-    <div class="action-buttons">
-      <a class="btn btn-primary"
-         href="<?= $base ?>/supervisor/workorders/<?= (int)$appt['work_order_id'] ?>">
-         View
-      </a>
-
-      <a class="btn btn-secondary"
-         href="<?= $base ?>/supervisor/workorders/<?= (int)$appt['work_order_id'] ?>/edit">
-         Edit
-      </a>
-
-      <form method="POST"
-            action="<?= $base ?>/supervisor/workorders/<?= (int)$appt['work_order_id'] ?>/delete"
-            class="delete-form">
-        <button type="submit" class="btn btn-danger">
-          Delete
-        </button>
-      </form>
-    </div>
-  <?php else: ?>
-    <div class="action-buttons">
-      <a class="btn btn-primary"
-         href="<?= $base ?>/supervisor/workorders/create?appointment_id=<?= (int)$appt['appointment_id'] ?>">
-         Create
-      </a>
-    </div>
-  <?php endif; ?>
-</td>
+                  <?php if (!empty($appt['work_order_id'])): ?>
+                    <a class="btn btn-primary small" href="<?= $base ?>/supervisor/workorders/<?= (int)$appt['work_order_id'] ?>">View</a>
+                  <?php else: ?>
+                    <a class="btn btn-primary small" href="<?= $base ?>/supervisor/workorders/create?appointment_id=<?= (int)$appt['appointment_id'] ?>">Create</a>
+                  <?php endif; ?>
+                </td>
               </tr>
-              <?php endforeach; ?>
-            <?php else: ?>
-              <tr><td colspan="6" style="text-align:center;">No appointments today</td></tr>
-            <?php endif; ?>
-          </tbody>
-        </table>
-      </section>
+            <?php endforeach; ?>
+          <?php else: ?>
+            <tr><td colspan="6" style="text-align:center; padding: 20px; color: #888;">No appointments scheduled for today.</td></tr>
+          <?php endif; ?>
+        </tbody>
+      </table>
+    </div>
 
-      <!-- In-progress vehicles -->
-      <section class="appointments hidden" id="inprogress">
-        <table>
-          <thead>
-            <tr>
-              <th>Vehicle</th>
-              <th>Mechanic</th>
-              <th>Started At</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            <?php if (!empty($inProgressJobs)): ?>
-              <?php foreach ($inProgressJobs as $job): ?>
+    <div class="table-wrapper hidden" id="inprogress">
+      <table>
+        <thead>
+          <tr>
+            <th>Vehicle</th>
+            <th>Mechanic</th>
+            <th>Started At</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <?php if (!empty($inProgressJobs)): ?>
+            <?php foreach ($inProgressJobs as $job): ?>
               <tr>
-                <td><?= htmlspecialchars($job['vehicle']) ?></td>
-                <td><?= htmlspecialchars($job['mechanic_code']) ?></td>
+                <td><img src="<?= $base ?>/public/assets/img/car.png" class="icon-car" /> <?= htmlspecialchars($job['vehicle']) ?></td>
+                <td><strong><?= htmlspecialchars($job['mechanic_code']) ?></strong></td>
                 <td><?= htmlspecialchars(date('h:i A', strtotime($job['started_at']))) ?></td>
-                <td><button class="btn btn-primary" onclick="location.href='/autonexus/supervisor/assignedjobs/<?= $job['work_order_id'] ?>'">Edit</button></td>
+                <td>
+                  <a class="btn btn-secondary small" href="<?= $base ?>/supervisor/workorders/<?= (int)$job['work_order_id'] ?>/edit">Edit</a>
+                </td>
               </tr>
-              <?php endforeach; ?>
-            <?php else: ?>
-              <tr><td colspan="4" style="text-align:center;">No vehicles in progress</td></tr>
-            <?php endif; ?>
-          </tbody>
-        </table>
-      </section>
+            <?php endforeach; ?>
+          <?php else: ?>
+            <tr><td colspan="4" style="text-align:center; padding: 20px; color: #888;">No vehicles currently in progress.</td></tr>
+          <?php endif; ?>
+        </tbody>
+      </table>
     </div>
-  </section>
+  </div>
+</div>
+
+<div class="dashboard-quick-links-column">
+  <div class="quick-links-card">
+    <h3>Quick Links</h3>
+    <div class="quick-links-grid">
+      <a href="<?= $base ?>/supervisor/coordination" class="q-link">
+        <i class="fa-solid fa-users-gear q-icon"></i>
+        <span>Assign Job</span>
+      </a>
+
+      <a href="<?= $base ?>/supervisor/workorders/create" class="q-link">
+        <i class="fa-solid fa-file-circle-plus q-icon"></i>
+        <span>Create Workorder</span>
+      </a>
+
+      <a href="<?= $base ?>/supervisor/reports/indexp" class="q-link">
+        <i class="fa-solid fa-car-side q-icon"></i>
+        <span>Vehicle Report</span>
+      </a>
+
+      <a href="<?= $base ?>/supervisor/reports/daily-jobs" class="q-link">
+        <i class="fa-solid fa-calendar-day q-icon"></i>
+        <span>Daily Job Report</span>
+      </a>
+
+      <a href="<?= $base ?>/supervisor/reports/mechanic-activity" class="q-link">
+        <i class="fa-solid fa-clipboard-user q-icon"></i>
+        <span>Mechanic Report</span>
+      </a>
+
+      <a href="<?= $base ?>/supervisor/reports" class="q-link">
+        <i class="fa-solid fa-chart-pie q-icon"></i>
+        <span>View All Reports</span>
+      </a>
+    </div>
+  </div>
+</div>
+ </section>
+
+ <section class="dashboard-graph-row">
+    <div class="chart-card">
+      <h3>Daily / Weekly Appointments Trend</h3>
+      <canvas id="weekly-chart"></canvas>
+    </div>
+ </section>
 
   <!-- Delete Confirmation Modal -->
 <div id="deleteModal" class="modal-overlay">

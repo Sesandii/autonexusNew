@@ -37,7 +37,7 @@ if ($message): ?>
     Edit profile <span class="sep"></span> 
   </div>
 
-  <div class="profile-header-card">
+  <div class="profile-header-card" style="display: flex; justify-content: space-between; align-items: center;">
   <div class="profile-info-left">
     <div class="avatar-circle">
       <i class="fas fa-user"></i>
@@ -51,6 +51,22 @@ if ($message): ?>
         <span class="email-info">
           <i class="far fa-envelope"></i> <?= htmlspecialchars($user['email']) ?>
         </span>
+      </div>
+    </div>
+  </div>
+
+  <div class="profile-info-right" style="text-align: right; padding-left: 20px;">
+    <div class="branch-display" style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px;">
+      <small style="color: #999; text-transform: uppercase; font-weight: 700; font-size: 10px; letter-spacing: 0.5px;">
+        Managed Branch
+      </small>
+      
+      <h2 style="margin: 0; color: #ffffff; font-size: 1.1rem; font-weight: 600;">
+        <?= htmlspecialchars($user['branch_name'] ?? 'General') ?>
+      </h2>
+
+      <div style="margin-top: 4px; border: 1px solid #dfe6e9; color: #636e72; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-family: monospace; background-color: #f8f9fa; font-weight: 600;">
+        ID: <?= htmlspecialchars($user['branch_code'] ?? 'N/A') ?>
       </div>
     </div>
   </div>
