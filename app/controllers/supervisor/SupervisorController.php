@@ -15,18 +15,30 @@ class SupervisorController extends Controller
     public function index()
     {
         if (session_status() !== PHP_SESSION_ACTIVE) session_start();
-        $supervisor_id = $_SESSION['user']['user_id'];
+        
+        // 1. Define the variable as $supervisor_id (to match your line 36)
+        $supervisor_id = $_SESSION['user']['user_id'] ?? 0;
+        
         $model = new Dashboard();
-
+    
+        // 2. Fetch the branch_id from the supervisor table
+        $branch_id = $model->getSupervisorBranch((int)$supervisor_id);
+        
+    
+        // 3. Save it to session so it's available for other pages
+        $_SESSION['user']['branch_id'] = $branch_id;
+    
         $data = [
-            'stats'        => $model->getWorkorderStats($supervisor_id),
-            'appointments' => $model->getTodayAppointments(),
-            'inProgressJobs' => $model->getInProgressJobs($supervisor_id),
-            'weeklyTrend' => $model->getWeeklyAppointments() // ✅ New data for chart
+            // Line 36: Now $supervisor_id is defined and won't be NULL
+            'stats'          => $model->getWorkorderStats((int)$supervisor_id, (int)$branch_id),
+            'appointments'   => $model->getTodayAppointments((int)$branch_id), 
+            'inProgressJobs' => $model->getInProgressJobs((int)$supervisor_id),
+            'weeklyTrend'    => $model->getWeeklyAppointments((int)$branch_id) 
         ];
-
+    
         $this->view('supervisor/dashboard/index', $data);
     }
+
 
     private function requireAdmin(): void
     {

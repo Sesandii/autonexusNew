@@ -361,6 +361,19 @@ if ($oldMechanicId && $oldMechanicId != $newMechanicId) {
 $newStatus = $_POST['status'] ?? 'open';
 $currentStatus = strtolower($wo['status'] ?? '');
 
+
+// 🔹 NEW VALIDATION: One "in_progress" job per mechanic
+if ($newStatus === 'in_progress' && $currentStatus !== 'in_progress') {
+    // We pass the $id to exclude the current work order from the check
+    if ($m->hasActiveInProgressJob($newMechanicId, (int)$id)) {
+        $this->flash('danger', "This mechanic already has a job 'In Progress'. Please pause or complete it first.");
+        header('Location: ' . rtrim(BASE_URL,'/') . "/supervisor/workorders");
+        exit;
+    }
+}
+
+
+
 if ($newStatus !== $currentStatus) {
 
     // ===============================
@@ -471,7 +484,7 @@ if ($newStatus !== $currentStatus) {
 
     // ✅ Reset appointment status
     if (!empty($wo['appointment_id'])) {
-        $m->setAppointmentStatus((int)$wo['appointment_id'], 'requested');
+        $m->setAppointmentStatus((int)$wo['appointment_id'], 'confirmed');
     }
 
     // ✅ Delete work order

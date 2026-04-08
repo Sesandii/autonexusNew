@@ -65,14 +65,18 @@ public function index()
             'workOrder' => $workOrder,
             'services'  => $services
         ]);
-    } else {
-        // No selection yet → fetch completed work orders without existing report
-        $completedOrders = $woModel->getCompletedWorkOrdersWithoutReport();
+    // Find the create() method and update the 'else' block:
+// Inside the else block of your create() method
+} else {
+    // Access the user ID from your session (adjust key if it's different in your app)
+    $supervisorId = $_SESSION['user']['user_id']; 
 
-        $this->view('supervisor/reports/create', [
-            'completedOrders' => $completedOrders
-        ]);
-    }
+    $completedOrders = $woModel->getCompletedWorkOrdersWithoutReport((int)$supervisorId);
+
+    $this->view('supervisor/reports/create', [
+        'completedOrders' => $completedOrders
+    ]);
+}
 }
 
 

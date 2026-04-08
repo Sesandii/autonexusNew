@@ -52,8 +52,23 @@ public function update()
     // Update session name
     $_SESSION['user']['name'] = $data['first_name'] . ' ' . $data['last_name'];
 
-    header('Location: ' . BASE_URL . '/mechanic/dashboard');
+    $this->flash('success', 'Details updated.');
+
+    header('Location: ' . BASE_URL . '/mechanic/profile/edit');
     exit;
+}
+
+
+private function flash(string $type, string $text): void
+{
+    if (session_status() !== PHP_SESSION_ACTIVE) {
+        session_start();
+    }
+
+    $_SESSION['message'] = [
+        'type' => $type,
+        'text' => $text
+    ];
 }
 
 }

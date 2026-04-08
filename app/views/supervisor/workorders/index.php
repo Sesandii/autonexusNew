@@ -10,6 +10,7 @@ unset($_SESSION['message']);
 // Logged-in supervisor ID for owner filter
 $currentSupervisorId = $_SESSION['user']['user_id'] ?? 0;
 ?>
+
 <!doctype html>
 <html lang="en">
 <head>

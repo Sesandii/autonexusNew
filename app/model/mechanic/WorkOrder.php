@@ -116,7 +116,7 @@ class WorkOrder
                 v.model,
                 v.year,
                 v.license_plate,
-                v.mileage,
+                v.current_mileage,
                 v.color,
                 v.vin,
                 u.first_name,
@@ -305,7 +305,7 @@ class WorkOrder
 private function updateAppointmentStatus(int $appointmentId, string $workOrderStatus): void
 {
     $map = [
-        'open'        => 'confirmed',
+        'open'        => 'assigned',
         'in_progress' => 'in_service',
         'completed'   => 'completed',
     ];
