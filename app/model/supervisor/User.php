@@ -34,4 +34,43 @@ class User
     return $stmt->execute($data);
 }
 
+
+/**
+ * Get detailed profile data including branch information for a mechanic
+ */
+public function findMechanicProfile(int $userId)
+{
+    $sql = "
+        SELECT 
+            u.*, 
+            m.mechanic_code, 
+            b.name AS branch_name, 
+            b.branch_code
+        FROM users u
+        JOIN mechanics m ON u.user_id = m.user_id
+        JOIN branches b ON m.branch_id = b.branch_id
+        WHERE u.user_id = ?
+    ";
+    $stmt = $this->pdo->prepare($sql);
+    $stmt->execute([$userId]);
+    return $stmt->fetch(PDO::FETCH_ASSOC);
+}
+
+
+public function findSupervisorProfile(int $userId)
+{
+    $sql = "
+        SELECT 
+            u.*, 
+            b.name AS branch_name, 
+            b.branch_code
+        FROM users u
+        JOIN supervisors s ON u.user_id = s.user_id
+        JOIN branches b ON s.branch_id = b.branch_id
+        WHERE u.user_id = ?
+    ";
+    $stmt = $this->pdo->prepare($sql);
+    $stmt->execute([$userId]);
+    return $stmt->fetch(PDO::FETCH_ASSOC);
+}
 }

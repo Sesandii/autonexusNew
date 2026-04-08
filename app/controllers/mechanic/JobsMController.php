@@ -4,6 +4,7 @@ namespace app\controllers\mechanic;
 use app\core\Controller;
 use app\model\mechanic\WorkOrder;
 
+
 class JobsMController extends Controller
 {
     public function __construct(array $config = [])
@@ -12,47 +13,82 @@ class JobsMController extends Controller
         $this->requireMechanic();
     }
 
-    public function index(): void
-    {
-        if (session_status() !== PHP_SESSION_ACTIVE) session_start();
+public function index(): void
+{
+    if (session_status() !== PHP_SESSION_ACTIVE) session_start();
 
-        // Logged-in user ID
-        $user_id = $_SESSION['user']['user_id'] ?? null;
-        if (!$user_id) {
-            die("Unauthorized");
+    $user_id = $_SESSION['user']['user_id'] ?? null;
+    if (!$user_id) die("Unauthorized");
+
+    // Initialize these as empty arrays first to prevent "Undefined variable" errors
+    $allJobs = [];
+    $myJobs = [];
+
+    // 1. Get branch_id (ensuring it exists)
+    if (!isset($_SESSION['user']['branch_id'])) {
+        $db = db();
+        $stmt = $db->prepare("SELECT branch_id FROM mechanics WHERE user_id = ?");
+        $stmt->execute([$user_id]);
+        $mech = $stmt->fetch();
+        if ($mech) {
+            $_SESSION['user']['branch_id'] = $mech['branch_id'];
         }
+    }
 
-        // Fetch all jobs for display
-        $allJobs = WorkOrder::getAllJobs();
+    $branch_id = $_SESSION['user']['branch_id'] ?? null;
 
-        // Fetch only this mechanic's jobs (optional)
-        $myJobs = WorkOrder::getAssignedJobs($user_id);
+    if ($branch_id) {
+        $workOrderModel = new WorkOrder(); 
+        
+        // 2. Fetch the data
+        $allJobs = WorkOrder::getAllJobs((int)$branch_id);
+        $myJobs  = WorkOrder::getAssignedJobs((int)$user_id);
 
-        // Compute progress and owner
+        // 3. Process the logic for timers/progress
         foreach ($allJobs as &$job) {
-            // Progress calculation
+
+            $totalSeconds = $job['base_duration_minutes'] * 60;
+            
+            if ($job['status'] === 'on_hold') {
+                // Use the exact static snapshot saved when it was paused
+                $job['seconds_left'] = $job['paused_remaining_seconds'] ?? $totalSeconds;
+            } elseif ($job['status'] === 'in_progress' && !empty($job['job_start_time'])) {
+                // Calculate real-time remaining based on when it was started/resumed
+                $elapsed = time() - strtotime($job['job_start_time']);
+                $job['seconds_left'] = max(0, $totalSeconds - $elapsed);
+            } else {
+                $job['seconds_left'] = $totalSeconds;
+            }
+            // --- 1. PROGRESS CALCULATION ---
             $progress = 0;
             switch ($job['status']) {
                 case 'open': $progress = 20; break;
                 case 'in_progress': $progress = 50; break;
+                case 'on_hold': $progress = 50; break;
                 case 'completed': $progress = 100; break;
             }
+    
             if (!empty($job['photo_count'])) $progress += 25;
-            if (!empty($job['checklist_completed'])) $progress += 25;
+    
+            $counts = $workOrderModel->getProgressCounts((int)$job['work_order_id']);
+            if ($counts['total'] > 0) {
+                $itemWeight = 25 / $counts['total'];
+                $checklistProgress = $counts['completed'] * $itemWeight;
+                $progress += $checklistProgress;
+            }
             $job['progress'] = min($progress, 100);
-
-            // Owner flag using user_id
-            // Assuming w.mechanic_id joins to users.user_id as mechanic_user_id
-            $job['owner'] = ($job['user_id'] ?? $job['mechanic_user_id'] ?? 0) == $user_id ? 'mine' : 'others';
+    
+            $job['owner'] = ($job['mechanic_user_id'] ?? 0) == $user_id ? 'mine' : 'others';
         }
-
-        // Send data to view
-        $this->view('mechanic/jobs/index', [
-            'allJobs' => $allJobs,
-            'myJobs' => $myJobs,
-            'user_id' => $user_id
-        ]);
     }
+
+    // 4. Pass to view (now $myJobs is guaranteed to exist)
+    $this->view('mechanic/jobs/index', [
+        'allJobs' => $allJobs,
+        'myJobs'  => $myJobs,
+        'user_id' => $user_id
+    ]);
+}
 
     private function requireMechanic(): void
     {

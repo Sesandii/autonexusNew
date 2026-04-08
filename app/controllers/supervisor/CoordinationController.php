@@ -19,11 +19,20 @@ class CoordinationController {
     }
 
     public function index() {
-
-        $mechanics  = $this->mechanicModel->getAllMechanics();
+        if (session_status() !== PHP_SESSION_ACTIVE) session_start();
+    
+        // 1. Get the branch ID from the logged-in supervisor's session
+        $branchId = $_SESSION['user']['branch_id'] ?? null;
+    
+        if (!$branchId) {
+            die("Unauthorized: No branch assigned to this supervisor.");
+        }
+    
+        // 2. Use a filtered method instead of getAllMechanics()
+        $mechanics  = $this->mechanicModel->getMechanicsByBranch($branchId);
         $issues     = $this->issueModel->getAllIssues();
     
-        // Apply filters
+        // Apply filters (existing logic)
         $mechanic_code   = $_GET['mechanic_code'] ?? null;
         $specialization  = $_GET['specialization'] ?? null;
         $status          = $_GET['status'] ?? null;
@@ -36,10 +45,10 @@ class CoordinationController {
             return $ok;
         });
     
-        // Attach scheduled work orders to each mechanic
+        // Attach scheduled work orders
         foreach ($mechanics as &$mech) {
             $mech['scheduled_orders'] = $this->workOrderModel
-    ->getScheduledWorkOrdersByMechanicCode($mech['mechanic_code']);
+                ->getScheduledWorkOrdersByMechanicCode($mech['mechanic_code']);
         }
         unset($mech);
     

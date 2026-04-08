@@ -65,6 +65,7 @@
 
 
   <h3><?= $mech['mechanic_code'] ?></h3>
+  <p>Name: <?= htmlspecialchars($mech['first_name'] . ' ' . $mech['last_name']) ?></p>
   <p>Skill: <?= $mech['specialization'] ?></p>
   <p>Status: <strong><?= $mech['status'] ?></strong></p>
   <p>Active Work Orders: <?= $load ?></p>
@@ -72,37 +73,6 @@
   <div class="workorder-list">
     <?php foreach($mech['scheduled_orders'] as $wo):
       if($wo['mechanic_id'] == $mech['mechanic_id']): ?>
-        <?php
-$progress = 0;
-
-// Status-based progress
-switch (strtolower($wo['status'])) {
-    case 'open':
-        $progress = 20;
-        break;
-    case 'in_progress':
-        $progress = 50;
-        break;
-    case 'completed':
-        $progress = 100;
-        break;
-}
-
-// Extra progress for photos
-if (!empty($wo['photo_count']) && $wo['photo_count'] > 0) {
-    $progress += 15;
-}
-
-// Extra progress for checklist
-if (!empty($wo['checklist_completed']) && $wo['checklist_completed'] > 0) {
-    $progress += 15;
-}
-
-// Ensure max 100%
-$progress = min($progress, 100);
-?>
-
-  
 <?php 
 $start = new DateTime($wo['calculated_start']);
 $end   = new DateTime($wo['calculated_end']);

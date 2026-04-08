@@ -126,39 +126,44 @@ public function getAppointmentDetails($appointmentId)
     return $stmt->fetch(\PDO::FETCH_ASSOC);
 }  
 
-public function getVehicleHistoryByLicenseWithDateRange(
-    string $licensePlate,
-    string $fromDate,
-    string $toDate
-) {
-    $sql = "
-        SELECT 
-            a.appointment_id,
-            a.appointment_date,
-            a.appointment_time,
-            a.status,
-            s.name AS service_name,
-            s.description AS service_description,
-            s.default_price,
-            a.branch_id,
-            a.updated_at
-        FROM appointments a
-        JOIN vehicles v ON v.vehicle_id = a.vehicle_id
-        JOIN services s ON s.service_id = a.service_id
-        WHERE v.license_plate = :plate
-          AND a.status = 'completed'
-          AND DATE(a.updated_at) BETWEEN :fromDate AND :toDate
-        ORDER BY a.updated_at DESC
-    ";
-
-    $stmt = $this->db->prepare($sql);
-    $stmt->execute([
-        'plate' => $licensePlate,
-        'fromDate' => $fromDate,
-        'toDate' => $toDate
-    ]);
-
-    return $stmt->fetchAll(\PDO::FETCH_ASSOC);
-}
+public function getVehicleHistoryByLicenseWithDateRange($licensePlate, $fromDate = null, $toDate = null)
+    {
+        $sql = "
+            SELECT 
+                a.appointment_id,
+                a.appointment_date,
+                a.appointment_time,
+                a.status,
+                a.updated_at,
+                s.name AS service_name,
+                s.description AS service_description,
+                s.default_price,
+                a.branch_id
+            FROM appointments a
+            JOIN vehicles v ON v.vehicle_id = a.vehicle_id
+            JOIN services s ON s.service_id = a.service_id
+            WHERE v.license_plate = :plate
+              AND a.status = 'completed'
+        ";
+    
+        $params = ['plate' => $licensePlate];
+    
+        // ✅ Changed from updated_at to appointment_date per your request
+        if (!empty($fromDate)) {
+            $sql .= " AND DATE(a.appointment_date) >= :fromDate";
+            $params['fromDate'] = $fromDate;
+        }
+    
+        if (!empty($toDate)) {
+            $sql .= " AND DATE(a.appointment_date) <= :toDate";
+            $params['toDate'] = $toDate;
+        }
+    
+        $sql .= " ORDER BY a.appointment_date DESC"; // Most recent appointments first
+    
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
 
 }

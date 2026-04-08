@@ -79,76 +79,80 @@ public function index()
 }
 }
 
-
-
-
     /* =========================
        STORE REPORT
        URL: POST /supervisor/reports/store/{workOrderId}
     ========================= */
     public function store()
-{
-    if (session_status() !== PHP_SESSION_ACTIVE) session_start();
-
-    $workOrderId = $_POST['work_order_id'] ?? null;
-    if (!$workOrderId) {
-        die('Invalid work order ID');
-    }
-
-    $model = new Report();
-
-    // 1️⃣ Create report
-    $model->create([
-        'work_order_id'               => $workOrderId,
-        'inspection_notes'            => $_POST['inspection_notes'] ?? '',
-        'quality_rating'              => (int)($_POST['quality_rating'] ?? 0),
-
-        'checklist_verified'          => in_array('tasks_verified', $_POST['checklist'] ?? []) ? 1 : 0,
-        'test_driven'                 => in_array('test_driven', $_POST['checklist'] ?? []) ? 1 : 0,
-        'concerns_addressed'          => in_array('concerns_addressed', $_POST['checklist'] ?? []) ? 1 : 0,
-
-        'report_summary'              => $_POST['report_summary'] ?? '',
-        'next_service_recommendation' =>(!empty($_POST['next_service_recommendation']))
-    ? $_POST['next_service_recommendation']
-    : null,
-
-        'status'                      => $_POST['status'] ?? 'draft'
-    ]);
-
-    // 2️⃣ Get newly created report ID
-    $reportId = $model->getLastInsertId();
-
-    // 3️⃣ Handle photo uploads
-    if (!empty($_FILES['work_images']['name'][0])) {
-
-        $uploadDir = __DIR__ . '/../../../public/assets/img/report_photos/';
-        if (!is_dir($uploadDir)) {
-            mkdir($uploadDir, 0777, true);
+    {
+        if (session_status() !== PHP_SESSION_ACTIVE) session_start();
+    
+        $workOrderId = $_POST['work_order_id'] ?? null;
+        $userId = $_SESSION['user']['user_id'] ?? null; 
+    
+        if (!$workOrderId || !$userId) {
+            die('Invalid session or work order');
         }
-
-        foreach ($_FILES['work_images']['tmp_name'] as $key => $tmpName) {
-
-            if ($_FILES['work_images']['error'][$key] === UPLOAD_ERR_OK) {
-
-                $ext = pathinfo($_FILES['work_images']['name'][$key], PATHINFO_EXTENSION);
-                $fileName = uniqid('report_') . '.' . $ext;
-                $targetPath = $uploadDir . $fileName;
-
-                if (move_uploaded_file($tmpName, $targetPath)) {
-                    $model->savePhoto(
-                        $reportId,
-                        'assets/img/report_photos/' . $fileName
-                    );
-                    
+    
+        $model = new Report();
+    
+        // --- NEW STEP: Get supervisor_id from the supervisors table ---
+        // Assuming you have access to a DB helper or the pdo inside the controller
+        $db = db(); 
+        $stmt = $db->prepare("SELECT supervisor_id FROM supervisors WHERE user_id = ?");
+        $stmt->execute([$userId]);
+        $supervisor = $stmt->fetch();
+    
+        if (!$supervisor) {
+            die('Error: You are not registered as a supervisor in the system.');
+        }
+    
+        $realSupervisorId = $supervisor['supervisor_id'];
+        // --------------------------------------------------------------
+    
+        $model->create([
+            'work_order_id'               => $workOrderId,
+            'supervisor_id'               => $realSupervisorId, // Now storing the PK from supervisors table
+            'inspection_notes'            => $_POST['inspection_notes'] ?? '',
+            'quality_rating'              => (int)($_POST['quality_rating'] ?? 0),
+            'checklist_verified'          => in_array('tasks_verified', $_POST['checklist'] ?? []) ? 1 : 0,
+            'test_driven'                 => in_array('test_driven', $_POST['checklist'] ?? []) ? 1 : 0,
+            'concerns_addressed'          => in_array('concerns_addressed', $_POST['checklist'] ?? []) ? 1 : 0,
+            'report_summary'              => $_POST['report_summary'] ?? '',
+            'next_service_recommendation' => !empty($_POST['next_service_recommendation']) ? $_POST['next_service_recommendation'] : null,
+            'status'                      => $_POST['status'] ?? 'draft'
+        ]);
+    
+        // 3. Get newly created report ID
+        $reportId = $model->getLastInsertId();
+    
+        // 4. Handle photo uploads (unchanged)
+        if (!empty($_FILES['work_images']['name'][0])) {
+            $uploadDir = __DIR__ . '/../../../public/assets/img/report_photos/';
+            if (!is_dir($uploadDir)) {
+                mkdir($uploadDir, 0777, true);
+            }
+    
+            foreach ($_FILES['work_images']['tmp_name'] as $key => $tmpName) {
+                if ($_FILES['work_images']['error'][$key] === UPLOAD_ERR_OK) {
+                    $ext = pathinfo($_FILES['work_images']['name'][$key], PATHINFO_EXTENSION);
+                    $fileName = uniqid('report_') . '.' . $ext;
+                    $targetPath = $uploadDir . $fileName;
+    
+                    if (move_uploaded_file($tmpName, $targetPath)) {
+                        $model->savePhoto(
+                            $reportId,
+                            'assets/img/report_photos/' . $fileName
+                        );
+                    }
                 }
             }
         }
+    
+        // 5. Redirect
+        header('Location: ' . rtrim(BASE_URL, '/') . '/supervisor/reports/indexp');
+        exit;
     }
-
-    // 4️⃣ Redirect
-    header('Location: ' . rtrim(BASE_URL, '/') . '/supervisor/reports/indexp');
-    exit;
-}
 
 
     /* =========================
