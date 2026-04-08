@@ -2,6 +2,7 @@
 $base  = rtrim(BASE_URL, '/');
 $items = array_values($appointments ?? []);
 $appointmentsCssVersion = @filemtime(dirname(APP_ROOT) . '/public/assets/css/customer/appointments.css') ?: time();
+$sidebarCssVersion = @filemtime(dirname(APP_ROOT) . '/public/assets/css/customer/sidebar.css') ?: time();
 
 $safeStatusClass = static function (string $value): string {
     $normalized = strtolower(trim($value));
@@ -83,7 +84,7 @@ foreach ($rows as $row) {
   <title><?= htmlspecialchars($title ?? 'Appointments', ENT_QUOTES, 'UTF-8') ?> - AutoNexus</title>
 
   <link rel="stylesheet" href="<?= $base ?>/public/assets/css/normalize-ui.css">
-  <link rel="stylesheet" href="<?= $base ?>/public/assets/css/customer/sidebar.css">
+  <link rel="stylesheet" href="<?= $base ?>/public/assets/css/customer/sidebar.css?v=<?= (int)$sidebarCssVersion ?>">
   <link rel="stylesheet" href="<?= $base ?>/public/assets/css/customer/appointments.css?v=<?= (int)$appointmentsCssVersion ?>">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>

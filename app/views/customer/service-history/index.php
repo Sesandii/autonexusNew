@@ -1,5 +1,6 @@
 <?php
 $base = rtrim(BASE_URL, '/');
+$sidebarCssVersion = @filemtime(dirname(APP_ROOT) . '/public/assets/css/customer/sidebar.css') ?: time();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -9,7 +10,7 @@ $base = rtrim(BASE_URL, '/');
   <title><?= htmlspecialchars($title ?? 'Service History') ?> - AutoNexus</title>
 
   <link rel="stylesheet" href="<?= $base ?>/public/assets/css/customer/service-history.css?v=<?= time() ?>">
-  <link rel="stylesheet" href="<?= $base ?>/public/assets/css/customer/sidebar.css">
+  <link rel="stylesheet" href="<?= $base ?>/public/assets/css/customer/sidebar.css?v=<?= (int)$sidebarCssVersion ?>">
   <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
