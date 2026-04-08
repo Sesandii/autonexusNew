@@ -74,7 +74,7 @@
     </div>
     <div class="info-row">
         <span>Mileage</span>
-        <span><?= $job['mileage'] ?></span>
+        <span><?= $job['current_mileage'] ?></span>
     </div>
 </div>
 

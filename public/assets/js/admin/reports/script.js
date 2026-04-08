@@ -5,8 +5,8 @@
 
   function toChartXY(rows) {
     return {
-      labels: rows.map(r => r.label),
-      values: rows.map(r => Number(r.value || 0))
+      labels: (rows || []).map((r) => r.label),
+      values: (rows || []).map((r) => Number(r.value || 0)),
     };
   }
 
@@ -36,7 +36,7 @@
     const el = document.getElementById(id);
     if (!el) return;
     el.href = url;
-    el.setAttribute("target", "_blank"); // optional: open download in new tab
+    el.setAttribute("target", "_blank");
   }
 
   function bindExports(csvId, pdfId, key) {
@@ -44,133 +44,119 @@
     bindLink(pdfId, exportUrlPdf(key));
   }
 
-  // Tabs
-  document.querySelectorAll(".tab-btn").forEach(btn => {
+  document.querySelectorAll(".tab-btn").forEach((btn) => {
     btn.addEventListener("click", () => {
-      document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+      document.querySelectorAll(".tab-btn").forEach((b) => b.classList.remove("active"));
       btn.classList.add("active");
 
       const tab = btn.dataset.tab;
-      document.querySelectorAll(".tab-content").forEach(c => (c.style.display = "none"));
+      document.querySelectorAll(".tab-content").forEach((c) => (c.style.display = "none"));
       const target = document.getElementById("tab-" + tab);
       if (target) target.style.display = "block";
     });
   });
 
-  // KPIs
   const kpis = document.getElementById("kpis");
   if (kpis) {
-    const avgCompletion = data.service?.avgCompletionMins ?? 0;
-    const avgInvoice = data.revenue?.avgInvoice ?? 0;
-    const avgApprovalHours = data.approval?.avgApprovalHours ?? 0;
+    const avgCompletion = Number(data.service?.avgCompletionMins ?? 0);
+    const avgInvoice = Number(data.revenue?.avgInvoice ?? 0);
+    const avgApprovalHours = Number(data.approval?.avgApprovalHours ?? 0);
+    const avgRevenuePerAppointment = Number(data.revenue?.avgRevenuePerAppointment ?? 0);
+    const avgRevenuePerCustomer = Number(data.revenue?.avgRevenuePerCustomer ?? 0);
+    const avgWaitingMins = Number(data.service?.avgWaitingMins ?? 0);
+    const feedbackResponseTurnaround = Number(data.feedback?.feedbackResponseTurnaround ?? 0);
 
     kpis.innerHTML = `
-      <div class="kpi"><div class="label">Avg Completion Time</div><div class="value">${Number(avgCompletion).toFixed(0)} mins</div></div>
-      <div class="kpi"><div class="label">Avg Invoice Value</div><div class="value">${Number(avgInvoice).toFixed(2)}</div></div>
-      <div class="kpi"><div class="label">Avg Approval Time</div><div class="value">${Number(avgApprovalHours).toFixed(1)} hrs</div></div>
+      <div class="kpi"><div class="label">Avg Completion Time</div><div class="value">${avgCompletion.toFixed(0)} mins</div></div>
+      <div class="kpi"><div class="label">Avg Waiting Time</div><div class="value">${avgWaitingMins.toFixed(0)} mins</div></div>
+      <div class="kpi"><div class="label">Avg Invoice Value</div><div class="value">${avgInvoice.toFixed(2)}</div></div>
+      <div class="kpi"><div class="label">Avg Revenue / Appointment</div><div class="value">${avgRevenuePerAppointment.toFixed(2)}</div></div>
+      <div class="kpi"><div class="label">Avg Revenue / Customer</div><div class="value">${avgRevenuePerCustomer.toFixed(2)}</div></div>
+      <div class="kpi"><div class="label">Avg Approval Time</div><div class="value">${avgApprovalHours.toFixed(1)} hrs</div></div>
+      <div class="kpi"><div class="label">Feedback Response Time</div><div class="value">${feedbackResponseTurnaround.toFixed(1)} hrs</div></div>
     `;
   }
 
-  // Chart helpers
-  function makeBar(canvas, rows) {
+  function makeChart(canvasId, type, rows) {
+    const el = document.getElementById(canvasId);
+    if (!el) return null;
+
     const { labels, values } = toChartXY(rows);
-    return new Chart(canvas, {
-      type: "bar",
-      data: { labels, datasets: [{ label: "Value", data: values }] },
-      options: { responsive: true, maintainAspectRatio: false }
+    return new Chart(el, {
+      type,
+      data: {
+        labels,
+        datasets: [{ label: "Value", data: values }],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+      },
     });
   }
 
-  function makeLine(canvas, rows) {
-    const { labels, values } = toChartXY(rows);
-    return new Chart(canvas, {
-      type: "line",
-      data: { labels, datasets: [{ label: "Value", data: values, fill: false }] },
-      options: { responsive: true, maintainAspectRatio: false }
-    });
-  }
+  function makeBar(id, rows) { return makeChart(id, "bar", rows); }
+  function makeLine(id, rows) { return makeChart(id, "line", rows); }
+  function makeDoughnut(id, rows) { return makeChart(id, "doughnut", rows); }
 
-  function makeDoughnut(canvas, rows) {
-    const { labels, values } = toChartXY(rows);
-    return new Chart(canvas, {
-      type: "doughnut",
-      data: { labels, datasets: [{ label: "Value", data: values }] },
-      options: { responsive: true, maintainAspectRatio: false }
-    });
-  }
+  makeBar("chartTopServices", data.service?.topServices || []);
+  makeLine("chartServiceTrend", data.service?.trend || []);
+  makeDoughnut("chartServiceTypeDist", data.service?.typeDist || []);
+  makeBar("chartWeekdayDemand", data.service?.weekdayDemand || []);
+  makeLine("chartSeasonalDemand", data.service?.seasonalDemand || []);
+  makeBar("chartTurnaroundByBranch", data.service?.turnaroundByBranch || []);
+  makeDoughnut("chartRepeatCustomerFrequency", data.service?.repeatCustomerFrequency || []);
+  makeBar("chartMostRebookedServices", data.service?.mostRebookedServices || []);
 
-  // SERVICE
-  const top = document.getElementById("chartTopServices");
-  if (top) {
-    makeBar(top, data.service?.topServices || []);
-    makeLine(document.getElementById("chartServiceTrend"), data.service?.trend || []);
-    makeDoughnut(document.getElementById("chartServiceTypeDist"), data.service?.typeDist || []);
+  makeLine("chartRevenueTrend", data.revenue?.trend || []);
+  makeLine("chartCostTrend", data.revenue?.costTrend || []);
+  makeLine("chartProfitTrend", data.revenue?.profitTrend || []);
+  makeBar("chartRevenueByBranch", data.revenue?.byBranch || []);
+  makeDoughnut("chartRevenueByServiceType", data.revenue?.byServiceType || []);
+  makeBar("chartUnpaidInvoiceAging", data.revenue?.unpaidInvoiceAging || []);
+  makeDoughnut("chartPaymentMethodBreakdown", data.revenue?.paymentMethodBreakdown || []);
+  makeDoughnut("chartPaymentStatusBreakdown", data.revenue?.paymentStatusBreakdown || []);
+  makeBar("chartBranchPaymentCollection", data.revenue?.branchPaymentCollectionPerformance || []);
 
-    bindExports("exportTopServices", "exportTopServicesPdf", "topServices");
-    bindExports("exportServiceTrend", "exportServiceTrendPdf", "serviceTrend");
-    bindExports("exportServiceTypeDist", "exportServiceTypeDistPdf", "serviceTypeDistribution");
-  }
+  makeDoughnut("chartApptStatus", data.appointments?.status || []);
+  makeBar("chartApptByHour", data.appointments?.byHour || []);
+  makeLine("chartApptTrend", data.appointments?.trend || []);
+  makeLine("chartCancellationTrend", data.appointments?.cancellationTrend || []);
 
-  // REVENUE
-  const rev = document.getElementById("chartRevenueTrend");
-  if (rev) {
-    makeLine(rev, data.revenue?.trend || []);
-    makeBar(document.getElementById("chartRevenueByBranch"), data.revenue?.byBranch || []);
-    makeDoughnut(document.getElementById("chartRevenueByServiceType"), data.revenue?.byServiceType || []);
+  makeBar("chartBranchCompleted", data.branches?.completed || []);
+  makeBar("chartBranchRating", data.branches?.avgRating || []);
+  makeBar("chartBranchCapacityUtilization", data.branches?.capacityUtilization || []);
+  makeBar("chartBranchStaffingVsWorkload", data.branches?.staffingVsWorkload || []);
+  makeBar("chartBranchServiceCoverage", data.branches?.serviceCoverageMatrix || []);
+  makeBar("chartBranchComplaintRate", data.branches?.complaintRate || []);
+  makeBar("chartBranchApprovalRejectionRate", data.branches?.approvalRejectionRate || []);
+  makeBar("chartBranchQualityScore", data.branches?.qualityScore || []);
+  makeBar("chartUnderperformingBranches", data.branches?.underperformingBranches || []);
 
-    bindExports("exportRevenueTrend", "exportRevenueTrendPdf", "revenueTrend");
-    bindExports("exportRevenueByBranch", "exportRevenueByBranchPdf", "revenueByBranch");
-    bindExports("exportRevenueByServiceType", "exportRevenueByServiceTypePdf", "revenueByServiceType");
-  }
+  makeBar("chartJobsPerMechanic", data.staff?.jobsPerMechanic || []);
+  makeBar("chartSubmittedByManagers", data.staff?.submittedByManagers || []);
+  makeBar("chartManagerApprovalDecisions", data.staff?.managerApprovalDecisions || []);
+  makeBar("chartMechanicQualityOutcomes", data.staff?.mechanicQualityOutcomes || []);
+  makeBar("chartStaffComplaintAssociation", data.staff?.staffComplaintAssociation || []);
+  makeBar("chartAvgJobsPerDayPerMechanic", data.staff?.avgJobsPerDayPerMechanic || []);
+  makeBar("chartDelayedWorkOrdersByMechanic", data.staff?.delayedWorkOrdersByMechanic || []);
 
-  // APPOINTMENTS
-  const ap = document.getElementById("chartApptStatus");
-  if (ap) {
-    makeDoughnut(ap, data.appointments?.status || []);
-    makeBar(document.getElementById("chartApptByHour"), data.appointments?.byHour || []);
-    makeLine(document.getElementById("chartApptTrend"), data.appointments?.trend || []);
+  makeDoughnut("chartRatingDist", data.feedback?.ratingDist || []);
+  makeLine("chartFeedbackTrend", data.feedback?.trend || []);
+  makeBar("chartLowestRated", data.feedback?.lowestRated || []);
+  makeBar("chartBranchRatingTrend", data.feedback?.branchRatingTrend || []);
+  makeBar("chartRatingByServiceType", data.feedback?.ratingByServiceType || []);
+  makeBar("chartMostPraisedServices", data.feedback?.mostPraisedServices || []);
+  makeBar("chartRepeatNegativeCustomers", data.feedback?.repeatNegativeFeedbackCustomers || []);
 
-    bindExports("exportApptStatus", "exportApptStatusPdf", "appointmentStatusCounts");
-    bindExports("exportApptByHour", "exportApptByHourPdf", "appointmentsByHour");
-    bindExports("exportApptTrend", "exportApptTrendPdf", "appointmentsTrend");
-  }
+  makeBar("chartApprovalStatus", data.approval?.statusCounts || []);
 
-  // BRANCHES
-  const bc = document.getElementById("chartBranchCompleted");
-  if (bc) {
-    makeBar(bc, data.branches?.completed || []);
-    makeBar(document.getElementById("chartBranchRating"), data.branches?.avgRating || []);
-
-    bindExports("exportBranchCompleted", "exportBranchCompletedPdf", "branchCompletedServices");
-    bindExports("exportBranchRating", "exportBranchRatingPdf", "branchAvgRating");
-  }
-
-  // STAFF
-  const jm = document.getElementById("chartJobsPerMechanic");
-  if (jm) {
-    makeBar(jm, data.staff?.jobsPerMechanic || []);
-    makeBar(document.getElementById("chartSubmittedByManagers"), data.staff?.submittedByManagers || []);
-
-    bindExports("exportJobsPerMechanic", "exportJobsPerMechanicPdf", "jobsPerMechanic");
-    bindExports("exportSubmittedByManagers", "exportSubmittedByManagersPdf", "servicesSubmittedByManagers");
-  }
-
-  // FEEDBACK
-  const rd = document.getElementById("chartRatingDist");
-  if (rd) {
-    makeDoughnut(rd, data.feedback?.ratingDist || []);
-    makeLine(document.getElementById("chartFeedbackTrend"), data.feedback?.trend || []);
-    makeBar(document.getElementById("chartLowestRated"), data.feedback?.lowestRated || []);
-
-    bindExports("exportRatingDist", "exportRatingDistPdf", "ratingDistribution");
-    bindExports("exportFeedbackTrend", "exportFeedbackTrendPdf", "feedbackTrend");
-    bindExports("exportLowestRated", "exportLowestRatedPdf", "lowestRatedServices");
-  }
-
-  // APPROVAL
-  const as = document.getElementById("chartApprovalStatus");
-  if (as) {
-    makeBar(as, data.approval?.statusCounts || []);
-    bindExports("exportApprovalStatus", "exportApprovalStatusPdf", "approvalStatusCounts");
-  }
+  makeLine("chartComplaintTrend", data.complaints?.trend || []);
+  makeLine("chartComplaintResolutionTrend", data.complaints?.resolutionTrend || []);
+  makeBar("chartComplaintClosureRate", data.complaints?.closureRateByBranch || []);
+  makeDoughnut("chartComplaintPriorityAnalysis", data.complaints?.priorityAnalysis || []);
+  makeBar("chartMostComplainedServices", data.complaints?.mostComplainedServices || []);
+  makeBar("chartMostComplainedBranches", data.complaints?.mostComplainedBranches || []);
+  makeBar("chartMostComplainedStaff", data.complaints?.mostComplainedStaff || []);
+  makeLine("chartSlaBreachTrend", data.complaints?.slaBreachTrend || []);
 })();

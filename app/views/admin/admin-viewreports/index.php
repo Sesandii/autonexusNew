@@ -1,10 +1,6 @@
 <?php
-/** @var array $filters */
-/** @var array $branches */
-/** @var string $reportDataJson */
-/** @var string $current */
 $current = 'reports';
-$B = rtrim(BASE_URL,'/');
+$B = rtrim(BASE_URL, '/');
 
 $from = htmlspecialchars($filters['from'] ?? '', ENT_QUOTES, 'UTF-8');
 $to   = htmlspecialchars($filters['to'] ?? '', ENT_QUOTES, 'UTF-8');
@@ -21,7 +17,6 @@ $group = htmlspecialchars($filters['group'] ?? 'month', ENT_QUOTES, 'UTF-8');
   <link rel="stylesheet" href="<?= $B ?>/app/views/layouts/admin-sidebar/styles.css">
   <link rel="stylesheet" href="<?= $B ?>/public/assets/css/admin/reports/style.css">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
@@ -29,7 +24,7 @@ $group = htmlspecialchars($filters['group'] ?? 'month', ENT_QUOTES, 'UTF-8');
     .filter-bar{display:flex;flex-wrap:wrap;gap:10px;align-items:end;margin:14px 0;}
     .filter-bar label{font-size:12px;color:#374151;display:flex;flex-direction:column;gap:4px;}
     .filter-bar select,.filter-bar input{padding:8px 10px;border-radius:10px;border:1px solid #d1d5db;background:#fff;}
-    .btn{border:0;border-radius:10px;padding:9px 14px;cursor:pointer;font-weight:600}
+    .btn{border:0;border-radius:10px;padding:9px 14px;cursor:pointer;font-weight:600;text-decoration:none;display:inline-flex;align-items:center;gap:8px}
     .btn-primary{background:#111827;color:#fff;}
     .btn-ghost{background:#fff;color:#111827;border:1px solid #d1d5db;}
     .tabs{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
@@ -44,6 +39,7 @@ $group = htmlspecialchars($filters['group'] ?? 'month', ENT_QUOTES, 'UTF-8');
     .chart-box{height:310px;}
     .chart-box canvas{width:100% !important;height:100% !important;}
     .export-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
+    .section-title{margin:22px 0 6px;font-size:20px;font-weight:800;color:#111827}
   </style>
 </head>
 
@@ -51,13 +47,13 @@ $group = htmlspecialchars($filters['group'] ?? 'month', ENT_QUOTES, 'UTF-8');
 <?php include APP_ROOT . '/views/layouts/admin-sidebar/sidebar.php'; ?>
 
 <div class="main">
-  <h2 style="margin:0 0 10px 0;">Reports</h2>
+  <h2 style="margin:0 0 10px 0;">Reports & Analytics</h2>
 
-  <!-- Filters -->
   <form class="filter-bar" method="get" action="<?= $B ?>/admin/admin-viewreports">
     <label>From
       <input type="date" name="from" value="<?= $from ?>">
     </label>
+
     <label>To
       <input type="date" name="to" value="<?= $to ?>">
     </label>
@@ -75,8 +71,8 @@ $group = htmlspecialchars($filters['group'] ?? 'month', ENT_QUOTES, 'UTF-8');
 
     <label>Group By
       <select name="group">
-        <option value="month" <?= $group==='month' ? 'selected' : '' ?>>Month</option>
-        <option value="day"   <?= $group==='day'   ? 'selected' : '' ?>>Day</option>
+        <option value="month" <?= $group === 'month' ? 'selected' : '' ?>>Month</option>
+        <option value="day" <?= $group === 'day' ? 'selected' : '' ?>>Day</option>
       </select>
     </label>
 
@@ -85,7 +81,6 @@ $group = htmlspecialchars($filters['group'] ?? 'month', ENT_QUOTES, 'UTF-8');
     </button>
   </form>
 
-  <!-- Tabs -->
   <div class="tabs">
     <button type="button" class="tab-btn active" data-tab="service">Service</button>
     <button type="button" class="tab-btn" data-tab="revenue">Revenue</button>
@@ -94,196 +89,109 @@ $group = htmlspecialchars($filters['group'] ?? 'month', ENT_QUOTES, 'UTF-8');
     <button type="button" class="tab-btn" data-tab="staff">Staff</button>
     <button type="button" class="tab-btn" data-tab="feedback">Feedback</button>
     <button type="button" class="tab-btn" data-tab="approval">Approvals</button>
+    <button type="button" class="tab-btn" data-tab="complaints">Complaints</button>
   </div>
 
-  <!-- KPI row -->
   <div class="kpis" id="kpis"></div>
 
-  <!-- SERVICE TAB -->
   <div class="tab-content" id="tab-service" style="display:block;">
+    <div class="section-title">Service Analytics</div>
     <div class="grid2">
-      <div class="box">
-        <h4 style="margin:6px 0 10px;">Top 10 Services (Completed)</h4>
-        <div class="chart-box"><canvas id="chartTopServices"></canvas></div>
-        <div class="export-row">
-          <a class="btn btn-ghost" id="exportTopServices" href="#"><i class="fa-solid fa-file-export"></i> CSV</a>
-          <a class="btn btn-ghost" id="exportTopServicesPdf" href="#"><i class="fa-solid fa-file-pdf"></i> PDF</a>
-        </div>
-      </div>
-
-      <div class="box">
-        <h4 style="margin:6px 0 10px;">Service Demand Trend</h4>
-        <div class="chart-box"><canvas id="chartServiceTrend"></canvas></div>
-        <div class="export-row">
-          <a class="btn btn-ghost" id="exportServiceTrend" href="#"><i class="fa-solid fa-file-export"></i> CSV</a>
-          <a class="btn btn-ghost" id="exportServiceTrendPdf" href="#"><i class="fa-solid fa-file-pdf"></i> PDF</a>
-        </div>
-      </div>
-
-      <div class="box">
-        <h4 style="margin:6px 0 10px;">Service Type Distribution</h4>
-        <div class="chart-box"><canvas id="chartServiceTypeDist"></canvas></div>
-        <div class="export-row">
-          <a class="btn btn-ghost" id="exportServiceTypeDist" href="#"><i class="fa-solid fa-file-export"></i> CSV</a>
-          <a class="btn btn-ghost" id="exportServiceTypeDistPdf" href="#"><i class="fa-solid fa-file-pdf"></i> PDF</a>
-        </div>
-      </div>
+      <div class="box"><h4>Top 10 Services</h4><div class="chart-box"><canvas id="chartTopServices"></canvas></div></div>
+      <div class="box"><h4>Service Demand Trend</h4><div class="chart-box"><canvas id="chartServiceTrend"></canvas></div></div>
+      <div class="box"><h4>Service Type Distribution</h4><div class="chart-box"><canvas id="chartServiceTypeDist"></canvas></div></div>
+      <div class="box"><h4>Demand by Weekday</h4><div class="chart-box"><canvas id="chartWeekdayDemand"></canvas></div></div>
+      <div class="box"><h4>Seasonal Demand</h4><div class="chart-box"><canvas id="chartSeasonalDemand"></canvas></div></div>
+      <div class="box"><h4>Turnaround Time by Branch</h4><div class="chart-box"><canvas id="chartTurnaroundByBranch"></canvas></div></div>
+      <div class="box"><h4>Repeat Customer Frequency</h4><div class="chart-box"><canvas id="chartRepeatCustomerFrequency"></canvas></div></div>
+      <div class="box"><h4>Most Rebooked Services</h4><div class="chart-box"><canvas id="chartMostRebookedServices"></canvas></div></div>
     </div>
   </div>
 
-  <!-- REVENUE TAB -->
   <div class="tab-content" id="tab-revenue" style="display:none;">
+    <div class="section-title">Financial Analytics</div>
     <div class="grid2">
-      <div class="box">
-        <h4 style="margin:6px 0 10px;">Revenue Trend (Paid Invoices)</h4>
-        <div class="chart-box"><canvas id="chartRevenueTrend"></canvas></div>
-        <div class="export-row">
-          <a class="btn btn-ghost" id="exportRevenueTrend" href="#"><i class="fa-solid fa-file-export"></i> CSV</a>
-          <a class="btn btn-ghost" id="exportRevenueTrendPdf" href="#"><i class="fa-solid fa-file-pdf"></i> PDF</a>
-        </div>
-      </div>
-
-      <div class="box">
-        <h4 style="margin:6px 0 10px;">Revenue by Branch</h4>
-        <div class="chart-box"><canvas id="chartRevenueByBranch"></canvas></div>
-        <div class="export-row">
-          <a class="btn btn-ghost" id="exportRevenueByBranch" href="#"><i class="fa-solid fa-file-export"></i> CSV</a>
-          <a class="btn btn-ghost" id="exportRevenueByBranchPdf" href="#"><i class="fa-solid fa-file-pdf"></i> PDF</a>
-        </div>
-      </div>
-
-      <div class="box">
-        <h4 style="margin:6px 0 10px;">Revenue by Service Type</h4>
-        <div class="chart-box"><canvas id="chartRevenueByServiceType"></canvas></div>
-        <div class="export-row">
-          <a class="btn btn-ghost" id="exportRevenueByServiceType" href="#"><i class="fa-solid fa-file-export"></i> CSV</a>
-          <a class="btn btn-ghost" id="exportRevenueByServiceTypePdf" href="#"><i class="fa-solid fa-file-pdf"></i> PDF</a>
-        </div>
-      </div>
+      <div class="box"><h4>Revenue Trend</h4><div class="chart-box"><canvas id="chartRevenueTrend"></canvas></div></div>
+      <div class="box"><h4>Cost Trend</h4><div class="chart-box"><canvas id="chartCostTrend"></canvas></div></div>
+      <div class="box"><h4>Profit Trend</h4><div class="chart-box"><canvas id="chartProfitTrend"></canvas></div></div>
+      <div class="box"><h4>Revenue by Branch</h4><div class="chart-box"><canvas id="chartRevenueByBranch"></canvas></div></div>
+      <div class="box"><h4>Revenue by Service Type</h4><div class="chart-box"><canvas id="chartRevenueByServiceType"></canvas></div></div>
+      <div class="box"><h4>Unpaid Invoice Aging</h4><div class="chart-box"><canvas id="chartUnpaidInvoiceAging"></canvas></div></div>
+      <div class="box"><h4>Payment Method Breakdown</h4><div class="chart-box"><canvas id="chartPaymentMethodBreakdown"></canvas></div></div>
+      <div class="box"><h4>Payment Status Breakdown</h4><div class="chart-box"><canvas id="chartPaymentStatusBreakdown"></canvas></div></div>
+      <div class="box"><h4>Branch Payment Collection Performance</h4><div class="chart-box"><canvas id="chartBranchPaymentCollection"></canvas></div></div>
     </div>
   </div>
 
-  <!-- APPOINTMENTS TAB -->
   <div class="tab-content" id="tab-appointments" style="display:none;">
+    <div class="section-title">Appointment & Operations Analytics</div>
     <div class="grid2">
-      <div class="box">
-        <h4 style="margin:6px 0 10px;">Appointment Statuses</h4>
-        <div class="chart-box"><canvas id="chartApptStatus"></canvas></div>
-        <div class="export-row">
-          <a class="btn btn-ghost" id="exportApptStatus" href="#"><i class="fa-solid fa-file-export"></i> CSV</a>
-          <a class="btn btn-ghost" id="exportApptStatusPdf" href="#"><i class="fa-solid fa-file-pdf"></i> PDF</a>
-        </div>
-      </div>
-
-      <div class="box">
-        <h4 style="margin:6px 0 10px;">Appointments by Hour</h4>
-        <div class="chart-box"><canvas id="chartApptByHour"></canvas></div>
-        <div class="export-row">
-          <a class="btn btn-ghost" id="exportApptByHour" href="#"><i class="fa-solid fa-file-export"></i> CSV</a>
-          <a class="btn btn-ghost" id="exportApptByHourPdf" href="#"><i class="fa-solid fa-file-pdf"></i> PDF</a>
-        </div>
-      </div>
-
-      <div class="box">
-        <h4 style="margin:6px 0 10px;">Booking Trend</h4>
-        <div class="chart-box"><canvas id="chartApptTrend"></canvas></div>
-        <div class="export-row">
-          <a class="btn btn-ghost" id="exportApptTrend" href="#"><i class="fa-solid fa-file-export"></i> CSV</a>
-          <a class="btn btn-ghost" id="exportApptTrendPdf" href="#"><i class="fa-solid fa-file-pdf"></i> PDF</a>
-        </div>
-      </div>
+      <div class="box"><h4>Appointment Statuses</h4><div class="chart-box"><canvas id="chartApptStatus"></canvas></div></div>
+      <div class="box"><h4>Appointments by Hour</h4><div class="chart-box"><canvas id="chartApptByHour"></canvas></div></div>
+      <div class="box"><h4>Booking Trend</h4><div class="chart-box"><canvas id="chartApptTrend"></canvas></div></div>
+      <div class="box"><h4>Cancellation Trend</h4><div class="chart-box"><canvas id="chartCancellationTrend"></canvas></div></div>
     </div>
   </div>
 
-  <!-- BRANCH PERFORMANCE TAB -->
   <div class="tab-content" id="tab-branches" style="display:none;">
+    <div class="section-title">Branch Analytics</div>
     <div class="grid2">
-      <div class="box">
-        <h4 style="margin:6px 0 10px;">Completed Services per Branch</h4>
-        <div class="chart-box"><canvas id="chartBranchCompleted"></canvas></div>
-        <div class="export-row">
-          <a class="btn btn-ghost" id="exportBranchCompleted" href="#"><i class="fa-solid fa-file-export"></i> CSV</a>
-          <a class="btn btn-ghost" id="exportBranchCompletedPdf" href="#"><i class="fa-solid fa-file-pdf"></i> PDF</a>
-        </div>
-      </div>
-
-      <div class="box">
-        <h4 style="margin:6px 0 10px;">Average Rating per Branch</h4>
-        <div class="chart-box"><canvas id="chartBranchRating"></canvas></div>
-        <div class="export-row">
-          <a class="btn btn-ghost" id="exportBranchRating" href="#"><i class="fa-solid fa-file-export"></i> CSV</a>
-          <a class="btn btn-ghost" id="exportBranchRatingPdf" href="#"><i class="fa-solid fa-file-pdf"></i> PDF</a>
-        </div>
-      </div>
+      <div class="box"><h4>Completed Services</h4><div class="chart-box"><canvas id="chartBranchCompleted"></canvas></div></div>
+      <div class="box"><h4>Average Rating</h4><div class="chart-box"><canvas id="chartBranchRating"></canvas></div></div>
+      <div class="box"><h4>Capacity Utilization</h4><div class="chart-box"><canvas id="chartBranchCapacityUtilization"></canvas></div></div>
+      <div class="box"><h4>Staffing vs Workload</h4><div class="chart-box"><canvas id="chartBranchStaffingVsWorkload"></canvas></div></div>
+      <div class="box"><h4>Service Coverage Matrix</h4><div class="chart-box"><canvas id="chartBranchServiceCoverage"></canvas></div></div>
+      <div class="box"><h4>Complaint Rate</h4><div class="chart-box"><canvas id="chartBranchComplaintRate"></canvas></div></div>
+      <div class="box"><h4>Approval Rejection Rate</h4><div class="chart-box"><canvas id="chartBranchApprovalRejectionRate"></canvas></div></div>
+      <div class="box"><h4>Quality Score</h4><div class="chart-box"><canvas id="chartBranchQualityScore"></canvas></div></div>
+      <div class="box"><h4>Underperforming Alerts</h4><div class="chart-box"><canvas id="chartUnderperformingBranches"></canvas></div></div>
     </div>
   </div>
 
-  <!-- STAFF TAB -->
   <div class="tab-content" id="tab-staff" style="display:none;">
+    <div class="section-title">Staff Analytics</div>
     <div class="grid2">
-      <div class="box">
-        <h4 style="margin:6px 0 10px;">Jobs Completed per Mechanic (Top 10)</h4>
-        <div class="chart-box"><canvas id="chartJobsPerMechanic"></canvas></div>
-        <div class="export-row">
-          <a class="btn btn-ghost" id="exportJobsPerMechanic" href="#"><i class="fa-solid fa-file-export"></i> CSV</a>
-          <a class="btn btn-ghost" id="exportJobsPerMechanicPdf" href="#"><i class="fa-solid fa-file-pdf"></i> PDF</a>
-        </div>
-      </div>
-
-      <div class="box">
-        <h4 style="margin:6px 0 10px;">Services Submitted (Top 10 Submitters)</h4>
-        <div class="chart-box"><canvas id="chartSubmittedByManagers"></canvas></div>
-        <div class="export-row">
-          <a class="btn btn-ghost" id="exportSubmittedByManagers" href="#"><i class="fa-solid fa-file-export"></i> CSV</a>
-          <a class="btn btn-ghost" id="exportSubmittedByManagersPdf" href="#"><i class="fa-solid fa-file-pdf"></i> PDF</a>
-        </div>
-      </div>
+      <div class="box"><h4>Jobs per Mechanic</h4><div class="chart-box"><canvas id="chartJobsPerMechanic"></canvas></div></div>
+      <div class="box"><h4>Services Submitted by Managers</h4><div class="chart-box"><canvas id="chartSubmittedByManagers"></canvas></div></div>
+      <div class="box"><h4>Manager Approval Decisions</h4><div class="chart-box"><canvas id="chartManagerApprovalDecisions"></canvas></div></div>
+      <div class="box"><h4>Mechanic Quality Outcomes</h4><div class="chart-box"><canvas id="chartMechanicQualityOutcomes"></canvas></div></div>
+      <div class="box"><h4>Staff Complaint Association</h4><div class="chart-box"><canvas id="chartStaffComplaintAssociation"></canvas></div></div>
+      <div class="box"><h4>Avg Jobs per Day per Mechanic</h4><div class="chart-box"><canvas id="chartAvgJobsPerDayPerMechanic"></canvas></div></div>
+      <div class="box"><h4>Delayed Work Orders by Mechanic</h4><div class="chart-box"><canvas id="chartDelayedWorkOrdersByMechanic"></canvas></div></div>
     </div>
   </div>
 
-  <!-- FEEDBACK TAB -->
   <div class="tab-content" id="tab-feedback" style="display:none;">
+    <div class="section-title">Feedback Analytics</div>
     <div class="grid2">
-      <div class="box">
-        <h4 style="margin:6px 0 10px;">Rating Distribution</h4>
-        <div class="chart-box"><canvas id="chartRatingDist"></canvas></div>
-        <div class="export-row">
-          <a class="btn btn-ghost" id="exportRatingDist" href="#"><i class="fa-solid fa-file-export"></i> CSV</a>
-          <a class="btn btn-ghost" id="exportRatingDistPdf" href="#"><i class="fa-solid fa-file-pdf"></i> PDF</a>
-        </div>
-      </div>
-
-      <div class="box">
-        <h4 style="margin:6px 0 10px;">Feedback Trend</h4>
-        <div class="chart-box"><canvas id="chartFeedbackTrend"></canvas></div>
-        <div class="export-row">
-          <a class="btn btn-ghost" id="exportFeedbackTrend" href="#"><i class="fa-solid fa-file-export"></i> CSV</a>
-          <a class="btn btn-ghost" id="exportFeedbackTrendPdf" href="#"><i class="fa-solid fa-file-pdf"></i> PDF</a>
-        </div>
-      </div>
-
-      <div class="box">
-        <h4 style="margin:6px 0 10px;">Lowest Rated Services (Avg Rating)</h4>
-        <div class="chart-box"><canvas id="chartLowestRated"></canvas></div>
-        <div class="export-row">
-          <a class="btn btn-ghost" id="exportLowestRated" href="#"><i class="fa-solid fa-file-export"></i> CSV</a>
-          <a class="btn btn-ghost" id="exportLowestRatedPdf" href="#"><i class="fa-solid fa-file-pdf"></i> PDF</a>
-        </div>
-      </div>
+      <div class="box"><h4>Rating Distribution</h4><div class="chart-box"><canvas id="chartRatingDist"></canvas></div></div>
+      <div class="box"><h4>Feedback Trend</h4><div class="chart-box"><canvas id="chartFeedbackTrend"></canvas></div></div>
+      <div class="box"><h4>Lowest Rated Services</h4><div class="chart-box"><canvas id="chartLowestRated"></canvas></div></div>
+      <div class="box"><h4>Branch-wise Average Rating</h4><div class="chart-box"><canvas id="chartBranchRatingTrend"></canvas></div></div>
+      <div class="box"><h4>Rating by Service Type</h4><div class="chart-box"><canvas id="chartRatingByServiceType"></canvas></div></div>
+      <div class="box"><h4>Most Praised Services</h4><div class="chart-box"><canvas id="chartMostPraisedServices"></canvas></div></div>
+      <div class="box"><h4>Repeat Negative Feedback Customers</h4><div class="chart-box"><canvas id="chartRepeatNegativeCustomers"></canvas></div></div>
     </div>
   </div>
 
-  <!-- APPROVAL TAB -->
   <div class="tab-content" id="tab-approval" style="display:none;">
+    <div class="section-title">Approval Analytics</div>
     <div class="grid2">
-      <div class="box">
-        <h4 style="margin:6px 0 10px;">Service Approval Status Counts</h4>
-        <div class="chart-box"><canvas id="chartApprovalStatus"></canvas></div>
-        <div class="export-row">
-          <a class="btn btn-ghost" id="exportApprovalStatus" href="#"><i class="fa-solid fa-file-export"></i> CSV</a>
-          <a class="btn btn-ghost" id="exportApprovalStatusPdf" href="#"><i class="fa-solid fa-file-pdf"></i> PDF</a>
-        </div>
-      </div>
+      <div class="box"><h4>Service Approval Status</h4><div class="chart-box"><canvas id="chartApprovalStatus"></canvas></div></div>
+    </div>
+  </div>
+
+  <div class="tab-content" id="tab-complaints" style="display:none;">
+    <div class="section-title">Complaint Analytics</div>
+    <div class="grid2">
+      <div class="box"><h4>Complaint Trend</h4><div class="chart-box"><canvas id="chartComplaintTrend"></canvas></div></div>
+      <div class="box"><h4>Resolution Time Trend</h4><div class="chart-box"><canvas id="chartComplaintResolutionTrend"></canvas></div></div>
+      <div class="box"><h4>Closure Rate by Branch</h4><div class="chart-box"><canvas id="chartComplaintClosureRate"></canvas></div></div>
+      <div class="box"><h4>Priority Analysis</h4><div class="chart-box"><canvas id="chartComplaintPriorityAnalysis"></canvas></div></div>
+      <div class="box"><h4>Most Complained Services</h4><div class="chart-box"><canvas id="chartMostComplainedServices"></canvas></div></div>
+      <div class="box"><h4>Most Complained Branches</h4><div class="chart-box"><canvas id="chartMostComplainedBranches"></canvas></div></div>
+      <div class="box"><h4>Most Complained Staff</h4><div class="chart-box"><canvas id="chartMostComplainedStaff"></canvas></div></div>
+      <div class="box"><h4>SLA Breach Trend</h4><div class="chart-box"><canvas id="chartSlaBreachTrend"></canvas></div></div>
     </div>
   </div>
 </div>

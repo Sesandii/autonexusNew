@@ -305,3 +305,49 @@ th, td {
   border-radius: 6px;
   margin-bottom: 20px;
 }
+
+/* Modal Overlay */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 9999;
+  
+  /* Start Hidden */
+  display: none;        
+  pointer-events: none; 
+  align-items: center;
+  justify-content: center;
+}
+
+/* This is what your JS triggers */
+.modal-overlay.show {
+  display: flex !important; /* Forces it to show */
+  pointer-events: auto;     /* Allows you to click the modal buttons */
+}
+
+/* Modal Box */
+.modal-box {
+  background: #fff;
+  padding: 25px;
+  width: 350px;
+  border-radius: 8px;
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2); /* Added shadow for depth */
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.modal-actions {
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-around; /* Better spacing for two buttons */
+  gap: 10px;
+}

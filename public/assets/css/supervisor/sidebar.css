@@ -75,7 +75,7 @@
   padding: 12px 10px;
   margin-bottom: 5px;
   cursor: pointer;
-  border-radius: 6px;
+  border-radius: 0px;
   color: #d1d5db;
   text-decoration: none;
   transition: background 0.3s;
@@ -104,20 +104,15 @@
   opacity: 1;
 }
 
-/* Sidebar Bottom Links - Full Highlight & Alignment */
-.sidebar-bottom a {
+
+/* Ensure alignment matches top links */
+.sidebar-bottom {
   display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 12px 10px;      /* same as top links */
-  margin-bottom: 5px;
-  cursor: pointer;
-  border-radius: 6px;
-  color: #d1d5db;
-  text-decoration: none;
-  transition: background 0.3s;
-  width: 100%;              /* ensures full width highlight */
+  flex-direction: column;
+  align-items: flex-start;  /* aligns left like top links */
+  padding: 15px 0px;
 }
+
 
 .sidebar-bottom a:hover {
   background-color: #1F2937; /* same hover effect as top links */
@@ -129,67 +124,9 @@
   height: 17px;
 }
 
-/* Hide text when collapsed */
-.sidebar-bottom a span {
-  opacity: 0;
-  white-space: nowrap;
-  transition: opacity 0.5s ease;
-}
-
 /* Show text on hover/expanded */
 .sidebar:hover .sidebar-bottom a span {
   opacity: 1;
-}
-
-/* Ensure alignment matches top links */
-.sidebar-bottom {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;  /* aligns left like top links */
-  padding: 15px 1px;
-}
-
-/* User Profile */
-.user-profile {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.user-img {
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  object-fit: cover;
-}
-
-/* Hide user info when collapsed */
-.user-info {
-  opacity: 0;
-  white-space: nowrap;
-  transition: opacity 0.5s ease;
-  display: flex;
-  flex-direction: column;
-  font-size: 12px;
-}
-
-.sidebar:hover .user-info {
-  opacity: 1;
-}
-
-.user-info span {
-  color: #fff;
-  font-weight: bold;
-}
-
-.user-info a {
-  color: #9ca3af;
-  text-decoration: none;
-  font-size: 11px;
-}
-
-.user-info a:hover {
-  color: #fff;
 }
 
 /* Modal overlay */
@@ -266,23 +203,21 @@
   gap: 8px;
   padding: 12px 10px;
   margin-bottom: 5px;
-  border-radius: 6px;
+  border-radius: 0px;
   color: #d1d5db;
   text-decoration: none;
   transition: all 0.3s ease;
   width: 100%;
 }
 
-/* Hover */
-.nav-links a:hover {
-  background-color: #1F2937;
-}
-
 /* ✅ ACTIVE LINK (FINAL FIX) */
-.nav-links a.active {
-  background-color: #111;
-  border-left: 4px solid #ff0000;
-  color: #fff;
+.nav-links a.active, 
+.sidebar-bottom a.active {
+    background-color: #111;
+    border-left: 4px solid #ff0000;
+    color: #fff;
+    width: 100%;
+    border-radius:6px;
 }
 
 /* Keep icon visible on active */
