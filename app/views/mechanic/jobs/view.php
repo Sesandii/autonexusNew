@@ -69,7 +69,7 @@
     <h2>Service Summary</h2>
     <table>
       <thead>
-        <tr><th>Service Task</th><th>Status</th><th>Notes</th></tr>
+        <tr><th>Service Task</th><th>Status</th></tr>
       </thead>
       <tbody>
         <?php if (!empty($services)): ?>
@@ -77,7 +77,7 @@
             <tr>
               <td><?= htmlspecialchars($s['item_name']) ?></td>
               <td class="statu <?= htmlspecialchars($s['status']) ?>"><?= ucfirst(htmlspecialchars($s['status'])) ?></td>
-              <td><?= htmlspecialchars($s['remarks'] ?? '-') ?></td>
+
             </tr>
           <?php endforeach; ?>
         <?php else: ?>
@@ -87,18 +87,23 @@
     </table>
   </div>
   <?php if (!empty($photos)): ?>
-  <div class="report-card">
+    <div class="job-card">
     <h2>Work Photos</h2>
     <div class="photo-card">
-
-      <?php foreach ($photos as $photo): ?>
-        <img
-                        src="/autonexus/public/assets/img/service_photos/<?= htmlspecialchars($photo['file_name']) ?>"
-                        class="photo-img"
-                        onclick="openModal(this.src)"
-                    >
-      <?php endforeach; ?>
+        <?php if (!empty($photos)): ?>
+            <?php foreach ($photos as $photo): ?>
+                <img
+                    src="/autonexus/public/assets/img/service_photos/<?= htmlspecialchars($photo['file_name']) ?>"
+                    class="photo-img"
+                    alt="Service Photo"
+                    onclick="openModal(this.src)"
+                >
+            <?php endforeach; ?>
+        <?php else: ?>
+            <p class="label" style="font-style: italic;">No photos uploaded for this job.</p>
+        <?php endif; ?>
     </div>
+</div>
  
   </div>
   <?php endif; ?>

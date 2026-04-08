@@ -120,27 +120,32 @@ header {
 }
 
 .photo-card {
-  background: #ffffff;
-  border-radius: 12px;
-  padding: 10px;
-  border: 1px solid #e5e7eb;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.05);
-  text-align: center;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  display: flex;
+  flex-wrap: wrap; /* Allows images to move to the next line */
+  gap: 12px;
+  padding: 10px 0;
 }
 
 .photo-img {
-  width: 100%;
-  height: 120px;
-  object-fit: cover;
-  border-radius: 10px;
-  margin-bottom: 8px;
+  width: 80px;            /* Fixed width */
+  height: 80px;           /* Fixed height to make them square */
+  object-fit: cover;      /* Crops the image to fit the square without stretching */
+  border-radius: 8px;     /* Rounded corners */
   cursor: pointer;
+  border: 1px solid #ddd;
+  transition: transform 0.2s, box-shadow 0.2s;
 }
+
+.photo-img:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
 /* Table */
 table {
   width: 100%;
   border-collapse: collapse;
+  margin-top: 10px;
 }
 th, td {
   text-align: left;
@@ -148,13 +153,18 @@ th, td {
   font-size: 14px;
 }
 th {
-  color: #666;
-  font-weight: 600;
-  border-bottom: 2px solid #f0f0f0;
+  text-align: left;
+    color: #7f8c8d;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
 }
 
 td {
-  border-bottom: 1px solid #f0f0f0;
+  padding: 10px 0;
+    font-size: 0.9rem;
+    border-bottom: 1px solid #fafafa;
 }
 .completed {
   color: green;
@@ -182,6 +192,13 @@ td {
 .label {
   font-weight: 600;
   color: #444;
+}
+
+
+.value {
+  color: #2c3e50;
+  font-weight: 600;
+  text-align: right;
 }
 
 .job-header {
@@ -233,6 +250,17 @@ td {
   font-weight: 600;
   color: #6b7280;
 }
+
+.status-badge {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: bold;
+}
+
+.status-in_progress { background: #e8f8f5; color: #1abc9c; }
+.status-on_hold { background: #fef5e7; color: #f39c12; }
+.status-open { background: #ebf5fb; color: #3498db; }
 
 /* Status text */
 .status {
@@ -288,19 +316,17 @@ td {
 
 .job-section {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 20px;
-  padding: 20px 0;
+  padding: 20px;
 }
 
 .job-card {
-  background: #fff;
+  background: #ffffff;
+  border-radius: 8px;
   padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-  display: flex;
-  flex-direction: column;
-  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border: 1px solid #eef2f6;
 }
 
 .job-card:hover {
@@ -309,21 +335,28 @@ td {
 }
 
 .job-card h2 {
-  margin: 0 0 12px 0;
-  font-size: 18px;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 8px;
+  font-size: 1.1rem;
+  color: #002d5b; /* Navy Blue */
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 20px;
+  padding-left: 12px;
+  border-left: 4px solid #e74c3c; /* The Red Accent */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .info-row {
   display: flex;
   justify-content: space-between;
-  margin: 6px 0;
+  margin-bottom: 12px;
+  font-size: 0.95rem;
 }
 
-.info-row .label {
-  font-weight: 600;
-  color: #555;
+.label {
+  color: #7f8c8d; /* Muted Grey */
+  font-weight: 500;
 }
 
 .status {

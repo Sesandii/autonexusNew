@@ -27,18 +27,18 @@
     </div>
     <div>
       <label>From Date</label><br>
-      <input type="date" name="fromDate">
+      <input type="date" name="fromDate" required>
     </div>
     <div>
       <label>To Date</label><br>
-      <input type="date" name="toDate">
+      <input type="date" name="toDate" required>
     </div>
     <div>
       <button type="submit" class="btn primary">Search</button>
     </div>
   </form>
 
-  <p class="subtitle" style="text-align:center; margin-top:30px;">Enter a license plate to view its service history.</p>
+  
 </div>
 
 </body>

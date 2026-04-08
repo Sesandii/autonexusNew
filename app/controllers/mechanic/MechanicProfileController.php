@@ -8,19 +8,20 @@ use app\model\supervisor\User;
 class MechanicProfileController extends Controller
 {
 
-public function edit()
-{
-    if (session_status() !== PHP_SESSION_ACTIVE) session_start();
-
-    $userId = $_SESSION['user']['user_id'];
-
-    $userModel = new User();
-    $user = $userModel->findById($userId);
-
-    $this->view('mechanic/profile/edit', [
-        'user' => $user
-    ]);
-}
+    public function edit()
+    {
+        if (session_status() !== PHP_SESSION_ACTIVE) session_start();
+    
+        $userId = $_SESSION['user']['user_id'];
+    
+        $userModel = new User();
+        // Use the new method to get branch data
+        $user = $userModel->findMechanicProfile($userId);
+    
+        $this->view('mechanic/profile/edit', [
+            'user' => $user
+        ]);
+    }
 
 
 public function update()

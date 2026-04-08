@@ -48,7 +48,7 @@ $base = rtrim(BASE_URL, '/');
       <option value="mine">My Jobs</option>
       <option value="others">Other Mechanics</option>
     </select>
-    <button id="resetFilters" type="button">Reset</button>
+    <button id="resetFilters" type="button" class="view-btn">Reset</button>
   </div>
 </header>
 
@@ -58,7 +58,6 @@ $base = rtrim(BASE_URL, '/');
   <div class="job-grid">
   <?php foreach ($allJobs as $job): ?>
     <?php
-        // Owner check using user_id
         $owner = ($job['mechanic_user_id'] ?? 0) == $currentUserId ? 'mine' : 'others';
     ?>
     <div class="job-card"
@@ -66,6 +65,7 @@ $base = rtrim(BASE_URL, '/');
      data-duration="<?= $job['base_duration_minutes'] ?>"
      data-status="<?= strtolower($job['status']) ?>"
      data-service="<?= strtolower($job['name']) ?>"
+     data-remaining="<?= $job['seconds_left'] ?? ($job['base_duration_minutes'] * 60) ?>"
      data-customer="<?= strtolower($job['first_name'] . ' ' . $job['last_name']) ?>"
      data-vehicle="<?= strtolower($job['make'] . ' ' . $job['model']) ?>"
      data-workorder="<?= $job['work_order_id'] ?>"
@@ -155,51 +155,85 @@ resetBtn.addEventListener('click', () => {
   jobCards.forEach(card => card.style.display = '');
 });
 
-// Timer function (only for in_progress jobs)
-function updateTimers() {
-  const now = new Date();
+let jobTimers = {};
 
+function initTimers() {
+  console.log("Initializing timers..."); // Debugging line
   document.querySelectorAll('.job-card').forEach(card => {
-    const status = card.dataset.status;
+    const id = card.dataset.workorder;
+    const remaining = parseInt(card.dataset.remaining);
+    jobTimers[id] = isNaN(remaining) ? 0 : remaining;
+  });
+}
+
+function formatTime(seconds) {
+  if (seconds <= 0) return "0s";
+  const h = Math.floor(seconds / 3600);
+  const m = Math.floor((seconds % 3600) / 60);
+  const s = seconds % 60;
+  
+  let parts = [];
+  if (h > 0) parts.push(h + 'h');
+  if (m > 0 || h > 0) parts.push(m + 'm');
+  parts.push(s + 's');
+  
+  return parts.join(' ');
+}
+
+function updateTimers() {
+  document.querySelectorAll('.job-card').forEach(card => {
+    const id = card.dataset.workorder;
+    const status = (card.dataset.status || "").toLowerCase();
     const timerEl = card.querySelector('.job-timer');
 
     if (!timerEl) return;
 
-    if (status !== "in_progress") {
-      timerEl.textContent = "-";
-      timerEl.style.color = "";
+    if (status === "on_hold") {
+      timerEl.textContent = "Paused: " + formatTime(jobTimers[id]);
+      timerEl.style.color = "#f39c12"; 
       return;
     }
 
-    const createdAt = card.dataset.created;
-    const durationMin = parseInt(card.dataset.duration);
-    if (!createdAt || !durationMin) return;
-
-    const startTime = new Date(createdAt);
-    const endTime = new Date(startTime.getTime() + durationMin * 60000);
-    let diff = Math.floor((endTime - now) / 1000);
-
-    if (diff <= 0) {
-      timerEl.textContent = "Overdue";
-      timerEl.style.color = "red";
+    if (status === "open") {
+      timerEl.textContent = "Not Started";
+      timerEl.style.color = "#95a5a6";
       return;
     }
 
-    const hours = Math.floor(diff / 3600);
-    diff %= 3600;
-    const minutes = Math.floor(diff / 60);
-    const seconds = diff % 60;
+    if (status === "completed") {
+      timerEl.textContent = "Finished";
+      timerEl.style.color = "#2ecc71";
+      return;
+    }
 
-    timerEl.style.color = "";
-    timerEl.textContent =
-      (hours > 0 ? hours + 'h ' : '') +
-      (minutes > 0 ? minutes + 'm ' : '') +
-      seconds + 's';
+    if (status === "in_progress") {
+      if (jobTimers[id] > 0) {
+        jobTimers[id]--; 
+        timerEl.textContent = formatTime(jobTimers[id]);
+        
+        if (jobTimers[id] < 300) {
+          timerEl.style.color = "#e74c3c";
+          timerEl.style.fontWeight = "bold";
+        } else {
+          timerEl.style.color = ""; 
+          timerEl.style.fontWeight = "normal";
+        }
+      } else {
+        timerEl.textContent = "Overdue";
+        timerEl.style.color = "#e74c3c";
+        timerEl.style.fontWeight = "bold";
+      }
+    }
   });
 }
 
-updateTimers();
-setInterval(updateTimers, 1000);
+// CRITICAL: These must be called for the timer to work!
+document.addEventListener('DOMContentLoaded', () => {
+    initTimers();
+    updateTimers(); // Run once immediately so it's not blank for the first second
+    setInterval(updateTimers, 1000);
+});
+
 </script>
 </body>
 </html>

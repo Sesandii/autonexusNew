@@ -9,8 +9,34 @@ class Mechanic {
     {
         $this->pdo = db(); // existing helper
     }
+
+    public function getMechanicsByBranch(int $branchId) {
+        $sql = "
+            SELECT 
+                m.*, 
+                u.first_name, 
+                u.last_name 
+            FROM mechanics m
+            INNER JOIN users u ON m.user_id = u.user_id
+            WHERE m.branch_id = ?
+            ORDER BY m.mechanic_code ASC
+        ";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([$branchId]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     public function getAllMechanics() {
-        $stmt = $this->pdo->query("SELECT * FROM mechanics");
+        $sql = "
+            SELECT 
+                m.*, 
+                u.first_name, 
+                u.last_name 
+            FROM mechanics m
+            INNER JOIN users u ON m.user_id = u.user_id
+            ORDER BY m.mechanic_code ASC
+        ";
+        $stmt = $this->pdo->query($sql);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 

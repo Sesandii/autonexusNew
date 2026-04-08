@@ -1,59 +1,69 @@
 // Toggle between Today’s Appointments and In-Progress Vehicles
 document.querySelectorAll('.toggle-btn').forEach(btn => {
   btn.addEventListener('click', () => {
-    // Remove active class from all buttons
+    // 1. Update button active states
     document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
 
-    // Hide all sections
-    document.querySelectorAll('.appointments').forEach(sec => sec.classList.add('hidden'));
+    // 2. Hide all table wrappers (Note: changed selector from .appointments to .table-wrapper)
+    document.querySelectorAll('.table-wrapper').forEach(sec => sec.classList.add('hidden'));
     
-    // Show the selected section
+    // 3. Show the selected section
     const targetSection = document.getElementById(btn.dataset.target);
     if (targetSection) targetSection.classList.remove('hidden');
 
-    // Draw the chart if showing "Today’s Appointments"
-    if (btn.dataset.target === 'appointments') {
-      drawAppointmentsChart();
-    }
+    // Note: Removed drawAppointmentsChart call here because the Weekly Chart 
+    // is now permanently visible at the bottom of the page.
   });
 });
 
-// Function to draw weekly appointments chart
+// Function to draw weekly appointments trend chart
 function drawWeeklyChart() {
   const canvas = document.getElementById('weekly-chart');
   if (!canvas) return;
 
+  // Make canvas responsive to its container width
+  const container = canvas.parentElement;
+  canvas.width = container.clientWidth - 40; // Account for padding
+
   const ctx = canvas.getContext('2d');
   const data = window.weeklyAppointments || [];
+
+  if (data.length === 0) return;
 
   const labels = data.map(item => item.appt_date);
   const counts = data.map(item => parseInt(item.count));
 
-  const padding = 30;
+  const padding = 40;
   const chartWidth = canvas.width - padding * 2;
   const chartHeight = canvas.height - padding * 2;
-  const maxCount = Math.max(...counts, 1);
+  const maxCount = Math.max(...counts, 5); // Default scale to at least 5
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  // Y-axis
-  ctx.strokeStyle = "#ccc";
-  ctx.beginPath();
-  ctx.moveTo(padding, padding);
-  ctx.lineTo(padding, canvas.height - padding);
-  ctx.stroke();
+  // Axis styling
+  ctx.strokeStyle = "#eee";
+  ctx.lineWidth = 1;
 
-  // X-axis
-  ctx.beginPath();
-  ctx.moveTo(padding, canvas.height - padding);
-  ctx.lineTo(canvas.width - padding, canvas.height - padding);
-  ctx.stroke();
+  // Y-axis & Grid lines
+  for (let i = 0; i <= maxCount; i++) {
+    const y = canvas.height - padding - (i / maxCount) * chartHeight;
+    ctx.beginPath();
+    ctx.moveTo(padding, y);
+    ctx.lineTo(canvas.width - padding, y);
+    ctx.stroke();
+    
+    ctx.fillStyle = "#888";
+    ctx.textAlign = "right";
+    ctx.fillText(i, padding - 10, y + 3);
+  }
 
   // Draw line connecting points
-  ctx.strokeStyle = "#FF5722"; // nice orange color
-  ctx.lineWidth = 2;
+  ctx.strokeStyle = "#3498db"; // Modern blue to match UCSC/AutoNexus theme
+  ctx.lineWidth = 3;
+  ctx.lineJoin = "round";
   ctx.beginPath();
+  
   counts.forEach((count, i) => {
     const x = padding + (chartWidth / (counts.length - 1)) * i;
     const y = canvas.height - padding - (count / maxCount) * chartHeight;
@@ -62,67 +72,64 @@ function drawWeeklyChart() {
   });
   ctx.stroke();
 
-  // Draw points on top of the line
-  ctx.fillStyle = "#FF5722";
+  // Draw points and X-labels
   counts.forEach((count, i) => {
     const x = padding + (chartWidth / (counts.length - 1)) * i;
     const y = canvas.height - padding - (count / maxCount) * chartHeight;
+    
+    // Point
+    ctx.fillStyle = "#3498db";
     ctx.beginPath();
-    ctx.arc(x, y, 4, 0, Math.PI * 2);
+    ctx.arc(x, y, 5, 0, Math.PI * 2);
     ctx.fill();
-  });
+    ctx.strokeStyle = "#fff";
+    ctx.lineWidth = 2;
+    ctx.stroke();
 
-  // X labels
-  ctx.fillStyle = "#000";
-  ctx.textAlign = "center";
-  ctx.textBaseline = "top";
-  labels.forEach((label, i) => {
-    const x = padding + (chartWidth / (labels.length - 1)) * i;
-    ctx.fillText(label, x, canvas.height - padding + 5);
+    // Label
+    ctx.fillStyle = "#333";
+    ctx.textAlign = "center";
+    ctx.fillText(labels[i], x, canvas.height - padding + 20);
   });
-
-  // Y labels
-  ctx.textAlign = "right";
-  ctx.textBaseline = "middle";
-  for (let i = 0; i <= maxCount; i++) {
-    const y = canvas.height - padding - (i / maxCount) * chartHeight;
-    ctx.fillText(i, padding - 5, y);
-  }
 }
 
-document.addEventListener('DOMContentLoaded', drawWeeklyChart);
+// Handle Modal and Chart on Load
+document.addEventListener('DOMContentLoaded', () => {
+    drawWeeklyChart();
+    
+    // Resize chart on window resize
+    window.addEventListener('resize', drawWeeklyChart);
 
-document.addEventListener('DOMContentLoaded', function() {
-  const deleteModal = document.getElementById('deleteModal');
-  const cancelBtn = document.getElementById('cancelDelete');
-  const confirmBtn = document.getElementById('confirmDelete');
-  let formToSubmit = null;
+    const deleteModal = document.getElementById('deleteModal');
+    const cancelBtn = document.getElementById('cancelDelete');
+    const confirmBtn = document.getElementById('confirmDelete');
+    let formToSubmit = null;
 
-  // Listen for clicks on the document to catch forms even if tables toggle
-  document.addEventListener('submit', function(e) {
-      if (e.target.classList.contains('delete-form')) {
-          e.preventDefault(); // Stop immediate PHP execution
-          formToSubmit = e.target;
-          deleteModal.classList.add('show');
-      }
-  });
+    // Use event delegation for delete forms
+    document.addEventListener('submit', function(e) {
+        if (e.target.classList.contains('delete-form')) {
+            e.preventDefault();
+            formToSubmit = e.target;
+            deleteModal.style.display = 'flex'; // Use display flex for center alignment
+            deleteModal.classList.add('show');
+        }
+    });
 
-  // Close logic
-  const closeModal = () => {
-      deleteModal.classList.remove('show');
-      formToSubmit = null;
-  };
+    const closeModal = () => {
+        deleteModal.style.display = 'none';
+        deleteModal.classList.remove('show');
+        formToSubmit = null;
+    };
 
-  cancelBtn.addEventListener('click', closeModal);
+    if(cancelBtn) cancelBtn.addEventListener('click', closeModal);
+    
+    if(confirmBtn) {
+        confirmBtn.addEventListener('click', function() {
+            if (formToSubmit) formToSubmit.submit();
+        });
+    }
 
-  confirmBtn.addEventListener('click', function() {
-      if (formToSubmit) {
-          formToSubmit.submit(); // Now the PHP delete actually runs
-      }
-  });
-
-  // Close if clicking the dark background
-  deleteModal.addEventListener('click', function(e) {
-      if (e.target === deleteModal) closeModal();
-  });
+    deleteModal.addEventListener('click', (e) => {
+        if (e.target === deleteModal) closeModal();
+    });
 });

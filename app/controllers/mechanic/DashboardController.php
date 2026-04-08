@@ -13,29 +13,30 @@ class DashboardController extends Controller
     }
 
     public function index()
-    {
-        
-        if (session_status() !== PHP_SESSION_ACTIVE) session_start();
+{
+    if (session_status() !== PHP_SESSION_ACTIVE) session_start();
 
-        $userId = $_SESSION['user']['user_id']; // users.user_id
-        $model = new Dashboard();
+    $userId = $_SESSION['user']['user_id'];
+    $model = new Dashboard();
+
+    // 1. Convert user_id → mechanic_id
+    $mechanicId = $model->getMechanicIdByUser($userId);
  
-
-
-        // ✅ Convert user_id → mechanic_id
-        $mechanicId = $model->getMechanicIdByUser($userId);
-     
-        if (!$mechanicId) {
-            die('Mechanic profile not found');
-        }
-
-        $data = [
-            'stats' => $model->getWorkorderStatsByUser($userId),
-            'appointments' => $model->getTodayAppointments()
-        ];
-
-        $this->view('mechanic/dashboard/index', $data);
+    if (!$mechanicId) {
+        die('Mechanic profile not found');
     }
+
+    // 2. Get the branch_id for this mechanic
+    $branchId = $model->getBranchIdByMechanic($mechanicId);
+
+$data = [
+    'stats' => $model->getWorkorderStatsByUser($userId),
+    'branch_pending' => $model->getPendingAppointmentsCountByBranch($branchId), // New key
+    'appointments' => $model->getTodayAppointments()
+];
+
+    $this->view('mechanic/dashboard/index', $data);
+}
 
     private function requireMechanic(): void
     {
