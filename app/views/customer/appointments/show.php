@@ -2,6 +2,7 @@
 // app/views/customer/appointments/show.php
 $a    = $appointment ?? [];
 $base = rtrim(BASE_URL, '/');
+$appointmentsCssVersion = @filemtime(dirname(APP_ROOT) . '/public/assets/css/customer/appointments.css') ?: time();
 
 // Status mapping for display
 $statusMap = [
@@ -22,7 +23,7 @@ $statusInfo = $statusMap[$rawStatus] ?? ['label' => ucfirst($rawStatus), 'class'
     <title>Appointment Details - AutoNexus</title>
     <link rel="stylesheet" href="<?= $base ?>/public/assets/css/customer/sidebar.css">
     <link rel="stylesheet" href="<?= $base ?>/public/assets/css/customer/dashboard.css">
-    <link rel="stylesheet" href="<?= $base ?>/public/assets/css/customer/appointments.css">
+    <link rel="stylesheet" href="<?= $base ?>/public/assets/css/customer/appointments.css?v=<?= (int)$appointmentsCssVersion ?>">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         .appointment-details-main {
