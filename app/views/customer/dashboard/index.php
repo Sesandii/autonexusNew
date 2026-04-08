@@ -12,6 +12,7 @@ $sidebarCssVersion = @filemtime(dirname(APP_ROOT) . '/public/assets/css/customer
   <title><?= htmlspecialchars($title, ENT_QUOTES) ?></title>
 
   <link rel="stylesheet" href="<?= $base ?>/public/assets/css/customer/sidebar.css?v=<?= (int)$sidebarCssVersion ?>">
+  <link rel="stylesheet" href="<?= $base ?>/public/assets/css/customer/page-header.css">
   <link rel="stylesheet" href="<?= $base ?>/public/assets/css/customer/dashboard.css?v=<?= (int)$dashboardCssVersion ?>">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>

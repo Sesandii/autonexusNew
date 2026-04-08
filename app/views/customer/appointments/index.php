@@ -85,6 +85,7 @@ foreach ($rows as $row) {
 
   <link rel="stylesheet" href="<?= $base ?>/public/assets/css/normalize-ui.css">
   <link rel="stylesheet" href="<?= $base ?>/public/assets/css/customer/sidebar.css?v=<?= (int)$sidebarCssVersion ?>">
+  <link rel="stylesheet" href="<?= $base ?>/public/assets/css/customer/page-header.css">
   <link rel="stylesheet" href="<?= $base ?>/public/assets/css/customer/appointments.css?v=<?= (int)$appointmentsCssVersion ?>">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -94,16 +95,13 @@ foreach ($rows as $row) {
 
   <main class="main-content appointments-main">
     <div class="appointments-page">
-      <header class="page-header">
-        <div class="heading-block">
-          <h1>Your Appointments</h1>
-          <p class="subtitle">Manage upcoming visits, completed services, and past cancellations easily.</p>
-        </div>
-        <div class="header-actions">
-          <span class="appointment-count-pill"><?= $total ?> appointment<?= $total === 1 ? '' : 's' ?></span>
-          <a href="<?= $base ?>/customer/book" class="book-service-btn">Book Service</a>
-        </div>
-      </header>
+      <?php
+        $headerIcon = 'fa-solid fa-calendar-check';
+        $headerTitle = 'Your Appointments';
+        $headerSubtitle = 'Manage upcoming visits, completed services, and past cancellations easily.';
+        $headerActionBtn = '<span class="appointment-count-pill">' . $total . ' appointment' . ($total === 1 ? '' : 's') . '</span><a href="' . htmlspecialchars($base) . '/customer/book" class="book-service-btn">Book Service</a>';
+        include APP_ROOT . '/views/partials/customer-page-header.php';
+      ?>
 
       <section class="summary-grid" id="statusCards">
         <button type="button" class="summary-card summary-upcoming" data-filter="upcoming">

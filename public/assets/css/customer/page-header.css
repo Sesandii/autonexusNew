@@ -1,0 +1,133 @@
+/**
+ * Standardized Customer Page Header
+ * Used across all customer pages for consistent styling
+ */
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 24px;
+  margin-bottom: 32px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--line, #e5e7eb);
+}
+
+.header-left {
+  flex: 1;
+}
+
+.header-title {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 0 0 8px 0;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--brand, #0c0d13);
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+
+h1.header-title {
+  color: var(--brand, #0c0d13);
+}
+
+.header-title i {
+  font-size: 1.5rem;
+  color: #ef4444;
+  flex-shrink: 0;
+}
+
+.header-subtitle {
+  margin: 8px 0 0 0;
+  font-size: 0.95rem;
+  color: var(--muted, #64748b);
+  line-height: 1.5;
+  max-width: 600px;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+/* Action Button Styles */
+.book-service-btn,
+.back-to-appointments-btn,
+.appointment-count-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  background: #ef4444;
+  color: white;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s ease;
+}
+
+.book-service-btn:hover,
+.back-to-appointments-btn:hover {
+  background: #dc2626;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+.appointment-count-pill {
+  background: var(--muted-bg, #eef2f7);
+  color: var(--muted, #64748b);
+  padding: 8px 14px;
+  font-size: 0.85rem;
+  border: 1px solid var(--line, #e5e7eb);
+}
+
+.appointment-count-pill:hover {
+  background: var(--muted-bg-hover, #e5e9f2);
+  transform: none;
+  box-shadow: none;
+}
+
+/* Responsive Design */
+@media (max-width: 1100px) {
+  .page-header {
+    flex-direction: column;
+    gap: 16px;
+    align-items: stretch;
+  }
+
+  .header-right {
+    justify-content: flex-start;
+  }
+
+  .header-title {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 700px) {
+  .page-header {
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+  }
+
+  .header-title {
+    font-size: 1.25rem;
+    gap: 10px;
+  }
+
+  .header-title i {
+    font-size: 1.2rem;
+  }
+
+  .header-subtitle {
+    font-size: 0.9rem;
+  }
+}

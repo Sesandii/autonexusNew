@@ -11,6 +11,7 @@ $base = rtrim(BASE_URL, '/');
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><?= htmlspecialchars($title ?? 'Service Reminder') ?> • AutoNexus</title>
 
+  <link rel="stylesheet" href="<?= $base ?>/public/assets/css/customer/page-header.css">
   <link rel="stylesheet" href="<?= $base ?>/public/assets/css/customer/service-reminder.css">
   <link rel="stylesheet" href="<?= $base ?>/public/assets/css/customer/sidebar.css">
   <link rel="stylesheet"
@@ -22,18 +23,12 @@ $base = rtrim(BASE_URL, '/');
 
 <div class="cx-container">
   <main class="cx-main">
-    <header class="cx-header">
-      <div>
-        <h1 class="cx-title">Service Reminder</h1>
-        <p class="cx-subtitle">
-          Track mileage and upcoming services for all your vehicles.
-        </p>
-      </div>
-      <span class="cx-chip">
-        <i class="fa-solid fa-gauge-high"></i>
-        AutoNexus Care
-      </span>
-    </header>
+    <?php
+      $headerIcon = 'fa-solid fa-gauge-high';
+      $headerTitle = 'Service Reminder';
+      $headerSubtitle = 'Track mileage and upcoming services for all your vehicles.';
+      include APP_ROOT . '/views/partials/customer-page-header.php';
+    ?>
 
     <?php if (empty($reminders)): ?>
       <section class="cx-empty">
