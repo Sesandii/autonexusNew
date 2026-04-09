@@ -50,49 +50,48 @@
         <!-- Mechanic -->
         <div class="form-group">
     <label class="required">Mechanic</label>
-    <select name="mechanic_id" id="mechanicSelect" required>
-        <option value="">Select Mechanic</option>
-        <?php foreach ($activeMechanics as $mech): 
-            $code = $mech['mechanic_code'] ?? '';
-            $spec = $mech['specialization'] ?? '-';
-            $status = $mech['status'] ?? 'Available';
+    <select name="mechanic_id" id="mechanic_id" class="form-control">
+    <option value="">-- Select Mechanic --</option>
+    <?php foreach ($activeMechanics as $mech): 
+        // Normalize status for reliable comparison
+        $rawStatus = $mech['status'] ?? 'available';
+        $status = strtolower($rawStatus); 
+        $isSelected = ($selectedMechanicId == $mech['mechanic_id']);
+        
+        // Default UI states
+        $style = "";
+        $labelSuffix = "";
+        $isDisabledAttr = "";
+
+        // Logic for specialized statuses
+        if ($status === 'on break') {
+            $style = "filter: blur(1px); opacity: 0.5; color: #999;";
+            $labelSuffix = " (On Break)";
+            // Only disable if it's NOT the currently assigned mechanic
+            if (!$isSelected) $isDisabledAttr = "disabled"; 
             
-            // Check if this mechanic is the one already assigned to THIS work order
-            $isCurrentlyAssigned = ($wo['mechanic_id'] ?? null) == $mech['mechanic_id'];
-
-            // 1. REMOVE: If Off-Duty (unless it's the person already assigned)
-            if ($status === 'Off-Duty' && !$isCurrentlyAssigned) continue;
-
-            // 2. CAPACITY: Count active jobs for this code
-            $activeCount = $mechanicLimits[$code] ?? 0;
-            $isFull = ($activeCount >= 5);
-
-            // 3. STYLING & LABELS
-            $style = "";
-            $isDisabledAttr = "";
-            $labelSuffix = "";
-
-            if ($status === 'On Break') {
-                // BLUR logic
-                $style = "filter: blur(1px); opacity: 0.6; background-color: #f4f4f4;";
-                $labelSuffix = " (On Break)";
-                // We only disable it if it's NOT the current person
-                if (!$isCurrentlyAssigned) $isDisabledAttr = "disabled";
-            } elseif ($isFull && !$isCurrentlyAssigned) {
-                // RED HIGHLIGHT for others at capacity
-                $style = "color: #d9534f; font-weight: bold; background-color: #fff0f0;";
-                $labelSuffix = " ⚠ Full Capacity";
-                $isDisabledAttr = "disabled";
-            }
-        ?>
-            <option value="<?= $mech['mechanic_id'] ?>" 
-                <?= $isCurrentlyAssigned ? 'selected' : '' ?> 
+        } elseif ($status === 'busy') {
+            $labelSuffix = " (Busy - 5+ Jobs)";
+            // We keep them enabled so supervisors can still assign if urgent
+            $style = "color: #d9534f; font-weight: bold;"; 
+            
+        } elseif ($status === 'off-duty') {
+            // Hide off-duty mechanics entirely unless they are already assigned to this WO
+            if (!$isSelected) continue; 
+            $labelSuffix = " (Off-Duty)";
+            $isDisabledAttr = "disabled";
+        }
+    ?>
+        <option value="<?= $mech['mechanic_id'] ?>" 
+                style="<?= $style ?>" 
                 <?= $isDisabledAttr ?>
-                style="<?= $style ?>">
-                <?= htmlspecialchars($code . ' (' . $spec . ')') . $labelSuffix ?>
-            </option>
-        <?php endforeach; ?>
-    </select>
+                <?= $isSelected ? 'selected' : '' ?>>
+            <?= htmlspecialchars($mech['mechanic_code']) ?> - 
+            <?= htmlspecialchars($mech['first_name'] . ' ' . $mech['last_name']) ?> 
+            <?= $labelSuffix ?>
+        </option>
+    <?php endforeach; ?>
+</select>
 </div>
 
         <!-- Service Name (readonly) -->

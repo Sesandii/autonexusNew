@@ -30,7 +30,8 @@ public function getWorkorderStatsByUser(int $user_id): array
             COUNT(*) AS total,
             SUM(CASE WHEN wo.status = 'completed' THEN 1 ELSE 0 END) AS completed,
             SUM(CASE WHEN wo.status = 'in_progress' THEN 1 ELSE 0 END) AS ongoing,
-            SUM(CASE WHEN wo.status NOT IN ('completed','in_progress') THEN 1 ELSE 0 END) AS assigned
+            SUM(CASE WHEN wo.status = 'on_hold' THEN 1 ELSE 0 END) AS onhold,
+            SUM(CASE WHEN wo.status NOT IN ('completed','in_progress','on_hold') THEN 1 ELSE 0 END) AS assigned
         FROM work_orders wo
         INNER JOIN mechanics m ON wo.mechanic_id = m.mechanic_id
         WHERE m.user_id = ?
@@ -63,4 +64,38 @@ public function getTodayAppointments(): array
     $stmt->execute();
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
+
+/**
+ * Get the branch ID for a specific mechanic
+ */
+public function getBranchIdByMechanic(int $mechanicId): ?int
+{
+    $stmt = $this->pdo->prepare("SELECT branch_id FROM mechanics WHERE mechanic_id = ?");
+    $stmt->execute([$mechanicId]);
+    return $stmt->fetchColumn() ?: null;
+}
+
+/**
+ * Count appointments in a branch that are 'confirmed' but NOT yet in work_orders
+ */
+public function getPendingAppointmentsCountByBranch(?int $branchId): int
+{
+    if (!$branchId) return 0;
+
+    $sql = "
+        SELECT COUNT(*) 
+        FROM appointments a
+        WHERE a.branch_id = ? 
+          AND a.status = 'confirmed'
+          AND a.appointment_id NOT IN (
+              SELECT appointment_id FROM work_orders WHERE appointment_id IS NOT NULL
+          )
+    ";
+
+    $stmt = $this->pdo->prepare($sql);
+    $stmt->execute([$branchId]);
+    return (int)$stmt->fetchColumn();
+}
+
+
 }

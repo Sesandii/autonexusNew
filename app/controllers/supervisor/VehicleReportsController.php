@@ -65,18 +65,28 @@ public function index()
             'workOrder' => $workOrder,
             'services'  => $services
         ]);
-    // Find the create() method and update the 'else' block:
-// Inside the else block of your create() method
-} else {
-    // Access the user ID from your session (adjust key if it's different in your app)
-    $supervisorId = $_SESSION['user']['user_id']; 
 
-    $completedOrders = $woModel->getCompletedWorkOrdersWithoutReport((int)$supervisorId);
+    } else {
+        // --- UPDATED LOGIC ---
+        // We use branch_id because supervisors oversee a branch, 
+        // and work_orders are tied to branches via appointments.
+        $branchId = $_SESSION['user']['branch_id'] ?? null; 
 
-    $this->view('supervisor/reports/create', [
-        'completedOrders' => $completedOrders
-    ]);
-}
+        // Security Fallback: If branch_id isn't in session, fetch it from the DB
+        if (!$branchId) {
+            $db = db();
+            $stmt = $db->prepare("SELECT branch_id FROM supervisors WHERE user_id = ?");
+            $stmt->execute([$_SESSION['user']['user_id']]);
+            $branchId = $stmt->fetchColumn();
+        }
+
+        // Fetch completed orders for this branch that don't have a report yet
+        $completedOrders = $woModel->getCompletedWorkOrdersWithoutReport((int)$branchId);
+
+        $this->view('supervisor/reports/create', [
+            'completedOrders' => $completedOrders
+        ]);
+    }
 }
 
     /* =========================
