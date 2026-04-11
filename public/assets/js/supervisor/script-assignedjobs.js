@@ -29,8 +29,10 @@ document.addEventListener("DOMContentLoaded", function () {
             const matchesMechanic =
                 mechanicValue === "" || mechanic === mechanicValue;
 
-            const matchesStatus =
-                statusValue === "" || status === statusValue;
+                const matchesStatus =
+                statusValue === "" 
+                    ? status !== "completed" 
+                    : status === statusValue;
 
             card.style.display =
                 (matchesSearch && matchesService && matchesMechanic && matchesStatus)
@@ -53,5 +55,6 @@ document.addEventListener("DOMContentLoaded", function () {
         statusFilter.value = "";
         filterJobs(); // ✅ correct function name
     });
+    filterJobs();
     
 });

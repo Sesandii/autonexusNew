@@ -1,70 +1,111 @@
 document.addEventListener('DOMContentLoaded', function() {
-  const fileInput = document.getElementById('image-upload');
-  const previewGrid = document.getElementById('preview-grid');
-  
-  // Modal Elements
-  const deleteModal = document.getElementById('deleteModal');
-  const confirmBtn = document.getElementById('confirmDelete');
-  const cancelBtn = document.getElementById('cancelDelete');
-  
-  let tempElementToDelete = null; // Variable to store the element temporarily
+    // --- MILEAGE CALCULATION LOGIC ---
+    const currentMileageInput = document.getElementById('current_mileage');
+    const intervalInput = document.getElementById('service_interval');
+    const nextDueDisplay = document.getElementById('next_service_display');
+    const hiddenNextDue = document.getElementById('next_service_due_val');
 
-  // Function to show/hide modal
-  const toggleModal = (show) => {
-      deleteModal.style.display = show ? 'flex' : 'none';
-  };
+    function calculateNextService() {
+        const current = parseInt(currentMileageInput.value);
+        const interval = parseInt(intervalInput.value);
 
-  // When "Cancel" is clicked
-  cancelBtn.onclick = () => toggleModal(false);
+        if (!isNaN(current) && !isNaN(interval)) {
+            const nextDue = current + interval;
+            nextDueDisplay.textContent = nextDue.toLocaleString() + " km";
+            if(hiddenNextDue) hiddenNextDue.value = nextDue;
+            
+            // Visual feedback - green border when calculated
+            nextDueDisplay.style.borderColor = "#10b981"; 
+            nextDueDisplay.style.color = "#003366";
+        } else {
+            nextDueDisplay.textContent = "- km";
+            if(hiddenNextDue) hiddenNextDue.value = "";
+            nextDueDisplay.style.borderColor = "#cbd5e1";
+        }
+    }
 
-  // When "Confirm Delete" is clicked
-  confirmBtn.onclick = () => {
-      if (tempElementToDelete) {
-          tempElementToDelete.remove();
-          tempElementToDelete = null;
-      }
-      toggleModal(false);
-  };
+    if (currentMileageInput && intervalInput) {
+        currentMileageInput.addEventListener('input', calculateNextService);
+        intervalInput.addEventListener('input', calculateNextService);
+        // Run once on load in case values are pre-filled
+        calculateNextService();
+    }
 
-  fileInput.addEventListener('change', function() {
-      const files = Array.from(this.files);
+    // --- IMAGE UPLOAD & MODAL LOGIC ---
+    const fileInput = document.getElementById('image-upload');
+    const previewGrid = document.getElementById('preview-grid');
+    const deleteModal = document.getElementById('deleteModal');
+    const confirmBtn = document.getElementById('confirmDelete');
+    const cancelBtn = document.getElementById('cancelDelete');
+    
+    let tempElementToDelete = null;
 
-      files.forEach((file) => {
-          if (!file.type.startsWith('image/')) return;
+    const toggleModal = (show) => {
+        if (deleteModal) deleteModal.style.display = show ? 'flex' : 'none';
+    };
 
-          const reader = new FileReader();
-          reader.onload = function(e) {
-              const container = document.createElement('div');
-              container.classList.add('preview-item');
+    if (cancelBtn) cancelBtn.onclick = () => toggleModal(false);
 
-              const img = document.createElement('img');
-              img.src = e.target.result;
-              img.onclick = () => openViewer(e.target.result); // Your existing viewer function
+    if (confirmBtn) {
+        confirmBtn.onclick = () => {
+            if (tempElementToDelete) {
+                tempElementToDelete.remove();
+                tempElementToDelete = null;
+            }
+            toggleModal(false);
+        };
+    }
 
-              const deleteBtn = document.createElement('button');
-              deleteBtn.innerText = 'Delete';
-              deleteBtn.type = 'button';
-              deleteBtn.classList.add('delete-btn-text');
-              
-              // INSTEAD OF REMOVING, OPEN THE MODAL
-              deleteBtn.onclick = function() {
-                  tempElementToDelete = container; // Remember this container
-                  toggleModal(true);               // Show confirmation
-              };
+    if (fileInput) {
+        fileInput.addEventListener('change', function() {
+            const files = Array.from(this.files);
 
-              container.appendChild(img);
-              container.appendChild(deleteBtn);
-              previewGrid.appendChild(container);
-          };
-          reader.readAsDataURL(file);
-      });
-  });
+            files.forEach((file) => {
+                if (!file.type.startsWith('image/')) return;
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const container = document.createElement('div');
+                    container.classList.add('preview-item');
+
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.onclick = () => openViewer(e.target.result); 
+
+                    const deleteBtn = document.createElement('button');
+                    deleteBtn.innerText = 'Delete';
+                    deleteBtn.type = 'button';
+                    deleteBtn.classList.add('delete-btn-text');
+                    
+                    deleteBtn.onclick = function() {
+                        tempElementToDelete = container;
+                        toggleModal(true);
+                    };
+
+                    container.appendChild(img);
+                    container.appendChild(deleteBtn);
+                    previewGrid.appendChild(container);
+                };
+                reader.readAsDataURL(file);
+            });
+        });
+    }
 });
 
-function saveDraft() {
-  alert("Draft saved successfully!");
+// Existing Viewer function (ensure this exists in your file)
+function openViewer(src) {
+    const modal = document.getElementById('imageModal');
+    const modalImg = document.getElementById('modalImg');
+    if (modal && modalImg) {
+        modal.style.display = "block";
+        modalImg.src = src;
+    }
 }
 
-function submitReport() {
-  alert("Final report submitted successfully!");
+// Close Modal logic
+const closeBtn = document.querySelector('.close-modal');
+if (closeBtn) {
+    closeBtn.onclick = function() {
+        document.getElementById('imageModal').style.display = "none";
+    }
 }

@@ -30,9 +30,11 @@ class DashboardController extends Controller
     $branchId = $model->getBranchIdByMechanic($mechanicId);
 
 $data = [
+    'mechanic_id' => $mechanicId,
     'stats' => $model->getWorkorderStatsByUser($userId),
     'branch_pending' => $model->getPendingAppointmentsCountByBranch($branchId), // New key
-    'appointments' => $model->getTodayAppointments()
+    'appointments' => $model->getTodayAppointments($branchId),
+    'active_job' => $model->getCurrentActiveJob($userId)
 ];
 
     $this->view('mechanic/dashboard/index', $data);

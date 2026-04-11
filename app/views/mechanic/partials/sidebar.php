@@ -1,11 +1,11 @@
 <?php $base = rtrim(BASE_URL, '/'); ?>
-
 <link rel="stylesheet" href="/autonexus/public/assets/css/supervisor/sidebar.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
 <?php
 function isActive($route) {
     $current = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
-    // normalize (remove trailing slash)
     $current = rtrim($current, '/');
     $route   = rtrim($route, '/');
 
@@ -14,57 +14,36 @@ function isActive($route) {
 ?>
 
 <div class="sidebar"> 
-
-<div class="top-section">
-  <div class="logo-container">
-    <img src="/autonexus/public/assets/img/Auto1.png" class="logo-collapsed" />
-    <img src="/autonexus/public/assets/img/Auto.png" class="logo-expanded" />
-  </div>
-
-  <h2 class="brand-text">AUTONEXUS</h2>
-
+<h2 class="brand-text">AutoNexus</h2>
   <div class="nav-links">
-  <a href="<?= $base ?>/mechanic/dashboard"
-     class="<?= isActive('/mechanic/dashboard') ?>">
-    <img src="/autonexus/public/assets/img/dashboard.png"/>
-    <span class="link-text">Dashboard</span>
+
+  <a href="<?= $base ?>/mechanic/dashboard" class="<?= isActive('/mechanic/dashboard') ?>">
+    <i class="fa-solid fa-gauge-high"></i> <span class="link-text">Dashboard</span>
   </a>
 
-  <a href="<?= $base ?>/mechanic/jobs"
-  class="<?= isActive('/mechanic/jobs') ?>">
-    <img src="/autonexus/public/assets/img/jobs.png"/>
-    <span class="link-text">Jobs</span>
+  <a href="<?= $base ?>/mechanic/jobs" class="<?= isActive('/mechanic/jobs') ?>">
+    <i class="fa-solid fa-layer-group"></i> <span class="link-text">Jobs</span>
   </a>
 
-  <a href="<?= $base ?>/mechanic/assignedjobs"
-    class="<?= isActive('/mechanic/assignedjobs') ?>">
-    <img src="/autonexus/public/assets/img/assigned.png"/>
+  <a href="<?= $base ?>/mechanic/assignedjobs" class="<?= isActive('/mechanic/assignedjobs') ?>">
+    <i class="fa-solid fa-screwdriver-wrench"></i> 
     <span class="link-text">Assigned</span>
   </a>
 
-  <a href="<?= $base ?>/mechanic/history"
-  class="<?= isActive('/mechanic/history') ?>">
-    <img src="/autonexus/public/assets/img/history.png"/>
-    <span class="link-text">Vehicle History</span>
+  <a href="<?= $base ?>/mechanic/history" class="<?= isActive('/mechanic/history') ?>">
+  <i class="fa-solid fa-clock-rotate-left"></i> <span class="link-text">Vehicle History</span>
   </a>
-</div>
-</div>
 
-<!-- Bottom User Section -->
-<div class="sidebar-bottom">
-
-  <a href="<?= $base ?>/mechanic/profile/edit"
-  class="<?= isActive('/mechanic/profile/edit') ?>">
-    <img src="<?= $base ?>/public/assets/img/user.png" />
-    <span class="link-text">Edit Profile</span>
+  <a href="<?= $base ?>/mechanic/profile/edit" class="<?= isActive('/mechanic/profile/edit') ?>">
+    <i class="fa-solid fa-user"></i> <span class="link-text">Profile</span>
   </a>
 
   <a href="<?= $base ?>/logout" id="logout-link">
-    <img src="<?= $base ?>/public/assets/img/logout.png" />
-    <span class="link-text">Sign Out</span>
-</a>
+    <i class="fa-solid fa-right-from-bracket"></i> <span class="link-text">Sign Out</span>
+  </a>
+  </div>
 </div>
- <!-- Logout Confirmation Modal -->
+
  <div id="logout-modal" class="modal hidden">
   <div class="modal-content">
     <h3>Confirm Logout</h3>
@@ -84,28 +63,23 @@ document.addEventListener('DOMContentLoaded', function() {
   const cancelBtn = document.getElementById('cancel-logout');
   const confirmBtn = document.getElementById('confirm-logout');
 
-  // Show modal on logout click
   logoutLink.addEventListener('click', function(e) {
     e.preventDefault();
     modal.classList.remove('hidden');
   });
 
-  // Cancel logout
   cancelBtn.addEventListener('click', function() {
     modal.classList.add('hidden');
   });
 
-  // Confirm logout
   confirmBtn.addEventListener('click', function() {
     window.location.href = logoutLink.href;
   });
 
-  // Close modal if click outside content
   modal.addEventListener('click', function(e) {
     if (e.target === modal) {
       modal.classList.add('hidden');
     }
   });
 });
-
 </script>

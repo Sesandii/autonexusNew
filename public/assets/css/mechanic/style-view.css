@@ -69,17 +69,7 @@ header {
   width: 24px;
   height: 24px;
 }
-.info-row {
-  display: flex;
-  grid-template-columns: 150px 1fr;
-  margin-bottom: 8px;
-  gap: 5px;
-}
-.info-row .label {
-  font-weight: 600;
-  color: #444;
-  min-width: 100px;
-}
+
 .status {
   display: inline-block;
   background-color: #d4f8da;
@@ -235,16 +225,6 @@ td {
   border-bottom: 1px solid #e5e7eb;
 }
 
-/* Info rows */
-.info-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 7px 0;
-  font-size: 14px;
-  color: #374151;
-}
-
 /* Labels */
 .label {
   font-weight: 600;
@@ -349,56 +329,147 @@ td {
 
 .info-row {
   display: flex;
-  justify-content: space-between;
-  margin-bottom: 12px;
-  font-size: 0.95rem;
+  align-items: center; /* Vertical centering */
+  gap: 12px;           /* Proper spacing between label, dropdown, and button */
+  flex-wrap: wrap;     /* Allows wrapping on small screens instead of overlapping */
+  min-height: 40px;
+  justify-content: space-between; /* Keeps label left and value right */
+  padding: 5px 0;    /* 👈 Change this from 15px or 20px down to 5px */
+  margin-bottom: 2px;
 }
 
-.label {
-  color: #7f8c8d; /* Muted Grey */
-  font-weight: 500;
-}
-
-.status {
-  text-transform: capitalize;
+.info-row .label {
+  width: 150px;        /* Fixed width for labels keeps things aligned */
   font-weight: 600;
-  color: #007bff;
+  flex-shrink: 0;
 }
+
 
 .status-dropdown {
-  padding: 4px 8px;
-  border-radius: 6px;
+  padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background-color: #fff;
+    font-size: 14px;
+    min-width: 160px;
 }
 
 .btn-primary {
-  padding: 6px 12px;
-  background: #007bff;
-  border: none;
-  color: #fff;
-  border-radius: 6px;
-  cursor: pointer;
-  margin-left: 8px;
+  background-color: #ff0000;
+    color: #fff;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap; /* Prevents text from wrapping inside the button */
+    transition: background 0.2s;
 }
 
 .btn-primary:hover {
-  background: #0056b3;
+  background-color: #ff7575;
 }
 
-.statu {
+.status {
   padding: 5px 12px;
   border-radius: 20px;
   font-size: 13px;
   font-weight: bold;
   display: inline-block; /* Or inline-flex */
-  width: fit-content;    /* Forces the width to match the text length */
+  width: fit-content; 
+  color: #007bff;   /* Forces the width to match the text length */
 }
 
-.statu.pending {
+.status.open{
   background: #fff7d6;
   color: #9c8500;
 }
 
-.statu.completed {
+.status.completed {
   color: #16a34a;
   font-weight: bold;
+}
+
+.toast-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 99999;
+}
+
+/* Toast box */
+.toast-message {
+  background: #000; /* black */
+  color: #fff;
+  padding: 14px 18px;
+  border-radius: 8px;
+  min-width: 250px;
+  font-size: 14px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+
+  /* animation */
+  opacity: 0;
+  transform: translateY(30px);
+  animation: slideUp 0.4s ease forwards, fadeOut 0.4s ease 3s forwards;
+}
+
+/* Type colors (left border only) */
+.toast-message.success {
+  border-left: 5px solid #28a745;
+}
+
+.toast-message.danger {
+  border-left: 5px solid #dc3545;
+}
+
+.toast-message.warning {
+  border-left: 5px solid #ffc107;
+}
+
+/* Animations */
+@keyframes slideUp {
+  to {
+      opacity: 1;
+      transform: translateY(0);
+  }
+}
+
+@keyframes fadeOut {
+  to {
+      opacity: 0;
+      transform: translateY(20px);
+  }
+}
+
+/* Fade out animation (optional) */
+.toast.hide {
+  opacity: 0;
+  transform: translateX(50px);
+}
+
+/* Footer container for the back button */
+.view-footer {
+  margin-top: 30px;
+  padding: 20px 0;
+  border-top: 1px solid #eee;
+  display: flex;
+  justify-content: flex-start;
+}
+
+/* Secondary button style */
+.btn-secondary {
+  display: inline-block;
+  padding: 8px 16px;
+  background-color: #000000; /* Neutral gray */
+  color: #ffffff;
+  text-decoration: none;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.btn-secondary:hover {
+  background-color: #5a6268;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  color: #fff;
 }

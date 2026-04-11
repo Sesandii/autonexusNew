@@ -82,7 +82,7 @@
                 <td><img src="<?= $base ?>/public/assets/img/car.png" class="icon-car" /> <?= htmlspecialchars($appt['vehicle']) ?></td>
                 <td><?= htmlspecialchars(date('h:i A', strtotime($appt['appointment_time']))) ?></td>
                 <td><?= htmlspecialchars($appt['name']) ?></td>
-                <td><span class="status-badge <?= strtolower($appt['status']) ?>"><?= htmlspecialchars($appt['status']) ?></span></td>
+                <td><span class="badge <?= strtolower($appt['status']) ?>"><?= htmlspecialchars($appt['status']) ?></span></td>
                 <td>
                   <?php if (!empty($appt['work_order_id'])): ?>
                     <a class="btn btn-primary small" href="<?= $base ?>/supervisor/workorders/<?= (int)$appt['work_order_id'] ?>">View</a>
@@ -166,13 +166,6 @@
     </div>
   </div>
 </div>
- </section>
-
- <section class="dashboard-graph-row">
-    <div class="chart-card">
-      <h3>Daily / Weekly Appointments Trend</h3>
-      <canvas id="weekly-chart"></canvas>
-    </div>
  </section>
 
   <!-- Delete Confirmation Modal -->

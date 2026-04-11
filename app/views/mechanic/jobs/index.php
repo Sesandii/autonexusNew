@@ -59,8 +59,13 @@ $base = rtrim(BASE_URL, '/');
   <?php foreach ($allJobs as $job): ?>
     <?php
         $owner = ($job['mechanic_user_id'] ?? 0) == $currentUserId ? 'mine' : 'others';
+        $status = strtolower($job['status']);
+        // Hide by default if completed
+        $initialDisplay = ($status === 'completed') ? 'display: none;' : '';
+  
     ?>
     <div class="job-card"
+    style="<?= $initialDisplay ?>"
      data-created="<?= $job['started_at'] ?>"
      data-duration="<?= $job['base_duration_minutes'] ?>"
      data-status="<?= strtolower($job['status']) ?>"
@@ -135,7 +140,14 @@ function applyJobFilters() {
       vehicle.includes(searchVal) ||
       workorder.includes(searchVal);
 
-    const matchStatus = !statusVal || status === statusVal;
+      let matchStatus = false;
+    if (statusVal === "") {
+      // If "All Status" is selected, hide completed jobs
+      matchStatus = (status !== "completed");
+    } else {
+      // If a specific status is selected (including completed), show only that
+      matchStatus = (status === statusVal);
+    }
     const matchOwner = !ownerVal || owner === ownerVal;
 
     card.style.display = (matchSearch && matchStatus && matchOwner) ? "" : "none";
@@ -152,7 +164,7 @@ resetBtn.addEventListener('click', () => {
   searchInput.value = '';
   statusFilter.value = '';
   myWorkordersFilter.value = '';
-  jobCards.forEach(card => card.style.display = '');
+  applyJobFilters();
 });
 
 let jobTimers = {};

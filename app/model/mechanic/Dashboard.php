@@ -42,7 +42,7 @@ public function getWorkorderStatsByUser(int $user_id): array
     return $stmt->fetch(PDO::FETCH_ASSOC);
 }
 
-public function getTodayAppointments(): array
+public function getTodayAppointments(int $branchId): array
 {
     $sql = "
         SELECT 
@@ -50,18 +50,22 @@ public function getTodayAppointments(): array
             CONCAT(u.first_name, ' ', u.last_name) AS customer_name,
             a.appointment_time,
             s.name,
-            a.status
+            wo.status AS work_status,
+            wo.work_order_id,
+            wo.mechanic_id
         FROM appointments a
+        INNER JOIN work_orders wo ON a.appointment_id = wo.appointment_id
         JOIN vehicles v ON v.vehicle_id = a.vehicle_id
         JOIN customers c ON c.customer_id = a.customer_id
         JOIN users u ON u.user_id = c.user_id
         JOIN services s ON s.service_id = a.service_id
-        WHERE DATE(a.appointment_date) = CURDATE()
+        WHERE a.branch_id = ? 
+          AND DATE(a.appointment_date) = CURDATE() AND wo.status NOT IN ('completed')
         ORDER BY a.appointment_time ASC
     ";
 
     $stmt = $this->pdo->prepare($sql);
-    $stmt->execute();
+    $stmt->execute([$branchId]);
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
@@ -97,5 +101,24 @@ public function getPendingAppointmentsCountByBranch(?int $branchId): int
     return (int)$stmt->fetchColumn();
 }
 
+/**
+ * Get the single most recent in-progress job for this mechanic
+ */
+public function getCurrentActiveJob(int $userId): ?array
+{
+    $sql = "
+        SELECT wo.work_order_id, s.name AS service_name, CONCAT(v.make, ' ', v.model) AS vehicle
+        FROM work_orders wo
+        JOIN mechanics m ON wo.mechanic_id = m.mechanic_id
+        JOIN appointments a ON wo.appointment_id = a.appointment_id
+        JOIN vehicles v ON a.vehicle_id = v.vehicle_id
+        JOIN services s ON a.service_id = s.service_id
+        WHERE m.user_id = ? AND wo.status = 'in_progress'
+        ORDER BY wo.started_at DESC LIMIT 1
+    ";
+    $stmt = $this->pdo->prepare($sql);
+    $stmt->execute([$userId]);
+    return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
+}
 
 }

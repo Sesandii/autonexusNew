@@ -133,3 +133,4 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.target === deleteModal) closeModal();
     });
 });
+

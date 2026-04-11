@@ -426,3 +426,37 @@ th, td {
   text-decoration: none;
   background-color: #f9f9f9;
 }
+
+/* Add this to your style-dashboard.css or a <style> tag */
+
+.table-wrapper {
+  max-height: 280px; /* Adjust this height as needed */
+  overflow-y: auto;  /* Adds vertical scrollbar */
+  overflow-x: auto;  /* Adds horizontal scrollbar for small screens */
+  border: 1px solid #eee; /* Optional: adds definition to the scroll area */
+  border-radius: 8px;
+  margin-top: 10px;
+}
+
+/* Optional: Make the table header "sticky" so it stays visible while scrolling */
+.table-wrapper table thead {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background-color: #f8f9fa; /* Matches your dashboard background */
+}
+
+/* Optional: Custom scrollbar styling to make it look modern */
+.table-wrapper::-webkit-scrollbar {
+  width: 8px;
+}
+.table-wrapper::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+.table-wrapper::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 4px;
+}
+.table-wrapper::-webkit-scrollbar-thumb:hover {
+  background: #aaa;
+}

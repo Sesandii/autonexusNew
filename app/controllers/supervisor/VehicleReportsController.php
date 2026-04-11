@@ -96,69 +96,73 @@ public function index()
     public function store()
     {
         if (session_status() !== PHP_SESSION_ACTIVE) session_start();
-    
+        
+        $userId = $_SESSION['user']['user_id'] ?? null;
         $workOrderId = $_POST['work_order_id'] ?? null;
-        $userId = $_SESSION['user']['user_id'] ?? null; 
-    
-        if (!$workOrderId || !$userId) {
-            die('Invalid session or work order');
-        }
-    
+        $db = db();
         $model = new Report();
     
-        // --- NEW STEP: Get supervisor_id from the supervisors table ---
-        // Assuming you have access to a DB helper or the pdo inside the controller
-        $db = db(); 
+        // Fetch supervisor_id
         $stmt = $db->prepare("SELECT supervisor_id FROM supervisors WHERE user_id = ?");
         $stmt->execute([$userId]);
         $supervisor = $stmt->fetch();
+        $realSupervisorId = $supervisor['supervisor_id'] ?? null;
     
-        if (!$supervisor) {
-            die('Error: You are not registered as a supervisor in the system.');
+        if (!$realSupervisorId) {
+            die('Supervisor record not found.');
         }
     
-        $realSupervisorId = $supervisor['supervisor_id'];
-        // --------------------------------------------------------------
+        // 1. Create the Report (Report table only)
+// 1. Create the Report and CAPTURE the ID
+$reportId = $model->create([
+    'work_order_id'      => $workOrderId,
+    'supervisor_id'      => $realSupervisorId,
+    'inspection_notes'   => $_POST['inspection_notes'] ?? '',
+    'quality_rating'     => (int)($_POST['quality_rating'] ?? 0),
+    'checklist_verified' => in_array('tasks_verified', $_POST['checklist'] ?? []) ? 1 : 0,
+    'test_driven'        => in_array('test_driven', $_POST['checklist'] ?? []) ? 1 : 0,
+    'concerns_addressed' => in_array('concerns_addressed', $_POST['checklist'] ?? []) ? 1 : 0,
+    'report_summary'     => $_POST['report_summary'] ?? '',
+    'status'             => $_POST['status'] ?? 'draft'
+]);
+
+// 2. Calculate and Update Vehicle (quantitative tracking)
+if (($_POST['status'] ?? '') === 'submitted') {
     
-        $model->create([
-            'work_order_id'               => $workOrderId,
-            'supervisor_id'               => $realSupervisorId, // Now storing the PK from supervisors table
-            'inspection_notes'            => $_POST['inspection_notes'] ?? '',
-            'quality_rating'              => (int)($_POST['quality_rating'] ?? 0),
-            'checklist_verified'          => in_array('tasks_verified', $_POST['checklist'] ?? []) ? 1 : 0,
-            'test_driven'                 => in_array('test_driven', $_POST['checklist'] ?? []) ? 1 : 0,
-            'concerns_addressed'          => in_array('concerns_addressed', $_POST['checklist'] ?? []) ? 1 : 0,
-            'report_summary'              => $_POST['report_summary'] ?? '',
-            'next_service_recommendation' => !empty($_POST['next_service_recommendation']) ? $_POST['next_service_recommendation'] : null,
-            'status'                      => $_POST['status'] ?? 'draft'
-        ]);
-    
-        // 3. Get newly created report ID
-        $reportId = $model->getLastInsertId();
-    
-        // 4. Handle photo uploads (unchanged)
-        if (!empty($_FILES['work_images']['name'][0])) {
-            $uploadDir = __DIR__ . '/../../../public/assets/img/report_photos/';
-            if (!is_dir($uploadDir)) {
-                mkdir($uploadDir, 0777, true);
-            }
-    
-            foreach ($_FILES['work_images']['tmp_name'] as $key => $tmpName) {
-                if ($_FILES['work_images']['error'][$key] === UPLOAD_ERR_OK) {
-                    $ext = pathinfo($_FILES['work_images']['name'][$key], PATHINFO_EXTENSION);
-                    $fileName = uniqid('report_') . '.' . $ext;
-                    $targetPath = $uploadDir . $fileName;
-    
-                    if (move_uploaded_file($tmpName, $targetPath)) {
-                        $model->savePhoto(
-                            $reportId,
-                            'assets/img/report_photos/' . $fileName
-                        );
-                    }
-                }
+    // Use current mileage for calculation ONLY
+    $odoAtService = (int)($_POST['current_mileage'] ?? 0); 
+    $interval     = (int)($_POST['service_interval'] ?? 5000);
+    $nextDue      = $odoAtService + $interval;
+
+    // Save only what we need to keep
+    $model->updateVehicleServiceData(
+        (int)$workOrderId, 
+        $nextDue, 
+        $interval
+    );
+}
+
+// 3. Handle photo uploads (This is where the error was)
+if (!empty($_FILES['work_images']['name'][0])) {
+    $uploadDir = __DIR__ . '/../../../public/assets/img/report_photos/';
+    if (!is_dir($uploadDir)) mkdir($uploadDir, 0777, true);
+
+    foreach ($_FILES['work_images']['tmp_name'] as $key => $tmpName) {
+        if ($_FILES['work_images']['error'][$key] === UPLOAD_ERR_OK) {
+            $ext = pathinfo($_FILES['work_images']['name'][$key], PATHINFO_EXTENSION);
+            $fileName = uniqid('report_') . '.' . $ext;
+            $targetPath = $uploadDir . $fileName;
+
+            if (move_uploaded_file($tmpName, $targetPath)) {
+                // Now $reportId is a valid integer, so this won't crash
+                $model->savePhoto(
+                    $reportId, 
+                    'assets/img/report_photos/' . $fileName
+                );
             }
         }
-    
+    }
+}
         // 5. Redirect
         header('Location: ' . rtrim(BASE_URL, '/') . '/supervisor/reports/indexp');
         exit;
@@ -255,24 +259,40 @@ public function update(int $reportId)
 {
     $reportModel = new Report();
 
-    // 1️⃣ Collect form data
+    // 1. Calculate the 'Next Due' value locally (not stored in reports table)
+    $odoAtService = (int)($_POST['current_mileage'] ?? 0);
+    $interval     = (int)($_POST['service_interval'] ?? 5000);
+    $nextDue      = $odoAtService + $interval;
+
+    // 2. Qualitative Data for the Reports table
     $data = [
-        'inspection_notes'           => $_POST['inspection_notes'] ?? '',
-        'quality_rating'             => (int)($_POST['quality_rating'] ?? 0),
-        'checklist_verified'         => in_array('tasks_verified', $_POST['checklist'] ?? []) ? 1 : 0,
-        'test_driven'                => in_array('test_driven', $_POST['checklist'] ?? []) ? 1 : 0,
-        'concerns_addressed'         => in_array('concerns_addressed', $_POST['checklist'] ?? []) ? 1 : 0,
-        'report_summary'             => $_POST['report_summary'] ?? '',
-        'next_service_recommendation'=> !empty($_POST['next_service_recommendation'])
-                                        ? $_POST['next_service_recommendation']
-                                        : null,
-        'status'                     => $_POST['status'] ?? 'draft'
+        'inspection_notes'   => $_POST['inspection_notes'] ?? '',
+        'quality_rating'     => (int)($_POST['quality_rating'] ?? 0),
+        'checklist_verified' => in_array('tasks_verified', $_POST['checklist'] ?? []) ? 1 : 0,
+        'test_driven'        => in_array('test_driven', $_POST['checklist'] ?? []) ? 1 : 0,
+        'concerns_addressed' => in_array('concerns_addressed', $_POST['checklist'] ?? []) ? 1 : 0,
+        'report_summary'     => $_POST['report_summary'] ?? '',
+        'status'             => $_POST['status'] ?? 'draft'
     ];
 
-    // 2️⃣ Update DB
+    // Save report notes
     $reportModel->update($reportId, $data);
 
-    // 3️⃣ Handle photo uploads (optional)
+    // 3. Sync to Vehicles table only on submission
+    if (($_POST['status'] ?? '') === 'submitted') {
+        $report = $reportModel->find($reportId);
+        
+        if ($report && !empty($report['work_order_id'])) {
+            // Update the vehicle record using the calculated values
+            $reportModel->updateVehicleServiceData(
+                (int)$report['work_order_id'], 
+                $nextDue, 
+                $interval
+            );
+        }
+    }
+
+    // 3. Handle photo uploads (unchanged)
     if (!empty($_FILES['work_images']['name'][0])) {
         $uploadDir = __DIR__ . '/../../../public/assets/img/report_photos/';
         if (!is_dir($uploadDir)) mkdir($uploadDir, 0777, true);
@@ -290,7 +310,6 @@ public function update(int $reportId)
         }
     }
 
-    // 4️⃣ Redirect to view page
     header('Location: ' . BASE_URL . '/supervisor/reports/view/' . $reportId);
     exit;
 }
@@ -322,20 +341,28 @@ public function deletePhoto(int $id)
 public function dailyJobs()
 {
     $reportModel = new \app\model\supervisor\Report();
+    
+    // SECURE: Only fetch data for the logged-in supervisor's branch
+    $branchId = $_SESSION['user']['branch_id'] ?? null;
 
-    // Read filters from GET
-    $date = $_GET['report_date'] ?? null;
+    $date = $_GET['report_date'] ?? date('Y-m-d');
     $mechanicCode = $_GET['mechanic_code'] ?? null;
 
-    // Fetch filtered daily report
-    $dailyReport = $reportModel->getDailyJobCompletion($date, $mechanicCode);
-
-    // Optionally, pass mechanics list to the view for the dropdown
-    $mechanics = $reportModel->getAllMechanics(); // You need a method for this
+    // Pass $branchId to all methods
+    $dailyReport = $reportModel->getDailyJobCompletion($date, $mechanicCode, $branchId);
+    $mechanics   = $reportModel->getAllMechanics($branchId);
+    $statusStats = $reportModel->getAppointmentStatusStats($branchId, $date);
+    $hourlyStats = $reportModel->getHourlyJobStats($branchId, $date);
+    $trendStats  = $reportModel->getWeeklyBookingTrend($branchId);
+    $summary     = $reportModel->getBranchPerformanceSummary($branchId, $date);
 
     $this->view('supervisor/reports/daily-jobs', [
-        'dailyReport' => $dailyReport,
-        'mechanics'   => $mechanics,
+        'dailyReport'  => $dailyReport,
+        'mechanics'    => $mechanics,
+        'statusStats'  => $statusStats,
+        'hourlyStats'  => $hourlyStats,
+        'trendStats'   => $trendStats,
+        'summary'      => $summary,
         'selectedDate' => $date,
         'selectedMechanic' => $mechanicCode
     ]);
@@ -344,20 +371,30 @@ public function dailyJobs()
 public function mechanicActivity()
 {
     $reportModel = new \app\model\supervisor\Report();
+    
+    // SECURE: Grab branch_id from session
+    $branchId = $_SESSION['user']['branch_id'] ?? null;
 
-    // Read optional filters from GET
+    // Optional filters
     $date = $_GET['date'] ?? null;
     $mechanicCode = $_GET['mechanic_code'] ?? null;
 
-    $activity = $reportModel->getMechanicActivity($date, $mechanicCode);
+    // 1. Table Data (Branch Restricted)
+    $activity = $reportModel->getMechanicActivity($date, $mechanicCode, $branchId);
 
-    // List of mechanics for dropdown filter
-    $mechanics = $reportModel->getAllMechanics();
+    // 2. Dropdown List (Only mechanics in this branch)
+    $mechanics = $reportModel->getAllMechanics($branchId);
+
+    // 3. Chart Data (Branch Performance Comparison)
+    $comparison = $reportModel->getMechanicCompletionComparison($branchId);
+    $efficiency = $reportModel->getMechanicEfficiencyStats($branchId);
 
     $this->view('supervisor/reports/mechanic-activity', [
-        'activity' => $activity,
-        'mechanics' => $mechanics,
-        'selectedDate' => $date,
+        'activity'         => $activity,
+        'mechanics'        => $mechanics,
+        'comparison'       => $comparison,
+        'efficiency'       => $efficiency,
+        'selectedDate'     => $date,
         'selectedMechanic' => $mechanicCode
     ]);
 }

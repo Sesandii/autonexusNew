@@ -8,7 +8,7 @@
   <style>
     .job-card.disabled {
         opacity: 0.5;
-        pointer-events: none;
+        cursor: grab;
         filter: blur(1px);
     }
   </style>
@@ -81,6 +81,11 @@
 
   <h2>Open Jobs</h2>
   <p>Jobs waiting to be started</p>
+  <div class="job-filters">
+        <label style="font-size: 0.9rem; color: #666; cursor: pointer;">
+            <input type="checkbox" id="showCompleted" onchange="toggleCompleted()"> Show Completed Jobs
+        </label>
+    </div>
 
   <div class="job-grid" id="job-grid">
     <?php if (!empty($openJobs)) : ?>
@@ -101,6 +106,12 @@
             </h3>
             <div class="job-info"><span>Customer</span> <?= htmlspecialchars($job['first_name'] . ' ' . $job['last_name']) ?></div>
             <div class="job-info"><span>Vehicle</span> <?= htmlspecialchars($job['make'] . ' ' . $job['model']) ?></div>
+
+            <div class="job-actions" style="margin-top: 15px;">
+    <a href="<?= $base ?>/mechanic/jobs/view/<?= $job['work_order_id'] ?>" class="btn-black-tile">
+        View
+    </a>
+</div>
 
             <div class="progress-wrapper">
               <div class="progress-label">Progress: <?= $job['progress'] ?>%</div>
@@ -160,10 +171,14 @@ const focusDropzone = document.getElementById('focus-dropzone');
 let draggedJob = null;
 
 document.querySelectorAll('.job-card').forEach(card => {
-    card.addEventListener('dragstart', e => {
-        draggedJob = card;
-        card.style.opacity = '0.5';
-    });
+  card.addEventListener('dragstart', e => {
+    if (card.dataset.status === 'completed') {
+        e.preventDefault();
+        return false;
+    }
+    draggedJob = card;
+    card.style.opacity = '0.5';
+});
     card.addEventListener('dragend', () => {
         draggedJob = null;
         card.style.opacity = '1';
@@ -179,25 +194,49 @@ focusDropzone.addEventListener('drop', async (e) => {
     const jobId = draggedJob.dataset.jobId;
     const currentCard = focusDropzone.querySelector('.job-card.focused-job');
 
-    try {
-        if (currentCard && currentCard.dataset.jobId !== jobId) {
-            await fetch(`/autonexus/mechanic/jobs/set-status/${currentCard.dataset.jobId}`, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ status: 'on_hold' })
-            });
-        }
+    // 1. Check if we are dragging the same job that's already focused
+    if (currentCard && currentCard.dataset.jobId === jobId) return;
 
-        const response = await fetch(`/autonexus/mechanic/jobs/set-status/${jobId}`, {
+    try {
+        // 2. Use the correct URL. Based on your Controller, it's likely update-status
+        // If you don't have a specific JSON API, we use FormData to talk to your existing method
+        const formData = new FormData();
+        formData.append('work_order_id', jobId);
+        formData.append('status', 'in_progress');
+
+        const response = await fetch('/autonexus/mechanic/jobs/update-status', {
             method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({ status: 'in_progress' })
+            body: formData
         });
 
-        if (response.ok) window.location.reload();
+        if (response.ok) {
+            window.location.reload();
+        } else {
+            // Handle the error (like the "Already has an active job" error we wrote)
+            alert("Could not start job. Check if you have another job in progress.");
+        }
     } catch (error) {
         console.error("Error:", error);
     }
+});
+
+function toggleCompleted() {
+    const showCompleted = document.getElementById('showCompleted').checked;
+    const cards = document.querySelectorAll('.job-card');
+
+    cards.forEach(card => {
+        // We only care about cards in the grid (not the focused one)
+        if (!card.classList.contains('focused-job')) {
+            if (card.dataset.status === 'completed') {
+                card.style.display = showCompleted ? 'block' : 'none';
+            }
+        }
+    });
+}
+
+// Ensure the filters are applied correctly if the page refreshes
+document.addEventListener('DOMContentLoaded', () => {
+    toggleCompleted();
 });
 </script>
 </body>

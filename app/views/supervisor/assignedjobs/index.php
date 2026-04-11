@@ -57,8 +57,9 @@
     <section class="job-section">
       <div class="job-grid">
         <?php if (!empty($workOrders)): ?>
-          <?php foreach ($workOrders as $job): ?>
-            <div class="job-card"
+          <?php foreach ($workOrders as $job):
+            $isHidden = (strtolower($job['status']) === 'completed') ? 'js-hidden' : ''; ?>
+            <div class="job-card <?= $isHidden ?>"
      data-workorder="<?= $job['work_order_id'] ?>"
      data-service="<?= strtolower($job['service_name']) ?>"
      data-vehicle="<?= strtolower($job['vehicle']) ?>" 

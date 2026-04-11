@@ -126,6 +126,7 @@ class WorkOrder
             v.current_mileage,
             v.color,
             v.vin,
+            s.name,
             u.first_name,
             u.last_name,
             u.street_address,
@@ -133,7 +134,9 @@ class WorkOrder
             u.state,
             u.phone,
             m.mechanic_code AS assigned_mechanic_code,
-            m.mechanic_id
+            m.mechanic_id,
+            us.first_name AS supervisor_first_name,
+            us.last_name AS supervisor_last_name
         FROM work_orders w
         JOIN appointments a ON w.appointment_id = a.appointment_id
         JOIN vehicles v ON a.vehicle_id = v.vehicle_id
@@ -142,6 +145,8 @@ class WorkOrder
         JOIN customers c ON a.customer_id = c.customer_id
         JOIN users u ON c.user_id = u.user_id
         JOIN mechanics m ON w.mechanic_id = m.mechanic_id
+        LEFT JOIN supervisors su ON w.supervisor_id = su.user_id
+        LEFT JOIN users us ON su.user_id = us.user_id
         WHERE w.work_order_id = :id
         LIMIT 1
     ";

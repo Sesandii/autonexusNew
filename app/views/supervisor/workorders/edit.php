@@ -85,9 +85,14 @@
         <option value="<?= $mech['mechanic_id'] ?>" 
                 style="<?= $style ?>" 
                 <?= $isDisabledAttr ?>
-                <?= $isSelected ? 'selected' : '' ?>>
+                <?php 
+            // Compare the mechanic in the loop to the mechanic saved in the work order
+            if ((int)$mech['mechanic_id'] === (int)($wo['mechanic_id'] ?? 0)) {
+                echo 'selected';
+            }
+        ?>>
             <?= htmlspecialchars($mech['mechanic_code']) ?> - 
-            <?= htmlspecialchars($mech['first_name'] . ' ' . $mech['last_name']) ?> 
+            <?= htmlspecialchars($mech['specialization']) ?> 
             <?= $labelSuffix ?>
         </option>
     <?php endforeach; ?>

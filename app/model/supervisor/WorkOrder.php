@@ -655,7 +655,7 @@ public function countActiveByMechanicCode(string $mechanicCode, int $excludeWork
             FROM work_orders w
             LEFT JOIN mechanics m ON w.mechanic_id = m.mechanic_id
             WHERE m.mechanic_code = :mechanic_code
-              AND w.status IN ('open','in_progress')
+              AND w.status IN ('open','in_progress','on_hold')
               AND w.work_order_id != :exclude_id";
 
     $stmt = $this->pdo->prepare($sql);
@@ -735,7 +735,7 @@ public function getScheduledWorkOrdersByMechanicCode(string $mechanicCode)
             JOIN mechanics m ON wo.mechanic_id = m.mechanic_id
             JOIN appointments a ON wo.appointment_id = a.appointment_id
             JOIN services s ON a.service_id = s.service_id
-            WHERE m.mechanic_code = ?
+            WHERE m.mechanic_code = ? AND wo.status != 'completed'
             ORDER BY wo.work_order_id ASC";
 
     $stmt = $this->pdo->prepare($sql);
@@ -877,6 +877,39 @@ public function getActiveMechanicsByBranch(?int $branchId): array
     return $stmt->fetchAll(\PDO::FETCH_ASSOC);
 }
 
+/**
+ * Checks if a mechanic has any unfinished jobs.
+ * Used to enforce the one-job-at-a-time rule.
+ */
+public function hasActiveJobInRestrictedStatuss(int $mechanicId): bool
+{
+    $sql = "SELECT COUNT(*) 
+            FROM work_orders 
+            WHERE mechanic_id = :mechanic_id 
+              AND status IN ('in_progress', 'on_hold', 'completed')";
+              
+    $stmt = $this->pdo->prepare($sql);
+    $stmt->execute(['mechanic_id' => $mechanicId]);
+    
+    return (int)$stmt->fetchColumn() > 0;
+}
 
+
+public function hasActiveJobInRestrictedStatus(int $mechanicId, int $excludeWorkOrderId = 0): bool
+{
+    $sql = "SELECT COUNT(*) 
+            FROM work_orders 
+            WHERE mechanic_id = :mechanic_id 
+              AND work_order_id != :exclude_id 
+              AND status IN ('in_progress')";
+              
+    $stmt = $this->pdo->prepare($sql);
+    $stmt->execute([
+        'mechanic_id' => $mechanicId,
+        'exclude_id'  => $excludeWorkOrderId
+    ]);
+    
+    return (int)$stmt->fetchColumn() > 0;
+}
 
 }

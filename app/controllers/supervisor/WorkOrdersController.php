@@ -144,7 +144,7 @@ public function store()
         $activeCount = $m->countActiveByMechanicCode($mechanicCode);
         if ($activeCount >= 5) {
             $this->flash('danger', "This mechanic ({$mechanicCode}) already has 5 active work orders.");
-            header('Location: ' . rtrim(BASE_URL,'/') . '/supervisor/workorders/create');
+            header('Location: ' . rtrim(BASE_URL,'/') . '/supervisor/workorders');
             exit;
         }
     }
@@ -160,6 +160,17 @@ public function store()
 //$hasActive = $m->hasActiveInProgressJob($mechanic_id);
 //$status = $hasActive ? 'open' : 'in_progress';
 $status = $_POST['status'] ?? 'open';
+
+if ($mechanic_id && ($status === 'in_progress')) {
+        
+    // We check if this mechanic already has ANY job that is 'in_progress' or 'on_hold'
+    // Using the model method we discussed earlier
+    if ($m->hasActiveJobInRestrictedStatuss($mechanic_id)) {
+        $this->flash('danger', "This mechanic already has a job 'In Progress'. Please pause or complete it first.");
+        header('Location: ' . rtrim(BASE_URL,'/') . '/supervisor/workorders');
+        exit;
+    }
+}
 // 🔹 CREATE WORK ORDER
 $workOrderId = $m->create([
     'appointment_id'  => $appointment_id,
@@ -243,7 +254,7 @@ if ($appt && !empty($appt['vehicle_id'])) {
     $wo = $m->find((int)$id);
 
     if (!$wo || ($wo['supervisor_id'] ?? 0) !== $supervisor_id) {
-        $this->flash('danger', 'Work order not found or unauthorized.');
+        $this->flash('danger', 'Work order unauthorized.');
         header('Location: ' . rtrim(BASE_URL,'/') . '/supervisor/workorders'); 
         exit;
     }
@@ -292,7 +303,8 @@ if ($appt && !empty($appt['vehicle_id'])) {
         'availableAppointments' => $availableAppointments,
         'activeMechanics'       => $activeMechanics, // Now filtered by branch
         'mechanicLimits'        => $mechanicLimits,
-        'checklist'             => $finalChecklist
+        'checklist'             => $finalChecklist,
+        'selectedMechanicId'    => $wo['mechanic_id']
     ];
 
     $this->view('supervisor/workorders/edit', $data);
@@ -327,20 +339,37 @@ if ($appt && !empty($appt['vehicle_id'])) {
         }
     
         // 🔹 Mechanic limit check (max 5 active work orders per mechanic_code)
-        if ($newMechanicId != $wo['mechanic_id']) { // only if mechanic is changed
-            $mechanic = $m->getMechanicById($newMechanicId);
-            $mechanicCode = $mechanic['mechanic_code'] ?? null;
-    
-            if ($mechanicCode) {
-                // Exclude the current work order ID from the count
-                $activeCount = $m->countActiveByMechanicCode($mechanicCode, $id);
-                if ($activeCount >= 5) {
-                    $this->flash('danger', "This mechanic ({$mechanicCode}) already has 5 active work orders.");
-                    header('Location: ' . rtrim(BASE_URL,'/') . "/supervisor/workorders/{$id}/edit");
-                    exit;
-                }
+        $newStatus = $_POST['status'] ?? 'open';
+    $currentStatus = strtolower($wo['status'] ?? '');
+
+    // 🔹 REASSIGNMENT & STATUS VALIDATION
+    $isActiveState = ($newStatus === 'in_progress');
+    $mechanicChanged = ($newMechanicId != $wo['mechanic_id']);
+
+    if ($isActiveState || ($mechanicChanged && $isActiveState)) {
+        
+        // Pass the current $id to EXCLUDE this specific work order from the count
+        // We only care if they have a DIFFERENT job that is active
+        if ($m->hasActiveJobInRestrictedStatus($newMechanicId, (int)$id)) {
+            $this->flash('danger', "This mechanic already has a job 'In Progress' or 'On Hold'. You cannot assign them another active task.");
+            header('Location: ' . rtrim(BASE_URL,'/') . "/supervisor/workorders");
+            exit;
+        }
+    }
+
+    // 🔹 Mechanic total limit check (max 5 jobs total)
+    if ($mechanicChanged) {
+        $mechanic = $m->getMechanicById($newMechanicId);
+        $mechanicCode = $mechanic['mechanic_code'] ?? null;
+        if ($mechanicCode) {
+            $activeCount = $m->countActiveByMechanicCode($mechanicCode, $id);
+            if ($activeCount >= 5) {
+                $this->flash('danger', "This mechanic ({$mechanicCode}) already has 5 total work orders.");
+                header('Location: ' . rtrim(BASE_URL,'/') . "/supervisor/workorders/{$id}/edit");
+                exit;
             }
         }
+    }
 
         // After checking the mechanic limit and before updating
 if ($newMechanicId) {
@@ -379,7 +408,7 @@ $currentStatus = strtolower($wo['status'] ?? '');
 
 
 // 🔹 NEW VALIDATION: One "in_progress" job per mechanic
-if ($newStatus === 'in_progress' && $currentStatus !== 'in_progress') {
+if (($newStatus === 'in_progress') && $currentStatus !== $newStatus) {
     // We pass the $id to exclude the current work order from the check
     if ($m->hasActiveInProgressJob($newMechanicId, (int)$id)) {
         $this->flash('danger', "This mechanic already has a job 'In Progress'. Please pause or complete it first.");
