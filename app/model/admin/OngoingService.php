@@ -21,10 +21,14 @@ class OngoingService
     public static function uiStatus(string $dbStatus): string
     {
         switch ($dbStatus) {
-            case 'open':        return 'Received';
-            case 'in_progress': return 'In Service';
-            case 'completed':   return 'Completed';
-            default:            return ucfirst(str_replace('_', ' ', $dbStatus));
+            case 'open':
+                return 'Received';
+            case 'in_progress':
+                return 'In Service';
+            case 'completed':
+                return 'Completed';
+            default:
+                return ucfirst(str_replace('_', ' ', $dbStatus));
         }
     }
 
@@ -151,7 +155,7 @@ class OngoingService
             LEFT JOIN mechanics m  ON m.mechanic_id  = w.mechanic_id
             LEFT JOIN users mu     ON mu.user_id     = m.user_id
 
-            LEFT JOIN supervisors sup ON sup.branch_id = b.branch_id AND sup.status = 'active'
+            LEFT JOIN supervisors sup ON sup.supervisor_id = w.supervisor_id
             LEFT JOIN users su        ON su.user_id    = sup.user_id
 
             WHERE w.work_order_id = :id

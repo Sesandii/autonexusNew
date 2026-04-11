@@ -22,8 +22,8 @@ class ServiceHistory
      * @return array
      */
     public function list(array $filters = []): array
-{
-    $sql = "
+    {
+        $sql = "
         SELECT
             w.work_order_id,
             w.completed_at,
@@ -64,35 +64,35 @@ class ServiceHistory
             w.status = 'completed'
     ";
 
-    $where  = [];
-    $params = [];
+        $where = [];
+        $params = [];
 
-    // Date range (by completed date)
-    if (!empty($filters['from'])) {
-        $where[]   = "DATE(w.completed_at) >= ?";
-        $params[]  = $filters['from'];
-    }
+        // Date range (by completed date)
+        if (!empty($filters['from'])) {
+            $where[] = "DATE(w.completed_at) >= ?";
+            $params[] = $filters['from'];
+        }
 
-    if (!empty($filters['to'])) {
-        $where[]   = "DATE(w.completed_at) <= ?";
-        $params[]  = $filters['to'];
-    }
+        if (!empty($filters['to'])) {
+            $where[] = "DATE(w.completed_at) <= ?";
+            $params[] = $filters['to'];
+        }
 
-    // Branch filter
-    if (!empty($filters['branch_id'])) {
-        $where[]   = "b.branch_id = ?";
-        $params[]  = (int)$filters['branch_id'];
-    }
+        // Branch filter
+        if (!empty($filters['branch_id'])) {
+            $where[] = "b.branch_id = ?";
+            $params[] = (int) $filters['branch_id'];
+        }
 
-    // Service type filter
-    if (!empty($filters['type_id'])) {
-        $where[]   = "s.type_id = ?";
-        $params[]  = (int)$filters['type_id'];
-    }
+        // Service type filter
+        if (!empty($filters['type_id'])) {
+            $where[] = "s.type_id = ?";
+            $params[] = (int) $filters['type_id'];
+        }
 
-    // Text search
-    if (!empty($filters['search'])) {
-        $where[] = "
+        // Text search
+        if (!empty($filters['search'])) {
+            $where[] = "
             (
                 s.name LIKE ?
                 OR st.type_name LIKE ?
@@ -103,27 +103,27 @@ class ServiceHistory
             )
         ";
 
-        $like = '%' . $filters['search'] . '%';
-        // One ? placeholder per column in the block above (6 of them)
-        for ($i = 0; $i < 6; $i++) {
-            $params[] = $like;
+            $like = '%' . $filters['search'] . '%';
+            // One ? placeholder per column in the block above (6 of them)
+            for ($i = 0; $i < 6; $i++) {
+                $params[] = $like;
+            }
         }
-    }
 
-    if (!empty($where)) {
-        $sql .= " AND " . implode(" AND ", $where);
-    }
+        if (!empty($where)) {
+            $sql .= " AND " . implode(" AND ", $where);
+        }
 
-    $sql .= "
+        $sql .= "
         ORDER BY w.completed_at DESC
         LIMIT 200
     ";
 
-    $stmt = $this->pdo->prepare($sql);
-    $stmt->execute($params);
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
 
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
-}
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 
 
     /**
@@ -197,7 +197,7 @@ class ServiceHistory
             LEFT JOIN vehicles v ON v.vehicle_id    = a.vehicle_id
             LEFT JOIN mechanics m ON m.mechanic_id  = w.mechanic_id
             LEFT JOIN users mu    ON mu.user_id     = m.user_id
-            LEFT JOIN supervisors sup ON sup.branch_id = b.branch_id AND sup.status = 'active'
+            LEFT JOIN supervisors sup ON sup.supervisor_id = w.supervisor_id
             LEFT JOIN users su        ON su.user_id    = sup.user_id
             WHERE w.work_order_id = :id
             LIMIT 1
