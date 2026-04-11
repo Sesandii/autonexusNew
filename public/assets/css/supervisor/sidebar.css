@@ -1,230 +1,124 @@
-/* Sidebar Container */
 .sidebar {
   background-color: #000;
   color: white;
-  width: 50px; /* collapsed width */
+  width: 260px; 
   height: 100vh;
   display: flex;
   flex-direction: column;
-  transition: width 0.5s ease;
-  overflow: hidden;
-  font-size: 13px;
-  padding: 10px 0;
-}
-
-/* Expand on hover */
-.sidebar:hover {
-  width: 170px;
-}
-
-/* Top Section */
-.top-section {
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;   /* 🔥 This pushes bottom section down properly */
-}
-
-/* Logo */
-.logo-container {
-  height: 80px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  margin-bottom: 10px;
-}
-
-/* Collapsed logo */
-.logo-collapsed {
-  width: 35px;
-  display: block;
-}
-
-/* Expanded logo */
-.logo-expanded {
-  display: none;
-  width: 150px;
-  height: 70px;
-}
-
-/* Switch logo on hover */
-.sidebar:hover .logo-collapsed {
-  display: none;
-}
-
-.sidebar:hover .logo-expanded {
-  display: block;
-}
-
-/* Brand text */
-.brand-text {
-  opacity: 0;
-  text-align: center;
-  transition: opacity 0.5s ease;
-  margin-bottom: 20px;   /* 🔥 adds space */
-}
-.sidebar:hover .brand-text {
-  opacity: 1;
-}
-
-/* Navigation Links */
-.sidebar a {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 12px 10px;
-  margin-bottom: 5px;
-  cursor: pointer;
-  border-radius: 0px;
-  color: #d1d5db;
-  text-decoration: none;
-  transition: background 0.3s;
-  width: 100%;              
-
-}
-
-.sidebar a img {
-  width: 17px;
-  height: 17px;
-}
-
-/* Hover effect */
-.sidebar a:hover {
-  background-color: #1F2937;
-}
-
-/* Hide link text when collapsed */
-.sidebar .link-text {
-  opacity: 0;
-  white-space: nowrap;
-  transition: opacity 0.5s ease;
-}
-
-.sidebar:hover .link-text {
-  opacity: 1;
-}
-
-
-/* Ensure alignment matches top links */
-.sidebar-bottom {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;  /* aligns left like top links */
-  padding: 15px 0px;
-}
-
-
-.sidebar-bottom a:hover {
-  background-color: #1F2937; /* same hover effect as top links */
-}
-
-/* Icons */
-.sidebar-bottom img {
-  width: 17px;
-  height: 17px;
-}
-
-/* Show text on hover/expanded */
-.sidebar:hover .sidebar-bottom a span {
-  opacity: 1;
-}
-
-/* Modal overlay */
-.modal {
-  position: fixed;
+  padding: 20px 0;
+  position: sticky;
   top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0,0,0,0.5); /* semi-transparent background */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 9999;
-  transition: opacity 0.3s ease;
+  overflow-x: hidden;
+  font-family: 'Inter', sans-serif;
 }
 
-/* Hidden by default */
-.modal.hidden {
-  display: none;
-}
-
-/* Modal box */
-.modal-content {
-  background-color: #1F2937; /* match sidebar theme */
+.brand-text {
+  margin: 0 8px 18px 8px;
+  margin-left: 20px;
+  color: var(--text-strong);
   color: #fff;
-  padding: 20px 25px;
-  border-radius: 10px;
-  text-align: center;
-  width: 300px;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 24px;
 }
 
-/* Buttons container */
-.modal-buttons {
-  display: flex;
-  justify-content: space-around;
-  margin-top: 20px;
-}
-
-/* Buttons */
-.modal-buttons .btn {
-  padding: 8px 15px;
-  border-radius: 5px;
-  cursor: pointer;
-  border: none;
-  font-weight: bold;
-  transition: background 0.2s;
-}
-
-/* Cancel button */
-.btn-cancel {
-  background-color: #9ca3af;
-  color: #000;
-}
-
-.btn-cancel:hover {
-  background-color: #d1d5db;
-}
-
-/* Confirm button */
-.btn-confirm {
-  background-color: #ef4444; /* red logout */
-  color: #fff;
-}
-
-.btn-confirm:hover {
-  background-color: #f87171;
-}
-/* Default link */
 .nav-links a {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 12px 10px;
-  margin-bottom: 5px;
-  border-radius: 0px;
-  color: #d1d5db;
+  padding: 12px 20px;
   text-decoration: none;
-  transition: all 0.3s ease;
-  width: 100%;
+  color: rgb(255, 255, 255);
+  transition: all 0.2s ease;
+  margin: 10px 5px; 
+  border-radius: 15px; 
+  width: auto; 
+  margin-top: 0.5px;
 }
 
-/* ✅ ACTIVE LINK (FINAL FIX) */
-.nav-links a.active, 
-.sidebar-bottom a.active {
-    background-color: #111;
-    border-left: 4px solid #ff0000;
-    color: #fff;
-    width: 100%;
-    border-radius:6px;
+.nav-links a i {
+  color: #ef4444;
+  font-size: 18px; 
+  width: 28px; 
+  text-align: center;
+  margin-right: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-/* Keep icon visible on active */
-.nav-links a.active img {
-  filter: brightness(0) invert(1);
+.link-text {
+  font-weight: 500;
+  white-space: nowrap;
+  font-size:15px;
+  margin-left: 0.1px;
 }
 
+.nav-links a:hover
+{
+  background-color: #2a2a2a !important; 
+  color: #fff !important;
+  transform: none; 
+  border-left: none !important; 
+}
+
+.nav-links a.active {
+  background-color: #ffffff !important; 
+  color: #000000 !important;
+  transform: none; 
+  border-left: none !important; 
+}
+
+.nav-links a.active .link-text {
+  font-weight: 700;
+}
+
+.modal {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  background-color: rgba(0, 0, 0, 0.8) !important;
+  backdrop-filter: blur(10px) !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  z-index: 2147483647 !important; 
+}
+
+.modal.hidden {
+  display: none !important;
+}
+
+.modal-content {
+  background-color: #1a1a1a;
+  color: #fff;
+  padding: 40px;
+  border-radius: 24px;
+  text-align: center;
+  width: 90%;
+  max-width: 400px;
+  border: 1px solid #333;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+}
+
+.modal-buttons {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  margin-top: 25px;
+}
+
+.modal-buttons .btn {
+  padding: 12px 30px;
+  border-radius: 50px;
+  cursor: pointer;
+  border: none;
+  font-weight: 600;
+  width: 130px;
+}
+
+.btn-cancel { background-color: #333; color: #fff; }
+.btn-confirm { background-color: #ff4d4d; color: #fff; }
 
 .breadcrumb-text {
   display: flex;
@@ -232,18 +126,19 @@
   gap: 8px;
   margin-bottom: 12px;
   font-size: 0.8rem;
-  color: #718096; /* Muted grey for secondary info */
+  color: #718096; 
   text-transform: uppercase;
   letter-spacing: 0.5px;
   font-weight: 500;
 }
 
 .breadcrumb-text .sep {
-  color: #cbd5e0; /* Even lighter grey for the arrow */
+  color: #cbd5e0; 
   font-weight: 400;
 }
 
 .breadcrumb-text .active-page {
-  color: #f05a5a; /* Red accent to show current location */
+  color: #f05a5a; 
   font-weight: 600;
 }
+

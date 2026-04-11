@@ -47,6 +47,7 @@ header {
   transition: all 0.2s ease;
   text-decoration: none;
   color:#000;
+  font-size: 16px;
 }
 
 .btn:hover {
@@ -92,6 +93,13 @@ header {
 
 .workorders th {
   background: #f8fafc;
+}
+
+.workorders td:last-child {
+  display: flex;
+  gap: 8px; /* Adds space between buttons */
+  align-items: center;
+  white-space: nowrap; /* Prevents buttons from wrapping weirdly */
 }
 
 .status {
@@ -392,7 +400,6 @@ header {
   border-radius: 30px;
   font-size: 12px;
   font-weight: 600;
-  margin-left: 6px;
 }
 
 /* Customize based on status value */
@@ -610,4 +617,23 @@ header {
 
 #mechanicSelect option[style*="color: #ff0000"] {
   background-color: #fff0f0;
+}
+
+.status.draft {
+  background-color: #e2e8f0; /* Light Gray */
+  color: #475569;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.status.submitted {
+  background-color: #dcfce7; /* Light Green */
+  color: #166534;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
 }

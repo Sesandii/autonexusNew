@@ -27,7 +27,7 @@
       <?= ucfirst(htmlspecialchars($report['status'])) ?>
     </span>
     <div class="info-grid">
-      <div><p class="label">Job ID</p><p class="value"><?= htmlspecialchars($workOrder['work_order_id']) ?></p></div>
+      <div><p class="label">Job ID</p><p class="value"><?= htmlspecialchars($workOrder['service_name']) ?></p></div>
       <div><p class="label">Vehicle Number</p><p class="value"><?= htmlspecialchars($workOrder['license_plate'] ?? '-') ?></p></div>
       <div><p class="label">Customer</p><p class="value"><?= htmlspecialchars(($workOrder['customer_first_name'] ?? '') . ' ' . ($workOrder['customer_last_name'] ?? '-')) ?></p></div>
       <div><p class="label">Assigned Mechanic</p><p class="value"><?= htmlspecialchars($workOrder['mechanic_code'] ?? 'N/A') ?></p></div>
@@ -39,7 +39,7 @@
     <h2>Service Summary</h2>
     <table>
       <thead>
-        <tr><th>Service Task</th><th>Status</th><th>Notes</th></tr>
+        <tr><th>Service Task</th><th>Status</th></tr>
       </thead>
       <tbody>
         <?php if (!empty($services)): ?>
@@ -47,7 +47,6 @@
             <tr>
               <td><?= htmlspecialchars($s['item_name']) ?></td>
               <td class="status <?= htmlspecialchars($s['status']) ?>"><?= ucfirst(htmlspecialchars($s['status'])) ?></td>
-              <td><?= htmlspecialchars($s['remarks'] ?? '-') ?></td>
             </tr>
           <?php endforeach; ?>
         <?php else: ?>
@@ -114,15 +113,18 @@
     <p><strong>Report Summary:</strong></p>
     <p><?= nl2br(htmlspecialchars($report['report_summary'] ?? '-')) ?></p>
 
-    <p><strong>Next Service Recommendation:</strong></p>
-    <p>
-      <?php if (!empty($report['next_service_recommendation']) && $report['next_service_recommendation'] !== '0000-00-00'): ?>
-        <?= date('d M Y', strtotime($report['next_service_recommendation'])) ?>
-      <?php else: ?>
-        <em>Not scheduled</em>
-      <?php endif; ?>
-    </p>
-  </div>
+    <p><strong>Service Continuity:</strong></p>
+    <div class="mileage-info">
+        <p>
+            <span class="label">Next Service Due:</span> 
+            <strong><?= htmlspecialchars($workOrder['last_service_mileage'] ?? 'Not set') ?> km</strong>
+        </p>
+        <p>
+            <span class="label">Service Interval:</span> 
+            <strong><?= htmlspecialchars($workOrder['service_interval_km'] ?? '5000') ?> km</strong>
+        </p>
+    </div>
+</div>
   </div>
 </section>
 

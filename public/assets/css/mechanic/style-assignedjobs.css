@@ -189,3 +189,27 @@ header h1 {
   opacity: 0.7;
 }
 
+
+.btn-black-tile {
+  display: inline-block;
+  background-color: #000000; /* Pure black */
+  color: #ffffff;            /* White text */
+  padding: 10px 12px;        /* Vertical and Horizontal padding */
+  border-radius: 12px;       /* Smooth rounded corners like the image */
+  text-decoration: none;     /* Remove underline from link */
+  font-weight: bold;         /* Bold "View" text */
+  font-size: 0.75rem;         /* Slightly larger font */
+  text-align: center;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-black-tile:hover {
+  background-color: #222222; /* Dark grey on hover */
+  color: #ffffff;
+}
+
+.btn-black-tile:active {
+  transform: scale(0.96);    /* Slight "press" effect */
+}

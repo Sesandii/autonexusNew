@@ -1,4 +1,15 @@
 <?php $base = rtrim(BASE_URL, '/'); ?>
+<?php
+if (session_status() !== PHP_SESSION_ACTIVE) {
+    session_start();
+}
+
+$message = $_SESSION['message'] ?? null;
+unset($_SESSION['message']);
+
+// Logged-in supervisor ID for owner filter
+$logged_user_id = $_SESSION['user']['user_id'] ?? 0;
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,6 +20,13 @@
 </head>
 <body>
 <?php include __DIR__ . '/../partials/sidebar.php'; ?>
+<?php if (!empty($message)): ?>
+    <div class="toast-container">
+        <div class="toast-message <?= htmlspecialchars($message['type']) ?>">
+            <?= htmlspecialchars($message['text']) ?>
+        </div>
+    </div>
+<?php endif; ?>
   <div class="main">
   <div class="breadcrumb-text">
     Mechanic <span class="sep">&gt;</span> 
@@ -22,7 +40,11 @@
   <h2>Work Order Information</h2>
   <div class="info-row">
     <span class="label">Job Title:</span>
-    <span><?= htmlspecialchars($job['service_summary']) ?></span>
+    <span><?= htmlspecialchars($job['name']) ?></span>
+  </div>
+  <div class="info-row">
+    <span class="label">Assigned by:</span>
+    <span><?= htmlspecialchars(($job['supervisor_first_name'] ?? '-') . ' ' . ($job['supervisor_last_name'] ?? '')) ?></span>
   </div>
   <div class="info-row">
     <span class="label">Status:</span>
@@ -43,8 +65,9 @@
       </div>
     </form>
   <?php endif; ?>
-  <div class="info-row"><span class="label">Date:</span> <span><?= $job['appointment_date'] ?></span></div>
-  <div class="info-row"><span class="label">Time:</span> <span><?= $job['appointment_time'] ?></span></div>
+  <div class="info-row"><span class="label">Created:</span> <span><?= $job['started_at'] ?></span></div>
+  <div class="info-row"><span class="label">Started:</span> <span><?= $job['job_start_time'] ?></span></div>
+  <div class="info-row"><span class="label">Completed:</span> <span><?= $job['completed_at'] ?></span></div>
 </div>
 <div class="job-card">
   <h2>Customer Information</h2>
@@ -53,7 +76,7 @@
   <div class="info-row"><span class="label">Street Address:</span> <span><?= htmlspecialchars($job['street_address'] ?? '-') ?></span></div>
   <div class="info-row"><span class="label">City:</span> <span><?= htmlspecialchars($job['city'] ?? '-') ?></span></div>
   <div class="info-row"><span class="label">State:</span> <span><?= htmlspecialchars($job['state'] ?? '-') ?></span></div>
-  <div class="info-row"><span class="label">Customer Code:</span> <span><?= htmlspecialchars($job['customer_code'] ?? '-') ?></span></div>
+  <div class="info-row"><span class="label">Appointment:</span> <span><?= htmlspecialchars(($job['appointment_date'] ?? '-') . ' ' . ($job['appointment_time'] ?? '')) ?></span></div>
 </div>
 <div class="job-card">
   <h2>Vehicle Information</h2>
@@ -107,7 +130,16 @@
  
   </div>
   <?php endif; ?>
-</div>
+  
+ 
+  <div class="view-footer">
+      <a href="<?= $base ?>/mechanic/jobs" class="btn-secondary">
+          Back
+      </a>
+
+      </div>
+
+
 <div id="imageModal" style="display:none;
      position:fixed; top:0; left:0; width:100%; height:100%;
      background:rgba(0,0,0,0.8);

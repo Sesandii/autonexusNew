@@ -71,7 +71,7 @@
             if (!$isSelected) $isDisabledAttr = "disabled"; 
             
         } elseif ($status === 'busy') {
-            $labelSuffix = " (Busy - 5+ Jobs)";
+            $labelSuffix = " (Busy)";
             // We keep them enabled so supervisors can still assign if urgent
             $style = "color: #d9534f; font-weight: bold;"; 
             
@@ -87,7 +87,7 @@
                 <?= $isDisabledAttr ?>
                 <?= $isSelected ? 'selected' : '' ?>>
             <?= htmlspecialchars($mech['mechanic_code']) ?> - 
-            <?= htmlspecialchars($mech['first_name'] . ' ' . $mech['last_name']) ?> 
+            <?= htmlspecialchars($mech['specialization']) ?> 
             <?= $labelSuffix ?>
         </option>
     <?php endforeach; ?>
@@ -123,7 +123,7 @@
     
     <div class="checklist-box">
         <ul id="checklist-display" class="checklist">
-            <li class="placeholder">Select an appointment to see the checklist</li>
+            <li class="placeholder">Edit the checklist in "Edit" section.</li>
         </ul>
     </div>
 </div>
@@ -159,7 +159,7 @@
             });
         } else {
             const li = document.createElement('li');
-            li.textContent = 'No checklist defined for this service';
+            li.textContent = 'Edit the checklist in "Edit" section.';
             checklistDisplay.appendChild(li);
         }
     }

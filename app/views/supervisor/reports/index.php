@@ -36,11 +36,6 @@
     <p>Jobs handled by each mechanic</p>
   </a>
 
-  <a href="<?= BASE_URL ?>/supervisor/reports/pending-jobs" class="report-tile">
-    <h3>Pending Jobs</h3>
-    <p>Open and in-progress jobs</p>
-  </a>
-
 </div>
 </main>
 </body>

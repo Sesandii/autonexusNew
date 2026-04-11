@@ -152,13 +152,35 @@
 
 <!-- Final Report -->
 <div class="form-section">
-  <h2>Final Report</h2>
+    <h2>Final Report & Mileage</h2>
 
-  <label>Report Summary</label>
-  <textarea name="report_summary" required></textarea>
+    <label>Report Summary</label>
+    <textarea name="report_summary" placeholder="Overall condition of the vehicle..." required></textarea>
 
-  <label>Next Service Recommendation</label>
-  <input type="date" name="next_service_recommendation">
+    <div style="margin-top: 15px; padding: 15px; background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0;">
+        <div style="margin-bottom: 15px;">
+            <label class="required">Current Vehicle Mileage (km)</label>
+            <input type="number" name="current_mileage" id="current_mileage" 
+                   placeholder="Enter odometer reading" required 
+                   style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #cbd5e1;">
+            <small style="color: #64748b;">Last recorded: <b><?= htmlspecialchars($workOrder['last_service_mileage'] ?? '0') ?> km</b></small>
+        </div>
+
+        <div style="margin-bottom: 15px;">
+            <label class="required">Service Interval (km)</label>
+            <input type="number" name="service_interval" id="service_interval" value="5000" 
+                   style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #cbd5e1;">
+            <small style="color: #64748b;">Standard is 5000km. Adjust if necessary.</small>
+        </div>
+
+        <div>
+            <label style="color: var(--primary); font-weight: bold;">Calculated Next Service Due</label>
+            <div id="next_service_display" style="font-size: 1.2rem; font-weight: 800; color: #1e293b; padding: 10px; background: #fff; border: 2px dashed #cbd5e1; border-radius: 6px; text-align: center;">
+                - km
+            </div>
+            <input type="hidden" name="next_service_due" id="next_service_due_val">
+        </div>
+    </div>
 </div>
 </div>
 <!-- Actions -->

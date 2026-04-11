@@ -73,9 +73,32 @@ class JobsMVController extends Controller
     }
 
 
+    if (in_array($newStatus, ['in_progress', 'on_hold'])) {
+        $stmt = $pdo->prepare("
+            SELECT COUNT(*) 
+            FROM work_orders 
+            WHERE mechanic_id = ? 
+            AND status IN ('in_progress') 
+            AND work_order_id != ?
+        ");
+        $stmt->execute([$job['mechanic_id'], $work_order_id]);
+        $activeCount = $stmt->fetchColumn();
+
+        if ($activeCount > 0) {
+            // Correct way to call your method:
+            $this->flash('danger', "This mechanic already has a job 'In Progress' or 'On Hold'.");
+            
+            header("Location: " . rtrim(BASE_URL, '/') . "/mechanic/jobs/view/" . $work_order_id);
+            exit; // Ensure script stops here
+        }
+
+    }
+
+    // 3. Update the status if check passes
     $m = new WorkOrder();
     $m->setStatusMechanic($work_order_id, $newStatus, $job['mechanic_id']);
 
+    $this->flash('success', "Status updated successfully.");
     header("Location: " . rtrim(BASE_URL, '/') . "/mechanic/jobs/view/" . $work_order_id);
     exit;
 }
@@ -91,4 +114,16 @@ class JobsMVController extends Controller
             exit;
         }
     }
+
+private function flash(string $type, string $text): void
+{
+    if (session_status() !== PHP_SESSION_ACTIVE) {
+        session_start();
+    }
+
+    $_SESSION['message'] = [
+        'type' => $type,
+        'text' => $text
+    ];
+}
 }

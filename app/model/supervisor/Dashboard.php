@@ -96,7 +96,7 @@ public function getWorkorderStats(int $supervisor_id, int $branch_id): array
         JOIN users u ON u.user_id = c.user_id
         JOIN services s ON s.service_id = a.service_id
         LEFT JOIN work_orders w ON w.appointment_id = a.appointment_id
-        WHERE DATE(a.appointment_date) = CURDATE() AND a.branch_id = ?
+        WHERE DATE(a.appointment_date) = CURDATE() AND a.branch_id = ? AND a.status IN ('confirmed')
         ORDER BY a.appointment_time ASC
     ";
 
