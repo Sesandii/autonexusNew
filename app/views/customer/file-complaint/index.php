@@ -26,6 +26,7 @@ $isLoggedIn = isset($_SESSION['customer_id']) || isset($_SESSION['user_id']);
     <title>File a Complaint - AutoNexus</title>
     
     <!-- CSS Files -->
+    <link rel="stylesheet" href="<?= $base ?>/public/assets/css/customer/page-header.css">
     <link rel="stylesheet" href="<?= $base ?>/public/assets/css/customer/complaint.css?v=<?= time() ?>">
     <link rel="stylesheet" href="<?= $base ?>/public/assets/css/customer/sidebar.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -40,11 +41,14 @@ if (defined('APP_ROOT') && file_exists(APP_ROOT . '/views/layouts/customer-sideb
 ?>
 
 <div class="complaint-container">
-    <div class="complaint-header">
-        <h2><i class="fa-solid fa-triangle-exclamation"></i> File a Complaint</h2>
-        <p>We're sorry to hear about your experience. Please select the relevant appointment and tell us what went wrong.</p>
-        <div class="complaint-response">We’ll review your complaint and reply via your registered email/phone. You’ll also see status updates here.</div>
-    </div>
+    <?php
+      $headerIcon = 'fa-solid fa-triangle-exclamation';
+      $headerTitle = 'File a Complaint';
+      $headerSubtitle = 'We\'re sorry to hear about your experience. Please select the relevant appointment and tell us what went wrong.';
+      include APP_ROOT . '/views/partials/customer-page-header.php';
+    ?>
+    
+    <div class="complaint-response">We'll review your complaint and reply via your registered email/phone. You'll also see status updates here.</div>
     
     <?php
     // Display success message

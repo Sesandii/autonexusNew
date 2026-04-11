@@ -1,6 +1,8 @@
 <?php
 $base = rtrim(BASE_URL,'/');
 $title = 'AutoNexus - Dashboard';
+$dashboardCssVersion = @filemtime(dirname(APP_ROOT) . '/public/assets/css/customer/dashboard.css') ?: time();
+$sidebarCssVersion = @filemtime(dirname(APP_ROOT) . '/public/assets/css/customer/sidebar.css') ?: time();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -9,85 +11,123 @@ $title = 'AutoNexus - Dashboard';
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><?= htmlspecialchars($title, ENT_QUOTES) ?></title>
 
-  <link rel="stylesheet" href="<?= $base ?>/public/assets/css/customer/dashboard.css">
-  <link rel="stylesheet" href="<?= $base ?>/public/assets/css/customer/sidebar.css">
+  <link rel="stylesheet" href="<?= $base ?>/public/assets/css/customer/sidebar.css?v=<?= (int)$sidebarCssVersion ?>">
+  <link rel="stylesheet" href="<?= $base ?>/public/assets/css/customer/page-header.css">
+  <link rel="stylesheet" href="<?= $base ?>/public/assets/css/customer/dashboard.css?v=<?= (int)$dashboardCssVersion ?>">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
 
   <?php include APP_ROOT . '/views/layouts/customer-sidebar.php'; ?>
 
-  <main class="main-content">
-    <h1>Welcome back, <?= htmlspecialchars($user_first_name ?? 'Customer') ?> 👋</h1>
-    <p>Manage your vehicle services with ease.</p>
-     <?php require APP_ROOT . '/views/partials/lang-switcher.php'; ?>
-
-    <!-- Stats Section -->
-    <section class="stats">
-      <div class="stat-card red">
-        <h3>Next Appointment</h3>
-        <p><?= htmlspecialchars($next_appointment['date']) ?></p>
-        <span><?= htmlspecialchars($next_appointment['service']) ?></span>
-      </div>
-      <div class="stat-card gold">
-        <h3>Mileage</h3>
-        <p><?= number_format((int)($mileage['current'] ?? 0)) ?> km</p>
-        <span>Next service at <?= number_format((int)($mileage['next_service_at'] ?? 0)) ?> km</span>
-      </div>
-      <div class="stat-card dark">
-        <h3>Feedback Pending</h3>
-        <p><?= (int)($feedback_pending ?? 0) ?> Service<?= (int)($feedback_pending ?? 0) === 1 ? '' : 's' ?></p>
-        <span>Needs your review</span>
-      </div>
-    </section>
-
-    <!-- Recent Services + Quick Actions in one row -->
-    <section class="lower-grid">
-      <!-- Recent Services card -->
-      <section class="history-preview card">
-        <h2>Recent Services</h2>
-        <div class="history-list">
-          <?php foreach (($recent_services ?? []) as $item): ?>
-            <div class="history-item">
-              <p><?= htmlspecialchars($item['title']) ?></p>
-              <span><?= htmlspecialchars($item['date']) ?></span>
-            </div>
-          <?php endforeach; ?>
-          <?php if (empty($recent_services)): ?>
-            <div class="history-item">
-              <p>No services yet.</p>
-              <span>-</span>
-            </div>
-          <?php endif; ?>
+  <main class="main-content customer-dashboard">
+    <div class="dash-wrap">
+      <header class="topbar">
+        <div>
+          <h1 class="page-title">Dashboard</h1>
+          <p class="subtitle">Overview of your vehicle service activity.</p>
         </div>
+
+        <div class="topbar-right">
+          <?php require APP_ROOT . '/views/partials/lang-switcher.php'; ?>
+          <div class="user-chip">
+            <div class="avatar"><i class="fa-solid fa-user"></i></div>
+            <span><?= htmlspecialchars($user_first_name ?? 'Customer') ?></span>
+          </div>
+        </div>
+      </header>
+
+      <section class="kpi-grid">
+        <a class="kpi-card-link" href="<?= $base ?>/customer/appointments">
+          <article class="kpi-card">
+            <div class="kpi-icon"><i class="fa-regular fa-calendar-check"></i></div>
+            <div class="kpi-meta">
+              <h3>Next Appointment</h3>
+              <p class="kpi-value"><?= htmlspecialchars($next_appointment['date'] ?? '-') ?></p>
+              <div class="kpi-delta"><?= htmlspecialchars($next_appointment['service'] ?? 'No appointment scheduled') ?></div>
+            </div>
+          </article>
+        </a>
+
+        <article class="kpi-card">
+          <div class="kpi-icon"><i class="fa-solid fa-gauge-high"></i></div>
+          <div class="kpi-meta">
+            <h3>Mileage</h3>
+            <p class="kpi-value"><?= number_format((int)($mileage['current'] ?? 0)) ?> km</p>
+            <div class="kpi-delta">Next service at <?= number_format((int)($mileage['next_service_at'] ?? 0)) ?> km</div>
+          </div>
+        </article>
+
+        <article class="kpi-card">
+          <div class="kpi-icon"><i class="fa-regular fa-message"></i></div>
+          <div class="kpi-meta">
+            <h3>Feedback Pending</h3>
+            <p class="kpi-value"><?= (int)($feedback_pending ?? 0) ?> Service<?= (int)($feedback_pending ?? 0) === 1 ? '' : 's' ?></p>
+            <div class="kpi-delta">Needs your review</div>
+          </div>
+        </article>
       </section>
 
-      <!-- Quick Actions card (like admin quick links) -->
-      <aside class="quick-actions card">
-        <h2>Quick Actions</h2>
-        <div class="ql-grid">
-          <a class="ql-card" href="<?= $base ?>/customer/book">
-            <i class="fa-regular fa-calendar-check"></i>
-            <span>Book Service</span>
-          </a>
+      <section class="content-grid">
+        <section class="panel history-panel">
+          <div class="panel-head">
+            <h2>Recent Services</h2>
+            <a class="panel-link" href="<?= $base ?>/customer/service-history">View all</a>
+          </div>
 
-          <a class="ql-card" href="<?= $base ?>/customer/appointments">
-            <i class="fa-solid fa-list-check"></i>
-            <span>View Appointments</span>
-          </a>
+          <div class="table-wrap">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Service</th>
+                  <th>Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                <?php foreach (($recent_services ?? []) as $item): ?>
+                  <tr>
+                    <td><?= htmlspecialchars($item['title']) ?></td>
+                    <td><?= htmlspecialchars($item['date']) ?></td>
+                  </tr>
+                <?php endforeach; ?>
+                <?php if (empty($recent_services)): ?>
+                  <tr>
+                    <td colspan="2" class="empty-state">No services yet.</td>
+                  </tr>
+                <?php endif; ?>
+              </tbody>
+            </table>
+          </div>
+        </section>
 
-          <a class="ql-card" href="<?= $base ?>/customer/track-services">
-            <i class="fa-solid fa-location-crosshairs"></i>
-            <span>Track Service</span>
-          </a>
+        <aside class="panel quick-links">
+          <div class="panel-head">
+            <h2>Quick Actions</h2>
+          </div>
+          <div class="ql-grid">
+            <a class="ql-card" href="<?= $base ?>/customer/book">
+              <i class="fa-regular fa-calendar-check"></i>
+              <span>Book Service</span>
+            </a>
 
-          <a class="ql-card" href="<?= $base ?>/customer/service-history">
-            <i class="fa-solid fa-clock-rotate-left"></i>
-            <span>Service History</span>
-          </a>
-        </div>
-      </aside>
-    </section>
+            <a class="ql-card" href="<?= $base ?>/customer/appointments">
+              <i class="fa-solid fa-list-check"></i>
+              <span>View Appointments</span>
+            </a>
+
+            <a class="ql-card" href="<?= $base ?>/customer/track-services">
+              <i class="fa-solid fa-location-crosshairs"></i>
+              <span>Track Service</span>
+            </a>
+
+            <a class="ql-card" href="<?= $base ?>/customer/service-history">
+              <i class="fa-solid fa-clock-rotate-left"></i>
+              <span>Service History</span>
+            </a>
+          </div>
+        </aside>
+      </section>
+    </div>
   </main>
 
   <script src="<?= $base ?>/public/assets/js/customer-dashboard.js" defer></script>

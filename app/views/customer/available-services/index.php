@@ -15,6 +15,7 @@ if (!empty($branch_name)) {
   <title><?= htmlspecialchars(($title ?? 'Available Services') . $branchTitle) ?></title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
+  <link rel="stylesheet" href="<?= $base ?>/public/assets/css/customer/page-header.css" />
   <link rel="stylesheet" href="<?= $base ?>/public/assets/css/customer/available-services.css" />
   <link rel="stylesheet" href="<?= $base ?>/public/assets/css/customer/sidebar.css" />
 
@@ -37,13 +38,12 @@ if (!empty($branch_name)) {
 
   <div class="customer-main-shell">
 
-  <!-- HERO -->
-  <header class="hero">
-    <div class="hero-text">
-      <h1><i class="fa-solid fa-car-side"></i> Available Services<?= $branchTitle ?></h1>
-      <p>Explore premium automotive services tailored to your ride.</p>
-    </div>
-  </header>
+  <?php
+    $headerIcon = 'fa-solid fa-car-side';
+    $headerTitle = 'Available Services' . $branchTitle;
+    $headerSubtitle = 'Explore premium automotive services tailored to your ride.';
+    include APP_ROOT . '/views/partials/customer-page-header.php';
+  ?>
 
   <main class="content-wrapper">
     <!-- FILTER TABS -->

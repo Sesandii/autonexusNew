@@ -1,77 +1,124 @@
-/* ===== Customer Sidebar Styles ===== */
-body{
-  margin:0;
-  font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
-  
+/* ===== Customer Sidebar (Admin-consistent shared CSS) ===== */
+:root {
+  --customer-sidebar-bg: #0c0c0c;
+  --customer-sidebar-text: #e5e7eb;
+  --customer-sidebar-hover: rgba(255, 255, 255, 0.08);
+  --customer-sidebar-active-bg: #f3f4f6;
+  --customer-sidebar-active-text: #111827;
+  --customer-sidebar-icon: #ef4444;
+  --customer-sidebar-border: rgba(255, 255, 255, 0.08);
 }
-.sidebar {
-  width: 240px;
-  background: #000000;
-  min-height: 100vh;
-  color: #D1D5DB;
-  padding: 20px 0;
+
+body {
+  margin: 0;
+  font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+}
+
+body .sidebar {
   position: fixed;
   top: 0;
   left: 0;
-  z-index: 10;
+  bottom: 0;
+  z-index: 1000;
+  width: 240px;
+  min-height: 100vh;
+  overflow-y: auto;
+  background: var(--customer-sidebar-bg);
+  color: var(--customer-sidebar-text);
+  padding: 18px 12px;
+  border-right: 1px solid var(--customer-sidebar-border);
 }
 
-.logo {
+body .sidebar .logo {
   display: flex;
   align-items: center;
-  padding: 0 20px 30px;
-}
-
-.logo img {
-  width: 35px;
-  height: auto;
-  margin-right: 10px;
-}
-
-.brand-name {
-  color: #DC2626;
-  font-weight: bold;
-  font-size: 18px;
-}
-
-.menu {
-  list-style: none;
+  gap: 10px;
+  margin: 0 8px 18px;
   padding: 0;
+}
+
+body .sidebar .logo img {
+  width: 34px;
+  height: 34px;
+  object-fit: cover;
+  border-radius: 8px;
   margin: 0;
 }
 
-.menu li {
-  margin: 12px 0;
+body .sidebar .brand-name {
+  color: #ffffff;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
 }
 
-.menu a {
-  color: #D1D5DB;
+body .sidebar .menu {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 6px;
+}
+
+body .sidebar .menu li {
+  margin: 0;
+}
+
+body .sidebar .menu a {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--customer-sidebar-text);
   text-decoration: none;
-  padding: 10px 20px;
-  display: block;
-  border-radius: 6px;
-  transition: background 0.3s ease, color 0.3s ease;
-  font-weight: bold;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.2;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
 }
 
-.menu a:hover,
-.menu li.active a {
-  background: #DC2626;
-  color: #FFFFFF;
+body .sidebar .menu a i {
+  width: 22px;
+  text-align: center;
+  font-size: 16px;
+  color: var(--customer-sidebar-icon);
 }
 
-/* Offset page content so it doesn’t hide under sidebar */
-.main-content {
+body .sidebar .menu a:hover {
+  background: var(--customer-sidebar-hover);
+  color: #ffffff;
+}
+
+body .sidebar .menu a.active {
+  background: var(--customer-sidebar-active-bg);
+  color: var(--customer-sidebar-active-text);
+  font-weight: 700;
+}
+
+body .sidebar .menu a.active i {
+  color: var(--customer-sidebar-icon);
+}
+
+body .main-content,
+body .appointments-main,
+body .sh-main,
+body .customer-main-shell {
   margin-left: 240px;
-  padding: 24px;
 }
 
-/* Simple responsive shrink */
 @media (max-width: 720px) {
-  .sidebar {
+  body .sidebar {
     width: 210px;
   }
-  .main-content {
+
+  body .main-content,
+  body .appointments-main,
+  body .sh-main,
+  body .customer-main-shell {
     margin-left: 210px;
   }
 }

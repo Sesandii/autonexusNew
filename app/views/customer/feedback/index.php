@@ -8,6 +8,7 @@ $base = rtrim(BASE_URL, '/');
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title><?= htmlspecialchars($title ?? 'Rate Your Service') ?> - AutoNexus</title>
 
+  <link rel="stylesheet" href="<?= $base ?>/public/assets/css/customer/page-header.css" />
   <link rel="stylesheet" href="<?= $base ?>/public/assets/css/customer/rate-service.css?v=<?= time() ?>" />
   <link rel="stylesheet" href="<?= $base ?>/public/assets/css/customer/sidebar.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -20,17 +21,12 @@ $base = rtrim(BASE_URL, '/');
   <div class="container">
     <main class="main-content">
 
-      <header class="page-header">
-        <div class="header-left">
-          <h1 class="page-title">
-            <i class="fa-solid fa-star"></i>
-            Rate Your Service
-          </h1>
-          <p class="page-subtitle">
-            Tell us how we did so we can keep improving every visit.
-          </p>
-        </div>
-      </header>
+      <?php
+        $headerIcon = 'fa-solid fa-star';
+        $headerTitle = 'Rate Your Service';
+        $headerSubtitle = 'Tell us how we did so we can keep improving every visit.';
+        include APP_ROOT . '/views/partials/customer-page-header.php';
+      ?>
 
       <!-- Flash Messages -->
       <?php if (isset($_SESSION['flash'])): ?>

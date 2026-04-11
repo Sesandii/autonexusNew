@@ -7,6 +7,7 @@ $base = rtrim(BASE_URL, '/');
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= htmlspecialchars($title ?? 'My Payments') ?> - AutoNexus</title>
+    <link rel="stylesheet" href="<?= $base ?>/public/assets/css/customer/page-header.css">
     <link rel="stylesheet" href="<?= $base ?>/public/assets/css/customer/sidebar.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -28,9 +29,14 @@ $base = rtrim(BASE_URL, '/');
 <?php include APP_ROOT . '/views/layouts/customer-sidebar.php'; ?>
 
 <div class="page">
+    <?php
+      $headerIcon = 'fa-solid fa-credit-card';
+      $headerTitle = 'My Payments';
+      $headerSubtitle = 'View your invoices and pay unpaid invoices online.';
+      include APP_ROOT . '/views/partials/customer-page-header.php';
+    ?>
+
     <div class="card">
-        <h1><i class="fa-solid fa-credit-card"></i> My Payments</h1>
-        <p>View your invoices and pay unpaid invoices online.</p>
 
         <?php if (empty($invoices)): ?>
             <p>No invoices found.</p>

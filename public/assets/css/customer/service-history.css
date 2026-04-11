@@ -26,36 +26,6 @@ body {
 }
 
 /* ====== Header ====== */
-.sh-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 18px;
-}
-
-.sh-title {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 1.4rem;
-    font-weight: 600;
-    color: #111827;
-}
-
-.sh-title i {
-    font-size: 1.1rem;
-    background: #fee2e2;
-    color: #b91c1c;
-    padding: 8px;
-    border-radius: 999px;
-}
-
-.sh-subtitle {
-    margin-top: 4px;
-    font-size: 0.9rem;
-    color: #6b7280;
-}
-
 /* ====== Empty state ====== */
 .sh-empty {
     margin-top: 30px;

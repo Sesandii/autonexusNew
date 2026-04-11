@@ -9,6 +9,7 @@ $initial = $services ?? [];
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><?= htmlspecialchars($title ?? 'Track Services') ?> - AutoNexus</title>
 
+  <link rel="stylesheet" href="<?= $base ?>/public/assets/css/customer/page-header.css">
   <link rel="stylesheet" href="<?= $base ?>/public/assets/css/customer/track-services.css">
   <link rel="stylesheet" href="<?= $base ?>/public/assets/css/customer/sidebar.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -19,8 +20,12 @@ $initial = $services ?? [];
 
   <div class="container">
     <main class="main-content">
-      <h2 class="page-title">🧰 Track Services</h2>
-      <p class="subtitle">Monitor the progress of your service jobs.</p>
+      <?php
+        $headerIcon = 'fa-solid fa-list-check';
+        $headerTitle = 'Track Services';
+        $headerSubtitle = 'Monitor the progress of your service jobs.';
+        include APP_ROOT . '/views/partials/customer-page-header.php';
+      ?>
 
       <section class="search-filter">
         <input type="text" id="searchInput"
