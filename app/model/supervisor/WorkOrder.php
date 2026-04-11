@@ -599,7 +599,7 @@ private function updateAppointmentStatus(int $appointmentId, string $workOrderSt
 
 
     public function updateStatus($id, $status) {
-        $stmt = $this->db->prepare("UPDATE work_orders SET status=? WHERE work_order_id=?");
+        $stmt = $this->pdo->prepare("UPDATE work_orders SET status=? WHERE work_order_id=?");
         return $stmt->execute([$status, $id]);
     }
 
