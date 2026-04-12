@@ -8,112 +8,433 @@ $B = rtrim(BASE_URL, '/');
 $r = $record;
 
 $completed = $r['completed_at'] ? new DateTime($r['completed_at']) : null;
-$started   = $r['started_at']   ? new DateTime($r['started_at'])   : null;
+$started = $r['started_at'] ? new DateTime($r['started_at']) : null;
+
+function e($value): string
+{
+  return htmlspecialchars((string) $value);
+}
+
+function fieldRow($icon, $label, $value): string
+{
+  return "<div style=\"display:flex; gap:12px; padding:10px 0; border-bottom:1px solid #f3f4f6;\">
+        <div style=\"color:#6b7280; width:24px; text-align:center;\"><i class=\"fa-solid {$icon}\"></i></div>
+        <div style=\"flex:1;\">
+            <div style=\"font-size:11px; font-weight:700; color:#9ca3af; text-transform:uppercase; letter-spacing:0.5px;\">$label</div>
+            <div style=\"font-size:14px; color:#111827; margin-top:4px;\">$value</div>
+        </div>
+    </div>";
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><?= htmlspecialchars($pageTitle ?? 'Service Details') ?></title>
 
-  <link rel="stylesheet" href="<?= $B ?>/app/views/layouts/admin-shared/management.css">
   <link rel="stylesheet" href="<?= $B ?>/app/views/layouts/admin-sidebar/styles.css">
+  <link rel="stylesheet" href="<?= $B ?>/public/assets/css/admin-dashboard.css?v=4">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    .main-content{margin-left:260px;padding:30px;background:#f4f5f7;min-height:100vh;}
-    .grid-two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-top:20px;}
-    .card{background:#fff;border-radius:12px;padding:16px;box-shadow:0 1px 3px rgba(15,23,42,.08);}
-    .card h3{margin-top:0;margin-bottom:10px;}
-    .field{font-size:14px;margin-bottom:6px;}
-    .label{font-weight:600;color:#4b5563;margin-right:4px;}
-    .actions{margin-top:20px;display:flex;gap:10px;}
-    .btn{padding:8px 14px;border-radius:8px;border:none;cursor:pointer;font-size:14px;display:inline-flex;align-items:center;gap:6px;text-decoration:none;}
-    .btn-secondary{background:#e5e7eb;color:#111827;}
+    .main-content {
+      min-height: 100vh;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .page-title {
+      font-size: 28px;
+      font-weight: 700;
+      margin: 10px 0 2px;
+      color: #111827;
+    }
+
+    .subtitle {
+      color: #6b7280;
+      margin: 0 0 8px;
+      font-size: 14px;
+    }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .detail-card {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, .06);
+      overflow: hidden;
+    }
+
+    .card-header {
+      background: #f9fafb;
+      padding: 16px;
+      border-bottom: 1px solid #e5e7eb;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .card-header h3 {
+      margin: 0;
+      font-size: 15px;
+      font-weight: 700;
+      color: #111827;
+    }
+
+    .card-header i {
+      font-size: 18px;
+      color: #6b7280;
+    }
+
+    .card-body {
+      padding: 16px;
+    }
+
+    .field-row {
+      display: flex;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid #f3f4f6;
+      align-items: flex-start;
+    }
+
+    .field-row:last-child {
+      border-bottom: none;
+    }
+
+    .field-icon {
+      color: #9ca3af;
+      width: 20px;
+      text-align: center;
+      margin-top: 2px;
+      font-size: 14px;
+    }
+
+    .field-content {
+      flex: 1;
+    }
+
+    .field-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: #9ca3af;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
+    }
+
+    .field-value {
+      font-size: 14px;
+      color: #111827;
+      line-height: 1.5;
+    }
+
+    .summary-box {
+      background: #f8fafc;
+      border-left: 4px solid #2563eb;
+      padding: 12px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      line-height: 1.6;
+      color: #374151;
+    }
+
+    .grid-two {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .grid-three {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 20px;
+      min-width: 0;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+      background: #ecfdf5;
+      color: #047857;
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      background: #f3f4f6;
+      color: #111827;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .back-btn:hover {
+      background: #e5e7eb;
+    }
+
+    .kpi-card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, .06);
+      text-align: center;
+    }
+
+    .kpi-icon {
+      height: 48px;
+      width: 48px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      background: #f3f4f6;
+      margin: 0 auto 10px;
+    }
+
+    .kpi-icon i {
+      font-size: 22px;
+      color: #2563eb;
+    }
+
+    .kpi-label {
+      font-size: 12px;
+      color: #6b7280;
+      font-weight: 600;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .kpi-value {
+      font-size: 24px;
+      font-weight: 700;
+      color: #111827;
+    }
+
+    @media (max-width: 1200px) {
+      .detail-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+
+      .detail-grid,
+      .grid-two,
+      .grid-three {
+        grid-template-columns: 1fr;
+      }
+
+      .main-content {
+        padding: 16px 16px 24px;
+      }
+    }
   </style>
 </head>
+
 <body>
-<?php include APP_ROOT . '/views/layouts/admin-sidebar/sidebar.php'; ?>
+  <?php include APP_ROOT . '/views/layouts/admin-sidebar/sidebar.php'; ?>
 
-<main class="main-content">
-  <header class="page-header">
-    <div class="page-breadcrumb">
-      <a href="<?= $B ?>/admin/admin-servicehistory">Service History</a>
-      <span>›</span>
-      <span>Work Order #<?= htmlspecialchars((string)$r['work_order_id']) ?></span>
-    </div>
-  </header>
+  <main class="main-content">
+    <header class="topbar">
+      <div>
+        <h1 class="page-title">Service Details</h1>
+        <p class="subtitle">Work Order #<?= e($r['work_order_id']) ?> • <?= e($r['service_name']) ?></p>
+      </div>
+    </header>
 
-  <section class="grid-two">
-    <div class="card">
-      <h3>Service & Work Order</h3>
-      <div class="field"><span class="label">Work Order ID:</span>#<?= htmlspecialchars((string)$r['work_order_id']) ?></div>
-      <div class="field"><span class="label">Service:</span><?= htmlspecialchars($r['service_name']) ?></div>
-      <div class="field"><span class="label">Service Code:</span><?= htmlspecialchars($r['service_code'] ?? '—') ?></div>
-      <div class="field"><span class="label">Type:</span><?= htmlspecialchars($r['service_type'] ?? 'Service') ?></div>
-      <div class="field"><span class="label">Branch:</span><?= htmlspecialchars($r['branch_name']) ?> (<?= htmlspecialchars($r['branch_code'] ?? '') ?>)</div>
-      <div class="field"><span class="label">Appointment Date:</span><?= htmlspecialchars($r['appointment_date']) ?></div>
-      <div class="field"><span class="label">Appointment Time:</span><?= htmlspecialchars($r['appointment_time']) ?></div>
-      <div class="field"><span class="label">Started At:</span><?= $started ? $started->format('M j, Y g:i A') : '—' ?></div>
-      <div class="field"><span class="label">Completed At:</span><?= $completed ? $completed->format('M j, Y g:i A') : '—' ?></div>
-      <div class="field"><span class="label">Default Price:</span><?= number_format((float)$r['default_price'], 2) ?></div>
-      <div class="field"><span class="label">Total Cost:</span><?= number_format((float)$r['total_cost'], 2) ?></div>
-      <div class="field">
-        <span class="label">Service Summary:</span>
-        <span><?= nl2br(htmlspecialchars($r['service_summary'] ?? '—')) ?></span>
+    <!-- Key Metrics -->
+    <div class="grid-three">
+      <div class="kpi-card">
+        <div class="kpi-icon"><i class="fa-solid fa-hourglass-end"></i></div>
+        <div class="kpi-label">Duration</div>
+        <div class="kpi-value">
+          <?= $completed ? (int) ($completed->diff($started)->format('%h')) . 'h ' . (int) ($completed->diff($started)->format('%i')) . 'm' : '—' ?>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-icon"><i class="fa-solid fa-sack-dollar"></i></div>
+        <div class="kpi-label">Total Cost</div>
+        <div class="kpi-value">Rs. <?= number_format((float) $r['total_cost'], 2) ?></div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-icon"><i class="fa-solid fa-circle-check"></i></div>
+        <div class="kpi-label">Status</div>
+        <div style="margin-top: 12px;"><span class="status-badge">Completed</span></div>
       </div>
     </div>
 
-    <div class="card">
-      <h3>Customer & Vehicle</h3>
-      <div class="field"><span class="label">Customer:</span><?= htmlspecialchars($r['customer_name']) ?></div>
-      <div class="field"><span class="label">Customer Code:</span><?= htmlspecialchars($r['customer_code'] ?? '—') ?></div>
-      <div class="field"><span class="label">Phone:</span><?= htmlspecialchars($r['customer_phone'] ?? '—') ?></div>
-      <div class="field"><span class="label">Email:</span><?= htmlspecialchars($r['customer_email'] ?? '—') ?></div>
-      <hr>
-      <div class="field"><span class="label">Vehicle Code:</span><?= htmlspecialchars($r['vehicle_code'] ?? '—') ?></div>
-      <div class="field"><span class="label">License Plate:</span><?= htmlspecialchars($r['license_plate'] ?? '—') ?></div>
-      <div class="field"><span class="label">Make / Model:</span><?= htmlspecialchars(trim(($r['make'] ?? '') . ' ' . ($r['model'] ?? '')) ?: '—') ?></div>
-      <div class="field"><span class="label">Year:</span><?= htmlspecialchars($r['year'] ?? '—') ?></div>
-      <div class="field"><span class="label">Color:</span><?= htmlspecialchars($r['color'] ?? '—') ?></div>
-    </div>
-  </section>
+    <!-- Service Information -->
+    <div class="detail-grid">
+      <div class="detail-card">
+        <div class="card-header">
+          <i class="fa-solid fa-wrench"></i>
+          <h3>Service Details</h3>
+        </div>
+        <div class="card-body">
+          <?= fieldRow('fa-key', 'Work Order ID', '#' . e($r['work_order_id'])) ?>
+          <?= fieldRow('fa-tools', 'Service', e($r['service_name'])) ?>
+          <?= fieldRow('fa-barcode', 'Service Code', e($r['service_code'] ?? '—')) ?>
+          <?= fieldRow('fa-tag', 'Service Type', e($r['service_type'] ?? 'Service')) ?>
+          <?= fieldRow('fa-dollar-sign', 'Default Price', 'Rs. ' . number_format((float) $r['default_price'], 2)) ?>
+        </div>
+      </div>
 
-  <section class="grid-two">
-    <div class="card">
-      <h3>Branch & Assignment</h3>
-      <div class="field"><span class="label">Branch City:</span><?= htmlspecialchars($r['branch_city'] ?? '—') ?></div>
-      <div class="field"><span class="label">Branch Address:</span><?= htmlspecialchars($r['branch_address'] ?? '—') ?></div>
-      <div class="field"><span class="label">Branch Phone:</span><?= htmlspecialchars($r['branch_phone'] ?? '—') ?></div>
-      <hr>
-      <div class="field"><span class="label">Mechanic:</span><?= htmlspecialchars($r['mechanic_name'] ?? '—') ?></div>
-      <div class="field"><span class="label">Mechanic Code:</span><?= htmlspecialchars($r['mechanic_code'] ?? '—') ?></div>
-      <div class="field"><span class="label">Mechanic Phone:</span><?= htmlspecialchars($r['mechanic_phone'] ?? '—') ?></div>
-      <div class="field"><span class="label">Specialization:</span><?= htmlspecialchars($r['specialization'] ?? '—') ?></div>
-      <div class="field"><span class="label">Experience:</span><?= $r['experience_years'] !== null ? htmlspecialchars($r['experience_years']) . ' years' : '—' ?></div>
-    </div>
+      <div class="detail-card">
+        <div class="card-header">
+          <i class="fa-solid fa-calendar-check"></i>
+          <h3>Schedule</h3>
+        </div>
+        <div class="card-body">
+          <?= fieldRow('fa-calendar', 'Appointment Date', e($r['appointment_date'])) ?>
+          <?= fieldRow('fa-clock', 'Appointment Time', e($r['appointment_time'])) ?>
+          <?= fieldRow('fa-play', 'Started At', $started ? $started->format('M j, Y g:i A') : '—') ?>
+          <?= fieldRow('fa-stop', 'Completed At', $completed ? $completed->format('M j, Y g:i A') : '—') ?>
+          <?= fieldRow('fa-circle-check', 'Appointment Status', e($r['appointment_status'])) ?>
+        </div>
+      </div>
 
-    <div class="card">
-      <h3>Supervisor & Appointment Notes</h3>
-      <div class="field"><span class="label">Supervisor:</span><?= htmlspecialchars($r['supervisor_name'] ?? '—') ?></div>
-      <div class="field"><span class="label">Supervisor Code:</span><?= htmlspecialchars($r['supervisor_code'] ?? '—') ?></div>
-      <div class="field"><span class="label">Supervisor Phone:</span><?= htmlspecialchars($r['supervisor_phone'] ?? '—') ?></div>
-      <hr>
-      <div class="field"><span class="label">Appointment Status:</span><?= htmlspecialchars($r['appointment_status']) ?></div>
-      <div class="field"><span class="label">Booked At:</span><?= htmlspecialchars($r['appointment_created_at'] ?? '—') ?></div>
-      <div class="field"><span class="label">Last Updated:</span><?= htmlspecialchars($r['appointment_updated_at'] ?? '—') ?></div>
-      <div class="field">
-        <span class="label">Appointment Notes:</span>
-        <span><?= nl2br(htmlspecialchars($r['appointment_notes'] ?? '—')) ?></span>
+      <div class="detail-card">
+        <div class="card-header">
+          <i class="fa-solid fa-building"></i>
+          <h3>Branch</h3>
+        </div>
+        <div class="card-body">
+          <?= fieldRow('fa-building', 'Branch', e($r['branch_name'])) ?>
+          <?= fieldRow('fa-barcode', 'Branch Code', e($r['branch_code'] ?? '—')) ?>
+          <?= fieldRow('fa-location-dot', 'City', e($r['branch_city'] ?? '—')) ?>
+          <?= fieldRow('fa-map', 'Address', e($r['branch_address'] ?? '—')) ?>
+          <?= fieldRow('fa-phone', 'Phone', e($r['branch_phone'] ?? '—')) ?>
+        </div>
       </div>
     </div>
-  </section>
 
-  <div class="actions">
-    <a href="<?= $B ?>/admin/admin-servicehistory" class="btn btn-secondary">
-      ← Back to Service History
-    </a>
-  </div>
-</main>
+    <!-- Customer & Vehicle -->
+    <div class="grid-two">
+      <div class="detail-card">
+        <div class="card-header">
+          <i class="fa-solid fa-user"></i>
+          <h3>Customer Information</h3>
+        </div>
+        <div class="card-body">
+          <?= fieldRow('fa-user', 'Customer Name', e($r['customer_name'])) ?>
+          <?= fieldRow('fa-barcode', 'Customer Code', e($r['customer_code'] ?? '—')) ?>
+          <?= fieldRow('fa-phone', 'Phone', e($r['customer_phone'] ?? '—')) ?>
+          <?= fieldRow('fa-envelope', 'Email', e($r['customer_email'] ?? '—')) ?>
+        </div>
+      </div>
+
+      <div class="detail-card">
+        <div class="card-header">
+          <i class="fa-solid fa-car"></i>
+          <h3>Vehicle Information</h3>
+        </div>
+        <div class="card-body">
+          <?= fieldRow('fa-car', 'Vehicle Code', e($r['vehicle_code'] ?? '—')) ?>
+          <?= fieldRow('fa-id-card', 'License Plate', e($r['license_plate'] ?? '—')) ?>
+          <?= fieldRow('fa-car-side', 'Make/Model', e(trim(($r['make'] ?? '') . ' ' . ($r['model'] ?? '')) ?: '—')) ?>
+          <?= fieldRow('fa-calendar-year', 'Year', e($r['year'] ?? '—')) ?>
+          <?= fieldRow('fa-palette', 'Color', e($r['color'] ?? '—')) ?>
+        </div>
+      </div>
+    </div>
+
+    <!-- Staff Assignment -->
+    <div class="grid-two">
+      <div class="detail-card">
+        <div class="card-header">
+          <i class="fa-solid fa-user-wrench"></i>
+          <h3>Assigned Mechanic</h3>
+        </div>
+        <div class="card-body">
+          <?= fieldRow('fa-user', 'Mechanic Name', e($r['mechanic_name'] ?? '—')) ?>
+          <?= fieldRow('fa-barcode', 'Mechanic Code', e($r['mechanic_code'] ?? '—')) ?>
+          <?= fieldRow('fa-phone', 'Phone', e($r['mechanic_phone'] ?? '—')) ?>
+          <?= fieldRow('fa-graduation-cap', 'Specialization', e($r['specialization'] ?? '—')) ?>
+          <?= fieldRow('fa-briefcase', 'Experience', $r['experience_years'] !== null ? e($r['experience_years']) . ' years' : '—') ?>
+        </div>
+      </div>
+
+      <div class="detail-card">
+        <div class="card-header">
+          <i class="fa-solid fa-user-tie"></i>
+          <h3>Assigned Supervisor</h3>
+        </div>
+        <div class="card-body">
+          <?php
+          $supName = trim($r['supervisor_name'] ?? '');
+          $supCode = trim($r['supervisor_code'] ?? '');
+          $supPhone = trim($r['supervisor_phone'] ?? '');
+          ?>
+          <?= fieldRow('fa-user-tie', 'Supervisor Name', $supName ?: '—') ?>
+          <?= fieldRow('fa-barcode', 'Supervisor Code', $supCode ?: '—') ?>
+          <?= fieldRow('fa-phone', 'Supervisor Phone', $supPhone ?: '—') ?>
+        </div>
+      </div>
+    </div>
+
+    <!-- Service Summary & Notes -->
+    <?php if (!empty($r['service_summary']) || !empty($r['appointment_notes'])): ?>
+      <div class="detail-card">
+        <div class="card-header">
+          <i class="fa-solid fa-note-sticky"></i>
+          <h3>Notes & Summary</h3>
+        </div>
+        <div class="card-body">
+          <?php if (!empty($r['service_summary'])): ?>
+            <div style="margin-bottom: 16px;">
+              <div class="field-label"><i class="fa-solid fa-clipboard"></i> Service Summary</div>
+              <div class="summary-box">
+                <?= nl2br(e($r['service_summary'])) ?>
+              </div>
+            </div>
+          <?php endif; ?>
+
+          <?php if (!empty($r['appointment_notes'])): ?>
+            <div>
+              <div class="field-label"><i class="fa-solid fa-sticky-note"></i> Appointment Notes</div>
+              <div class="summary-box">
+                <?= nl2br(e($r['appointment_notes'])) ?>
+              </div>
+            </div>
+          <?php endif; ?>
+        </div>
+      </div>
+    <?php endif; ?>
+
+    <!-- Back Button -->
+    <div style="margin-top: 24px;">
+      <a href="<?= $B ?>/admin/admin-servicehistory" class="back-btn">
+        <i class="fa-solid fa-arrow-left"></i> Back to Service History
+      </a>
+    </div>
+  </main>
+
 </body>
+
 </html>
