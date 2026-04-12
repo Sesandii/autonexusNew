@@ -35,7 +35,7 @@ function fieldRow($icon, $label, $value): string
   <title><?= htmlspecialchars($pageTitle ?? 'Service Details') ?></title>
 
   <link rel="stylesheet" href="<?= $B ?>/app/views/layouts/admin-sidebar/styles.css">
-  <link rel="stylesheet" href="<?= $B ?>/public/assets/css/admin-dashboard.css?v=4">
+
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     .main-content {
@@ -61,6 +61,14 @@ function fieldRow($icon, $label, $value): string
       color: #6b7280;
       margin: 0 0 8px;
       font-size: 14px;
+    }
+
+    /* KPI Grid - Stays 3 columns always */
+    .grid-three {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-bottom: 20px;
     }
 
     .detail-grid {
@@ -102,30 +110,6 @@ function fieldRow($icon, $label, $value): string
       padding: 16px;
     }
 
-    .field-row {
-      display: flex;
-      gap: 12px;
-      padding: 12px 0;
-      border-bottom: 1px solid #f3f4f6;
-      align-items: flex-start;
-    }
-
-    .field-row:last-child {
-      border-bottom: none;
-    }
-
-    .field-icon {
-      color: #9ca3af;
-      width: 20px;
-      text-align: center;
-      margin-top: 2px;
-      font-size: 14px;
-    }
-
-    .field-content {
-      flex: 1;
-    }
-
     .field-label {
       font-size: 11px;
       font-weight: 700;
@@ -133,12 +117,6 @@ function fieldRow($icon, $label, $value): string
       text-transform: uppercase;
       letter-spacing: 0.5px;
       margin-bottom: 4px;
-    }
-
-    .field-value {
-      font-size: 14px;
-      color: #111827;
-      line-height: 1.5;
     }
 
     .summary-box {
@@ -156,14 +134,6 @@ function fieldRow($icon, $label, $value): string
       grid-template-columns: 1fr 1fr;
       gap: 20px;
       margin-bottom: 20px;
-    }
-
-    .grid-three {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 20px;
-      margin-bottom: 20px;
-      min-width: 0;
     }
 
     .status-badge {
@@ -188,7 +158,6 @@ function fieldRow($icon, $label, $value): string
       text-decoration: none;
       font-size: 14px;
       font-weight: 600;
-      cursor: pointer;
       transition: all 0.15s ease;
     }
 
@@ -234,18 +203,44 @@ function fieldRow($icon, $label, $value): string
       color: #111827;
     }
 
-    @media (max-width: 1200px) {
+    @media (max-width: 120px) {
       .detail-grid {
         grid-template-columns: 1fr 1fr;
       }
     }
 
-    @media (max-width: 768px) {
-
+    @media (max-width: 76px) {
+      /* Detail sections stack vertically */
       .detail-grid,
-      .grid-two,
-      .grid-three {
+      .grid-two {
         grid-template-columns: 1fr;
+      }
+
+      /* Keep KPIs in 3 columns but reduce spacing and text size for fit */
+      .grid-three {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+      }
+
+      .kpi-card {
+        padding: 10px 5px;
+      }
+
+      .kpi-value {
+        font-size: 14px;
+      }
+
+      .kpi-label {
+        font-size: 9px;
+      }
+
+      .kpi-icon {
+        height: 36px;
+        width: 36px;
+      }
+
+      .kpi-icon i {
+        font-size: 16px;
       }
 
       .main-content {
@@ -266,30 +261,28 @@ function fieldRow($icon, $label, $value): string
       </div>
     </header>
 
-    <!-- Key Metrics -->
     <div class="grid-three">
       <div class="kpi-card">
         <div class="kpi-icon"><i class="fa-solid fa-hourglass-end"></i></div>
         <div class="kpi-label">Duration</div>
         <div class="kpi-value">
-          <?= $completed ? (int) ($completed->diff($started)->format('%h')) . 'h ' . (int) ($completed->diff($started)->format('%i')) . 'm' : '—' ?>
+          <?= $completed && $started ? (int) ($completed->diff($started)->format('%h')) . 'h ' . (int) ($completed->diff($started)->format('%i')) . 'm' : '—' ?>
         </div>
       </div>
 
       <div class="kpi-card">
         <div class="kpi-icon"><i class="fa-solid fa-sack-dollar"></i></div>
         <div class="kpi-label">Total Cost</div>
-        <div class="kpi-value">Rs. <?= number_format((float) $r['total_cost'], 2) ?></div>
+        <div class="kpi-value">Rs. <?= number_format((float) ($r['total_cost'] ?? 0), 2) ?></div>
       </div>
 
       <div class="kpi-card">
         <div class="kpi-icon"><i class="fa-solid fa-circle-check"></i></div>
         <div class="kpi-label">Status</div>
-        <div style="margin-top: 12px;"><span class="status-badge">Completed</span></div>
+        <div style="margin-top: 8px;"><span class="status-badge">Completed</span></div>
       </div>
     </div>
 
-    <!-- Service Information -->
     <div class="detail-grid">
       <div class="detail-card">
         <div class="card-header">
@@ -301,7 +294,7 @@ function fieldRow($icon, $label, $value): string
           <?= fieldRow('fa-tools', 'Service', e($r['service_name'])) ?>
           <?= fieldRow('fa-barcode', 'Service Code', e($r['service_code'] ?? '—')) ?>
           <?= fieldRow('fa-tag', 'Service Type', e($r['service_type'] ?? 'Service')) ?>
-          <?= fieldRow('fa-dollar-sign', 'Default Price', 'Rs. ' . number_format((float) $r['default_price'], 2)) ?>
+          <?= fieldRow('fa-dollar-sign', 'Default Price', 'Rs. ' . number_format((float) ($r['default_price'] ?? 0), 2)) ?>
         </div>
       </div>
 
@@ -334,7 +327,6 @@ function fieldRow($icon, $label, $value): string
       </div>
     </div>
 
-    <!-- Customer & Vehicle -->
     <div class="grid-two">
       <div class="detail-card">
         <div class="card-header">
@@ -358,13 +350,12 @@ function fieldRow($icon, $label, $value): string
           <?= fieldRow('fa-car', 'Vehicle Code', e($r['vehicle_code'] ?? '—')) ?>
           <?= fieldRow('fa-id-card', 'License Plate', e($r['license_plate'] ?? '—')) ?>
           <?= fieldRow('fa-car-side', 'Make/Model', e(trim(($r['make'] ?? '') . ' ' . ($r['model'] ?? '')) ?: '—')) ?>
-          <?= fieldRow('fa-calendar-year', 'Year', e($r['year'] ?? '—')) ?>
+          <?= fieldRow('fa-calendar', 'Year', e($r['year'] ?? '—')) ?>
           <?= fieldRow('fa-palette', 'Color', e($r['color'] ?? '—')) ?>
         </div>
       </div>
     </div>
 
-    <!-- Staff Assignment -->
     <div class="grid-two">
       <div class="detail-card">
         <div class="card-header">
@@ -398,7 +389,6 @@ function fieldRow($icon, $label, $value): string
       </div>
     </div>
 
-    <!-- Service Summary & Notes -->
     <?php if (!empty($r['service_summary']) || !empty($r['appointment_notes'])): ?>
       <div class="detail-card">
         <div class="card-header">
@@ -427,7 +417,6 @@ function fieldRow($icon, $label, $value): string
       </div>
     <?php endif; ?>
 
-    <!-- Back Button -->
     <div style="margin-top: 24px;">
       <a href="<?= $B ?>/admin/admin-servicehistory" class="back-btn">
         <i class="fa-solid fa-arrow-left"></i> Back to Service History
