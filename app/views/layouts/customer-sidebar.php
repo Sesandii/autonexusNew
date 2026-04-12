@@ -1,8 +1,10 @@
 <?php
 $base = rtrim(BASE_URL, '/');
 $currentPath = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
+$sidebarCssVersion = @filemtime(dirname(APP_ROOT) . '/public/assets/css/customer/sidebar.css') ?: time();
 function isActive($path, $current) { return strpos($current, $path) === 0 ? ' class="active"' : ''; }
 ?>
+<link rel="stylesheet" href="<?= $base ?>/public/assets/css/customer/sidebar.css?v=<?= (int)$sidebarCssVersion ?>">
 <aside class="sidebar">
   <div class="logo">
     <img src="<?= $base ?>/public/assets/img/logo.jpg" alt="AutoNexus Logo">

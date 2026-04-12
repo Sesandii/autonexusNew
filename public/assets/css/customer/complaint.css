@@ -40,35 +40,14 @@ body {
 }
 
 /* Page title */
-.complaint-header {
-  text-align: center;
-  margin-bottom: 24px;
-}
-
-.complaint-header h2 {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 1.9rem;
-  font-weight: 800;
-  color: var(--brand-red);
-  margin: 0 0 8px;
-}
-
-.complaint-header h2 i {
-  font-size: 1.6rem;
-}
-
-.complaint-header p {
-  margin: 0 0 6px;
-  font-size: 1rem;
-  color: var(--muted);
-  line-height: 1.6;
-}
-
 .complaint-response {
   font-size: 0.95rem;
   color: #374151;
+  margin-bottom: 24px;
+  padding: 12px 16px;
+  background: #f0f9ff;
+  border-left: 4px solid #2563eb;
+  border-radius: 4px;
 }
 
 /* Alerts */

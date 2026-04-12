@@ -58,40 +58,6 @@ body {
 }
 
 /* Page header */
-.page-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 32px;
-  padding-bottom: 24px;
-  border-bottom: 2px solid var(--border);
-}
-
-.header-left {
-  flex: 1;
-}
-
-.page-title {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  font-size: 2rem;
-  font-weight: 700;
-  color: var(--brand-red);
-  margin: 0 0 8px;
-}
-
-.page-title i {
-  font-size: 1.8rem;
-}
-
-.page-subtitle {
-  margin: 0;
-  font-size: 0.95rem;
-  color: var(--muted);
-  line-height: 1.5;
-}
-
 .btn-view-reviews {
   display: inline-flex;
   align-items: center;

@@ -13,6 +13,7 @@ $prefillTime      = $prefill['time'] ?? '';
   <meta charset="UTF-8" />
   <title><?= htmlspecialchars($title ?? 'Book Service') ?></title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="<?= $base ?>/public/assets/css/customer/page-header.css" />
   <link rel="stylesheet" href="<?= $base ?>/public/assets/css/customer/booking.css" />
   <link rel="stylesheet" href="<?= rtrim(BASE_URL,'/') ?>/public/assets/css/home.css" />
   <style>
@@ -93,20 +94,17 @@ $prefillTime      = $prefill['time'] ?? '';
 </head>
 <body>
   <div class="container">
-    <header class="page-header" style="display: flex; justify-content: space-between; align-items: flex-start;">
-      <div>
-        <h1>Book a Service</h1>
-        <p class="subtitle">
-          <?= !empty($branch_name) ? 'Selected branch: '.htmlspecialchars($branch_name) : 'Choose your preferred branch and time slot.' ?>
-        </p>
-        <?php if (!empty($flash)): ?>
-          <div class="toast show" style="position:static;margin-top:8px;opacity:1"><?= htmlspecialchars($flash) ?></div>
-        <?php endif; ?>
-      </div>
-      <a href="<?= $base ?>/customer/appointments" style="display:inline-flex;align-items:center;gap:6px;padding:10px 20px;background:#6c757d;color:#fff;text-decoration:none;border-radius:8px;font-weight:500;">
-        Back to Appointments
-      </a>
-    </header>
+    <?php
+      $branchSubtitle = !empty($branch_name) ? 'Selected branch: ' . htmlspecialchars($branch_name) : 'Choose your preferred branch and time slot.';
+      $headerIcon = 'fa-solid fa-calendar-plus';
+      $headerTitle = 'Book a Service';
+      $headerSubtitle = $branchSubtitle;
+      $headerActionBtn = '<a href="' . htmlspecialchars($base) . '/customer/appointments" class="back-to-appointments-btn"><i class="fa-solid fa-arrow-left"></i> Back to Appointments</a>';
+      include APP_ROOT . '/views/partials/customer-page-header.php';
+    ?>
+    <?php if (!empty($flash)): ?>
+      <div class="toast show" style="position:static;margin-bottom:16px;opacity:1"><?= htmlspecialchars($flash) ?></div>
+    <?php endif; ?>
 
     <!-- Wrap everything in a POST form -->
     <form action="<?= $base ?>/customer/book" method="post" id="bookingForm">

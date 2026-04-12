@@ -1,5 +1,6 @@
 <?php
 $base = rtrim(BASE_URL, '/');
+$sidebarCssVersion = @filemtime(dirname(APP_ROOT) . '/public/assets/css/customer/sidebar.css') ?: time();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -8,8 +9,9 @@ $base = rtrim(BASE_URL, '/');
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title><?= htmlspecialchars($title ?? 'Service History') ?> - AutoNexus</title>
 
+  <link rel="stylesheet" href="<?= $base ?>/public/assets/css/customer/page-header.css">
   <link rel="stylesheet" href="<?= $base ?>/public/assets/css/customer/service-history.css?v=<?= time() ?>">
-  <link rel="stylesheet" href="<?= $base ?>/public/assets/css/customer/sidebar.css">
+  <link rel="stylesheet" href="<?= $base ?>/public/assets/css/customer/sidebar.css?v=<?= (int)$sidebarCssVersion ?>">
   <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -18,15 +20,12 @@ $base = rtrim(BASE_URL, '/');
 
   <div class="sh-layout">
     <main class="sh-main">
-      <header class="sh-header">
-        <div>
-          <h1 class="sh-title">
-            <i class="fa-solid fa-clipboard-list"></i>
-            <span>Service History</span>
-          </h1>
-          <p class="sh-subtitle">View completed services for your vehicles.</p>
-        </div>
-      </header>
+      <?php
+        $headerIcon = 'fa-solid fa-clipboard-list';
+        $headerTitle = 'Service History';
+        $headerSubtitle = 'View completed services for your vehicles.';
+        include APP_ROOT . '/views/partials/customer-page-header.php';
+      ?>
 
       <?php 
       // Debug: Show user ID and count
