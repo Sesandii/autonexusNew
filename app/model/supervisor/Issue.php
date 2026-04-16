@@ -9,7 +9,7 @@ class Issue {
 
     public function __construct()
     {
-        $this->pdo = db(); // existing helper
+        $this->pdo = db();
     }
 
     public function reportIssue($mechanicId, $jobId, $description) {

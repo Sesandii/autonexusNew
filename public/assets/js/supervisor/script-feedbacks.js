@@ -1,4 +1,3 @@
-// Simple search filter
 document.querySelector(".filter-search").addEventListener("input", function () {
   let query = this.value.toLowerCase();
   document.querySelectorAll(".card").forEach(card => {

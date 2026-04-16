@@ -80,17 +80,13 @@
     <tbody>
   <?php if (!empty($reports)): ?>
     <?php 
-    // Get the logged-in user ID from session
     $currentSupervisorId = $_SESSION['user']['user_id'] ?? 0;
     ?>
     
     <?php foreach ($reports as $r): ?>
   <?php 
-    // Identify the correct ID field. If 'supervisor_id' is missing, try 'user_id'
     $reportOwnerId = $r['supervisor_id'] ?? $r['user_id'] ?? null;
-    
-    // Check if current user is the owner
-    // We cast to (int) to ensure a match even if one is a string
+
     $isOwner = ($reportOwnerId !== null && (int)$reportOwnerId === (int)$currentSupervisorId);
   ?>
   <tr data-status="<?= strtolower($r['status']) ?>"
@@ -109,17 +105,24 @@
     <td><?= htmlspecialchars($r['supervisor_code']) ?></td>
 
     <td>
-        <a class="btn small" href="<?= $base ?>/supervisor/reports/view/<?= $r['report_id'] ?>">View</a>
+    <a class="btn small" href="<?= $base ?>/supervisor/reports/view/<?= $r['report_id'] ?>">View</a>
 
-        <?php if ($isOwner): ?>
-            <a class="btn small edit" href="<?= $base ?>/supervisor/reports/edit/<?= $r['report_id'] ?>">Edit</a>
-            <form method="post" action="<?= $base ?>/supervisor/reports/delete/<?= $r['report_id'] ?>" class="delete-form" style="display:inline">
-                <button type="submit" class="btn small danger">Delete</button>
-            </form>
-        <?php else: ?>
-            <span style="color:#888; font-size:13px;" title="ID: <?= $reportOwnerId ?? 'Missing' ?>">Restricted</span>
-        <?php endif; ?>
-    </td>
+    <?php if ($isOwner): ?>
+        <a class="btn small edit" href="<?= $base ?>/supervisor/reports/edit/<?= $r['report_id'] ?>">Edit</a>
+        <form method="post" action="<?= $base ?>/supervisor/reports/delete/<?= $r['report_id'] ?>" class="delete-form" style="display:inline">
+            <button type="submit" class="btn small danger">Delete</button>
+        </form>
+        <?php if ($r['status'] === 'submitted'): ?>
+          <a class="btn small download" 
+   href="<?= $base ?>/supervisor/reports/download/<?= $r['report_id'] ?>?format=pdf" 
+   title="Download PDF">
+   PDF
+</a>
+    <?php endif; ?>
+    <?php else: ?>
+        <span style="color:#888; font-size:13px;" title="ID: <?= $reportOwnerId ?? 'Missing' ?>">Restricted</span>
+    <?php endif; ?>
+</td>
   </tr>
 <?php endforeach; ?>
   <?php else: ?>
@@ -129,7 +132,6 @@
 
 </div>
 
-<!-- Delete Confirmation Modal -->
 <div id="deleteModal" class="modal-overlay">
   <div class="modal-box">
     <h3>Confirm Deletion</h3>
@@ -157,7 +159,6 @@ document.addEventListener("DOMContentLoaded", function () {
         const ownerVal = ownerFilter.value;
 
         rows.forEach(row => {
-            // Target specific data for search
             const service = row.dataset.service || "";
             const vehicle = row.dataset.vehicle || "";
             const customer = row.dataset.customer || "";
@@ -166,7 +167,6 @@ document.addEventListener("DOMContentLoaded", function () {
             const rowMechanic = row.dataset.mechanic;
             const rowOwner = row.dataset.owner;
 
-            // Search Bar matches Service OR Vehicle OR Customer
             const matchSearch = !searchVal || 
                                 service.includes(searchVal) || 
                                 vehicle.includes(searchVal) || 
@@ -180,13 +180,11 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // Event Listeners
     searchInput.addEventListener("keyup", applyFilters);
     statusFilter.addEventListener("change", applyFilters);
     mechanicFilter.addEventListener("change", applyFilters);
     ownerFilter.addEventListener("change", applyFilters);
 
-    // Reset Button Logic
     resetBtn.addEventListener("click", function () {
         searchInput.value = "";
         statusFilter.value = "";

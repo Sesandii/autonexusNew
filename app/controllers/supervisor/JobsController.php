@@ -13,18 +13,16 @@ class JobsController extends Controller
         $this->jobModel = new Job();
     }
 
-    /** Show all jobs */
     public function index()
     {
         $jobs = $this->jobModel->all();
         $this->render('supervisor/jobs/index', ['jobs' => $jobs]);
     }
 
-    /** Show form to create a job */
     public function create()
     {
-        $vehicles = []; // fetch from DB later
-        $mechanics = []; // fetch from DB later
+        $vehicles = []; 
+        $mechanics = []; 
 
         $this->render('supervisor/jobs/create', [
             'vehicles' => $vehicles,
@@ -32,7 +30,6 @@ class JobsController extends Controller
         ]);
     }
 
-    /** Handle job creation */
     public function store()
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -51,4 +48,4 @@ class JobsController extends Controller
             exit;
         }
     }
-} // <--- file ends here, no
+}

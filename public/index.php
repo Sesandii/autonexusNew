@@ -547,7 +547,7 @@ $router->get('/receptionist/billing/paid',[app\controllers\Receptionist\BillingC
 
 
 
-// --------------Mechanic copy
+// Mechanic 
 use app\controllers\mechanic\MechanicProfileController;
 $router->get('/mechanic/profile/edit', [MechanicProfileController::class, 'edit']);
 $router->post('/mechanic/profile/update', [MechanicProfileController::class, 'update']);
@@ -561,12 +561,11 @@ $router->get('/mechanic/history', [HistoryController::class, 'index']);
 $router->get('/mechanic/history/show', [HistoryController::class, 'show']);
 $router->get('/mechanic/history/details/{appointmentId}', [HistoryController::class, 'details']);
 
-
 use app\controllers\mechanic\JobsMVController;
 $router->get('/mechanic/jobs/view/{id}', [JobsMVController::class, 'show']);
 $router->post('/mechanic/jobs/update-status', [JobsMVController::class, 'updateStatus']);
 
-// ------------------Supervisor copy
+// Supervisor 
 $router->get('/supervisor/dashboard', [\app\controllers\supervisor\SupervisorController::class, 'index']);
 $router->get('/supervisor/complaints_feedbacks', [\app\controllers\supervisor\ComplaintsFeedbackController::class, 'index']);
 
@@ -586,13 +585,16 @@ $router->get('/supervisor/reports/edit/{id}', [VehicleReportsController::class,'
 $router->post('/supervisor/reports/update/{reportId}', [VehicleReportsController::class,'update']);
 $router->post('/supervisor/reports/delete/{id}', [VehicleReportsController::class, 'delete']);
 $router->get('/supervisor/reports/delete-photo/{id}',[VehicleReportsController::class, 'deletePhoto']);
+$router->get('/supervisor/reports/download/{reportId}', [VehicleReportsController::class, 'download']);
+$router->get('/supervisor/reports/export-mechanic', [VehicleReportsController::class, 'exportMechanic']);
+$router->post('/supervisor/reports/export-mechanic', [VehicleReportsController::class, 'exportMechanic']);
+$router->get('/supervisor/reports/export-daily', [VehicleReportsController::class, 'exportDaily']);
+$router->post('/supervisor/reports/export-daily', [VehicleReportsController::class, 'exportDaily']);
 
 use app\controllers\supervisor\CoordinationController;
 $router->get('/supervisor/coordination', [CoordinationController::class, 'index']);
 $router->post('/supervisor/coordination/updateMechanicStatus', [CoordinationController::class, 'updateMechanicStatus']);
 $router->post('/supervisor/coordination/reportIssue', [CoordinationController::class, 'reportIssue']);
-
-
 
 use \app\controllers\supervisor\VehicleHistoryController;
 $router->get('/supervisor/history', [VehicleHistoryController::class, 'index']);

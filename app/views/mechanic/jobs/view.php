@@ -7,7 +7,6 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
 $message = $_SESSION['message'] ?? null;
 unset($_SESSION['message']);
 
-// Logged-in supervisor ID for owner filter
 $logged_user_id = $_SESSION['user']['user_id'] ?? 0;
 ?>
 <!DOCTYPE html>

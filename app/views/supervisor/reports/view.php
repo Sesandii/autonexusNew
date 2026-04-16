@@ -20,21 +20,19 @@
 <?php if (!empty($report) && !empty($workOrder)): ?>
 
 <div class="grid-row two-columns">
-  <!-- Job Inspection -->
   <div class="report-card">
     <h2>Job Inspection & Reporting</h2>
     <span class="status <?= htmlspecialchars($report['status']) ?>">
       <?= ucfirst(htmlspecialchars($report['status'])) ?>
     </span>
     <div class="info-grid">
-      <div><p class="label">Job ID</p><p class="value"><?= htmlspecialchars($workOrder['service_name']) ?></p></div>
+      <div><p class="label">Service</p><p class="value"><?= htmlspecialchars($workOrder['name']) ?></p></div>
       <div><p class="label">Vehicle Number</p><p class="value"><?= htmlspecialchars($workOrder['license_plate'] ?? '-') ?></p></div>
       <div><p class="label">Customer</p><p class="value"><?= htmlspecialchars(($workOrder['customer_first_name'] ?? '') . ' ' . ($workOrder['customer_last_name'] ?? '-')) ?></p></div>
       <div><p class="label">Assigned Mechanic</p><p class="value"><?= htmlspecialchars($workOrder['mechanic_code'] ?? 'N/A') ?></p></div>
     </div>
   </div>
 
-  <!-- Service Summary -->
   <div class="report-card">
     <h2>Service Summary</h2>
     <table>
@@ -56,7 +54,6 @@
     </table>
   </div>
   </div>
-  <!-- Final Inspection -->
   <div class="grid-row three-columns">
   <div class="report-card">
     <h2>Final Inspection</h2>
@@ -107,7 +104,6 @@
     </div>
 </div>
 
-  <!-- Final Report -->
   <div class="report-card">
     <h2>Final Report</h2>
     <p><strong>Report Summary:</strong></p>
@@ -149,13 +145,10 @@ function openLightbox(imageSrc) {
     const modal = document.getElementById("imageModal");
     const bigImg = document.getElementById("bigImage");
     
-    // Set the source of the big image to the one clicked
     bigImg.src = imageSrc;
     
-    // Show the modal
     modal.style.display = "flex";
     
-    // Disable scrolling on the main page while viewing
     document.body.style.overflow = "hidden";
 }
 
@@ -163,11 +156,9 @@ function closeLightbox() {
     const modal = document.getElementById("imageModal");
     modal.style.display = "none";
     
-    // Re-enable scrolling
     document.body.style.overflow = "auto";
 }
 
-// Also close if the user presses the 'Escape' key
 document.addEventListener('keydown', function(event) {
     if (event.key === "Escape") {
         closeLightbox();

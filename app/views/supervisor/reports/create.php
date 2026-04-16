@@ -20,7 +20,6 @@
   </div>
 
 <?php if (!empty($completedOrders)): ?>
-  <!-- Step 1: Choose a completed work order -->
   <div class="form-section">
   <h2>Select Completed Work Order</h2>
   <form method="get" action="<?= $base ?>/supervisor/reports/create">
@@ -42,11 +41,9 @@
 </div>
 
 <?php elseif (!empty($workOrder)): ?>
-  <!-- Step 2: Show report form for selected work order -->
   <form action="<?= $base ?>/supervisor/reports/store" method="POST" enctype="multipart/form-data">
     <input type="hidden" name="work_order_id" value="<?= $workOrder['work_order_id'] ?>">
     <div class="grid-row two-columns">
-  <!-- Job Inspection -->
   <div class="card">
     <div class="card-header">
       <h2>Job Inspection & Reporting</h2>
@@ -73,7 +70,6 @@
       </div>
     </div>
   </div>
-<!-- Service Summary -->
 <div class="card">
   <div class="card-header">
     <h2>Service Summary</h2>
@@ -110,7 +106,6 @@
 </div>
 </div>
 
-<!-- Final Inspection -->
 <div class="grid-row three-columns">
 <div class="form-section">
   <h2>Final Inspection Form</h2>
@@ -137,7 +132,6 @@
   </div>
 </div>
 
-<!-- Attach Photo -->
 <div class="form-section">
   <h2>Attach Work Photo</h2>
   <div class="upload-container">
@@ -150,7 +144,6 @@
   </div>
 </div>
 
-<!-- Final Report -->
 <div class="form-section">
     <h2>Final Report & Mileage</h2>
 
@@ -183,7 +176,6 @@
     </div>
 </div>
 </div>
-<!-- Actions -->
 <div class="actions">
     <button type="button" onclick="history.back()" class="btn secondary">
         Cancel & Go Back

@@ -9,12 +9,9 @@ class ServiceChecklistTemplate
 
     public function __construct()
     {
-        $this->pdo = db(); // global db() helper
+        $this->pdo = db(); 
     }
 
-    /**
-     * Get checklist steps for a service
-     */
     public function getByService(int $service_id): array
     {
         $sql = "
@@ -32,9 +29,6 @@ class ServiceChecklistTemplate
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    /**
-     * Add new checklist step
-     */
     public function create(int $service_id, string $step_name, int $step_order = 1): void
     {
         $sql = "
@@ -51,9 +45,6 @@ class ServiceChecklistTemplate
         ]);
     }
 
-    /**
-     * Delete a checklist step
-     */
     public function delete(int $template_id): void
     {
         $sql = "

@@ -21,18 +21,15 @@ class CoordinationController {
     public function index() {
         if (session_status() !== PHP_SESSION_ACTIVE) session_start();
     
-        // 1. Get the branch ID from the logged-in supervisor's session
         $branchId = $_SESSION['user']['branch_id'] ?? null;
     
         if (!$branchId) {
             die("Unauthorized: No branch assigned to this supervisor.");
         }
     
-        // 2. Use a filtered method instead of getAllMechanics()
         $mechanics  = $this->mechanicModel->getMechanicsByBranch($branchId);
         $issues     = $this->issueModel->getAllIssues();
     
-        // Apply filters (existing logic)
         $mechanic_code   = $_GET['mechanic_code'] ?? null;
         $specialization  = $_GET['specialization'] ?? null;
         $status          = $_GET['status'] ?? null;
@@ -45,7 +42,6 @@ class CoordinationController {
             return $ok;
         });
     
-        // Attach scheduled work orders
         foreach ($mechanics as &$mech) {
             $mech['scheduled_orders'] = $this->workOrderModel
                 ->getScheduledWorkOrdersByMechanicCode($mech['mechanic_code']);
@@ -55,7 +51,6 @@ class CoordinationController {
         require "../app/views/supervisor/coordination/coordination.php";
     }
     
-
     public function assignWorkOrder() {
         $this->workOrderModel->assignMechanic($_POST['work_order_id'], $_POST['mechanic_id']);
         header("Location: /supervisor/coordination");
@@ -67,7 +62,6 @@ class CoordinationController {
             $mechanicCode = $_POST['mechanic_code'] ?? null;
             $status = $_POST['status'] ?? null;
 
-            // Use the already initialized model
             $updated = $this->mechanicModel->updateStatus($mechanicCode, $status);
 
             if ($updated) {

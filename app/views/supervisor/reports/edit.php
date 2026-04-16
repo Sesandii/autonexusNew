@@ -29,7 +29,6 @@
 <input type="hidden" name="report_id" value="<?= $report['report_id'] ?>">
 <input type="hidden" name="work_order_id" value="<?= $workOrder['work_order_id'] ?>">
 <div class="grid-row two-columns">
-<!-- Job Info -->
 <div class="card">
   <div class="card-header">
     <h2>Job Information</h2>
@@ -60,7 +59,6 @@
   </div>
 </div>
 
-<!-- Service Summary (Read-only) -->
 <div class="card">
   <div class="card-header">
     <h2>Service Summary</h2>
@@ -89,7 +87,6 @@
 </div>
 </div>
 
-<!-- Final Inspection -->
 <div class="grid-row three-columns">
 <div class="form-section">
   <h2>Final Inspection</h2>
@@ -129,7 +126,6 @@
 </div>
 
 
-<!-- Work Photos -->
 <div class="form-section">
   <h2>Work Photos</h2>
 
@@ -143,44 +139,59 @@
     style="width:150px; margin:5px; border-radius:6px; box-shadow:0 1px 4px rgba(0,0,0,0.2);"
 />
 
-        <a
+<a
   href="<?= BASE_URL ?>/supervisor/reports/delete-photo/<?= (int)$photo['photo_id'] ?>"
   onclick="return confirm('Are you sure you want to delete this photo?');"
-  style="position:absolute; top:5px; right:5px; background:red; color:white; padding:2px 6px; border-radius:50%; text-decoration:none; font-weight:bold;"
+  class = "delete-btn-text"
 >
-  ×
+  Delete
 </a>
-
       </div>
     <?php endforeach; ?>
   </div>
 <?php else: ?>
   <p>No photos uploaded yet.</p>
 <?php endif; ?>
-
-  <!-- Upload additional photos -->
   <label>Upload Additional Photos</label>
   <input type="file" name="work_images[]" multiple accept=".png,.jpg,.jpeg,.gif">
 </div>
 
-
-
-<!-- Final Report -->
 <div class="form-section">
-  <h2>Final Report</h2>
+    <h2>Final Report & Mileage</h2>
 
-  <label>Report Summary</label>
-  <textarea name="report_summary" required><?= htmlspecialchars($report['report_summary']) ?></textarea>
+    <label>Report Summary</label>
+    <textarea name="report_summary" placeholder="Overall condition of the vehicle..." required><?= htmlspecialchars($report['report_summary']) ?></textarea>
 
-  <label>Next Service Recommendation</label>
-<input 
-  type="date"
-  name="next_service_recommendation"
-  value="<?= (!empty($report['next_service_recommendation']) && $report['next_service_recommendation'] !== '0000-00-00') ? htmlspecialchars($report['next_service_recommendation']) : '' ?>"
->
+    <div style="margin-bottom: 15px;">
+    <label class="required">Current Vehicle Mileage (km)</label>
+    <input type="number" name="current_mileage" id="current_mileage" 
+           placeholder="Enter odometer reading"
+           value="<?= htmlspecialchars($workOrder['last_service_mileage'] ?? '') ?>"
+           style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #cbd5e1;">
+    
+    <small style="color: #64748b;">
+        Last recorded mileage: <b><?= htmlspecialchars($workOrder['last_service_mileage'] ?? '0') ?> km</b>
+    </small>
 </div>
 
-<!-- Actions -->
+        <div style="margin-bottom: 15px;">
+            <label class="required">Service Interval (km)</label>
+            <input type="number" name="service_interval" id="service_interval" 
+                   value="<?= htmlspecialchars($workOrder['service_interval_km'] ?? '5000') ?>" 
+                   style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #cbd5e1;">
+            <small style="color: #64748b;">Standard is 5000km. Adjust if necessary.</small>
+        </div>
+
+        <div>
+            <label style="color: var(--primary); font-weight: bold;">Calculated Next Service Due</label>
+            <div id="next_service_display" style="font-size: 1.2rem; font-weight: 800; color: #1e293b; padding: 10px; background: #fff; border: 2px dashed #cbd5e1; border-radius: 6px; text-align: center;">
+                - km
+            </div>
+            <input type="hidden" name="next_service_due" id="next_service_due_val">
+        </div>
+    </div>
+</div>
+
 <div class="actions">
   <button type="submit" name="status" value="draft" class="btn secondary">
     Save as Draft
@@ -203,4 +214,31 @@
 
 </main>
 </body>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const currentMileageInput = document.getElementById('current_mileage');
+    const serviceIntervalInput = document.getElementById('service_interval');
+    const nextServiceDisplay = document.getElementById('next_service_display');
+    const nextServiceHidden = document.getElementById('next_service_due_val');
+
+    function calculateNextService() {
+        const current = parseInt(currentMileageInput.value) || 0;
+        const interval = parseInt(serviceIntervalInput.value) || 0;
+        
+        if (current > 0) {
+            const nextDue = current + interval;
+            nextServiceDisplay.innerText = nextDue.toLocaleString() + ' km';
+            nextServiceHidden.value = nextDue;
+        } else {
+            nextServiceDisplay.innerText = '- km';
+            nextServiceHidden.value = '';
+        }
+    }
+
+    currentMileageInput.addEventListener('input', calculateNextService);
+    serviceIntervalInput.addEventListener('input', calculateNextService);
+
+    calculateNextService(); 
+});
+</script>
 </html>

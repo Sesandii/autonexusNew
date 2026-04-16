@@ -1,4 +1,3 @@
-/* ====== RESET / BASE ====== */
 * {
   margin: 0;
   padding: 0;
@@ -18,21 +17,19 @@ font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
     padding: 30px;
     overflow-y: auto;
   }
-  /* ====== PAGE TITLE ====== */
+
   .main-content h1 {
     font-size: 30px;
     margin-bottom: 20px;
     color: #000000;
   }
   
-  /* ====== BOARD LAYOUT ====== */
   .mechanic-board {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 20px;
   }
   
-  /* ====== MECHANIC TILE ====== */
   .mechanic-card {
     background: #ffffff;
     border-radius: 14px;
@@ -47,7 +44,6 @@ font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
     box-shadow: 0 10px 28px rgba(0,0,0,0.12);
   }
   
-  /* ====== STATUS INDICATOR ====== */
   .mechanic-card::before {
     content: "";
     position: absolute;
@@ -58,13 +54,11 @@ font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
     border-radius: 14px 0 0 14px;
   }
   
-  /* Status colors */
   .mechanic-card.available::before { background: #22c55e; }
   .mechanic-card.busy::before { background: #facc15; }
   .mechanic-card.on\ break::before { background: #fb923c; }
   .mechanic-card.off-duty::before { background: #9ca3af; }
-  
-  /* ====== HEADER INFO ====== */
+
   .mechanic-card h3 {
     margin: 0 0 6px;
     font-size: 18px;
@@ -78,14 +72,12 @@ font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
     color: #4b5563;
   }
   
-  /* ====== WORK ORDER COUNT ====== */
   .mechanic-card p:last-of-type {
     margin-top: 8px;
     font-weight: 500;
     color: #1f2937;
   }
-  
-  /* ====== WORK ORDER LIST ====== */
+
   .workorder-list {
     margin-top: 14px;
     padding-top: 10px;
@@ -101,7 +93,7 @@ font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 
 .workorder-card {
     display: flex;
-    justify-content: space-between; /* Spreads Time, Status, and Service across the card */
+    justify-content: space-between; 
     align-items: center;
     background: #fff;
     padding: 15px 20px;
@@ -114,7 +106,6 @@ font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
     background-color: #cacaca;
 }
 
-/* Time: Stacked slightly or side-by-side depending on space */
 .wo-time {
     flex: 0 0 100px;
     font-size: 0.75rem;
@@ -122,7 +113,6 @@ font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
     line-height: 1.4;
 }
 
-/* Status: Plain text, uppercase, bold */
 .wo-status {
     flex: 1;
     text-align: center;
@@ -131,11 +121,9 @@ font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
     letter-spacing: 0.5px;
 }
 
-/* Color coding for the text status only */
-.wo-status.in_progress { color: #333; } /* In your image, it looks like dark text */
+.wo-status.in_progress { color: #333; }
 .wo-status.open { color: #555; }
 
-/* Service: Right-aligned text */
 .wo-service {
     flex: 0 0 80px;
     text-align: right;
@@ -144,7 +132,6 @@ font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
     font-weight: 500;
     line-height: 1.2;
 }
-  /* ====== FORMS ====== */
   .mechanic-card form {
     margin-top: 10px;
   }
@@ -256,7 +243,6 @@ font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   border-radius: 8px;
 }
 
-/* Hover effect so users know it's clickable */
 #reset-filters.btn:hover {
   background-color: #333333 !important;
   border-color: #333333 !important;
@@ -269,19 +255,19 @@ font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   gap: 8px;
   margin-bottom: 12px;
   font-size: 0.8rem;
-  color: #718096; /* Muted grey for secondary info */
+  color: #718096; 
   text-transform: uppercase;
   letter-spacing: 0.5px;
   font-weight: 500;
 }
 
 .breadcrumb-text .sep {
-  color: #cbd5e0; /* Even lighter grey for the arrow */
+  color: #cbd5e0; 
   font-weight: 400;
 }
 
 .breadcrumb-text .active-page {
-  color: #f05a5a; /* Red accent to show current location */
+  color: #f05a5a; 
   font-weight: 600;
 }
 

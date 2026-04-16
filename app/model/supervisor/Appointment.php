@@ -55,7 +55,6 @@ public function getVehicleHistoryByLicense($licensePlate, $fromDate = null, $toD
 
     $params = ['plate' => $licensePlate];
 
-    // ✅ Filter by completion (updated_at)
     if (!empty($fromDate)) {
         $sql .= " AND DATE(a.updated_at) >= :fromDate";
         $params['fromDate'] = $fromDate;
@@ -147,8 +146,7 @@ public function getVehicleHistoryByLicenseWithDateRange($licensePlate, $fromDate
         ";
     
         $params = ['plate' => $licensePlate];
-    
-        // ✅ Changed from updated_at to appointment_date per your request
+
         if (!empty($fromDate)) {
             $sql .= " AND DATE(a.appointment_date) >= :fromDate";
             $params['fromDate'] = $fromDate;
@@ -159,7 +157,7 @@ public function getVehicleHistoryByLicenseWithDateRange($licensePlate, $fromDate
             $params['toDate'] = $toDate;
         }
     
-        $sql .= " ORDER BY a.appointment_date DESC"; // Most recent appointments first
+        $sql .= " ORDER BY a.appointment_date DESC";
     
         $stmt = $this->db->prepare($sql);
         $stmt->execute($params);

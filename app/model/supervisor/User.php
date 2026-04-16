@@ -34,10 +34,6 @@ class User
     return $stmt->execute($data);
 }
 
-
-/**
- * Get detailed profile data including branch information for a mechanic
- */
 public function findMechanicProfile(int $userId)
 {
     $sql = "

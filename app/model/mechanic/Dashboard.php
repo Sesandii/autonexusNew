@@ -69,9 +69,6 @@ public function getTodayAppointments(int $branchId): array
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
-/**
- * Get the branch ID for a specific mechanic
- */
 public function getBranchIdByMechanic(int $mechanicId): ?int
 {
     $stmt = $this->pdo->prepare("SELECT branch_id FROM mechanics WHERE mechanic_id = ?");
@@ -79,9 +76,6 @@ public function getBranchIdByMechanic(int $mechanicId): ?int
     return $stmt->fetchColumn() ?: null;
 }
 
-/**
- * Count appointments in a branch that are 'confirmed' but NOT yet in work_orders
- */
 public function getPendingAppointmentsCountByBranch(?int $branchId): int
 {
     if (!$branchId) return 0;
@@ -101,9 +95,6 @@ public function getPendingAppointmentsCountByBranch(?int $branchId): int
     return (int)$stmt->fetchColumn();
 }
 
-/**
- * Get the single most recent in-progress job for this mechanic
- */
 public function getCurrentActiveJob(int $userId): ?array
 {
     $sql = "

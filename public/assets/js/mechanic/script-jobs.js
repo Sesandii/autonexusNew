@@ -5,7 +5,6 @@ document.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
-  // Sample data
   const jobs = [
     {
       customer: "John Smith",
@@ -41,10 +40,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   ];
 
-  // Clear old content
   jobGrid.innerHTML = "";
 
-  // Render each job as a card
   jobs.forEach(job => {
     const card = document.createElement("div");
     card.className = "job-card";

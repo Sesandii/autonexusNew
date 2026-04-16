@@ -10,10 +10,9 @@ class WorkOrder
 
     public function __construct()
     {
-        $this->pdo = db(); // same helper used for supervisor
+        $this->pdo = db(); 
     }
 
-    /** Get assigned jobs for a single mechanic */
     public static function getAssignedJobs(int $mechanic_id): array
     {
         $pdo = db();
@@ -55,7 +54,6 @@ class WorkOrder
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    /** Get assigned jobs for multiple mechanics */
     public static function getAssignedJobsMultiple(array $mechanic_ids): array
 {
     if (empty($mechanic_ids)) return [];
@@ -107,7 +105,6 @@ class WorkOrder
     $stmt->execute($mechanic_ids);
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
-    /** Get single job */
     public static function getSingleJob(int $work_order_id): ?array
 {
     $pdo = db();
@@ -155,7 +152,6 @@ class WorkOrder
     $stmt->execute(['id' => $work_order_id]);
     return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
 }
-    /** Mechanic updates job status */
     public function setStatusMechanic(int $workOrderId, string $newStatus, int $mechanicId): void
     {
         $stmt = $this->pdo->prepare("
@@ -176,15 +172,12 @@ class WorkOrder
     
         date_default_timezone_set('Asia/Colombo');
         $now = date('Y-m-d H:i:s');
-    
-        /* ================= START JOB ================= */
+
         if (($oldStatus === 'open' || $oldStatus === 'on_hold') 
             && $newStatus === 'in_progress') {
     
-            // If resuming from pause → calculate new start time
             if ($oldStatus === 'on_hold' && $pausedRemaining !== null) {
     
-                // get duration
                 $durStmt = $this->pdo->prepare("
                     SELECT s.base_duration_minutes
                     FROM work_orders w
@@ -206,12 +199,10 @@ class WorkOrder
             $pausedRemaining = null;
         }
     
-        /* ================= PAUSE JOB ================= */
         if ($newStatus === 'on_hold' && $oldStatus === 'in_progress') {
     
             if ($jobStart) {
     
-                // get duration
                 $durStmt = $this->pdo->prepare("
                     SELECT s.base_duration_minutes
                     FROM work_orders w
@@ -229,7 +220,6 @@ class WorkOrder
             }
         }
     
-        /* ================= COMPLETE JOB ================= */
         if ($newStatus === 'completed' && $completed === null) {
             $completed = $now;
         }
@@ -251,14 +241,11 @@ class WorkOrder
         ]);
     }
     
-
-    /** Get all jobs (mechanic tab) */
     public static function getAllJobs(?int $branchId = null): array
 {
     $pdo = db();
     $params = [];
-    
-    // Start the base SQL
+
     $sql = "
         SELECT
             w.work_order_id,
@@ -293,7 +280,6 @@ class WorkOrder
         LEFT JOIN checklist ch ON ch.work_order_id = w.work_order_id
         LEFT JOIN service_photos p ON p.work_order_id = w.work_order_id ";
 
-    // Add branch filter only if ID is passed
     if ($branchId !== null) {
         $sql .= " WHERE a.branch_id = :branch_id ";
         $params['branch_id'] = $branchId;

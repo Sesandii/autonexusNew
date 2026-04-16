@@ -20,7 +20,6 @@
   <h1>Vehicle Service Details</h1>
 </header>
 <div class="details-wrapper details-grid">
-  <!-- Vehicle Info -->
   <div class="card info-card">
     <h3 class="card-title">Vehicle Information</h3>
     <p><b>License Plate:</b> <?= htmlspecialchars($details['license_plate']) ?></p>
@@ -30,7 +29,6 @@
     <p><b>Status:</b> <span class="status"><?= htmlspecialchars($details['vehicle_status']) ?></span></p>
   </div>
 
-  <!-- Appointment Info -->
   <div class="card info-card">
     <h3 class="card-title">Appointment Information</h3>
     <p><b>Date:</b> <?= htmlspecialchars($details['appointment_date']) ?></p>
@@ -39,7 +37,6 @@
     <p><b>Notes:</b> <?= htmlspecialchars($details['notes'] ?? 'None') ?></p>
   </div>
 
-  <!-- Service Info -->
   <div class="card info-card">
     <h3 class="card-title">Service Information</h3>
     <p><b>Service Name:</b> <?= htmlspecialchars($details['service_name']) ?></p>
@@ -47,7 +44,6 @@
     <p><b>Base Price:</b> <span class="price">Rs. <?= htmlspecialchars($details['default_price']) ?></span></p>
   </div>
 
-  <!-- Work Order Info -->
   <div class="card info-card">
     <h3 class="card-title">Work Order Information</h3>
     <p><b>Mechanic ID:</b> <?= htmlspecialchars($details['mechanic_code'] ?? '—') ?></p>

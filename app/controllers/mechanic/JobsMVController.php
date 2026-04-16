@@ -85,16 +85,14 @@ class JobsMVController extends Controller
         $activeCount = $stmt->fetchColumn();
 
         if ($activeCount > 0) {
-            // Correct way to call your method:
             $this->flash('danger', "This mechanic already has a job 'In Progress' or 'On Hold'.");
             
             header("Location: " . rtrim(BASE_URL, '/') . "/mechanic/jobs/view/" . $work_order_id);
-            exit; // Ensure script stops here
+            exit; 
         }
 
     }
 
-    // 3. Update the status if check passes
     $m = new WorkOrder();
     $m->setStatusMechanic($work_order_id, $newStatus, $job['mechanic_id']);
 

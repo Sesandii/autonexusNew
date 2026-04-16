@@ -166,7 +166,6 @@ function updateTimers() {
 updateTimers();
 setInterval(updateTimers, 1000);
 
-/* DRAG & DROP */
 const focusDropzone = document.getElementById('focus-dropzone');
 let draggedJob = null;
 
@@ -194,12 +193,9 @@ focusDropzone.addEventListener('drop', async (e) => {
     const jobId = draggedJob.dataset.jobId;
     const currentCard = focusDropzone.querySelector('.job-card.focused-job');
 
-    // 1. Check if we are dragging the same job that's already focused
     if (currentCard && currentCard.dataset.jobId === jobId) return;
 
     try {
-        // 2. Use the correct URL. Based on your Controller, it's likely update-status
-        // If you don't have a specific JSON API, we use FormData to talk to your existing method
         const formData = new FormData();
         formData.append('work_order_id', jobId);
         formData.append('status', 'in_progress');
@@ -212,7 +208,6 @@ focusDropzone.addEventListener('drop', async (e) => {
         if (response.ok) {
             window.location.reload();
         } else {
-            // Handle the error (like the "Already has an active job" error we wrote)
             alert("Could not start job. Check if you have another job in progress.");
         }
     } catch (error) {
@@ -225,7 +220,6 @@ function toggleCompleted() {
     const cards = document.querySelectorAll('.job-card');
 
     cards.forEach(card => {
-        // We only care about cards in the grid (not the focused one)
         if (!card.classList.contains('focused-job')) {
             if (card.dataset.status === 'completed') {
                 card.style.display = showCompleted ? 'block' : 'none';
@@ -234,7 +228,6 @@ function toggleCompleted() {
     });
 }
 
-// Ensure the filters are applied correctly if the page refreshes
 document.addEventListener('DOMContentLoaded', () => {
     toggleCompleted();
 });

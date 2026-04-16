@@ -20,7 +20,6 @@
       <h1>Job Details</h1>
     </header>
     <section class="job-sec">
-      <!-- WORK ORDER DETAILS -->
 <div class="details-box info-card">
     <h2 class="info-title">Work Order Details</h2>
     <div class="info-row">
@@ -50,7 +49,6 @@
     </div>
 </div>
 
-<!-- VEHICLE INFO -->
 <div class="details-box info-card">
     <h2 class="info-title">Vehicle Information</h2>
 
@@ -78,7 +76,6 @@
     </div>
 </div>
 
-<!-- CUSTOMER INFO -->
 <div class="details-box info-card">
     <h2 class="info-title">Customer Information</h2>
 
@@ -109,8 +106,6 @@
     </div>
 </div>
 
-
-      <!-- CHECKLIST -->
 <div class="details-box checklist-box">
     <h3 class="checklist-title">Service Checklist</h3>
 
@@ -163,11 +158,9 @@
     <?php endif; ?>
 </div>
 
-     <!-- SERVICE PHOTOS -->
 <div class="details-box info-card photos-box">
     <h2 class="info-title">Service Photos</h2>
 
-    <!-- UPLOAD FORM -->
     <form
         action="/autonexus/supervisor/assignedjobs/uploadPhoto"
         method="POST"
@@ -181,7 +174,6 @@
         <button type="submit" class="btn primary">Upload Photo</button>
     </form>
 
-    <!-- PHOTO GRID -->
     <?php if (!empty($job['photos'])): ?>
         <div class="photo-grid">
             <?php foreach ($job['photos'] as $photo): ?>
@@ -191,7 +183,6 @@
                         class="photo-img"
                         onclick="openModal(this.src)"
                     >
-                    <!-- DELETE -->
                     <form
     action="/autonexus/supervisor/assignedjobs/deletePhoto"
     method="POST"
@@ -208,8 +199,6 @@
         <p class="empty-text">No photos uploaded.</p>
     <?php endif; ?>
 </div>
-
-
     </section>
     <div class="back-button-wrapper">
   <a href="/autonexus/supervisor/assignedjobs" class="btn-back">
@@ -218,7 +207,6 @@
 </div>
   </main>
 
-  <!-- 🔍 IMAGE MODAL -->
 <div id="imageModal" style="display:none;
      position:fixed; top:0; left:0; width:100%; height:100%;
      background:rgba(0,0,0,0.8);
@@ -229,7 +217,6 @@
     <img id="modalImage" style="max-width:90%; max-height:90%; border-radius:10px;">
 </div>
 
-<!-- Delete Confirmation Modal -->
 <div id="deleteModal" class="modal-overlay">
   <div class="modal-box">
     <h3>Confirm Deletion</h3>
@@ -253,25 +240,22 @@ function closeModal() {
 
 let formToSubmit = null;
 
-// Handle delete button click
 document.querySelectorAll('.deleteForm').forEach(form => {
     form.addEventListener('submit', function(e) {
-        e.preventDefault(); // STOP normal submit
-        formToSubmit = this; // store current form
+        e.preventDefault();
+        formToSubmit = this;
         document.getElementById('deleteModal').style.display = 'flex';
     });
 });
 
-// Cancel button
 document.getElementById('cancelDelete').addEventListener('click', function() {
     document.getElementById('deleteModal').style.display = 'none';
     formToSubmit = null;
 });
 
-// Confirm delete
 document.getElementById('confirmDelete').addEventListener('click', function() {
     if (formToSubmit) {
-        formToSubmit.submit(); // submit the correct form
+        formToSubmit.submit(); 
     }
 });
 

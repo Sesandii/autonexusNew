@@ -7,7 +7,6 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
 $message = $_SESSION['message'] ?? null;
 unset($_SESSION['message']);
 
-// Logged-in supervisor ID for owner filter
 $currentSupervisorId = $_SESSION['user']['user_id'] ?? 0;
 ?>
 
@@ -43,7 +42,6 @@ $currentSupervisorId = $_SESSION['user']['user_id'] ?? 0;
     <a class="btn primary" href="<?= $base ?>/supervisor/workorders/create">Add Work Order</a>
   </div>
 
-  <!-- Filters -->
   <div class="table-filters">
     <input type="text" id="idFilter" placeholder="Search by Vehicle, Service...." class="filter-input">
 
@@ -102,7 +100,6 @@ $currentSupervisorId = $_SESSION['user']['user_id'] ?? 0;
     <?php
         $isOwner = ($w['supervisor_id'] ?? 0) == $currentSupervisorId;
 
-        // Only calculate expected completion if status is 'in_progress'
         $expectedEnd = '-';
         if (!empty($w['started_at']) && !empty($w['base_duration_minutes']) && strtolower($w['status']) === 'in_progress') {
             $dt = new \DateTime($w['started_at']);
@@ -132,8 +129,6 @@ $currentSupervisorId = $_SESSION['user']['user_id'] ?? 0;
     data-remaining="<?= $w['paused_remaining_seconds'] ?? '' ?>">
     -
 </td>
-
-
         <td><span class="status <?= htmlspecialchars($w['status']) ?>"><?= htmlspecialchars($w['status']) ?></span></td>
         <td><?= $supervisorCode ?></td>
         <td>
@@ -153,7 +148,6 @@ $currentSupervisorId = $_SESSION['user']['user_id'] ?? 0;
   </table>
 </div>
 
-<!-- Delete Confirmation Modal -->
 <div id="deleteModal" class="modal-overlay">
   <div class="modal-box">
     <h3>Confirm Deletion</h3>
@@ -176,7 +170,6 @@ function updateTimers() {
         let remainingSec;
 
         if (status === 'in_progress') {
-            // Use paused_remaining if exists
             if (td.dataset.remaining && td.dataset.remaining !== '') {
                 remainingSec = parseInt(td.dataset.remaining);
             } else if (startStr) {
@@ -202,12 +195,10 @@ function updateTimers() {
                 (minutes > 0 ? minutes + 'm ' : '') +
                 seconds + 's';
 
-            // Always decrement for in_progress
             td.dataset.remaining = remainingSec - 1;
             td.style.color = "";
 
         } else if (status === 'on_hold') {
-            // paused time: do NOT decrement
             remainingSec = td.dataset.remaining ? parseInt(td.dataset.remaining) : durationMin * 60;
 
             const hours = Math.floor(remainingSec / 3600);
@@ -231,8 +222,6 @@ function updateTimers() {
 setInterval(updateTimers, 1000);
 updateTimers();
 
-
-// Filters
 document.addEventListener("DOMContentLoaded", function () {
     const searchInput = document.getElementById("idFilter");
     const serviceFilter = document.getElementById("serviceFilter");
@@ -247,7 +236,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const searchVal = searchInput.value.trim().toLowerCase();
     const serviceVal = serviceFilter.value;
     const mechanicVal = mechanicFilter.value;
-    const statusVal = statusFilter.value; // The value from the <select id="statusFilter">
+    const statusVal = statusFilter.value; 
     const ownerVal = ownerFilter.value;
 
     rows.forEach(row => {
@@ -258,29 +247,23 @@ document.addEventListener("DOMContentLoaded", function () {
         const rowVehicle = (row.dataset.vehicle || "").toLowerCase();
         const rowSupervisor = (row.dataset.supervisor || "").toLowerCase();
 
-        // Search Bar Logic
         const matchSearch = !searchVal || 
                             rowVehicle.includes(searchVal) || 
                             rowService.includes(searchVal) || 
                             rowSupervisor.includes(searchVal) || 
                             rowMechanic.includes(searchVal);
 
-        // --- ARCHIVE LOGIC START ---
         let matchStatus;
         if (statusVal) {
-            // If the user SPECIFICALLY selects a status (including "completed"), show only that
             matchStatus = rowStatus === statusVal;
         } else {
-            // DEFAULT STATE: If no status is chosen, show everything EXCEPT completed
             matchStatus = rowStatus !== 'completed';
         }
-        // --- ARCHIVE LOGIC END ---
 
         const matchService = !serviceVal || rowService === serviceVal;
         const matchMechanic = !mechanicVal || rowMechanic === mechanicVal;
         const matchOwner = !ownerVal || rowOwner === ownerVal;
 
-        // Apply visibility
         row.style.display = (matchSearch && matchService && matchMechanic && matchStatus && matchOwner) ? "" : "none";
     });
 }
@@ -317,7 +300,7 @@ let formToDelete = null;
 
 document.querySelectorAll('.delete-form').forEach(form => {
     form.addEventListener('submit', function(e) {
-        e.preventDefault(); // Stop normal submit
+        e.preventDefault();
         formToDelete = this;
         document.getElementById('deleteModal').style.display = 'flex';
     });

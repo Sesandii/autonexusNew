@@ -26,21 +26,16 @@ section.welcome {
   margin-bottom: 10px;
 }
 
-
-/* Dashboard top: cards in one row with equal width */
-/* Top section */
 .dashboard-top {
   width: 100%;
 }
 
-/* Cards container */
 .dashboard-left .cards {
   display: flex;
   width: 100%;
   gap: 20px;
 }
 
-/* Each card */
 .dashboard-left .cards .card {
   flex: 1 1 0;
   max-width: 100%;
@@ -108,7 +103,7 @@ section.welcome {
   position: absolute;
   pointer-events: none;
 }
-/* Action button container */
+
 .action-buttons {
   display: flex;
   gap: 8px;
@@ -116,7 +111,6 @@ section.welcome {
   align-items: center;
 }
 
-/* Base button */
 .btn {
   padding: 6px 12px;
   border-radius: 6px;
@@ -129,7 +123,6 @@ section.welcome {
   
 }
 
-/* Primary */
 .btn-primary {
   background: #000000;
   color: #fff;
@@ -139,7 +132,6 @@ section.welcome {
   background: #535353;
 }
 
-/* Secondary */
 .btn-secondary {
   background: #979797;
   color: #000000;
@@ -149,7 +141,6 @@ section.welcome {
   background: #b8b8b8;
 }
 
-/* Danger */
 .btn-danger {
   background: #dc2626;
   color: #fff;
@@ -159,7 +150,6 @@ section.welcome {
   background: #b91c1c;
 }
 
-/* Prevent form from stretching */
 .action-buttons form {
   margin: 0;
 }
@@ -274,8 +264,6 @@ th, td {
   vertical-align: middle;
 }
 
-
-/* Container for Side-by-Side layout */
 .dashboard-grid-container {
   display: flex;
   gap: 20px;
@@ -284,18 +272,17 @@ th, td {
 }
 
 .dashboard-tables-column {
-  flex: 7; /* Takes up 70% space */
+  flex: 7; 
 }
 
 .dashboard-quick-links-column {
-  flex: 3; /* Takes up 30% space */
+  flex: 3; 
   background: #fff;
   padding: 20px;
   border-radius: 12px;
   box-shadow: 0 4px 10px rgba(0,0,0,0.05);
 }
 
-/* Quick Links Grid - 2 columns */
 .quick-links-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -334,7 +321,6 @@ th, td {
   font-weight: 500;
 }
 
-/* Graph Row at the bottom */
 .dashboard-graph-row {
   margin-top: 20px;
   width: 100%;
@@ -347,7 +333,6 @@ th, td {
   box-shadow: 0 4px 10px rgba(0,0,0,0.05);
 }
 
-/* Chart container styling */
 .chart-container {
   background: #fff;
   padding: 15px;
@@ -355,7 +340,6 @@ th, td {
   margin-bottom: 20px;
 }
 
-/* Modal Overlay */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -364,28 +348,24 @@ th, td {
   height: 100%;
   background: rgba(0, 0, 0, 0.5);
   z-index: 9999;
-  
-  /* Start Hidden */
   display: none;        
   pointer-events: none; 
   align-items: center;
   justify-content: center;
 }
 
-/* This is what your JS triggers */
 .modal-overlay.show {
-  display: flex !important; /* Forces it to show */
-  pointer-events: auto;     /* Allows you to click the modal buttons */
+  display: flex !important; 
+  pointer-events: auto;    
 }
 
-/* Modal Box */
 .modal-box {
   background: #fff;
   padding: 25px;
   width: 350px;
   border-radius: 8px;
   text-align: center;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.2); /* Added shadow for depth */
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2); 
   animation: fadeIn 0.2s ease-in-out;
 }
 
@@ -397,24 +377,21 @@ th, td {
 .modal-actions {
   margin-top: 20px;
   display: flex;
-  justify-content: space-around; /* Better spacing for two buttons */
+  justify-content: space-around; 
   gap: 10px;
 }
 
-/* Update the icon styling */
 .q-icon {
-  font-size: 24px;      /* Icon Size */
-  margin-bottom: 10px;  /* Space below icon */
-  color: #db3434;      /* Theme color (adjust to your preference) */
+  font-size: 24px;      
+  margin-bottom: 10px;  
+  color: #db3434;      
   transition: color 0.3s ease;
 }
 
-/* Optional: Change icon color on hover */
 .q-link:hover .q-icon {
   color: #ff9090;
 }
 
-/* Ensure the link remains a flex container */
 .q-link {
   display: flex;
   flex-direction: column;
@@ -427,26 +404,22 @@ th, td {
   background-color: #f9f9f9;
 }
 
-/* Add this to your style-dashboard.css or a <style> tag */
-
 .table-wrapper {
-  max-height: 280px; /* Adjust this height as needed */
-  overflow-y: auto;  /* Adds vertical scrollbar */
-  overflow-x: auto;  /* Adds horizontal scrollbar for small screens */
-  border: 1px solid #eee; /* Optional: adds definition to the scroll area */
+  max-height: 280px; 
+  overflow-y: auto;  
+  overflow-x: auto;  
+  border: 1px solid #eee; 
   border-radius: 8px;
   margin-top: 10px;
 }
 
-/* Optional: Make the table header "sticky" so it stays visible while scrolling */
 .table-wrapper table thead {
   position: sticky;
   top: 0;
   z-index: 10;
-  background-color: #f8f9fa; /* Matches your dashboard background */
+  background-color: #f8f9fa; 
 }
 
-/* Optional: Custom scrollbar styling to make it look modern */
 .table-wrapper::-webkit-scrollbar {
   width: 8px;
 }

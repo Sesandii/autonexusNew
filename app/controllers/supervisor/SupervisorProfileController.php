@@ -39,7 +39,6 @@ public function update()
         'role'            => $_POST['role'] ?? null,
     ];
 
-    // Only update password if entered
     if (!empty($_POST['password'])) {
         $data['password_hash'] = password_hash($_POST['password'], PASSWORD_DEFAULT);
     }
@@ -47,7 +46,6 @@ public function update()
     $userModel = new User();
     $userModel->updateProfile($userId, $data);
 
-    // Update session name
     $_SESSION['user']['name'] = $data['first_name'] . ' ' . $data['last_name'];
 
     $this->flash('success', 'Details updated.');
