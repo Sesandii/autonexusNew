@@ -311,4 +311,76 @@ button.view-btn:hover {
   background: #4d4d4d;
 }
 
+.reply-form textarea {
+  width: 100%;
+  min-height: 80px;
+  padding: 10px;
+  margin-top: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  resize: vertical;
+}
 
+.submit-reply-btn {
+  background-color: #a02020; 
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.3s;
+}
+
+.cancel-btn {
+  background-color: #000000; 
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: opacity 0.3s;
+}
+
+.submit-reply-btn:hover, .cancel-btn:hover {
+  opacity: 0.8;
+}
+
+.reply-form textarea {
+  width: 100%;
+  display: block;
+  margin-bottom: 5px;
+}
+
+.submit-reply-btn:hover {
+  background-color: #882121;
+}
+
+.reply-status.pending {
+  color: #dc3545;
+  font-weight: bold;
+}
+
+.edit-reply-btn {
+  float: right;
+  background: transparent;
+  color: #ff0000;
+  border: 1px solid #ff0000;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.edit-reply-btn:hover {
+  background: #ff0000;
+  color: white;
+}
+
+.reply-actions {
+  display: flex;       
+  align-items: center; 
+  gap: 10px;          
+  margin-top: 12px;    
+}

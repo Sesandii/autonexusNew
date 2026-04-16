@@ -38,7 +38,7 @@
     <select id="filter-status">
         <option value="">All Statuses</option>
         <?php
-        $statuses = ['Available', 'Busy', 'On Break', 'Off-Duty'];
+        $statuses = ['Active', 'Busy', 'On Break', 'Off-Duty'];
         foreach ($statuses as $st): ?>
             <option value="<?= $st ?>"><?= $st ?></option>
         <?php endforeach; ?>
@@ -95,7 +95,7 @@ $end   = new DateTime($wo['calculated_end']);
     <input type="hidden" name="mechanic_id" value="<?= $mech['mechanic_id'] ?>">
     <input type="hidden" name="mechanic_code" value="<?= htmlspecialchars($mech['mechanic_code']) ?>">
     <select name="status">
-  <option value="Available" <?= $mech['status'] == 'Available' ? 'selected' : '' ?>>Available</option>
+  <option value="Active" <?= $mech['status'] == 'Active' ? 'selected' : '' ?>>Active</option>
   <option value="Busy" <?= $mech['status'] == 'Busy' ? 'selected' : '' ?>>Busy</option>
   <option value="On Break" <?= $mech['status'] == 'On Break' ? 'selected' : '' ?>>On Break</option>
   <option value="Off-Duty" <?= $mech['status'] == 'Off-Duty' ? 'selected' : '' ?>>Off-Duty</option>

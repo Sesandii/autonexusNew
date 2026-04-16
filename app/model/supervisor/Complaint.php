@@ -51,4 +51,14 @@ class Complaint
     $stmt->execute();
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
+
+public function updateStatus($id, $status) {
+    $sql = "UPDATE complaints SET status = :status, updated_at = NOW() WHERE complaint_id = :id";
+    $stmt = $this->db->prepare($sql); 
+    
+    return $stmt->execute([
+        ':status' => $status,
+        ':id' => $id
+    ]);
+}
 }

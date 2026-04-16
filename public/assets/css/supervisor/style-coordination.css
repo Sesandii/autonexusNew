@@ -54,7 +54,7 @@ font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
     border-radius: 14px 0 0 14px;
   }
   
-  .mechanic-card.available::before { background: #22c55e; }
+  .mechanic-card.active::before { background: #22c55e; }
   .mechanic-card.busy::before { background: #facc15; }
   .mechanic-card.on\ break::before { background: #fb923c; }
   .mechanic-card.off-duty::before { background: #9ca3af; }
