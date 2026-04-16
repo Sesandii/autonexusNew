@@ -8,9 +8,8 @@ use app\model\admin\Branch;
 use app\model\admin\BranchService;
 use app\model\admin\PackageItem;
 use app\model\admin\Service;
-use app\model\admin\ServiceType;
 
-class ServicesController extends Controller
+class PackagesController extends Controller
 {
     public function __construct(array $config = [])
     {
@@ -23,10 +22,8 @@ class ServicesController extends Controller
         $serviceModel = new Service();
         $packageModel = new PackageItem();
         $allRows = $serviceModel->allWithTypeAndBranches();
-        $tabs = $serviceModel->distinctTypesForTabs();
         $packageStats = $serviceModel->packageAnalytics();
 
-        $services = [];
         $packages = [];
 
         foreach ($allRows as $row) {
@@ -52,41 +49,33 @@ class ServicesController extends Controller
                 $row['estimated_revenue'] = $stats['estimated_revenue'];
 
                 $packages[] = $row;
-            } else {
-                $services[] = $row;
             }
         }
 
         $this->view('admin/admin-viewservices/index', [
-            'pageTitle' => 'Service & Package Management',
+            'pageTitle' => 'Package Management',
             'current' => 'services',
             'base' => BASE_URL,
-            'services' => $services,
+            'services' => [],
             'packages' => $packages,
-            'tabs' => $tabs,
+            'tabs' => [],
         ]);
     }
 
     public function create(): void
     {
         $serviceModel = new Service();
+        $branches = (new Branch())->allActive();
+        $nextCode = $serviceModel->nextPackageCode();
+        $servicesForPackage = $serviceModel->allAtomicServices();
         $packageTypeId = $serviceModel->findPackageTypeId();
 
-        $types = array_filter(
-            (new ServiceType())->all(),
-            fn($t) => (int) $t['type_id'] !== $packageTypeId
-        );
-
-        $branches = (new Branch())->allActive();
-        $nextCode = $serviceModel->nextCode();
-
-        $this->view('admin/admin-viewservices/create', [
-            'types' => $types,
+        $this->view('admin/admin-viewservices/create-package', [
             'branches' => $branches,
             'nextCode' => $nextCode,
             'base' => BASE_URL,
             'current' => 'services',
-            'servicesForPackage' => [],
+            'servicesForPackage' => $servicesForPackage,
             'packageTypeId' => $packageTypeId,
         ]);
     }
@@ -100,18 +89,28 @@ class ServicesController extends Controller
             $serviceModel = new Service();
             $branchModel = new Branch();
             $bsModel = new BranchService();
+            $pkgModel = new PackageItem();
+            $packageTypeId = $serviceModel->findPackageTypeId();
 
             $data = $this->sanitize($_POST);
+            $data['type_id'] = $packageTypeId;
             $data['service_code'] = $serviceModel->nextCode();
 
-            if ($serviceModel->isPackageType($data['type_id'])) {
-                $pdo->rollBack();
-                http_response_code(422);
-                echo 'Packages must be created from the package module.';
-                return;
-            }
+            $packageItems = $this->normalizePackageItems($_POST['package_items'] ?? []);
 
-            $errors = $this->validate($data);
+            $totals = $this->computePackageTotals($packageItems, $serviceModel->allAtomicServices());
+            $pricing = $this->applyPackagePricingRule(
+                $totals['price'],
+                $_POST['pricing_mode'] ?? 'auto',
+                $_POST['discount_type'] ?? 'none',
+                $_POST['discount_value'] ?? '0',
+                $_POST['manual_price'] ?? ''
+            );
+
+            $data['base_duration_minutes'] = $totals['duration'];
+            $data['default_price'] = number_format($pricing, 2, '.', '');
+
+            $errors = $this->validate($data, $packageItems);
             if ($errors) {
                 $pdo->rollBack();
                 http_response_code(422);
@@ -127,6 +126,9 @@ class ServicesController extends Controller
                 : array_map('intval', $_POST['branches'] ?? []);
 
             $bsModel->replaceForService($serviceId, $branchIds);
+
+            $packageId = $serviceModel->createPackageRecord($serviceId, $data);
+            $pkgModel->replaceItems($packageId, $packageItems);
 
             $pdo->commit();
             header('Location: ' . rtrim(BASE_URL, '/') . '/admin/services');
@@ -147,42 +149,36 @@ class ServicesController extends Controller
 
         if (!$row) {
             http_response_code(404);
-            echo 'Service not found';
+            echo 'Package not found';
             return;
         }
 
-        if ($serviceModel->isPackageType($row['type_id'] ?? null)) {
-            header('Location: ' . rtrim(BASE_URL, '/') . '/admin/packages/' . $id . '/edit');
+        if (!$serviceModel->isPackageType($row['type_id'] ?? null)) {
+            header('Location: ' . rtrim(BASE_URL, '/') . '/admin/services/' . $id . '/edit');
             exit;
         }
-
-        $packageTypeId = $serviceModel->findPackageTypeId();
-        $types = array_filter(
-            (new ServiceType())->all(),
-            fn($t) => (int) $t['type_id'] !== $packageTypeId
-        );
 
         $branches = (new Branch())->allActive();
         $bsModel = new BranchService();
         $attached = $bsModel->branchIdsForService($id);
         $allActive = array_map(fn($b) => (int) $b['branch_id'], $branches);
+        $servicesForPackage = $serviceModel->allAtomicServices();
+
+        $packageId = $serviceModel->getPackageIdForService($id);
+        $packageItems = $packageId ? (new PackageItem())->itemsForPackage($packageId) : [];
         $isAll = !array_diff($allActive, $attached) && !empty($allActive);
 
-        $this->view('admin/admin-viewservices/edit', [
+        $this->view('admin/admin-viewservices/edit-package', [
             'row' => $row,
-            'types' => $types,
             'branches' => $branches,
             'attached' => $attached,
             'applyAll' => $isAll,
             'base' => BASE_URL,
             'current' => 'services',
-            'servicesForPackage' => [],
-            'packageItems' => [],
-            'packageTypeId' => $packageTypeId,
-            'packageSummary' => null,
-            'isPackage' => false,
-            'packageCode' => null,
-            'packageId' => null,
+            'servicesForPackage' => $servicesForPackage,
+            'packageItems' => $packageItems,
+            'packageCode' => $serviceModel->getPackageCodeForService($id),
+            'packageId' => $packageId,
         ]);
     }
 
@@ -196,33 +192,42 @@ class ServicesController extends Controller
             $serviceModel = new Service();
             $branchModel = new Branch();
             $bsModel = new BranchService();
+            $pkgModel = new PackageItem();
 
             $existing = $serviceModel->findById($id);
             if (!$existing) {
                 $pdo->rollBack();
                 http_response_code(404);
-                echo 'Service not found';
+                echo 'Package not found';
                 return;
             }
 
-            if ($serviceModel->isPackageType($existing['type_id'] ?? null)) {
+            if (!$serviceModel->isPackageType($existing['type_id'] ?? null)) {
                 $pdo->rollBack();
                 http_response_code(422);
-                echo 'Packages must be updated from the package module.';
+                echo 'This record is not a package.';
                 return;
             }
 
             $data = $this->sanitize($_POST);
             unset($data['created_at']);
+            $data['type_id'] = $serviceModel->findPackageTypeId();
 
-            if ($serviceModel->isPackageType($data['type_id'])) {
-                $pdo->rollBack();
-                http_response_code(422);
-                echo 'Cannot convert a normal service into a package here.';
-                return;
-            }
+            $packageItems = $this->normalizePackageItems($_POST['package_items'] ?? []);
 
-            $errors = $this->validate($data);
+            $totals = $this->computePackageTotals($packageItems, $serviceModel->allAtomicServices());
+            $pricing = $this->applyPackagePricingRule(
+                $totals['price'],
+                $_POST['pricing_mode'] ?? 'auto',
+                $_POST['discount_type'] ?? 'none',
+                $_POST['discount_value'] ?? '0',
+                $_POST['manual_price'] ?? ''
+            );
+
+            $data['base_duration_minutes'] = $totals['duration'];
+            $data['default_price'] = number_format($pricing, 2, '.', '');
+
+            $errors = $this->validate($data, $packageItems);
             if ($errors) {
                 $pdo->rollBack();
                 http_response_code(422);
@@ -238,6 +243,15 @@ class ServicesController extends Controller
                 : array_map('intval', $_POST['branches'] ?? []);
 
             $bsModel->replaceForService($id, $branchIds);
+
+            $packageId = $serviceModel->getPackageIdForService($id);
+            if ($packageId) {
+                $serviceModel->updatePackageRecord($packageId, $id, $data);
+                $pkgModel->replaceItems($packageId, $packageItems);
+            } else {
+                $packageId = $serviceModel->createPackageRecord($id, $data);
+                $pkgModel->replaceItems($packageId, $packageItems);
+            }
 
             $pdo->commit();
             header('Location: ' . rtrim(BASE_URL, '/') . '/admin/services');
@@ -264,26 +278,21 @@ class ServicesController extends Controller
             if (!$row) {
                 $pdo->rollBack();
                 http_response_code(404);
-                echo 'Service not found';
+                echo 'Package not found';
                 return;
             }
-
-            // Remove any package items that reference this service
-            $stmt = $pdo->prepare("DELETE FROM service_package_items WHERE service_id = :id");
-            $stmt->execute(['id' => $id]);
 
             // Remove branch associations
             $bsModel->replaceForService($id, []);
 
-            // If it's a package service, also delete the package record
-            if ($serviceModel->isPackageType($row['type_id'] ?? null)) {
-                $packageId = $serviceModel->getPackageIdForService($id);
-                if ($packageId) {
-                    $stmt = $pdo->prepare("DELETE FROM packages WHERE package_id = :id");
-                    $stmt->execute(['id' => $packageId]);
-                }
+            // Delete package items and package record
+            $packageId = $serviceModel->getPackageIdForService($id);
+            if ($packageId) {
+                $pkgModel->replaceItems($packageId, []);
+                $serviceModel->deletePackageRecord($packageId);
             }
 
+            // Delete the package service
             $serviceModel->deleteById($id);
 
             $pdo->commit();
@@ -302,9 +311,6 @@ class ServicesController extends Controller
 
         $name = $get('name');
         $description = $get('description');
-        $typeId = (int) $get('type_id', '0');
-        $typeId = $typeId > 0 ? $typeId : null;
-
         $duration = (int) $get('base_duration_minutes', '0');
         if ($duration < 0) {
             $duration = 0;
@@ -321,7 +327,7 @@ class ServicesController extends Controller
         return [
             'name' => $name,
             'description' => $description,
-            'type_id' => $typeId,
+            'type_id' => null,
             'base_duration_minutes' => $duration,
             'default_price' => $price,
             'status' => $status,
@@ -329,16 +335,12 @@ class ServicesController extends Controller
         ];
     }
 
-    private function validate(array $data): array
+    private function validate(array $data, array $packageItems): array
     {
         $errors = [];
 
         if (($data['name'] ?? '') === '') {
-            $errors[] = 'Service name is required.';
-        }
-
-        if (!is_null($data['type_id']) && !is_int($data['type_id'])) {
-            $errors[] = 'Invalid service type.';
+            $errors[] = 'Package name is required.';
         }
 
         if (!preg_match('/^\d+(\.\d{1,2})?$/', (string) ($data['default_price'] ?? ''))) {
@@ -349,7 +351,83 @@ class ServicesController extends Controller
             $errors[] = 'Duration must be a non-negative integer.';
         }
 
+        if (empty($packageItems)) {
+            $errors[] = 'A package must contain at least one service item.';
+        }
+
         return $errors;
+    }
+
+    private function normalizePackageItems(array $raw): array
+    {
+        $items = [];
+
+        foreach ($raw as $row) {
+            $serviceId = (int) ($row['service_id'] ?? 0);
+            $quantity = max(1, (int) ($row['quantity'] ?? 1));
+
+            if ($serviceId <= 0) {
+                continue;
+            }
+
+            $items[] = [
+                'service_id' => $serviceId,
+                'quantity' => $quantity,
+            ];
+        }
+
+        return $items;
+    }
+
+    private function computePackageTotals(array $packageItems, array $availableServices): array
+    {
+        $serviceMap = [];
+        foreach ($availableServices as $service) {
+            $serviceMap[(int) $service['service_id']] = $service;
+        }
+
+        $duration = 0;
+        $price = 0.00;
+
+        foreach ($packageItems as $item) {
+            $serviceId = (int) $item['service_id'];
+            $qty = max(1, (int) $item['quantity']);
+
+            if (!isset($serviceMap[$serviceId])) {
+                continue;
+            }
+
+            $duration += ((int) $serviceMap[$serviceId]['base_duration_minutes']) * $qty;
+            $price += ((float) $serviceMap[$serviceId]['default_price']) * $qty;
+        }
+
+        return [
+            'duration' => $duration,
+            'price' => round($price, 2),
+        ];
+    }
+
+    private function applyPackagePricingRule(
+        float $baseTotal,
+        string $pricingMode,
+        string $discountType,
+        string $discountValue,
+        string $manualPrice
+    ): float {
+        if ($pricingMode === 'manual' && is_numeric($manualPrice)) {
+            return max(0, round((float) $manualPrice, 2));
+        }
+
+        $discount = 0.0;
+        $value = is_numeric($discountValue) ? (float) $discountValue : 0.0;
+
+        if ($discountType === 'percent') {
+            $discount = $baseTotal * ($value / 100);
+        } elseif ($discountType === 'fixed') {
+            $discount = $value;
+        }
+
+        return max(0, round($baseTotal - $discount, 2));
     }
 
     private function requireAdmin(): void

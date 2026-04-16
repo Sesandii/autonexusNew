@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace app\model\admin;
 
 use PDO;
@@ -19,7 +21,7 @@ class Service
             FROM services
             WHERE service_code REGEXP '^SER[0-9]+$'
         ";
-        $row  = $this->pdo->query($sql)->fetch(PDO::FETCH_ASSOC);
+        $row = $this->pdo->query($sql)->fetch(PDO::FETCH_ASSOC);
         $next = (int)($row['max_num'] ?? 0) + 1;
 
         return 'SER' . str_pad((string)$next, 3, '0', STR_PAD_LEFT);
@@ -28,8 +30,8 @@ class Service
     public function create(array $data): int
     {
         $cols = array_keys($data);
-        $sql  = "INSERT INTO services (" . implode(',', $cols) . ")
-                 VALUES (:" . implode(',:', $cols) . ")";
+        $sql = "INSERT INTO services (" . implode(',', $cols) . ")
+                VALUES (:" . implode(',:', $cols) . ")";
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute($data);
 
@@ -49,7 +51,7 @@ class Service
         $set = implode(', ', array_map(fn($k) => "$k = :$k", array_keys($data)));
         $sql = "UPDATE services SET {$set}, updated_at = NOW() WHERE service_id = :id";
 
-        $params       = $data;
+        $params = $data;
         $params['id'] = $id;
 
         $stmt = $this->pdo->prepare($sql);
@@ -125,25 +127,32 @@ class Service
 
     public function allAtomicServices(): array
     {
+        $packageTypeId = $this->findPackageTypeId();
+
         $sql = "
             SELECT
                 s.service_id,
                 s.service_code,
                 s.name,
+                s.description,
                 s.base_duration_minutes,
                 s.default_price,
+                s.type_id,
+                s.status,
                 COALESCE(st.type_name, 'Uncategorized') AS type_name
             FROM services s
             LEFT JOIN service_types st ON st.type_id = s.type_id
             WHERE s.status = 'active'
-              AND (
-                    st.type_name IS NULL
-                    OR LOWER(st.type_name) NOT IN ('package', 'packages')
-                  )
+              AND (s.type_id IS NULL OR s.type_id <> :package_type_id)
             ORDER BY s.name ASC
         ";
 
-        return $this->pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([
+            'package_type_id' => $packageTypeId ?? 0,
+        ]);
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function findPackageTypeId(): ?int
@@ -166,19 +175,17 @@ class Service
             return false;
         }
 
-        $stmt = $this->pdo->prepare("
-            SELECT COUNT(*)
-            FROM service_types
-            WHERE type_id = :id
-              AND LOWER(type_name) IN ('package', 'packages')
-        ");
-        $stmt->execute(['id' => $typeId]);
-
-        return (int)$stmt->fetchColumn() > 0;
+        $packageTypeId = $this->findPackageTypeId();
+        return $packageTypeId !== null && (int)$typeId === $packageTypeId;
     }
 
     public function packageAnalytics(): array
     {
+        $packageTypeId = $this->findPackageTypeId();
+        if (!$packageTypeId) {
+            return [];
+        }
+
         $sql = "
             SELECT
                 s.service_id,
@@ -192,21 +199,24 @@ class Service
                     END
                 ), 0) AS estimated_revenue
             FROM services s
-            INNER JOIN service_types st
-                ON st.type_id = s.type_id
-               AND LOWER(st.type_name) IN ('package', 'packages')
             LEFT JOIN appointments a
                 ON a.service_id = s.service_id
+            WHERE s.type_id = :package_type_id
             GROUP BY s.service_id
         ";
 
-        $rows = $this->pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
-        $map  = [];
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([
+            'package_type_id' => $packageTypeId,
+        ]);
+
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $map = [];
 
         foreach ($rows as $row) {
             $map[(int)$row['service_id']] = [
-                'usage_count'       => (int)($row['usage_count'] ?? 0),
-                'last_booked_date'  => $row['last_booked_date'] ?? null,
+                'usage_count' => (int)($row['usage_count'] ?? 0),
+                'last_booked_date' => $row['last_booked_date'] ?? null,
                 'estimated_revenue' => (float)($row['estimated_revenue'] ?? 0),
             ];
         }
@@ -214,8 +224,16 @@ class Service
         return $map;
     }
 
-    public function packageSummary(int $packageId): array
+    public function packageSummary(int $serviceId): array
     {
+        $packageId = $this->getPackageIdForService($serviceId);
+        if (!$packageId) {
+            return [
+                'total_duration' => 0,
+                'base_total' => 0.00,
+            ];
+        }
+
         $sql = "
             SELECT
                 COALESCE(SUM(s.base_duration_minutes * spi.quantity), 0) AS total_duration,
@@ -231,7 +249,133 @@ class Service
 
         return [
             'total_duration' => (int)($row['total_duration'] ?? 0),
-            'base_total'     => (float)($row['base_total'] ?? 0),
+            'base_total' => (float)($row['base_total'] ?? 0),
         ];
+    }
+
+    public function nextPackageCode(): string
+    {
+        $sql = "
+            SELECT MAX(CAST(SUBSTRING(package_code, 4) AS UNSIGNED)) AS max_num
+            FROM packages
+            WHERE package_code REGEXP '^PKG[0-9]+$'
+        ";
+        $row = $this->pdo->query($sql)->fetch(PDO::FETCH_ASSOC);
+        $next = (int)($row['max_num'] ?? 0) + 1;
+
+        return 'PKG' . str_pad((string)$next, 3, '0', STR_PAD_LEFT);
+    }
+
+    public function createPackageRecord(int $serviceId, array $data): int
+    {
+        $packageCode = $this->nextPackageCode();
+
+        $sql = "
+            INSERT INTO packages
+            (
+                service_id,
+                package_code,
+                name,
+                description,
+                total_duration_minutes,
+                total_price,
+                service_type_id,
+                status,
+                created_at
+            )
+            VALUES
+            (
+                :service_id,
+                :package_code,
+                :name,
+                :description,
+                :total_duration,
+                :total_price,
+                :service_type_id,
+                :status,
+                :created_at
+            )
+        ";
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([
+            'service_id' => $serviceId,
+            'package_code' => $packageCode,
+            'name' => $data['name'] ?? '',
+            'description' => $data['description'] ?? '',
+            'total_duration' => (int)($data['base_duration_minutes'] ?? 0),
+            'total_price' => $data['default_price'] ?? 0,
+            'service_type_id' => $data['type_id'] ?? 0,
+            'status' => in_array(($data['status'] ?? 'active'), ['active', 'inactive'], true)
+                ? $data['status']
+                : 'active',
+            'created_at' => $data['created_at'] ?? date('Y-m-d H:i:s'),
+        ]);
+
+        return (int)$this->pdo->lastInsertId();
+    }
+
+    public function updatePackageRecord(int $packageId, int $serviceId, array $data): void
+    {
+        $sql = "
+            UPDATE packages
+            SET
+                service_id = :service_id,
+                name = :name,
+                description = :description,
+                total_duration_minutes = :total_duration,
+                total_price = :total_price,
+                service_type_id = :service_type_id,
+                status = :status
+            WHERE package_id = :package_id
+        ";
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([
+            'package_id' => $packageId,
+            'service_id' => $serviceId,
+            'name' => $data['name'] ?? '',
+            'description' => $data['description'] ?? '',
+            'total_duration' => (int)($data['base_duration_minutes'] ?? 0),
+            'total_price' => $data['default_price'] ?? 0,
+            'service_type_id' => $data['type_id'] ?? 0,
+            'status' => in_array(($data['status'] ?? 'active'), ['active', 'inactive'], true)
+                ? $data['status']
+                : 'active',
+        ]);
+    }
+
+    public function deletePackageRecord(int $packageId): void
+    {
+        $stmt = $this->pdo->prepare("DELETE FROM packages WHERE package_id = :package_id");
+        $stmt->execute(['package_id' => $packageId]);
+    }
+
+    public function getPackageIdForService(int $serviceId): ?int
+    {
+        $stmt = $this->pdo->prepare("
+            SELECT package_id
+            FROM packages
+            WHERE service_id = :service_id
+            LIMIT 1
+        ");
+        $stmt->execute(['service_id' => $serviceId]);
+
+        $value = $stmt->fetchColumn();
+        return $value !== false ? (int)$value : null;
+    }
+
+    public function getPackageCodeForService(int $serviceId): ?string
+    {
+        $stmt = $this->pdo->prepare("
+            SELECT package_code
+            FROM packages
+            WHERE service_id = :service_id
+            LIMIT 1
+        ");
+        $stmt->execute(['service_id' => $serviceId]);
+
+        $value = $stmt->fetchColumn();
+        return $value !== false ? (string)$value : null;
     }
 }
