@@ -442,7 +442,7 @@ $router->get('/customer/payments', [\app\controllers\customer\PaymentsController
 $router->get('/customer/payments/checkout/{id}', [\app\controllers\customer\PaymentsController::class, 'checkout']);
 $router->get('/customer/payments/success', [\app\controllers\customer\PaymentsController::class, 'success']);
 $router->get('/customer/payments/cancel', [\app\controllers\customer\PaymentsController::class, 'cancel']);
-$router->post('/stripe/webhook', [\app\controllers\customer\PaymentsController::class, 'webhook']);
+$router->post('/customer/payments/webhook', [\app\controllers\customer\PaymentsController::class, 'webhook']);
 
 //manager: Dashboard
 $router->get('/manager/dashboard', [app\controllers\Manager\DashboardController::class, 'index']);

@@ -124,29 +124,34 @@ class PaymentsController extends Controller
             exit('Invalid signature');
         }
 
-        if ($event->type === 'checkout.session.completed') {
-            $session = $event->data->object;
+        try {
+            if ($event->type === 'checkout.session.completed') {
+                $session = $event->data->object;
 
-            $invoiceId = (int)($session->metadata->invoice_id ?? 0);
+                $invoiceId = (int)($session->metadata->invoice_id ?? 0);
 
-            $referenceNo = '';
-            if (!empty($session->payment_intent)) {
-                $referenceNo = (string)$session->payment_intent;
-            } elseif (!empty($session->id)) {
-                $referenceNo = (string)$session->id;
+                $referenceNo = '';
+                if (!empty($session->payment_intent)) {
+                    $referenceNo = (string)$session->payment_intent;
+                } elseif (!empty($session->id)) {
+                    $referenceNo = (string)$session->id;
+                }
+
+                $amount = 0.00;
+                if (isset($session->amount_total)) {
+                    $amount = ((float)$session->amount_total) / 100;
+                }
+
+                if ($invoiceId > 0 && $referenceNo !== '') {
+                    $this->payments->markInvoicePaid($invoiceId, $amount, $referenceNo);
+                }
             }
 
-            $amount = 0.00;
-            if (isset($session->amount_total)) {
-                $amount = ((float)$session->amount_total) / 100;
-            }
-
-            if ($invoiceId > 0 && $referenceNo !== '') {
-                $this->payments->markInvoicePaid($invoiceId, $amount, $referenceNo);
-            }
+            http_response_code(200);
+            echo 'OK';
+        } catch (\Throwable $e) {
+            http_response_code(500);
+            echo 'Webhook error: ' . $e->getMessage();
         }
-
-        http_response_code(200);
-        echo 'OK';
     }
 }

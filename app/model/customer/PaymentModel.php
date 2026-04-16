@@ -118,7 +118,7 @@ class PaymentModel
 
         try {
             if ($this->paymentReferenceExists($referenceNo)) {
-                $this->db->rollBack();
+                $this->db->commit();
                 return true;
             }
 
@@ -128,7 +128,7 @@ class PaymentModel
             }
 
             if (($invoice['status'] ?? '') === 'paid') {
-                $this->db->rollBack();
+                $this->db->commit();
                 return true;
             }
 
@@ -144,22 +144,21 @@ class PaymentModel
                     :invoice_id,
                     NOW(),
                     :amount,
-                    'online',
+                    'card',
                     :reference_no,
                     'success'
                 )
             ");
             $stmt->execute([
-                'invoice_id'    => $invoiceId,
-                'amount'        => $amount,
-                'reference_no'  => $referenceNo
+                'invoice_id'   => $invoiceId,
+                'amount'       => $amount,
+                'reference_no' => $referenceNo
             ]);
 
             $stmt = $this->db->prepare("
                 UPDATE invoices
                 SET status = 'paid'
                 WHERE invoice_id = :invoice_id
-                  AND status = 'unpaid'
             ");
             $stmt->execute([
                 'invoice_id' => $invoiceId
