@@ -6,13 +6,46 @@ use app\model\Manager\AppointmentModel;
 
 class AppointmentsController extends Controller
 {
+    private function guardManager(): void
+    {
+        if (session_status() !== PHP_SESSION_ACTIVE) session_start();
+        $u = $_SESSION['user'] ?? null;
 
-   public function index(): void
+        // Check role
+        if (!$u || ($u['role'] ?? '') !== 'manager') {
+            header('Location: ' . rtrim(BASE_URL, '/') . '/login');
+            exit;
+        }
+
+        // Load branch_id if not set yet
+        if (!isset($_SESSION['user']['branch_id'])) {
+            $stmt = db()->prepare('SELECT branch_id FROM managers WHERE user_id = :uid LIMIT 1');
+           
+            $stmt->execute(['uid' => $u['user_id']]);
+            $manager = $stmt->fetch(\PDO::FETCH_ASSOC);
+
+            if (!$manager) {
+                header('Location: ' . rtrim(BASE_URL, '/') . '/login');
+                exit;
+            }
+
+            $_SESSION['user']['branch_id'] = $manager['branch_id'];
+        }
+    }
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->guardManager();
+    }
+    
+    public function index(): void
     {
         $today = date('Y-m-d');
+        $branchId = $_SESSION['user']['branch_id'];
 
         $appointmentModel = new AppointmentModel(db());
-        $appointments = $appointmentModel->getAppointmentsByDate($today);
+        $appointments = $appointmentModel->getAppointmentsByDateAndBranch($today, $branchId);
 
         $this->view('manager/Appointments/appointment', [
             'appointments' => $appointments,
@@ -20,168 +53,93 @@ class AppointmentsController extends Controller
         ]);
     }
 
+    public function day()
+    {
+        $date = $_GET['date'] ?? date('Y-m-d');
+        $branchId = $_SESSION['user']['branch_id'];
+        
+        $appointmentModel = new \app\model\Manager\AppointmentModel(db());
+        $appointments = $appointmentModel->getAppointmentsByDateAndBranch($date, $branchId);
 
-   public function create()
+        $this->view('manager/Appointments/dayAppointment', [
+            'appointments' => $appointments,
+            'date' => $date
+        ]);
+    }
+
+    // ✅ FIXED: Complete edit method with proper signature
+    public function edit($id = null)
 {
-    $appointmentModel = new \app\model\Manager\AppointmentModel(db());
-    $data = $appointmentModel->getAllServicesAndPackages();
-
-    // Fetch all active branches
-    $stmt = db()->prepare("SELECT branch_id, name, city FROM branches WHERE status='active' ORDER BY name ASC");
-    $stmt->execute();
-    $branches = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-
-    // Pass services, packages, and branches to the view
-    $this->view('manager/Appointments/newAppointment', [
-        'services' => $data['services'],
-        'packages' => $data['packages'],
-        'branches' => $branches
-    ]);
-}
-
-
-    
-public function day()
-{
-    $date = $_GET['date'] ?? date('Y-m-d'); // default today if no date
-    $appointmentModel = new \app\model\Manager\AppointmentModel(db());
-    $appointments = $appointmentModel->getAppointmentsByDate($date);
-
-    $this->view('manager/Appointments/dayAppointment', [
-        'appointments' => $appointments,
-        'date' => $date
-    ]);
-}
-
-
-/*
-public function edit($id)
-{
-
-
-    $this->view('manager/Appointments/updateApp', [
-        'appointment' => $appointment
-    ]);
-}*/
-
-public function getCustomer(): void
-{
-    header('Content-Type: application/json');
-
-    $phone = $_GET['phone'] ?? null;
-
-    if (!$phone) {
-        echo json_encode(['success' => false, 'message' => 'Phone number is required']);
+    if (!$id) {
+        header('Location: ' . BASE_URL . '/manager/appointments');
         exit;
     }
 
-    $appointmentModel = new \app\model\Manager\AppointmentModel(db());
-    $customer = $appointmentModel->getCustomerByPhone($phone);
+    $appointmentModel = new AppointmentModel(db());
+    $appointment = $appointmentModel->getAppointmentById($id);
 
-    echo json_encode([
-        'success' => true,
-        'data' => $customer
+    $supervisors = $appointmentModel->getSupervisorsByBranch($appointment['branch_id']);
+
+    $this->view('manager/Appointments/updateApp', [
+        'appointment' => $appointment,
+        'supervisors' => $supervisors
     ]);
-    exit;
 }
 
-// Inside AppointmentsController
-public function getServices(): void
-{
-    $appointmentModel = new \app\model\Manager\AppointmentModel(db());
-    $data = $appointmentModel->getAllServicesAndPackages();
 
-    header('Content-Type: application/json');
-    echo json_encode($data);
-    exit;
-}
-
- public function save(): void
-{
-    header('Content-Type: application/json');
-
-    try {
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            throw new \Exception('Invalid request method');
-        }
-
-        $appointmentModel = new \app\model\Manager\AppointmentModel(db());
-
-        // Safely fetch POST data
-        $data = [
-            'customer_id' => $_POST['customer_id'] ?? null,
-            'vehicle_id'  => $_POST['vehicle_id'] ?? null,
-            'branch_id'   => $_POST['branch_id'] ?? null,
-            'service_id'  => $_POST['service_id'] ?? null,
-            'appointment_date' => $_POST['appointment_date'] ?? null,
-            'appointment_time' => $_POST['appointment_time'] ?? null,
-            'status'      => $_POST['status'] ?? 'Requested',
-            'notes'       => $_POST['notes'] ?? null
-        ];
-
-        // Validate required fields
-        foreach (['customer_id','vehicle_id','branch_id','service_id','appointment_date','appointment_time'] as $key) {
-            if (empty($data[$key])) {
-                throw new \Exception("Missing or invalid field: $key");
+    public function update(): void
+    {
+        header('Content-Type: application/json');
+        
+        try {
+            if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+                throw new \Exception('Invalid request method');
             }
+            
+            $appointmentId = $_POST['appointment_id'] ?? null;
+            $assignedTo = $_POST['assigned_to'] ?? null;
+            $notes = $_POST['notes'] ?? null;
+            
+            if (!$appointmentId) {
+                throw new \Exception('Appointment ID is required');
+            }
+            
+            $appointmentModel = new AppointmentModel(db());
+            
+            // Verify the appointment belongs to manager's branch
+            $appointment = $appointmentModel->getAppointmentById($appointmentId);
+            $managerBranchId = $_SESSION['user']['branch_id'];
+            
+            if ($appointment['branch_id'] != $managerBranchId) {
+                throw new \Exception('You can only update appointments from your branch');
+            }
+            
+            // Convert empty string to null for database
+            $assignedTo = $assignedTo === '' ? null : (int)$assignedTo;
+            
+            $success = $appointmentModel->updateAppointmentAssignment(
+            $appointmentId,
+            $assignedTo,
+            $notes
+        );
+        
+            if (!$success) {
+                throw new \Exception('Failed to update appointment');
+            }
+            
+            echo json_encode([
+                'success' => true,
+                'message' => 'Appointment updated successfully'
+            ]);
+            
+        } catch (\Throwable $e) {
+            echo json_encode([
+                'success' => false,
+                'message' => $e->getMessage()
+            ]);
         }
-
-        // Save appointment
-        $success = $appointmentModel->saveAppointment($data);
-
-        if (!$success) {
-            throw new \Exception('Failed to save appointment due to database error.');
-        }
-
-        // Always return JSON
-        echo json_encode([
-            'success' => true,
-            'message' => 'Appointment saved successfully'
-        ]);
-
-    } catch (\Throwable $e) {
-        // Return JSON even on error
-        echo json_encode([
-            'success' => false,
-            'message' => $e->getMessage()
-        ]);
+        
+        exit;
     }
-
-    exit;
-}
-
-public function getAppointmentsByDate(): void
-{
-    header('Content-Type: application/json');
-
-    try {
-        $date = $_GET['date'] ?? null;
-
-        if (!$date) {
-            throw new \Exception("Date is required");
-        }
-
-        $appointmentModel = new \app\model\Manager\AppointmentModel(db());
-
-        // Fetch appointments for the given date
-        $appointments = $appointmentModel->getAppointmentsByDate($date);
-
-        echo json_encode([
-            'success' => true,
-            'appointments' => $appointments
-        ]);
-
-    } catch (\Throwable $e) {
-        echo json_encode([
-            'success' => false,
-            'message' => $e->getMessage()
-        ]);
-    }
-
-    exit;
-}
-
-
-
 }
 ?>

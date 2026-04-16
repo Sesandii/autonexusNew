@@ -5,88 +5,126 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>View Vehicle History</title>
 
-  <link rel="stylesheet" href="<?= BASE_URL ?>/public/assets/css/receptionist/sidebar.css">
-  <link rel="stylesheet" href="<?= BASE_URL ?>/public/assets/css/receptionist/viewHistory.css">
+  <link rel="stylesheet" href="<?= BASE_URL ?>/public/assets/css/manager/sidebar.css">
+  <link rel="stylesheet" href="<?= BASE_URL ?>/public/assets/css/manager/viewHistory.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
 
 <body>
-  
+
 <?php include APP_ROOT . '/views/layouts/manager-sidebar.php'; ?>
 
-  <div class="main">
-    <div class="service-history">
-          <h4>Service History</h4>
-          <div class="history-item">
-            <div class="service-used">
-                <p><b>30,000 Mile Service</b> <br><span><small>2023-06-15</small></span></p>
+<div class="main">
+
+    <h2>Service History</h2>
+
+    <!-- ========================= -->
+    <!-- 1️⃣ APPOINTMENTS SECTION -->
+    <!-- ========================= -->
+    <h3>Appointments & Work Orders</h3>
+
+    <?php if (!empty($customer['appointments'])): ?>
+        <div class="appointment-grid">
+
+        <?php foreach ($customer['appointments'] as $appt): ?>
+            <div class="appointment-card">
+
+                <h4>
+                    Appointment #<?= htmlspecialchars($appt['appointment_id']) ?>
+                    - <?= date('F j, Y', strtotime($appt['appointment_date'])) ?>
+                </h4>
+
+                <span class="badge-status <?= htmlspecialchars(strtolower($appt['status'])) ?>">
+                    <?= htmlspecialchars($appt['status']) ?>
+                </span>
+
+                <p><b>Vehicle:</b>
+                    <?= htmlspecialchars($appt['year'] . ' ' . $appt['make'] . ' ' . $appt['model']) ?>
+                </p>
+
+                <p><b>Service:</b>
+                    <?= htmlspecialchars($appt['service_name']) ?>
+                </p>
+
+                <!-- Work Orders -->
+                <?php if (!empty($appt['work_orders'])): ?>
+                    <h5>Work Orders:</h5>
+                    <ul>
+                        <?php foreach ($appt['work_orders'] as $wo): ?>
+                            <li>
+                                <b>Mechanic:</b>
+                                <?= htmlspecialchars($wo['mechanic_first'] . ' ' . $wo['mechanic_last']) ?><br>
+
+                                <b>Supervisor:</b>
+                                <?= htmlspecialchars($wo['supervisor_first'] . ' ' . $wo['supervisor_last']) ?><br>
+
+                                <b>Summary:</b>
+                                <?= htmlspecialchars($wo['service_summary'] ?? 'N/A') ?><br>
+
+                                <b>Cost:</b>
+                                $<?= htmlspecialchars($wo['total_cost']) ?><br>
+
+                                <b>Status:</b>
+                                <?= htmlspecialchars($wo['status']) ?>
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
+                <?php endif; ?>
+
             </div>
-            <div class="history-content">
-                <div class="label">Technician:</div>
-                <div class="value">John Smith</div>
+        <?php endforeach; ?>
 
-                <div class="label">Cost:</div>
-                <div class="value">Rs. 30,000</div>
+        </div>
+    <?php else: ?>
+        <p>No appointments found.</p>
+    <?php endif; ?>
 
-                <div class="label">Notes:</div>
-                <div class="value">Completed full service package including oil change, Filter Replacement, Multi-point Inspection.</div>
-            </div>
-           </div>
 
-           <div class="history-item">
-            <div class="service-used">
-                <p><b>Brake Pad Replacement</b> <br><span><small>2023-10-05</small></span></p>
-            </div>
-            <div class="history-content">
-                <div class="label">Technician:</b></div>
-                <div class="value">Bill Hawkins</div>
+    <!-- ========================= -->
+    <!-- 2️⃣ COMPLAINT HISTORY -->
+    <!-- ========================= -->
+    <h3 style="margin-top: 40px;">Complaint History</h3>
 
-                <div class="label"></b>Cost:</div>
-                <div class="value">Rs. 22,000</div>
+    <?php
+    // 🔹 Collect all complaints from appointments
+    $allComplaints = [];
 
-                <div class="label">Notes:</div>
-                <div class="value">Replaced front brake pads and resurfaced rotors.</div>
-            </div>
-           </div>
+    if (!empty($customer['appointments'])) {
+        foreach ($customer['appointments'] as $appt) {
+            if (!empty($appt['complaints'])) {
+                foreach ($appt['complaints'] as $c) {
+                    $c['appointment_date'] = $appt['appointment_date']; // attach date
+                    $allComplaints[] = $c;
+                }
+            }
+        }
+    }
+    ?>
+<?php if (!empty($customer['complaints'])): ?>
+    <div class="appointment-grid">
 
-           <div class="history-item">
-            <div class="service-used">
-                <p><b>Oil Change</b> <br><span><small>2024-01-15</small></p>
-            </div>
-            <div class="history-content">
-                <div class="label">Technician:</div>
-                <div class="value">Bill Hawkins</div>
+    <?php foreach ($customer['complaints'] as $c): ?>
+        <div class="appointment-card">
 
-                <div class="label">Cost:</div>
-                <div class="value">Rs. 10,000</div>
+            <h4><?= htmlspecialchars($c['subject']) ?></h4>
 
-                <div class="label">Notes:</div>
-                <div class="value">Full synthetic oil change and filter replacement.</div>
-            </div>
-           </div>
+            <span class="badge-status <?= strtolower($c['status']) ?>">
+                <?= htmlspecialchars($c['status']) ?>
+            </span>
+
+            <p><b>Priority:</b> <?= htmlspecialchars($c['priority']) ?></p>
+            <p><?= htmlspecialchars($c['description']) ?></p>
+
+        </div>
+    <?php endforeach; ?>
 
     </div>
+<?php else: ?>
+    <p>No complaints found.</p>
+<?php endif; ?>
 
-    <div class="complaint-history">
-          <h4>Complaint History</h4>
-          <div class="complaint-item">
-            <div class="complaint">
-                <p><b>Tire pressure warning</b> <br><span><small>2023-06-24</small></span></p>
-            </div>
-            <div class="complaint-content">
-                <div><b>Status:</b></div>
-                <div>Resolved</div>
-
-                <div><b>Solution:</b></div>
-                <div>Found slow leak in right front tire. Patched and reinflated all tires to proper PSI.</div>
-            </div>
-    </div>
 </div>
 
-           <script src="<?= BASE_URL ?>/public/assets/js/receptionist/viewHistory.js"></script>
-
-
-        </body>
-        </html>
-
-    
+</body>
+</html>

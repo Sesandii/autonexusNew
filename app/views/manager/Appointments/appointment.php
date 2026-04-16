@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="<?= BASE_URL ?>/public/assets/css/manager/sidebar.css">
   <link rel="stylesheet" href="<?= BASE_URL ?>/public/assets/css/manager/appointment.css">
   <link rel="stylesheet" href="<?= BASE_URL ?>/public/assets/css/manager/calender.css">
-  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>

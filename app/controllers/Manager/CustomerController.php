@@ -8,9 +8,38 @@ class CustomerController extends Controller
 {
     private CustomerModel $model; // ✅ Add this declaration
 
+        private function guardManager(): void
+{
+    if (session_status() !== PHP_SESSION_ACTIVE) session_start();
+    $u = $_SESSION['user'] ?? null;
+
+    // Check role
+    if (!$u || ($u['role'] ?? '') !== 'manager') {
+        header('Location: ' . rtrim(BASE_URL, '/') . '/login');
+        exit;
+    }
+
+    // Load branch_id if not set yet
+    if (!isset($_SESSION['user']['branch_id'])) {
+       $stmt = db()->prepare('SELECT branch_id FROM managers WHERE user_id = :uid LIMIT 1');
+       
+        $stmt->execute(['uid' => $u['user_id']]);
+        $manager = $stmt->fetch(\PDO::FETCH_ASSOC);
+
+        if (!$manager) {
+            // Something is wrong: user exists but not a manager in table
+            header('Location: ' . rtrim(BASE_URL, '/') . '/login');
+            exit;
+        }
+
+        $_SESSION['user']['branch_id'] = $manager['branch_id'];
+    }
+}
+
     public function __construct(array $config = [])
     {
         parent::__construct($config);
+        $this->guardManager(); // 🔐 enforce manager login & branch
 
         // Use the same db() helper or $this->db from base controller
         $db = db();  
@@ -76,10 +105,14 @@ public function show(int $customerId): void
             return;
         }
 
+        $customer['appointments'] = $this->model->getCustomerAppointments($customerId);
+
         $this->view('manager/Customer Profile/individualDetails', [
             'customer' => $customer
         ]);
     }
+
+
 
 
 // In CustomerController

@@ -6,6 +6,7 @@
   <title>Add Service Package</title>
 
   <link rel="stylesheet" href="<?= BASE_URL ?>/public/assets/css/manager/sidebar.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="<?= BASE_URL ?>/public/assets/css/manager/addService.css">
 </head>
 <body>
@@ -71,37 +72,47 @@
   </div>
 
  <!-- PACKAGE FIELDS -->
+<!-- PACKAGE FIELDS -->
 <div id="packageFields" style="display:none;">
 
+  <!-- Included Services -->
   <div class="form-group">
     <label>Included Services</label>
-
     <select name="services[]" multiple size="6" required style="min-height:140px;">
       <?php foreach ($services as $service): ?>
         <option value="<?= $service['service_code'] ?>">
-          <?= htmlspecialchars($service['name']) ?>
-          (<?= $service['service_code'] ?>)
+          <?= htmlspecialchars($service['name']) ?> (<?= $service['service_code'] ?>)
         </option>
       <?php endforeach; ?>
     </select>
-
     <small style="color:#666">
       Hold Ctrl (Windows) or Cmd (Mac) to select multiple services
     </small>
   </div>
 
+  <!-- Package Type -->
+  <div class="form-group">
+    <label>Package Type</label>
+    <select name="service_type_id" required>
+      <?php foreach ($serviceTypes as $t): ?>
+        <option value="<?= $t['type_id'] ?>"><?= $t['type_name'] ?></option>
+      <?php endforeach; ?>
+    </select>
+  </div>
+
+  <!-- Total Duration -->
   <div class="form-group">
     <label>Total Duration (minutes)</label>
     <input type="number" name="total_duration" required>
   </div>
 
+  <!-- Total Price -->
   <div class="form-group">
     <label>Total Price</label>
     <input type="number" name="total_price" required>
   </div>
 
 </div>
-
 
   <button type="submit">Save</button>
 </form>

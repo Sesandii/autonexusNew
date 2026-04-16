@@ -1,87 +1,15 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: 'Inter', sans-serif;
-}
 
-body {
-  display: flex;
-  background: #f6f7fa;
-  color: #333;
-}
-
-.sidebar .logo img {
-  width: 80%;      
-  max-width: 200px; 
-  height: auto;    
-  display: block;
-  margin: 0 auto;  
-}
-
-.sidebar {
-  position: fixed;
-  top: 0;        /* stick to very top */
-  left: 0;
-  width: 280px;
-  background: #000;
-  color: #fff;
-  padding: 0px;
-  min-height: 100vh;
-}
-
-.sidebar .logo {
-  text-align: center;
-  margin-bottom: 30px;
-}
-
-.sidebar .logo h2 {
-  color: #ffffff;
-  margin: 5px 0 0;
-}
-
-.sidebar .logo p {
-  font-size: 12px;
-  letter-spacing: 1px;
-}
-
-.sidebar .menu {
-  list-style: none;
-  margin-top: 20px;
-}
-
-.sidebar .menu li {
-  padding: 20px 40px;
-  cursor: pointer;
+/* Header */
+.header {
   display: flex;
   align-items: center;
-  gap: 20px;
-  color: #ccc;
-  border-radius: 0px;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
 }
 
-.sidebar .menu li.active,
-.sidebar .menu li:hover {
-  background: #2a2d34;
-}
-
-.sidebar .menu li a {
-  color: inherit;        /* matches li text color */
-  text-decoration: none; /* removes underline */
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  width: 100%;
-}
-
-
-.main {
-  flex: 1;
-  padding: 30px;
-  display: flex;
-  flex-direction: column;
-  overflow-y: auto; 
-  margin-left: 280px;
+.header h1 {
+  font-size: 22px;
+  font-weight: 500;
 }
 
 header h1 {
@@ -90,23 +18,28 @@ header h1 {
   margin-bottom: 20px;
 }
 
+/* Buttons */
+.btn-back {
+  font-size: 13px;
+  color: var(--color-text-secondary, #555);
+  text-decoration: none;
+  border: 0.5px solid #ccc;
+  padding: 6px 14px;
+  border-radius: 8px;
+  background: #fff;
+}
+
 /* Cards */
 .card {
-  background: white;
-  border-radius: 10px;
+  background: #fff;
+  border: 0.5px solid #d3d1c7;
+  border-radius: 12px;
   padding: 20px;
   margin-bottom: 20px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  overflow: hidden;
 }
 
 /* Report Types */
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
 .report-options {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -170,11 +103,117 @@ header h1 {
   border-radius: 6px;
 }
 
-.to {
-  font-size: 14px;
-  color: #555;
+/* Meta Info */
+.meta-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
+.report-title {
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.date-badge {
+  font-size: 12px;
+  color: #666;
+  background: #f1efe8;
+  border: 0.5px solid #d3d1c7;
+  padding: 4px 10px;
+  border-radius: 8px;
+}
+
+/* Summary Metrics */
+.summary-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.metric {
+  background: #f1efe8;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  flex: 1;
+  min-width: 120px;
+}
+
+.metric-label {
+  font-size: 12px;
+  color: #888;
+  margin-bottom: 4px;
+}
+
+.metric-value {
+  font-size: 20px;
+  font-weight: 500;
+}
+
+.metric-value.danger { color: #a32d2d; }
+.metric-value.warning { color: #854f0b; }
+.metric-value.muted { color: #5f5e5a; }
+
+/* Table */
+.table-wrap {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+thead tr {
+  border-bottom: 0.5px solid #d3d1c7;
+  background: #f1efe8;
+}
+
+thead th {
+  padding: 10px 16px;
+  text-align: left;
+  font-weight: 500;
+  font-size: 12px;
+  color: #888;
+  white-space: nowrap;
+}
+
+tbody tr {
+  border-bottom: 0.5px solid #d3d1c7;
+}
+
+tbody tr:last-child {
+  border-bottom: none;
+}
+
+tbody tr:hover {
+  background: #f9f9f7;
+}
+
+tbody td {
+  padding: 11px 16px;
+}
+
+/* Status badges */
+.status-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.status-pending { background: #faeeda; color: #854f0b; }
+.status-overdue { background: #fcebeb; color: #a32d2d; }
+.status-inprogress { background: #e6f1fb; color: #185fa5; }
+.status-onhold { background: #f1efe8; color: #5f5e5a; }
+
+/* Actions */
 .actions {
   display: flex;
   justify-content: flex-end;
@@ -197,4 +236,12 @@ header h1 {
 .actions .generate {
   background: #e63946;
   color: white;
+}
+
+/* Empty state */
+.empty {
+  padding: 3rem;
+  text-align: center;
+  color: #888;
+  font-size: 14px;
 }

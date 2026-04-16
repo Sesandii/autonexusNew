@@ -447,36 +447,57 @@ $router->post('/customer/payments/webhook', [\app\controllers\customer\PaymentsC
 //manager: Dashboard
 $router->get('/manager/dashboard', [app\controllers\Manager\DashboardController::class, 'index']);
 
-//Manager: Appointments
+// =======================
+// Manager: Appointments
+// =======================
+
+// Landing page (today + calendar view)
 $router->get('/manager/appointments', [app\controllers\Manager\AppointmentsController::class, 'index']);
-$router->get('/manager/appointments/new',         [app\controllers\Manager\AppointmentsController::class, 'create']);
+
+// View appointments by selected date (calendar click)
 $router->get('/manager/appointments/day', [app\controllers\Manager\AppointmentsController::class, 'day']);
-$router->post('/manager/appointments/save',       [app\controllers\Manager\AppointmentsController::class, 'save']);
-$router->get('/manager/appointments/getCustomer', [app\controllers\Manager\AppointmentsController::class, 'getCustomer']);
-$router->get('/manager/appointments/getServices', [app\controllers\Manager\AppointmentsController::class, 'getServices']);
-$router->get('/manager/appointments/edit/{id}', [app\controllers\Manager\AppointmentsController::class, 'edit']);
+$router->get('/manager/appointments/edit/{id}',[app\controllers\Manager\AppointmentsController::class, 'edit']);
+$router->post('/manager/appointments/update', [app\controllers\Manager\AppointmentsController::class, 'update']);
 
 //Manager: Services
 $router->get('/manager/services',        [app\controllers\Manager\ServicesController::class, 'index']); 
 $router->get('/manager/services/create', [app\controllers\Manager\ServicesController::class,'create']);
 $router->post('/manager/services/store', [app\controllers\Manager\ServicesController::class,'store']);
+$router->get('/manager/services/edit/{id}/{type}', [app\controllers\Manager\ServicesController::class, 'edit']);
+$router->post('/manager/services/update', [app\controllers\Manager\ServicesController::class, 'update']);
+$router->get('/manager/services/delete/{id}/{type}', [app\controllers\Manager\ServicesController::class, 'delete']);
+$router->get('/manager/services/activate/{id}/{type}', [app\controllers\Manager\ServicesController::class, 'activate']);
 
 //Manager: Billing
 $router->get('/manager/billing', [app\controllers\Manager\BillingController::class, 'invoices']);
 $router->get('/manager/billing/downloadInvoice/{id}',[app\controllers\Manager\BillingController::class, 'downloadInvoice']);
 
+//Manager: WorkOrdes
+$router->get('/manager/work-orders', [app\controllers\Manager\WorkOrderController::class, 'index']);
+$router->get('/manager/work-orders/detail/{id}', [app\controllers\Manager\WorkOrderController::class, 'detail']);
+
 //Manager: Complaints
 $router->get('/manager/complaints',                         [app\controllers\Manager\ComplaintController::class, 'index']);
+$router->get('/manager/complaints/new',                     [app\controllers\Manager\ComplaintController::class, 'create']);
+$router->get('/manager/complaints/fetchByPhone',            [app\controllers\Manager\ComplaintController::class, 'fetchByPhone']); // important: before dynamic
+$router->post('/manager/complaints',                        [app\controllers\Manager\ComplaintController::class, 'store']);
 $router->get('/manager/complaints/{complaintId}',           [app\controllers\Manager\ComplaintController::class, 'show']);
+$router->get('/manager/complaints/history/{customerId}', [app\controllers\Manager\ComplaintController::class, 'history']);
+$router->get('/manager/complaints/edit/{id}',               [app\controllers\Manager\ComplaintController::class, 'edit']);
+$router->post('/manager/complaints/update/{id}',            [app\controllers\Manager\ComplaintController::class, 'update']);
+$router->get('/manager/complaints/delete/{id}',             [app\controllers\Manager\ComplaintController::class, 'delete']);
 
 //Manager: Customer Profile
 $router->get('/manager/customers',                      [app\controllers\Manager\CustomerController::class, 'index']);
 $router->get('/manager/customers/{customerId}',         [app\controllers\Manager\CustomerController::class, 'show']);
 
-// Manager: Team Schedule
+// Manager: Staff Management
 $router->get('/manager/schedule', [app\controllers\Manager\ScheduleController::class,'index']);
-$router->get('/manager/schedule/day', [app\controllers\Manager\ScheduleController::class,'day']);
-$router->get('/manager/schedule/member', [app\controllers\Manager\ScheduleController::class, 'member']);
+$router->get('/manager/schedule/personal', [app\controllers\Manager\ScheduleController::class, 'personalSchedule']);
+$router->post('/manager/schedule/add-to-team', [app\controllers\Manager\ScheduleController::class, 'addToTeam']);
+$router->get('/manager/schedule/add-member', [app\controllers\Manager\ScheduleController::class, 'addMemberForm']);
+$router->post('/manager/schedule/assign-to-branch', [app\controllers\Manager\ScheduleController::class, 'assignToBranch']);
+
 
 // Manager: Peformance
 $router->get('/manager/performance', [\app\controllers\Manager\PerformanceController::class,'index']);
@@ -487,11 +508,8 @@ $router->get('/manager/performance/mechanics', [\app\controllers\Manager\Perform
 $router->get('/manager/performance/viewMechanic',[\app\controllers\Manager\PerformanceController::class, 'viewMechanic']);
 
 // manager: reports
-$router->get('/manager/reports', [app\controllers\Manager\ReportController::class, 'index']);
-$router->get('/manager/reports/getFilters', [app\controllers\Manager\ReportController::class, 'getFilters']);
-$router->post('/manager/reports/generate', [app\controllers\Manager\ReportController::class, 'generate']);
-$router->post('/manager/reports/result', [app\controllers\Manager\ReportController::class, 'result']);
-
+$router->get('/manager/reports',  [\app\controllers\Manager\ReportController::class, 'index']);
+$router->post('/manager/reports', [\app\controllers\Manager\ReportController::class, 'index']);
 //Receptionist: Complaints
 
 $router->get('/receptionist/complaints',                         [app\controllers\Receptionist\ComplaintController::class, 'index']);

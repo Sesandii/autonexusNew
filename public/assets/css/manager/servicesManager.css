@@ -127,6 +127,11 @@
   font-weight: 600;
   margin-bottom: 6px;
 }
+.service-tile a {
+    text-decoration: none; /* remove underline */
+    font-size: 16px;
+    color: inherit;
+}
 
 .service-desc {
   font-size: 14px;
@@ -246,7 +251,22 @@
   color: #444;
   list-style: none;
 }
+.package-card .status {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: capitalize;
+    color: white; /* default text color */
+}
 
+/* Status colors */
+.status.active { color: green; font-weight: 600; }
+.status.inactive { color: red; font-weight: 600; }
+.status.pending { color: orange; font-weight: 600; }
 #packages .package-footer {
   margin-top: 15px;
   display: flex;
@@ -271,6 +291,23 @@
   justify-content: flex-end; /* align filter to the left */
   margin-bottom: 15px;
 }
+
+/* Make the actions inline */
+.package-actions {
+    display: flex;         /* horizontal alignment */
+    gap: 12px;             /* space between icons */
+    margin-top: 10px;      /* spacing from above content */
+}
+
+.package-actions a {
+    font-size: 18px;
+    text-decoration: none;
+    cursor: pointer;
+}
+.package-actions .edit-icon { color: #1f2937; }   /* dark gray */
+.package-actions .delete-icon { color: red; }
+.package-actions .activate-icon { color: green; }
+
 
 /* Select dropdown styling */
 .filter-container select.servicetype-filter {

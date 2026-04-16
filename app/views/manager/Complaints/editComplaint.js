@@ -51,7 +51,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Fetch customer vehicles on page load using phone
   const phone = phoneInput.value.trim();
   if (phone) {
-    fetch(`${BASE_URL}/receptionist/complaints/fetch-by-phone?phone=${encodeURIComponent(phone)}`)
+    fetch(`${BASE_URL}/manager/complaints/fetch-by-phone?phone=${encodeURIComponent(phone)}`)
       .then(res => res.json())
       .then(data => {
         if (!data.success || !data.data) return;
@@ -70,7 +70,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const phone = phoneInput.value.trim();
     if (!phone) return;
 
-    fetch(`${BASE_URL}/receptionist/complaints/fetch-by-phone?phone=${encodeURIComponent(phone)}`)
+    fetch(`${BASE_URL}/manager/complaints/fetch-by-phone?phone=${encodeURIComponent(phone)}`)
       .then(res => res.json())
       .then(data => {
         if (!data.success || !data.data) return;
