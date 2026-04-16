@@ -8,9 +8,9 @@ $activePage = 'dashboard';
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AutoNexus Dashboard</title>
-
-  <link rel="stylesheet" href="<?= BASE_URL ?>/public/assets/css/receptionist/sidebar.css">
+<link rel="stylesheet" href="<?= BASE_URL ?>/public/assets/css/manager/sidebar.css">
   <link rel="stylesheet" href="<?= BASE_URL ?>/public/assets/css/receptionist/dashboard/dashboard.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 
   <style>
@@ -44,14 +44,14 @@ $activePage = 'dashboard';
 <div class="main">
 
   <!-- Topbar -->
-  <div class="topbar">
-    <input type="text" placeholder="Enter Vehicle Number">
+   <!--<div class="topbar">
+   <input type="text" placeholder="Enter Vehicle Number">
     <div class="user">
       <span class="user-icon">👤</span>
       <span class="username">Ana Bell</span>
       <span class="bell">🔔</span>
     </div>
-  </div>
+</div-->
 
   <!-- Dashboard Cards -->
   <div class="cards">
@@ -132,11 +132,7 @@ $activePage = 'dashboard';
           <div class="link">⚙️<br>Add New Appointment</div>
         </a>
 
-        <a href="<?= BASE_URL ?>/receptionist/invoices/new" class="link-block">
-          <div class="link">📅<br>Create Invoice</div>
-        </a>
-
-        <a href="<?= BASE_URL ?>/receptionist/complaints/new" class="link-block">
+        <a href="<?= BASE_URL ?>/manager/complaints/new" class="link-block">
           <div class="link">📊<br>New Complaint</div>
         </a>
 

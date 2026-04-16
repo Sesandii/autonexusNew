@@ -1,43 +1,38 @@
-// Select elements
-const saveBtn = document.querySelector(".save-button");
-const cancelBtn = document.querySelector(".cancel-button");
+function updateAssignment() {
+    const appointmentId = document.getElementById('appointment-id').value;
+    const assignedTo = document.getElementById('assigned-to').value;
+    const notes = document.getElementById('notes').value; 
 
-// Input fields
-const customerInput = document.getElementById("customer");
-const phoneInput = document.getElementById("phone");
-const vehicleNumberInput = document.getElementById("vehicle-number");
-const vehicleInput = document.getElementById("vehicle");
-const serviceInput = document.getElementById("service");
-const statusSelect = document.getElementById("status");
+    // Create form data
+    const formData = new FormData();
+    formData.append('appointment_id', appointmentId);
+    formData.append('assigned_to', assignedTo);
+     formData.append('notes', notes); 
 
-// Save button click
-saveBtn.addEventListener("click", () => {
-  // Check if any field is empty
-  if (
-    !customerInput.value.trim() ||
-    !phoneInput.value.trim() ||
-    !vehicleNumberInput.value.trim() ||
-    !vehicleInput.value.trim() ||
-    !serviceInput.value.trim() ||
-    !statusSelect.value
-  ) {
-    alert("Please fill in all the details.");
-    return; // stop further action
-  }
-
-  // If all fields are filled, you can add save logic here
-  alert("Appointment saved successfully!");
-  // Optionally, you can redirect after saving
-  // window.location.href = "anotherPage.html";
-});
-
-document.addEventListener("DOMContentLoaded", () => {
-    const cancelBtn = document.querySelector(".cancel-button");
-
-    cancelBtn.addEventListener("click", () => {
-        // Redirect back to appointments list
-        window.location.href = `${BASE_URL}/receptionist/appointments`;
+    // Send update request
+    fetch(BASE_URL + '/manager/appointments/update', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Appointment updated successfully!');
+            window.location.href = `${BASE_URL}/manager/appointments/day?date=${clickedDate}`;
+           } else {
+            alert('Error: ' + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while updating the appointment');
     });
+}
+
+// Optional: Add keyboard shortcut for save (Ctrl+S)
+document.addEventListener('keydown', function(e) {
+    if (e.ctrlKey && e.key === 's') {
+        e.preventDefault();
+        updateAssignment();
+    }
 });
-
-

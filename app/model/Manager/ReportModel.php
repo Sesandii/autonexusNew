@@ -51,57 +51,60 @@ if (empty($selects)) {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-     /** =====================
-     *  Pending & Overdue Services
-     * ===================== */
-    public function pendingServices(string $from, string $to, array $statuses = ['pending','overdue'])
-    {
-        $placeholders = implode(",", array_fill(0, count($statuses), "?"));
-        $sql = "SELECT a.appointment_id, a.appointment_date, a.status,
-                       v.license_plate, s.name AS service_name
-                FROM appointments a
-                JOIN vehicles v ON v.vehicle_id = a.vehicle_id
-                JOIN services s ON s.service_id = a.service_id
-                WHERE a.status IN ($placeholders)
-                  AND a.appointment_date BETWEEN ? AND ?
-                ORDER BY a.appointment_date ASC";
-
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute(array_merge($statuses, [$from, $to]));
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+     public function getServices(): array {
+        return $this->db->query("SELECT service_id, name FROM services ORDER BY name")->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    /** =====================
-     *  Mechanic / Technician Performance
-     * ===================== */
-    /*public function mechanicPerformance(string $from, string $to, array $metrics = [], ?int $mechanicId = null)
-    {
-        $selects = ["m.mechanic_code", "u.first_name", "u.last_name"];
-        if (in_array('jobs_done', $metrics)) $selects[] = "COUNT(w.work_order_id) AS jobs_done";
-        if (in_array('avg_time', $metrics)) $selects[] = "AVG(TIMESTAMPDIFF(MINUTE, w.started_at, w.completed_at)) AS avg_time";
-        if (in_array('revenue', $metrics)) $selects[] = "SUM(w.total_cost) AS revenue";
 
-        $sql = "SELECT " . implode(", ", $selects) . "
-                FROM work_orders w
-                JOIN mechanics m ON m.mechanic_id = w.mechanic_id
-                JOIN users u ON u.user_id = m.user_id
-                WHERE w.completed_at BETWEEN :from AND :to";
+     public function pendingServices(string $from, string $to, ?int $branchId = null)
+{
+    $sql = "SELECT 
+            w.work_order_id,
+            w.status,
+            w.job_start_time,
+            w.started_at,
+            w.total_cost,
+            a.appointment_date,
+            v.license_plate,
+            s.name AS service_name,
+            CONCAT(u.first_name, ' ', u.last_name) AS customer_name,
+            CASE 
+                WHEN w.status = 'open'        THEN 'Pending'
+                WHEN w.status = 'on_hold'     THEN 'On Hold'
+                WHEN w.status = 'in_progress' 
+                     AND w.job_start_time < NOW() THEN 'Overdue'
+                WHEN w.status = 'in_progress' THEN 'In Progress'
+                ELSE w.status
+            END AS computed_status
+        FROM work_orders w
+        JOIN appointments a ON a.appointment_id = w.appointment_id
+        JOIN vehicles     v ON v.vehicle_id     = a.vehicle_id
+        JOIN services     s ON s.service_id     = a.service_id
+        JOIN customers    c ON c.customer_id    = a.customer_id
+        JOIN users        u ON u.user_id        = c.user_id
+        WHERE w.status IN ('open', 'in_progress', 'on_hold')
+          AND (
+              w.job_start_time BETWEEN :from AND :to  -- has a date, filter by it
+              OR w.job_start_time IS NULL              -- no date yet, always include
+          )";
 
-        if ($mechanicId) $sql .= " AND w.mechanic_id = :mid";
+    if ($branchId) $sql .= " AND a.branch_id = :bid";
 
-        $sql .= " GROUP BY w.mechanic_id";
+    $sql .= " ORDER BY 
+                CASE w.status
+                    WHEN 'in_progress' THEN 1
+                    WHEN 'open'        THEN 2
+                    WHEN 'on_hold'     THEN 3
+                END,
+                w.job_start_time ASC";
 
-if (in_array('jobs_done', $metrics)) {
-    $sql .= " ORDER BY jobs_done DESC";
+    $params = [':from' => $from, ':to' => $to];
+    if ($branchId) $params[':bid'] = $branchId;
+
+    $stmt = $this->db->prepare($sql);
+    $stmt->execute($params);
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
-
-        $stmt = $this->db->prepare($sql);
-        $params = [':from'=>$from, ':to'=>$to];
-        if ($mechanicId) $params[':mid'] = $mechanicId;
-        $stmt->execute($params);
-
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
 
    
 
@@ -157,26 +160,45 @@ if (in_array('jobs_done', $metrics)) {
         $stmt = $this->db->prepare($sql);
         $stmt->execute([':from'=>$from, ':to'=>$to]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
+    }*/
 
-    /** =====================
-     *  Dynamic Filters
-     * ===================== */
-    public function getServices()
-    {
-        $stmt = $this->db->query("SELECT service_id, name FROM services WHERE status='active' ORDER BY name ASC");
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
+   public function serviceCompletionReport(string $from, string $to, ?int $branchId = null)
+{
+    $sql = "SELECT 
+                 w.work_order_id,
+            s.name                                          AS service_name,
+            DATE_FORMAT(w.started_at,   '%Y-%m-%d')         AS started_at,
+            DATE_FORMAT(w.completed_at, '%Y-%m-%d')         AS completed_at,
+            SEC_TO_TIME(
+                GREATEST(
+                    TIMESTAMPDIFF(SECOND, w.started_at, w.completed_at) 
+                    - COALESCE(w.paused_remaining_seconds, 0),
+                    0
+                )
+            )                                               AS total_duration,
+            v.license_plate,
+            CONCAT(v.make, ' ', v.model, ' (', v.year, ')') AS vehicle,
+            CONCAT(u.first_name, ' ', u.last_name)          AS customer_name
+            FROM work_orders w
+            JOIN appointments a ON a.appointment_id = w.appointment_id
+            JOIN services     s ON s.service_id     = a.service_id
+            JOIN vehicles     v ON v.vehicle_id     = a.vehicle_id
+            JOIN customers    c ON c.customer_id    = a.customer_id
+            JOIN users        u ON u.user_id        = c.user_id
+            WHERE w.status     = 'completed'
+              AND w.started_at    IS NOT NULL
+              AND w.completed_at  IS NOT NULL
+              AND w.completed_at BETWEEN :from AND :to";
 
-    public function getMechanics()
-    {
-        $stmt = $this->db->query("
-            SELECT m.mechanic_id, CONCAT(u.first_name,' ',u.last_name) AS name
-            FROM mechanics m
-            JOIN users u ON u.user_id = m.user_id
-            WHERE m.status='active'
-            ORDER BY name ASC
-        ");
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
+    if ($branchId) $sql .= " AND a.branch_id = :bid";
+
+    $sql .= " ORDER BY w.completed_at DESC";
+
+    $params = [':from' => $from, ':to' => $to];
+    if ($branchId) $params[':bid'] = $branchId;
+
+    $stmt = $this->db->prepare($sql);
+    $stmt->execute($params);
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
 }

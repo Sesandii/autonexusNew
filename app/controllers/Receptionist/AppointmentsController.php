@@ -8,26 +8,68 @@ use PDO;
 class AppointmentsController extends Controller
 {
 
-    public function index()
+ private function guardReceptionist(): void
+{
+    if (session_status() !== PHP_SESSION_ACTIVE) session_start();
+    $u = $_SESSION['user'] ?? null;
+
+    // Check role
+    if (!$u || ($u['role'] ?? '') !== 'receptionist') {
+        header('Location: ' . rtrim(BASE_URL, '/') . '/login');
+        exit;
+    }
+
+    // Load branch_id if not set yet
+    if (!isset($_SESSION['user']['branch_id'])) {
+        $stmt = db()->prepare('SELECT branch_id FROM receptionists WHERE user_id = :uid LIMIT 1');
+       
+        $stmt->execute(['uid' => $u['user_id']]);
+        $receptionist = $stmt->fetch(\PDO::FETCH_ASSOC);
+
+        if (!$receptionist) {
+            // Something is wrong: user exists but not a manager in table
+            header('Location: ' . rtrim(BASE_URL, '/') . '/login');
+            exit;
+        }
+
+        $_SESSION['user']['branch_id'] = $receptionist['branch_id'];
+    }
+}
+
+public function __construct()
+{
+    parent::__construct();
+    $this->guardReceptionist(); // 🔐 enforce manager login & branch
+}
+
+
+   public function index()
 {
     $appointmentModel = new AppointmentModel(db());
     $date = date('Y-m-d'); // today
-    $appointments = $appointmentModel->getAppointmentsByDate($date);
+    
+    // Get receptionist's branch_id from session
+    $branchId = $_SESSION['user']['branch_id'] ?? null;
+    
+    if (!$branchId) {
+        die("Error: Branch not assigned to this receptionist");
+    }
+    
+    // Fetch appointments only for receptionist's branch
+    $appointments = $appointmentModel->getAppointmentsByDateAndBranch($date, $branchId);
 
     foreach ($appointments as &$app) {
-    $app['supervisors'] = $appointmentModel->getAvailableSupervisors(
-    $app['branch_id'], 
-    $app['appointment_date'], 
-    5 // max appointments per day
-);
-}
+        $app['supervisors'] = $appointmentModel->getAvailableSupervisors(
+            $app['branch_id'], 
+            $app['appointment_date'], 
+            5 // max appointments per day
+        );
+    }
 
     $this->view('receptionist/Appointments/appointment', [
         'appointments' => $appointments
     ]);
-    
 }
-
 
    public function create()
 {
@@ -53,6 +95,13 @@ public function day()
 {
     $date = $_GET['date'] ?? date('Y-m-d'); // default today
     $appointmentModel = new \app\model\Receptionist\AppointmentModel(db());
+    
+    // Get receptionist's branch_id from session
+    $branchId = $_SESSION['user']['branch_id'] ?? null;
+    
+    if (!$branchId) {
+        die("Error: Branch not assigned to this receptionist");
+    }
 
     // Check if a supervisor assignment was submitted
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['appointment_id'], $_POST['supervisor_id'])) {
@@ -65,8 +114,8 @@ public function day()
         exit;
     }
 
-    // Fetch appointments
-    $appointments = $appointmentModel->getAppointmentsByDate($date);
+    // Fetch appointments ONLY for receptionist's branch
+    $appointments = $appointmentModel->getAppointmentsByDateAndBranch($date, $branchId);
 
     foreach ($appointments as &$app) {
         $app['supervisors'] = $appointmentModel->getAvailableSupervisors(
@@ -171,15 +220,20 @@ public function getAppointmentsByDate(): void
 
     try {
         $date = $_GET['date'] ?? null;
+        $branchId = $_SESSION['user']['branch_id'] ?? null;
 
         if (!$date) {
             throw new \Exception("Date is required");
         }
+        
+        if (!$branchId) {
+            throw new \Exception("Branch not assigned");
+        }
 
         $appointmentModel = new \app\model\Receptionist\AppointmentModel(db());
 
-        // Fetch appointments for the given date
-        $appointments = $appointmentModel->getAppointmentsByDate($date);
+        // Fetch appointments for the given date and branch
+        $appointments = $appointmentModel->getAppointmentsByDateAndBranch($date, $branchId);
 
         echo json_encode([
             'success' => true,

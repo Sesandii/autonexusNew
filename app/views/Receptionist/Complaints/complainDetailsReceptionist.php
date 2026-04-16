@@ -39,13 +39,15 @@
           <h3>🚗 Vehicle Information</h3>
           <p><strong>Vehicle:</strong> <?= htmlspecialchars($complaint['vehicle']) ?></p>
           <p><strong>License:</strong> <?= htmlspecialchars($complaint['vehicle_number']) ?></p><br/><br/>
-          <b><a href="<?= BASE_URL ?>/receptionist/complaints/history/<?= urlencode($complaint['customer_name']) ?>">View Customer History</a></b>
+          <b><a href="<?= BASE_URL ?>/manager/complaints/history/<?= $complaint['customer_id'] ?>">View Customer History</a></b>
         </div>
       </div>
 
-      <!-- Complaint Details -->
       <div class="complaint">
-       <p class="date">Submitted on <strong><?= date('M d, Y', strtotime($complaint['created_at'])) ?></strong></p> <p><?= nl2br(htmlspecialchars($complaint['description'])) ?></p>
+       <p class="date">Submitted on <strong><?= date('M d, Y', strtotime($complaint['created_at'])) ?></strong></p> </br>
+       
+       <h3>Description & Activities</h3>
+       <p><?= nl2br(htmlspecialchars($complaint['description'])) ?></p>
 
         <div class="tags">
           <p><strong>Priority:</strong> <?= htmlspecialchars($complaint['priority']) ?></p>
@@ -63,21 +65,8 @@
   </button>
 </div>
 
-      <!-- Notes & Activity -->
-      <div class="notes">
-        <h4>Notes & Activity</h4>
-        <?php if(!empty($complaint['notes'] ?? [])): ?>
-          <?php foreach($complaint['notes'] as $note): ?>
-            <div class="note">
-              <p><strong><?= htmlspecialchars($note['author']) ?></strong></p>
-              <p><?= nl2br(htmlspecialchars($note['content'])) ?></p>
-              <p class="timestamp"><?= date('M d, Y \a\t h:i A', strtotime($note['created_at'])) ?></p>
-            </div>
-          <?php endforeach; ?>
-        <?php else: ?>
-          <p>No activity recorded.</p>
-        <?php endif; ?>
-      </div>
+   
+     
     </div>
   </div>
 </body>

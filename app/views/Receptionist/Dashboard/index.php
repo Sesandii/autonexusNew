@@ -21,14 +21,14 @@ $activePage = 'dashboard';
 <div class="main">
 
   <!-- Topbar -->
-  <div class="topbar">
+  <!--<div class="topbar">
     <input type="text" placeholder="Enter Vehicle Number">
     <div class="user">
       <span class="user-icon">👤</span>
       <span class="username">Ana Bell</span>
       <span class="bell">🔔</span>
     </div>
-  </div>
+  </div>-->
 
   <!-- Dashboard Cards -->
   <div class="cards">

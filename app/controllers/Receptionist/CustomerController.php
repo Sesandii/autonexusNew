@@ -7,13 +7,43 @@ use app\model\Receptionist\CustomerModel;
 use PDO; // <-- Add this at the to
 class CustomerController extends Controller
 {
+
+ private function guardReceptionist(): void
+{
+    if (session_status() !== PHP_SESSION_ACTIVE) session_start();
+    $u = $_SESSION['user'] ?? null;
+
+    // Check role
+    if (!$u || ($u['role'] ?? '') !== 'receptionist') {
+        header('Location: ' . rtrim(BASE_URL, '/') . '/login');
+        exit;
+    }
+
+    // Load branch_id if not set yet
+    if (!isset($_SESSION['user']['branch_id'])) {
+        $stmt = db()->prepare('SELECT branch_id FROM receptionists WHERE user_id = :uid LIMIT 1');
+       
+        $stmt->execute(['uid' => $u['user_id']]);
+        $receptionist = $stmt->fetch(\PDO::FETCH_ASSOC);
+
+        if (!$receptionist) {
+            // Something is wrong: user exists but not a manager in table
+            header('Location: ' . rtrim(BASE_URL, '/') . '/login');
+            exit;
+        }
+
+        $_SESSION['user']['branch_id'] = $receptionist['branch_id'];
+    }
+}
+
+
     public function __construct(array $config = [])
 {
     parent::__construct($config);
 
     // Use the same db() helper or $this->db from base controller
     $db = db();  
-
+    $this->guardReceptionist(); // 🔐 enforce manager login & branch
     $this->model = new CustomerModel($db); // ✅ pass required argument
 }
 

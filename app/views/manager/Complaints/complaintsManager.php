@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Complaints Management</title>  
   <link rel="stylesheet" href="<?= BASE_URL ?>/public/assets/css/manager/sidebar.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="<?= BASE_URL ?>/public/assets/css/manager/complaintsManager.css">
 </head>
 
@@ -12,12 +13,14 @@
   <!-- Sidebar -->
   <?php include APP_ROOT . '/views/layouts/manager-sidebar.php'; ?>
 
-  <!-- Main content -->
   <div class="main">
     <header>
       <h1>Complaints Management</h1>
       <div class="filters">
-        <input type="text" placeholder="Search complaints...">
+        <button class="add-btn" id="openModal" onclick="window.location.href='<?= BASE_URL ?>/manager/complaints/new'">
+          + New Complaint
+        </button>
+    
         <select>
           <option>All Statuses</option>
           <option>Open</option>
@@ -69,7 +72,10 @@
 
             <!-- Actions: Delete icon -->
             <div class="actions">
-  
+  <a href="<?= BASE_URL ?>/manager/complaints/delete/<?= $complaint['complaint_id'] ?>" 
+   onclick="return confirm('Are you sure you want to delete this complaint?');">
+   🗑️
+</a>
 
 </div>
 

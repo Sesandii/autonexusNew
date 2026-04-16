@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,6 +7,7 @@
   <title>Services & Packages - AutoNexus</title>
    <link rel="stylesheet" href="<?= BASE_URL ?>/public/assets/css/manager/sidebar.css">
    <link rel="stylesheet" href="<?= BASE_URL ?>/public/assets/css/manager/servicesManager.css">
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -32,8 +34,8 @@
     </ul>
   </nav>
 
-  <section id="service" class="tab-content active">
-    <div class="packages">
+  
+
 
     <div class="filter-container">
   <select class="servicetype-filter">
@@ -50,15 +52,8 @@
   </select>
 </div>
 
-<?php if (!empty($package['services']) && is_array($package['services'])): ?>
-    <?php foreach ($package['services'] as $service): ?>
-        <li><?= htmlspecialchars($service['name']) ?> - <?= $service['base_duration_minutes'] ?> min - Rs.<?= $service['default_price'] ?></li>
-    <?php endforeach; ?>
-<?php else: ?>
-    <li></li>
-<?php endif; ?>
 
-
+<section id="service" class="tab-content active">
      <div class="service-grid">
   <?php foreach ($services as $row): ?>
     <div class="service-tile">
@@ -79,12 +74,26 @@
       <p class="tile-price">
         Rs. <?= number_format($row['default_price'], 2) ?>
       </p>
+      <p>Status: <?= $row['status'] ?></p>
+    <a href="<?= BASE_URL ?>/manager/services/edit/<?= $row['service_id'] ?>/service" 
+           class="edit-icon" title="Edit Service">
+          ✏️
+        </a>
+
+       <a href="<?= BASE_URL ?>/manager/services/delete/<?= $row['service_id'] ?>/service" 
+   onclick="return confirm('Are you sure you want to delete this service?');"
+   style="color:red; text-decoration:none;">
+   🗑️
+</a>
+<a href="<?= BASE_URL ?>/manager/services/activate/<?=  $row['service_id'] ?>/service" 
+   onclick="return confirm('Are you sure you want to activate this service?');"
+   style="color:red; text-decoration:none;">
+   ♻️
+</a>
     </div>
   <?php endforeach; ?>
 </div>
 
-
-    </div>
   </section>
 
 <section id="packages" class="tab-content">
@@ -93,9 +102,14 @@
 <?php $packages = $packages ?? []; ?>
 <?php foreach($packages as $package): ?>
 <div class="package-card">
+    <span class="status <?= $package['status'] ?>">
+        <?= ucfirst($package['status']) ?>
+    </span>
+
     <div class="package-header">
         <h2><?= htmlspecialchars($package['name']) ?></h2>
     </div>
+    
     <p><?= htmlspecialchars($package['description']) ?></p>
 
     <ul class="package-services">
@@ -108,7 +122,15 @@
         <span class="duration">Takes <?= $package['total_duration_minutes'] ?> min</span>
         <span class="price">Rs.<?= $package['total_price'] ?></span>
     </div>
+
+    <div class="package-actions">
+        <a href="<?= BASE_URL ?>/manager/services/edit/<?= $package['package_id'] ?>/package" class="edit-icon" title="Edit Package">✏️</a>
+        <a href="<?= BASE_URL ?>/manager/services/delete/<?= $package['package_id'] ?>/package" onclick="return confirm('Are you sure you want to deactivate this service?');" class="delete-icon">🗑️</a>
+        <a href="<?= BASE_URL ?>/manager/services/activate/<?= $package['package_id'] ?>/package" onclick="return confirm('Are you sure you want to activate this service?');" class="activate-icon">♻️</a>
+    </div>
 </div>
+
+
 <?php endforeach; ?>
 
 </section>

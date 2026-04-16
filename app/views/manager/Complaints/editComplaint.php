@@ -4,8 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Edit Complaint</title>
-  <link rel="stylesheet" href="<?= BASE_URL ?>/public/assets/css/receptionist/sidebar.css">
-  <link rel="stylesheet" href="<?= BASE_URL ?>/public/assets/css/receptionist/editComplaint.css?v=1.1">
+  <link rel="stylesheet" href="<?= BASE_URL ?>/public/assets/css/manager/sidebar.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="<?= BASE_URL ?>/public/assets/css/manager/editComplaint.css">
   </head>
   
 <body>
@@ -15,7 +16,7 @@
   <div class="main">
     <div class="details-section">
       <h3>Edit Complaint</h3>
-      <form action="<?= BASE_URL ?>/receptionist/complaints/update/<?= $complaint['complaint_id'] ?>" method="POST">
+      <form action="<?= BASE_URL ?>/manager/complaints/update/<?= $complaint['complaint_id'] ?>" method="POST">
         
         <input type="hidden" name="customer_id" id="customer_id" value="<?= $complaint['customer_id'] ?>">
         <input type="hidden" name="user_id" id="user_id" value="<?= $complaint['user_id'] ?>">
@@ -30,7 +31,8 @@
        
         <input type="email" id="email" name="email" value="<?= htmlspecialchars($complaint['email']) ?>">
 
-<label> Vehicle:</label>
+<!-- Vehicle Dropdown -->
+<label>Vehicle:</label>
 <div id="vehicle-container" data-complaint-vehicle-id="<?= $complaint['vehicle_id'] ?>"></div>
 <input type="hidden" name="vehicle_id" id="vehicle_id" value="<?= $complaint['vehicle_id'] ?>">
 
@@ -54,16 +56,26 @@
         </select>
 
         <label for="status">Status:</label>
-        <select id="status" name="status">
-          <option value="Open" <?= $complaint['status'] == 'Open' ? 'selected' : '' ?>>Open</option>
-          <option value="In Progress" <?= $complaint['status'] == 'In Progress' ? 'selected' : '' ?>>In Progress</option>
-          <option value="Resolved" <?= $complaint['status'] == 'Resolved' ? 'selected' : '' ?>>Resolved</option>
-          <option value="Canceled" <?= $complaint['status'] == 'Canceled' ? 'selected' : '' ?>>Canceled</option>
-        </select>
+<select id="status" name="status">
+  <option value="open" <?= $complaint['status'] == 'open' ? 'selected' : '' ?>>Open</option>
+  <option value="in_progress" <?= $complaint['status'] == 'in_progress' ? 'selected' : '' ?>>In Progress</option>
+  <option value="closed" <?= $complaint['status'] == 'closed' ? 'selected' : '' ?>>Closed</option>
+  <option value="resolved" <?= $complaint['status'] == 'resolved' ? 'selected' : '' ?>>Resolved</option>
+</select>
+
+<label for="assigned_to">Assign Supervisor:</label>
+<select name="assigned_to" id="assigned_to">
+    <option value="">-- Select Supervisor --</option>
+    <?php foreach ($supervisors as $sup): ?>
+        <option value="<?= $sup['user_id'] ?>" <?= $complaint['assigned_to_user_id'] == $sup['user_id'] ? 'selected' : '' ?>>
+            <?= htmlspecialchars($sup['first_name'] . ' ' . $sup['last_name']) ?>
+        </option>
+    <?php endforeach; ?>
+</select>
 
       
         <div class="modal-footer">
-          <a href="<?= BASE_URL ?>/receptionist/complaints" class="cancel-button">Cancel</a>
+          <a href="<?= BASE_URL ?>/manager/complaints" class="cancel-button">Cancel</a>
           <button type="submit" class="save-button"> Update </button>
         </div>
       </form>
@@ -73,6 +85,6 @@
  <script>
   const BASE_URL = "<?= BASE_URL ?>";
 </script>
-<script src="<?= BASE_URL ?>/public/assets/js/receptionist/editComplaint.js"></script>
+<script src="<?= BASE_URL ?>/public/assets/js/manager/editComplaint.js"></script>
 </body>
 </html>

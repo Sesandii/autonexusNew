@@ -7,6 +7,7 @@
 
   <link rel="stylesheet" href="<?= BASE_URL ?>/public/assets/css/manager/sidebar.css">
   <link rel="stylesheet" href="<?= BASE_URL ?>/public/assets/css/manager/dayAppointment.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -28,7 +29,7 @@
                     <th>Customer</th>
                     <th>Vehicle</th>
                     <th>Service</th>
-                    <th>Branch</th>
+                    <th>Assigned to</th>
                     <th>Status</th>
                     <th>Notes</th>
                     <th>Action</th>
@@ -47,8 +48,7 @@
                         </td>
 
                         <td><?= htmlspecialchars($app['service_name']) ?></td>
-                        <td><?= htmlspecialchars($app['branch_name']) ?></td>
-
+                        <td><?= htmlspecialchars($app['assigned_person'] ?? 'Not Assigned') ?></td>
                         <td>
                         <span class="status <?= strtolower(str_replace(' ', '-', $app['status'])) ?>">
                             <?= htmlspecialchars($app['status']) ?>
@@ -58,16 +58,11 @@
                         <td><?= htmlspecialchars($app['notes'] ?? '-') ?></td>
 
                         <td>
-                            <button class="update-btn"
-                                data-id="<?= $app['appointment_id'] ?>"
-                                data-time="<?= $app['appointment_time'] ?>"
-                                data-customer="<?= htmlspecialchars($app['first_name'] . ' ' . $app['last_name']) ?>"
-                                data-vehicle="<?= htmlspecialchars($app['make'] . ' ' . $app['model'] . ' (' . $app['license_plate'] . ')') ?>"
-                                data-service="<?= htmlspecialchars($app['service_name']) ?>"
-                                data-status="<?= htmlspecialchars($app['status']) ?>">
-                                Update
-                            </button>
-                        </td>
+    <a href="<?= BASE_URL ?>/manager/appointments/edit/<?= $app['appointment_id'] ?>" 
+       class="update-btn">
+        Update
+    </a>
+</td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>

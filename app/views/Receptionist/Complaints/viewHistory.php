@@ -16,7 +16,7 @@
 
   <div class="main">
     <div class="service-history">
-          <h4>Service History</h4>
+         <h3>Service History for <?= htmlspecialchars($customer['info']['first_name'] . ' ' . $customer['info']['last_name']) ?></h3>
           <div class="history-item">
             <div class="service-used">
                 <p><b>30,000 Mile Service</b> <br><span><small>2023-06-15</small></span></p>
