@@ -1,4 +1,3 @@
-// --- Modal ---
 const modal = document.getElementById('modal');
 const openAddBtn = document.getElementById('openAddBtn');
 const modalClose = document.getElementById('modalClose');
@@ -7,7 +6,6 @@ const modalForm = document.getElementById('modalForm');
 const formAction = document.getElementById('formAction');
 const workIdInput = document.getElementById('work_order_id');
 
-// Open Add Modal
 openAddBtn.addEventListener('click', () => {
   formAction.value = 'add_workorder';
   workIdInput.value = '';
@@ -15,17 +13,16 @@ openAddBtn.addEventListener('click', () => {
   modal.setAttribute('aria-hidden', 'false');
 });
 
-// Close modal
+
 [modalClose, cancelBtn].forEach(btn => {
   btn.addEventListener('click', () => modal.setAttribute('aria-hidden', 'true'));
 });
 
-// --- View Drawer ---
+
 const viewDrawer = document.getElementById('viewDrawer');
 const viewClose = document.getElementById('viewClose');
 viewClose.addEventListener('click', () => viewDrawer.setAttribute('aria-hidden', 'true'));
 
-// View details
 document.querySelectorAll('.viewBtn').forEach(btn => {
   btn.addEventListener('click', () => {
     const row = btn.closest('tr');
@@ -43,7 +40,6 @@ document.querySelectorAll('.viewBtn').forEach(btn => {
   });
 });
 
-// --- Edit Modal Prefill ---
 document.querySelectorAll('.editBtn').forEach(btn => {
   btn.addEventListener('click', () => {
     const row = btn.closest('tr');
@@ -69,7 +65,6 @@ document.querySelectorAll('.editBtn').forEach(btn => {
   });
 });
 
-// --- Delete Confirmation ---
 function confirmDelete(e, form) {
   e.preventDefault();
   const confirmed = confirm('Are you sure you want to DELETE this work order?');
@@ -77,7 +72,6 @@ function confirmDelete(e, form) {
   return false;
 }
 
-// --- Auto-update total when selecting service ---
 const serviceSelect = document.getElementById('service_id');
 if (serviceSelect) {
   serviceSelect.addEventListener('change', e => {
@@ -87,7 +81,6 @@ if (serviceSelect) {
   });
 }
 
-// --- Hide toast after a few seconds ---
 setTimeout(() => {
   const t = document.querySelector('.toast');
   if (t) t.style.display = 'none';

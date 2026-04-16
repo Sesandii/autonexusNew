@@ -3,7 +3,6 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
     session_start();
 }
 
-// Logged-in mechanic user ID
 $currentUserId = $_SESSION['user']['user_id'] ?? null;
 $base = rtrim(BASE_URL, '/'); 
 ?>
@@ -60,7 +59,6 @@ $base = rtrim(BASE_URL, '/');
     <?php
         $owner = ($job['mechanic_user_id'] ?? 0) == $currentUserId ? 'mine' : 'others';
         $status = strtolower($job['status']);
-        // Hide by default if completed
         $initialDisplay = ($status === 'completed') ? 'display: none;' : '';
   
     ?>
@@ -119,11 +117,10 @@ const myWorkordersFilter = document.getElementById("myWorkordersFilter");
 const resetBtn = document.getElementById('resetFilters');
 const jobCards = document.querySelectorAll(".job-card");
 
-// Filter function
 function applyJobFilters() {
   const searchVal = searchInput.value.toLowerCase().trim();
   const statusVal = statusFilter.value.trim();
-  const ownerVal = myWorkordersFilter.value.trim(); // "mine", "others", or ""
+  const ownerVal = myWorkordersFilter.value.trim();
 
   jobCards.forEach(card => {
     const service = (card.dataset.service || "").toLowerCase();
@@ -142,10 +139,8 @@ function applyJobFilters() {
 
       let matchStatus = false;
     if (statusVal === "") {
-      // If "All Status" is selected, hide completed jobs
       matchStatus = (status !== "completed");
     } else {
-      // If a specific status is selected (including completed), show only that
       matchStatus = (status === statusVal);
     }
     const matchOwner = !ownerVal || owner === ownerVal;
@@ -154,12 +149,10 @@ function applyJobFilters() {
   });
 }
 
-// Event listeners
 searchInput.addEventListener("keyup", applyJobFilters);
 statusFilter.addEventListener("change", applyJobFilters);
 myWorkordersFilter.addEventListener("change", applyJobFilters);
 
-// Reset button
 resetBtn.addEventListener('click', () => {
   searchInput.value = '';
   statusFilter.value = '';
@@ -170,7 +163,7 @@ resetBtn.addEventListener('click', () => {
 let jobTimers = {};
 
 function initTimers() {
-  console.log("Initializing timers..."); // Debugging line
+  console.log("Initializing timers..."); 
   document.querySelectorAll('.job-card').forEach(card => {
     const id = card.dataset.workorder;
     const remaining = parseInt(card.dataset.remaining);
@@ -239,10 +232,9 @@ function updateTimers() {
   });
 }
 
-// CRITICAL: These must be called for the timer to work!
 document.addEventListener('DOMContentLoaded', () => {
     initTimers();
-    updateTimers(); // Run once immediately so it's not blank for the first second
+    updateTimers(); 
     setInterval(updateTimers, 1000);
 });
 

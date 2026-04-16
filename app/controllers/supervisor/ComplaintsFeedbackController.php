@@ -19,11 +19,9 @@ class ComplaintsFeedbackController extends Controller
 
     public function index()
     {
-        // Fetch complaints and feedbacks
         $complaints = $this->complaintModel->getAllComplaints();
         $feedbacks  = $this->feedbackModel->getAllFeedbacks();
 
-        // Pass both datasets to a single view
         $this->view('supervisor/complaints_feedbacks/index', [
             'complaints' => $complaints,
             'feedbacks'  => $feedbacks

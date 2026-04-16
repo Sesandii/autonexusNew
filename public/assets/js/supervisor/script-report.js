@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // --- MILEAGE CALCULATION LOGIC ---
     const currentMileageInput = document.getElementById('current_mileage');
     const intervalInput = document.getElementById('service_interval');
     const nextDueDisplay = document.getElementById('next_service_display');
@@ -13,8 +12,6 @@ document.addEventListener('DOMContentLoaded', function() {
             const nextDue = current + interval;
             nextDueDisplay.textContent = nextDue.toLocaleString() + " km";
             if(hiddenNextDue) hiddenNextDue.value = nextDue;
-            
-            // Visual feedback - green border when calculated
             nextDueDisplay.style.borderColor = "#10b981"; 
             nextDueDisplay.style.color = "#003366";
         } else {
@@ -27,11 +24,9 @@ document.addEventListener('DOMContentLoaded', function() {
     if (currentMileageInput && intervalInput) {
         currentMileageInput.addEventListener('input', calculateNextService);
         intervalInput.addEventListener('input', calculateNextService);
-        // Run once on load in case values are pre-filled
         calculateNextService();
     }
 
-    // --- IMAGE UPLOAD & MODAL LOGIC ---
     const fileInput = document.getElementById('image-upload');
     const previewGrid = document.getElementById('preview-grid');
     const deleteModal = document.getElementById('deleteModal');
@@ -92,7 +87,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-// Existing Viewer function (ensure this exists in your file)
 function openViewer(src) {
     const modal = document.getElementById('imageModal');
     const modalImg = document.getElementById('modalImg');
@@ -102,7 +96,6 @@ function openViewer(src) {
     }
 }
 
-// Close Modal logic
 const closeBtn = document.querySelector('.close-modal');
 if (closeBtn) {
     closeBtn.onclick = function() {

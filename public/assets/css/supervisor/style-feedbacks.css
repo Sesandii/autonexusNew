@@ -99,7 +99,6 @@ button.view-btn:hover {
   border-radius: 6px;
 }
 
-/* Card Container */
 .feedback-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
@@ -116,15 +115,12 @@ button.view-btn:hover {
   font-family: 'Inter', sans-serif;
 }
 
-/* Header & Rating */
 .card-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 15px;
 }
-
-/* FORCE VISIBILITY - Add this to your style-feedbacks.css */
 
 .feedback-card .user-info {
   text-align: left !important;
@@ -133,60 +129,55 @@ button.view-btn:hover {
   opacity: 1 !important;
 }
 
-/* The Customer Name */
+
 .feedback-card .customer-name {
-  color: #000000 !important; /* Pure Black */
+  color: #000000 !important; 
   font-size: 17px !important;
   font-weight: 800 !important;
   margin: 0 0 12px 0 !important;
   display: block !important;
 }
 
-/* The Service, Branch, and Date labels */
+
 .feedback-card .detail-item {
-  color: #333333 !important; /* Dark Grey */
+  color: #333333 !important; 
   font-size: 0.95rem !important;
   margin: 5px 0 !important;
   line-height: 1.4 !important;
   display: block !important;
 }
 
-/* The Bold Labels (Service:, Branch:, etc.) */
+
 .feedback-card .detail-item strong {
   color: #000000 !important;
   font-weight: 700 !important;
   margin-right: 5px !important;
 }
 
-/* Ensure the card background is white so dark text shows up */
 .feedback-card {
   background-color: #ffffff !important;
   border: 1px solid #e0e0e0 !important;
 }
 
-
-/* --- Rating Badge Colors --- */
 .rating-badge {
   padding: 6px 14px !important;
   border-radius: 20px !important;
   font-weight: 800 !important;
   font-size: 0.9rem !important;
-  color: white !important; /* White text on the colored backgrounds */
+  color: white !important; 
   display: inline-block !important;
 }
 
-.rate-green { background-color: #5cb85c !important; }  /* Green for 4, 5 */
-.rate-yellow { background-color: #f0ad4e !important; } /* Yellow/Orange for 2, 3 */
-.rate-red { background-color: #d9534f !important; }    /* Red for 1 */
+.rate-green { background-color: #5cb85c !important; }  
+.rate-yellow { background-color: #f0ad4e !important; } 
+.rate-red { background-color: #d9534f !important; }   
 
-/* --- Visibility Fix for User Info --- */
 .feedback-card {
   background: #ffffff !important;
   border: 1px solid #e0e0e0 !important;
-  color: #333 !important; /* Ensure default text is dark */
+  color: #333 !important; 
 }
 
-/* Force Customer Name Visibility */
 .feedback-card .customer-name {
   color: #1a1a1a !important; 
   font-weight: 800 !important;
@@ -196,7 +187,6 @@ button.view-btn:hover {
   visibility: visible !important;
 }
 
-/* Force Detail Items Visibility (Service, Branch, Date) */
 .feedback-card .detail-item {
   color: #444444 !important;
   font-size: 0.95rem !important;
@@ -210,7 +200,6 @@ button.view-btn:hover {
   font-weight: 700 !important;
 }
 
-/* Force Comment Visibility */
 .feedback-card .comment-text {
   color: #555555 !important;
   font-style: italic !important;
@@ -220,21 +209,19 @@ button.view-btn:hover {
 
 .stars {
   display: inline-block;
-  color: #ff6b6b; /* Reddish stars per image */
+  color: #ff6b6b; 
   font-size: 1.2rem;
 }
 
 .star.filled { color: #ff6b6b; }
 .star:not(.filled) { color: #ddd; }
 
-/* Comment Body */
 .comment-text {
   font-size: 1rem;
   color: #555;
   margin: 15px 0;
 }
 
-/* Reply Section */
 .reply-status {
   color: #5cb85c;
   font-size: 0.85rem;

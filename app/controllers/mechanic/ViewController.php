@@ -13,7 +13,6 @@ class ViewController extends Controller
     }
     public function index()
     {
-        // Later you can fetch assigned jobs from the database here
         $this->view('mechanic/view/index');
     }
     private function requireMechanic(): void

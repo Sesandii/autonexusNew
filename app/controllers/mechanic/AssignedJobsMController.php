@@ -18,7 +18,7 @@ class AssignedJobsMController extends Controller
     public function index()
 {
     if (session_status() !== PHP_SESSION_ACTIVE) session_start();
-    date_default_timezone_set('Asia/Colombo'); // CRITICAL: Match DB timezone
+    date_default_timezone_set('Asia/Colombo');
 
     $user_id = $_SESSION['user']['user_id'] ?? null;
     $db = db();
@@ -40,22 +40,18 @@ class AssignedJobsMController extends Controller
     foreach ($workOrders as $job) {
         $totalSeconds = $job['base_duration_minutes'] * 60;
 
-        // --- TIMER CALCULATION ---
         if ($job['status'] === 'on_hold') {
             $job['seconds_left'] = $job['paused_remaining_seconds'] ?? $totalSeconds;
         } elseif ($job['status'] === 'in_progress' && !empty($job['job_start_time'])) {
             $elapsed = time() - strtotime($job['job_start_time']);
             
-            // If we resumed from a pause, we subtract the elapsed time from the saved remaining time
             $availableTime = $job['paused_remaining_seconds'] ?? $totalSeconds;
             $job['seconds_left'] = max(0, $availableTime - $elapsed);
         } else {
             $job['seconds_left'] = $totalSeconds;
         }
 
-        // --- PROGRESS CALCULATION ---
         $progress = 0;
-        // Base status weight
         switch ($job['status']) {
             case 'open': $progress = 20; break;
             case 'in_progress': $progress = 50; break;
@@ -63,7 +59,6 @@ class AssignedJobsMController extends Controller
             case 'completed': $progress = 100; break;
         }
 
-        // Checklist Weight (25%)
         $counts = $workOrderModel->getProgressCounts((int)$job['work_order_id']);
         if ($counts['total'] > 0) {
             $itemWeight = 25 / $counts['total'];
@@ -71,14 +66,12 @@ class AssignedJobsMController extends Controller
             $progress += $checklistProgress;
         }
 
-        // Photos Weight (30%)
         if (!empty($job['photo_count']) && $job['photo_count'] > 0) {
             $progress += 25;
         }
 
         $job['progress'] = min(round($progress), 100);
 
-        // --- SORTING ---
         if ($job['status'] === 'in_progress') {
             $currentJobs[] = $job;
         } else {
@@ -104,7 +97,6 @@ class AssignedJobsMController extends Controller
         }
     }
 
-    // WorkOrdersController.php
 public function setStatus($workOrderId) {
     $data = json_decode(file_get_contents('php://input'), true);
     $status = $data['status'] ?? null;

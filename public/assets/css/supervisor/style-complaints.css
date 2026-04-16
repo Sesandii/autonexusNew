@@ -289,7 +289,7 @@ button.view-btn:hover {
   display: flex;
   gap: 10px;
   align-items: center;
-  justify-content: flex-start; /* 🔽 ensures left alignment */
+  justify-content: flex-start;
   width: 100%;
   flex-wrap: wrap;
 }
@@ -310,7 +310,7 @@ button.view-btn:hover {
 .complaints-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(300px, 1fr));
-  gap: 20px; /* spacing between tiles */
+  gap: 20px; 
   margin-top: 20px;
 }
 

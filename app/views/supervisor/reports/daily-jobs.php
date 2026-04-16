@@ -7,16 +7,14 @@
     <link rel="stylesheet" href="<?= $base ?>/public/assets/css/supervisor/style-report.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        :root { --primary: #003366; --accent: #d9534f; --bg: #f4f7f6; }
+        :root { --primary: #000000; --accent: #d9534f; --bg: #f4f7f6; }
         .main-content { padding: 20px; background: var(--bg); font-family: 'Inter', sans-serif; }
         
-        /* Summary Boxes */
         .analytics-summary-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin: 20px 0; }
         .stat-box { background: #fff; padding: 20px; border-radius: 10px; border-bottom: 4px solid var(--primary); box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
         .stat-box .label { font-size: 0.8rem; color: #64748b; font-weight: 600; text-transform: uppercase; }
         .stat-box .value { font-size: 1.5rem; font-weight: 800; color: var(--primary); margin-top: 5px; }
 
-        /* Tables & Charts */
         .report-table-container { background: #fff; padding: 20px; border-radius: 10px; margin-bottom: 25px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
         .charts-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
         .chart-container { background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
@@ -38,7 +36,7 @@
     <header style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
         <h1 style="color: var(--primary);">Daily Job Completion Report</h1>
         <div class="table-controls">
-            <button class="btn-download" onclick="exportData('pdf')"><i class="fa-solid fa-file-pdf"></i> Download PDF</button>
+            <button class="btn-download" onclick="exportData('pdf')"><i class="fa-solid fa-file-pdf"></i> PDF</button>
             <button class="btn-download" onclick="exportData('csv')" style="background: #15803d;"><i class="fa-solid fa-file-csv"></i> CSV</button>
         </div>
     </header>
@@ -121,7 +119,6 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // 1. Status Donut Chart
     new Chart(document.getElementById('statusDonutChart'), {
         type: 'doughnut',
         data: {
@@ -134,7 +131,6 @@ document.addEventListener('DOMContentLoaded', function() {
         options: { cutout: '70%', plugins: { legend: { position: 'bottom' } } }
     });
 
-    // 2. Hourly Bar Chart
     new Chart(document.getElementById('hourlyBarChart'), {
         type: 'bar',
         data: {
@@ -148,7 +144,6 @@ document.addEventListener('DOMContentLoaded', function() {
         options: { scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }
     });
 
-    // 3. Booking Trend Chart
     new Chart(document.getElementById('bookingTrendChart'), {
         type: 'line',
         data: {
@@ -165,7 +160,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// Filter Handlers
 const dateInput = document.getElementById('filter-date');
 const mechanicSelect = document.getElementById('filter-mechanic');
 
@@ -180,9 +174,39 @@ dateInput.addEventListener('change', applyFilters);
 mechanicSelect.addEventListener('change', applyFilters);
 
 function exportData(format) {
-    const d = dateInput.value;
-    const m = mechanicSelect.value;
-    window.location.href = `<?= $base ?>/supervisor/reports/export?format=${format}&date=${d}&mechanic=${m}`;
+    const d = document.getElementById('filter-date').value;
+    const m = document.getElementById('filter-mechanic').value;
+
+    if (format === 'csv') {
+        window.location.href = `<?= $base ?>/supervisor/reports/export-daily?format=csv&date=${d}&mechanic=${m}`;
+    } else if (format === 'pdf') {
+        const chart1 = document.getElementById('statusDonutChart').toDataURL('image/png');
+        const chart2 = document.getElementById('hourlyBarChart').toDataURL('image/png');
+        const chart3 = document.getElementById('bookingTrendChart').toDataURL('image/png');
+
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = `<?= $base ?>/supervisor/reports/export-daily?format=pdf`;
+
+        const inputs = {
+            'date': d,
+            'mechanic': m,
+            'chart_status': chart1,
+            'chart_hourly': chart2,
+            'chart_trend': chart3
+        };
+
+        for (const [key, value] of Object.entries(inputs)) {
+            const field = document.createElement('input');
+            field.type = 'hidden';
+            field.name = key;
+            field.value = value;
+            form.appendChild(field);
+        }
+
+        document.body.appendChild(form);
+        form.submit();
+    }
 }
 </script>
 </body>

@@ -20,11 +20,9 @@ public function index(): void
     $user_id = $_SESSION['user']['user_id'] ?? null;
     if (!$user_id) die("Unauthorized");
 
-    // Initialize these as empty arrays first to prevent "Undefined variable" errors
     $allJobs = [];
     $myJobs = [];
 
-    // 1. Get branch_id (ensuring it exists)
     if (!isset($_SESSION['user']['branch_id'])) {
         $db = db();
         $stmt = $db->prepare("SELECT branch_id FROM mechanics WHERE user_id = ?");
@@ -40,26 +38,21 @@ public function index(): void
     if ($branch_id) {
         $workOrderModel = new WorkOrder(); 
         
-        // 2. Fetch the data
         $allJobs = WorkOrder::getAllJobs((int)$branch_id);
         $myJobs  = WorkOrder::getAssignedJobs((int)$user_id);
 
-        // 3. Process the logic for timers/progress
         foreach ($allJobs as &$job) {
 
             $totalSeconds = $job['base_duration_minutes'] * 60;
             
             if ($job['status'] === 'on_hold') {
-                // Use the exact static snapshot saved when it was paused
                 $job['seconds_left'] = $job['paused_remaining_seconds'] ?? $totalSeconds;
             } elseif ($job['status'] === 'in_progress' && !empty($job['job_start_time'])) {
-                // Calculate real-time remaining based on when it was started/resumed
                 $elapsed = time() - strtotime($job['job_start_time']);
                 $job['seconds_left'] = max(0, $totalSeconds - $elapsed);
             } else {
                 $job['seconds_left'] = $totalSeconds;
             }
-            // --- 1. PROGRESS CALCULATION ---
             $progress = 0;
             switch ($job['status']) {
                 case 'open': $progress = 20; break;
@@ -82,7 +75,6 @@ public function index(): void
         }
     }
 
-    // 4. Pass to view (now $myJobs is guaranteed to exist)
     $this->view('mechanic/jobs/index', [
         'allJobs' => $allJobs,
         'myJobs'  => $myJobs,

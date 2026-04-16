@@ -11,13 +11,10 @@
 <body>
 <?php include __DIR__ . '/../partials/sidebar.php'; ?>
 <main class="main-content">
-  <!-- Welcome section -->
   <section class="welcome">
     <h1>Welcome, <?= htmlspecialchars(($_SESSION['user']['first_name'] ?? '') . ' ' . ($_SESSION['user']['last_name'] ?? '')) ?></h1>
     <p>Here's an overview of your <span><?= htmlspecialchars($_SESSION['user']['name'] ?? 'Supervisor') ?></span> dashboard</p>
   </section>
-
-  <!-- Dashboard top: cards -->
   <section class="dashboard-top">
     <div class="dashboard-left">
       <div class="cards">
@@ -49,7 +46,6 @@
     </div>
   </section>
 
-  <!-- Chart + toggle tables section -->
   <section class="dashboard-grid-container">
     
   <div class="dashboard-tables-column">
@@ -168,7 +164,6 @@
 </div>
  </section>
 
-  <!-- Delete Confirmation Modal -->
 <div id="deleteModal" class="modal-overlay">
   <div class="modal-box">
     <h3>Confirm Deletion</h3>

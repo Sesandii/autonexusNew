@@ -18,7 +18,6 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
 <?php include __DIR__ . '/../partials/sidebar.php'; ?>
 
 <?php
-// Match what the controller saved: $_SESSION['message']
 $message = $_SESSION['message'] ?? null;
 
 if ($message): ?>
@@ -27,7 +26,7 @@ if ($message): ?>
             <?= htmlspecialchars($message['text']) ?>
         </div>
     </div>
-    <?php unset($_SESSION['message']); // Clear it so it doesn't repeat ?>
+    <?php unset($_SESSION['message']); ?>
 <?php endif; ?>
 
 <main class="container">

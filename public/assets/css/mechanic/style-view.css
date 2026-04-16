@@ -111,16 +111,16 @@ header {
 
 .photo-card {
   display: flex;
-  flex-wrap: wrap; /* Allows images to move to the next line */
+  flex-wrap: wrap; 
   gap: 12px;
   padding: 10px 0;
 }
 
 .photo-img {
-  width: 80px;            /* Fixed width */
-  height: 80px;           /* Fixed height to make them square */
-  object-fit: cover;      /* Crops the image to fit the square without stretching */
-  border-radius: 8px;     /* Rounded corners */
+  width: 80px;           
+  height: 80px;           
+  object-fit: cover;      
+  border-radius: 8px;    
   cursor: pointer;
   border: 1px solid #ddd;
   transition: transform 0.2s, box-shadow 0.2s;
@@ -131,7 +131,6 @@ header {
   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
-/* Table */
 table {
   width: 100%;
   border-collapse: collapse;
@@ -198,14 +197,12 @@ td {
   color: #000;        
 }
 
-/* Page wrapper */
 .page-container {
   max-width: 1000px;
   margin: 30px auto;
   padding: 0 16px;
 }
 
-/* Card layout */
 .card {
   background: #ffffff;
   border-radius: 16px;
@@ -215,7 +212,6 @@ td {
   box-shadow: 0 10px 24px rgba(0, 0, 0, 0.06);
 }
 
-/* Section titles */
 .section-title {
   font-size: 16px;
   font-weight: 700;
@@ -225,7 +221,6 @@ td {
   border-bottom: 1px solid #e5e7eb;
 }
 
-/* Labels */
 .label {
   font-weight: 600;
   color: #6b7280;
@@ -242,7 +237,6 @@ td {
 .status-on_hold { background: #fef5e7; color: #f39c12; }
 .status-open { background: #ebf5fb; color: #3498db; }
 
-/* Status text */
 .status {
   font-weight: 700;
   padding: 4px 10px;
@@ -253,7 +247,6 @@ td {
   color: #4338ca;
 }
 
-/* Dropdown */
 .status-dropdown {
   padding: 6px 10px;
   border-radius: 8px;
@@ -263,7 +256,6 @@ td {
   min-width: 160px;
 }
 
-/* Buttons */
 .btn {
   border: none;
   cursor: pointer;
@@ -282,13 +274,11 @@ td {
   background: #1e40af;
 }
 
-/* View-only text */
 .info-row span[style*="opacity"] {
   font-size: 13px;
   color: #6b7280;
 }
 
-/* Customer name alignment */
 .card span.label + span {
   font-size: 14px;
   color: #374151;
@@ -316,12 +306,12 @@ td {
 
 .job-card h2 {
   font-size: 1.1rem;
-  color: #002d5b; /* Navy Blue */
+  color: #002d5b;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   margin-bottom: 20px;
   padding-left: 12px;
-  border-left: 4px solid #e74c3c; /* The Red Accent */
+  border-left: 4px solid #e74c3c;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -329,17 +319,17 @@ td {
 
 .info-row {
   display: flex;
-  align-items: center; /* Vertical centering */
-  gap: 12px;           /* Proper spacing between label, dropdown, and button */
-  flex-wrap: wrap;     /* Allows wrapping on small screens instead of overlapping */
+  align-items: center; 
+  gap: 12px;           
+  flex-wrap: wrap;     
   min-height: 40px;
-  justify-content: space-between; /* Keeps label left and value right */
-  padding: 5px 0;    /* 👈 Change this from 15px or 20px down to 5px */
+  justify-content: space-between; 
+  padding: 5px 0;   
   margin-bottom: 2px;
 }
 
 .info-row .label {
-  width: 150px;        /* Fixed width for labels keeps things aligned */
+  width: 150px;        
   font-weight: 600;
   flex-shrink: 0;
 }
@@ -362,7 +352,7 @@ td {
     border-radius: 6px;
     font-weight: 600;
     cursor: pointer;
-    white-space: nowrap; /* Prevents text from wrapping inside the button */
+    white-space: nowrap; 
     transition: background 0.2s;
 }
 
@@ -375,9 +365,9 @@ td {
   border-radius: 20px;
   font-size: 13px;
   font-weight: bold;
-  display: inline-block; /* Or inline-flex */
+  display: inline-block; 
   width: fit-content; 
-  color: #007bff;   /* Forces the width to match the text length */
+  color: #007bff;  
 }
 
 .status.open{
@@ -397,23 +387,19 @@ td {
   z-index: 99999;
 }
 
-/* Toast box */
 .toast-message {
-  background: #000; /* black */
+  background: #000; 
   color: #fff;
   padding: 14px 18px;
   border-radius: 8px;
   min-width: 250px;
   font-size: 14px;
   box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-
-  /* animation */
   opacity: 0;
   transform: translateY(30px);
   animation: slideUp 0.4s ease forwards, fadeOut 0.4s ease 3s forwards;
 }
 
-/* Type colors (left border only) */
 .toast-message.success {
   border-left: 5px solid #28a745;
 }
@@ -426,7 +412,6 @@ td {
   border-left: 5px solid #ffc107;
 }
 
-/* Animations */
 @keyframes slideUp {
   to {
       opacity: 1;
@@ -441,13 +426,11 @@ td {
   }
 }
 
-/* Fade out animation (optional) */
 .toast.hide {
   opacity: 0;
   transform: translateX(50px);
 }
 
-/* Footer container for the back button */
 .view-footer {
   margin-top: 30px;
   padding: 20px 0;
@@ -456,11 +439,10 @@ td {
   justify-content: flex-start;
 }
 
-/* Secondary button style */
 .btn-secondary {
   display: inline-block;
   padding: 8px 16px;
-  background-color: #000000; /* Neutral gray */
+  background-color: #000000; 
   color: #ffffff;
   text-decoration: none;
   border-radius: 6px;

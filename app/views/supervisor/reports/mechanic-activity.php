@@ -8,27 +8,23 @@
     <link rel="stylesheet" href="<?= $base ?>/public/assets/css/supervisor/style-report.css"/>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        :root { --primary: #003366; --accent: #d9534f; --bg: #f8fafc; }
+        :root { --primary: #000000; --accent: #d9534f; --bg: #f8fafc; }
         body { background-color: var(--bg); font-family: 'Inter', sans-serif; }
         .main-content { padding: 25px; }
         
-        /* Summary Tiles */
         .analytics-summary-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 25px; }
         .stat-box { background: #fff; padding: 20px; border-radius: 10px; border-bottom: 4px solid var(--primary); box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
         .stat-box .label { font-size: 0.75rem; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
         .stat-box .value { font-size: 1.4rem; font-weight: 800; color: var(--primary); margin-top: 5px; }
 
-        /* Buttons */
         .btn-download { background: var(--primary); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; transition: 0.2s; }
         .btn-download:hover { opacity: 0.9; transform: translateY(-1px); }
         .btn-csv { background: #15803d; }
 
-        /* Charts */
         .charts-container { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 25px; }
         .chart-card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
         .chart-card h3 { font-size: 0.95rem; margin-bottom: 20px; color: var(--primary); border-left: 4px solid var(--accent); padding-left: 12px; }
 
-        /* Table Styling */
         .report-table-container { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-bottom: 25px; }
         .report-table { width: 100%; border-collapse: collapse; }
         .report-table th { background: #f8fafc; color: var(--primary); text-align: left; padding: 15px; font-size: 0.85rem; border-bottom: 2px solid #edf2f7; }
@@ -44,10 +40,10 @@
     <div class="breadcrumb-text">Supervisor <span class="sep">&gt;</span> Reports <span class="sep">&gt;</span> <b>Mechanic Performance</b></div>
 
     <header style="display: flex; justify-content: space-between; align-items: center; margin: 20px 0;">
-        <h1 style="color: var(--primary); margin: 0;">Technician Activity Report</h1>
+        <h1 style="color: var(--primary); margin: 0;">Mechanic Activity Report</h1>
         <div class="export-controls" style="display: flex; gap: 10px;">
-            <button class="btn-download" onclick="exportReport('pdf')">Download PDF</button>
-            <button class="btn-download btn-csv" onclick="exportReport('csv')">Export CSV</button>
+            <button class="btn-download" onclick="exportReport('pdf')"><i class="fa-solid fa-file-pdf"></i>PDF</button>
+            <button class="btn-download btn-csv" onclick="exportReport('csv')"><i class="fa-solid fa-file-csv"></i>CSV</button>
         </div>
     </header>
 
@@ -187,7 +183,45 @@ document.addEventListener('DOMContentLoaded', function() {
 function exportReport(type) {
     const d = document.getElementById('filter-date').value;
     const m = document.getElementById('filter-mechanic').value;
-    window.location.href = `<?= $base ?>/supervisor/reports/export-mechanic?format=${type}&date=${d}&mechanic=${m}`;
+
+    if (type === 'csv') {
+        // Construct the URL and redirect the browser to trigger the download
+        const url = `<?= $base ?>/supervisor/reports/export-mechanic?format=csv&date=${d}&mechanic=${m}`;
+        window.location.href = url;
+    } else if (type === 'pdf') {
+        // Get the canvas elements
+        const chart1Canvas = document.getElementById('jobCountChart');
+        const chart2Canvas = document.getElementById('efficiencyChart');
+
+        // Convert canvases to Base64 Image strings
+        const chart1Image = chart1Canvas.toDataURL('image/png');
+        const chart2Image = chart2Canvas.toDataURL('image/png');
+
+        const form = document.createElement('form');
+        form.method = 'POST';
+        // Ensure this URL is registered in your Router
+        form.action = `<?= $base ?>/supervisor/reports/export-mechanic?format=pdf`;
+
+        const inputs = {
+            'date': document.getElementById('filter-date').value,
+            'mechanic': document.getElementById('filter-mechanic').value,
+            'chart1_data': chart1Image,
+            'chart2_data': chart2Image
+        };
+
+        for (const [key, value] of Object.entries(inputs)) {
+            const field = document.createElement('input');
+            field.type = 'hidden';
+            field.name = key;
+            field.value = value;
+            form.appendChild(field);
+        }
+
+        document.body.appendChild(form);
+        form.submit();
+    } else {
+        window.location.href = `<?= $base ?>/supervisor/reports/export-mechanic?format=csv&date=${d}&mechanic=${m}`;
+    }
 }
 </script>
 </body>

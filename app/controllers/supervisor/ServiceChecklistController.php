@@ -13,9 +13,6 @@ class ServiceChecklistController extends Controller
         $this->requireSupervisor();
     }
 
-    /**
-     * Show checklist management page
-     */
     public function index()
     {
         if (session_status() !== PHP_SESSION_ACTIVE) session_start();
@@ -34,9 +31,6 @@ class ServiceChecklistController extends Controller
         $this->view('supervisor/checklist/index', $data);
     }
 
-    /**
-     * Add checklist step
-     */
     public function store()
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') return;
@@ -57,9 +51,6 @@ class ServiceChecklistController extends Controller
         exit;
     }
 
-    /**
-     * Delete checklist step
-     */
     public function delete($id)
     {
         $model = new ServiceChecklistTemplate();
@@ -69,9 +60,6 @@ class ServiceChecklistController extends Controller
         exit;
     }
 
-    /**
-     * Guard
-     */
     private function requireSupervisor(): void
     {
         if (session_status() !== PHP_SESSION_ACTIVE) session_start();
