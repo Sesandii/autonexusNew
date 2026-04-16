@@ -282,21 +282,17 @@ class PackagesController extends Controller
                 return;
             }
 
-            if (!$serviceModel->isPackageType($row['type_id'] ?? null)) {
-                $pdo->rollBack();
-                http_response_code(422);
-                echo 'This record is not a package.';
-                return;
-            }
-
+            // Remove branch associations
             $bsModel->replaceForService($id, []);
 
+            // Delete package items and package record
             $packageId = $serviceModel->getPackageIdForService($id);
             if ($packageId) {
                 $pkgModel->replaceItems($packageId, []);
                 $serviceModel->deletePackageRecord($packageId);
             }
 
+            // Delete the package service
             $serviceModel->deleteById($id);
 
             $pdo->commit();

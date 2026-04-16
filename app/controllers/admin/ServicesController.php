@@ -59,11 +59,11 @@ class ServicesController extends Controller
 
         $this->view('admin/admin-viewservices/index', [
             'pageTitle' => 'Service & Package Management',
-            'current'   => 'services',
-            'base'      => BASE_URL,
-            'services'  => $services,
-            'packages'  => $packages,
-            'tabs'      => $tabs,
+            'current' => 'services',
+            'base' => BASE_URL,
+            'services' => $services,
+            'packages' => $packages,
+            'tabs' => $tabs,
         ]);
     }
 
@@ -74,20 +74,20 @@ class ServicesController extends Controller
 
         $types = array_filter(
             (new ServiceType())->all(),
-            fn($t) => (int)$t['type_id'] !== $packageTypeId
+            fn($t) => (int) $t['type_id'] !== $packageTypeId
         );
 
         $branches = (new Branch())->allActive();
         $nextCode = $serviceModel->nextCode();
 
         $this->view('admin/admin-viewservices/create', [
-            'types'              => $types,
-            'branches'           => $branches,
-            'nextCode'           => $nextCode,
-            'base'               => BASE_URL,
-            'current'            => 'services',
+            'types' => $types,
+            'branches' => $branches,
+            'nextCode' => $nextCode,
+            'base' => BASE_URL,
+            'current' => 'services',
             'servicesForPackage' => [],
-            'packageTypeId'      => $packageTypeId,
+            'packageTypeId' => $packageTypeId,
         ]);
     }
 
@@ -98,8 +98,8 @@ class ServicesController extends Controller
 
         try {
             $serviceModel = new Service();
-            $branchModel  = new Branch();
-            $bsModel      = new BranchService();
+            $branchModel = new Branch();
+            $bsModel = new BranchService();
 
             $data = $this->sanitize($_POST);
             $data['service_code'] = $serviceModel->nextCode();
@@ -140,7 +140,7 @@ class ServicesController extends Controller
 
     public function edit($id): void
     {
-        $id = (int)$id;
+        $id = (int) $id;
 
         $serviceModel = new Service();
         $row = $serviceModel->findById($id);
@@ -159,43 +159,43 @@ class ServicesController extends Controller
         $packageTypeId = $serviceModel->findPackageTypeId();
         $types = array_filter(
             (new ServiceType())->all(),
-            fn($t) => (int)$t['type_id'] !== $packageTypeId
+            fn($t) => (int) $t['type_id'] !== $packageTypeId
         );
 
         $branches = (new Branch())->allActive();
         $bsModel = new BranchService();
         $attached = $bsModel->branchIdsForService($id);
-        $allActive = array_map(fn($b) => (int)$b['branch_id'], $branches);
+        $allActive = array_map(fn($b) => (int) $b['branch_id'], $branches);
         $isAll = !array_diff($allActive, $attached) && !empty($allActive);
 
         $this->view('admin/admin-viewservices/edit', [
-            'row'                => $row,
-            'types'              => $types,
-            'branches'           => $branches,
-            'attached'           => $attached,
-            'applyAll'           => $isAll,
-            'base'               => BASE_URL,
-            'current'            => 'services',
+            'row' => $row,
+            'types' => $types,
+            'branches' => $branches,
+            'attached' => $attached,
+            'applyAll' => $isAll,
+            'base' => BASE_URL,
+            'current' => 'services',
             'servicesForPackage' => [],
-            'packageItems'       => [],
-            'packageTypeId'      => $packageTypeId,
-            'packageSummary'     => null,
-            'isPackage'          => false,
-            'packageCode'        => null,
-            'packageId'          => null,
+            'packageItems' => [],
+            'packageTypeId' => $packageTypeId,
+            'packageSummary' => null,
+            'isPackage' => false,
+            'packageCode' => null,
+            'packageId' => null,
         ]);
     }
 
     public function update($id): void
     {
-        $id = (int)$id;
+        $id = (int) $id;
         $pdo = db();
         $pdo->beginTransaction();
 
         try {
             $serviceModel = new Service();
-            $branchModel  = new Branch();
-            $bsModel      = new BranchService();
+            $branchModel = new Branch();
+            $bsModel = new BranchService();
 
             $existing = $serviceModel->findById($id);
             if (!$existing) {
@@ -251,13 +251,14 @@ class ServicesController extends Controller
 
     public function destroy($id): void
     {
-        $id = (int)$id;
+        $id = (int) $id;
         $pdo = db();
         $pdo->beginTransaction();
 
         try {
             $serviceModel = new Service();
             $bsModel = new BranchService();
+            $pkgModel = new PackageItem();
 
             $row = $serviceModel->findById($id);
             if (!$row) {
@@ -267,14 +268,22 @@ class ServicesController extends Controller
                 return;
             }
 
+            // Remove any package items that reference this service
+            $stmt = $pdo->prepare("DELETE FROM service_package_items WHERE service_id = :id");
+            $stmt->execute(['id' => $id]);
+
+            // Remove branch associations
+            $bsModel->replaceForService($id, []);
+
+            // If it's a package service, also delete the package record
             if ($serviceModel->isPackageType($row['type_id'] ?? null)) {
-                $pdo->rollBack();
-                http_response_code(422);
-                echo 'Packages must be deleted from the package module.';
-                return;
+                $packageId = $serviceModel->getPackageIdForService($id);
+                if ($packageId) {
+                    $stmt = $pdo->prepare("DELETE FROM packages WHERE package_id = :id");
+                    $stmt->execute(['id' => $packageId]);
+                }
             }
 
-            $bsModel->replaceForService($id, []);
             $serviceModel->deleteById($id);
 
             $pdo->commit();
@@ -289,20 +298,20 @@ class ServicesController extends Controller
 
     private function sanitize(array $src): array
     {
-        $get = static fn(string $k, string $d = ''): string => trim((string)($src[$k] ?? $d));
+        $get = static fn(string $k, string $d = ''): string => trim((string) ($src[$k] ?? $d));
 
         $name = $get('name');
         $description = $get('description');
-        $typeId = (int)$get('type_id', '0');
+        $typeId = (int) $get('type_id', '0');
         $typeId = $typeId > 0 ? $typeId : null;
 
-        $duration = (int)$get('base_duration_minutes', '0');
+        $duration = (int) $get('base_duration_minutes', '0');
         if ($duration < 0) {
             $duration = 0;
         }
 
         $priceRaw = $get('default_price', '0');
-        $price = is_numeric($priceRaw) ? number_format((float)$priceRaw, 2, '.', '') : '0.00';
+        $price = is_numeric($priceRaw) ? number_format((float) $priceRaw, 2, '.', '') : '0.00';
 
         $status = $get('status', 'active');
         if (!in_array($status, ['active', 'inactive', 'pending', 'rejected'], true)) {
@@ -310,13 +319,13 @@ class ServicesController extends Controller
         }
 
         return [
-            'name'                  => $name,
-            'description'           => $description,
-            'type_id'               => $typeId,
+            'name' => $name,
+            'description' => $description,
+            'type_id' => $typeId,
             'base_duration_minutes' => $duration,
-            'default_price'         => $price,
-            'status'                => $status,
-            'created_at'            => date('Y-m-d H:i:s'),
+            'default_price' => $price,
+            'status' => $status,
+            'created_at' => date('Y-m-d H:i:s'),
         ];
     }
 
@@ -332,7 +341,7 @@ class ServicesController extends Controller
             $errors[] = 'Invalid service type.';
         }
 
-        if (!preg_match('/^\d+(\.\d{1,2})?$/', (string)($data['default_price'] ?? ''))) {
+        if (!preg_match('/^\d+(\.\d{1,2})?$/', (string) ($data['default_price'] ?? ''))) {
             $errors[] = 'Price must be numeric with up to 2 decimal places.';
         }
 
