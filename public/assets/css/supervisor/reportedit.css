@@ -1,4 +1,3 @@
-/* --- Variables & Reset --- */
 :root {
     --primary-blue: #003366;
     --accent-red: #d9534f;
@@ -36,7 +35,6 @@ header h1 {
     font-size: 1.75rem;
 }
 
-/* --- Grid System --- */
 .grid-row {
     display: grid;
     gap: 1.5rem;
@@ -50,7 +48,6 @@ header h1 {
     .two-columns, .three-columns { grid-template-columns: 1fr; }
 }
 
-/* --- Card & Form Section Container --- */
 .report-card, .card, .form-section {
     background: #fff;
     padding: 1.5rem;
@@ -60,7 +57,6 @@ header h1 {
     height: 100%;
 }
 
-/* Red Accent Heading Style */
 .report-card h2, .card-header h2, .form-section h2 {
     font-size: 0.95rem;
     text-transform: uppercase;
@@ -72,7 +68,6 @@ header h1 {
     margin-top: 0;
 }
 
-/* --- Form Elements --- */
 label {
     display: block;
     font-weight: 600;
@@ -105,7 +100,6 @@ textarea {
     line-height: 1.5;
 }
 
-/* --- Information Display (Read-Only) --- */
 .info-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -126,7 +120,6 @@ textarea {
     color: #1e293b;
 }
 
-/* --- Status Pills --- */
 .status {
     display: inline-flex;
     align-items: center;
@@ -142,14 +135,12 @@ textarea {
 .status.completed { background: #dcfce7; color: #15803d; }
 .status.in_progress { background: #e0f2fe; color: #0369a1; }
 
-/* Position status in top right of card header */
 .card-header {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
 }
 
-/* --- Checklist --- */
 .checklist {
     margin-top: 10px;
 }
@@ -171,7 +162,6 @@ textarea {
     cursor: pointer;
 }
 
-/* --- Tables (Inside Cards) --- */
 table {
     width: 100%;
     border-collapse: collapse;
@@ -192,7 +182,6 @@ td {
     font-size: 0.95rem;
 }
 
-/* --- Photo Gallery --- */
 .photo-gallery {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
@@ -231,7 +220,6 @@ td {
     font-size: 16px;
 }
 
-/* --- Buttons --- */
 .actions {
     display: flex;
     gap: 1rem;
@@ -257,7 +245,6 @@ td {
 .btn.secondary { background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; }
 .btn.secondary:hover { background: #e2e8f0; }
 
-/* --- Lightbox Modal --- */
 .modal-lightbox {
     display: none;
     position: fixed;

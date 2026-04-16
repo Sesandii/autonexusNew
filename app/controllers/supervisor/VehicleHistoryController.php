@@ -11,21 +11,14 @@ class VehicleHistoryController extends Controller
     public function __construct()
     {
         $this->requireAdmin();
-        // ✅ Use global db() helper which returns the PDO instance
         $this->appointmentModel = new Appointment(db());
     }
 
-    /** 
-     * ✅ Show the vehicle history search page 
-     */
     public function index()
     {
         $this->view('supervisor/history/index');
     }
 
-    /** 
-     * ✅ Process the license plate search and display all past appointments 
-     */
     public function show()
 {
     $licensePlate = $_GET['license_plate'] ?? '';
@@ -55,15 +48,11 @@ class VehicleHistoryController extends Controller
         'appointments' => $appointments
     ]);
 }
-    /**
-     * ✅ Show detailed info for a specific appointment
-     * Example URL: /supervisor/history/details/12
-     */
+
     public function details($appointmentId)
     {
         $appointmentId = (int)$appointmentId;
 
-        // Get full appointment details (joins: services, vehicle, customer, work_order)
         $details = $this->appointmentModel->getAppointmentDetails($appointmentId);
 
         if (!$details) {
@@ -75,7 +64,6 @@ class VehicleHistoryController extends Controller
             exit;
         }
 
-        // ✅ Render the details view
         $this->view('supervisor/history/details', ['details' => $details]);
     }
     private function requireAdmin(): void

@@ -11,19 +11,11 @@ class Report
     public function __construct(PDO $pdo = null)
     {
         if ($pdo !== null) {
-            $this->pdo = $pdo; // use passed PDO
+            $this->pdo = $pdo; 
         } else {
-            // fallback for existing usage
             $this->pdo = db(); 
         }
     }
-
-    // ... rest of your methods ...
-
-
-    /* =====================================================
-       GET REPORTS
-    ===================================================== */
 
     public function getByWorkOrder(int $workOrderId): ?array
     {
@@ -54,7 +46,7 @@ class Report
             CONCAT(v.make, ' ', v.model) AS vehicle,
             CONCAT(u.first_name, ' ', u.last_name) AS customer_name,
             su.supervisor_code,
-            su.user_id AS supervisor_id,  /* <--- ADD THIS LINE HERE */
+            su.user_id AS supervisor_id, 
             s.name,
             m.mechanic_code
         FROM reports r
@@ -74,10 +66,6 @@ class Report
 
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
-
-    /* =====================================================
-       CREATE / UPDATE / DELETE
-    ===================================================== */
 
     public function create(array $data): int
 {
@@ -109,7 +97,6 @@ class Report
 
     $stmt = $this->pdo->prepare($sql);
     
-    // We filter the array so PDO doesn't complain about extra keys like 'current_mileage'
     $stmt->execute([
         'work_order_id'      => $data['work_order_id'],
         'supervisor_id'      => $data['supervisor_id'],
@@ -125,27 +112,21 @@ class Report
     return (int)$this->pdo->lastInsertId();
 }
 
-/**
- * Update the existing columns in the vehicles table
- */
-/**
- * Updates service tracking columns in the vehicles table
- */
-/**
- * Updates service tracking columns in the vehicles table
- */
 public function updateVehicleServiceData(int $workOrderId, int $nextDue, int $interval): bool
 {
-    // Step A: Get the specific vehicle_id for this work order
-    $stmt = $this->pdo->prepare("SELECT vehicle_id FROM work_orders WHERE work_order_id = ?");
+    $stmt = $this->pdo->prepare("
+        SELECT a.vehicle_id 
+        FROM work_orders w
+        JOIN appointments a ON w.appointment_id = a.appointment_id
+        WHERE w.work_order_id = ?
+    ");
     $stmt->execute([$workOrderId]);
     $vehicleId = $stmt->fetchColumn();
 
     if (!$vehicleId) {
-        return false; // Stop if the work order isn't linked correctly
+        return false; 
     }
 
-    // Step B: Update the vehicle table directly
     $sql = "UPDATE vehicles 
             SET last_service_mileage = :next,
                 service_interval_km = :interval
@@ -159,29 +140,37 @@ public function updateVehicleServiceData(int $workOrderId, int $nextDue, int $in
     ]);
 }
 
-    public function update(int $reportId, array $data): bool
-    {
-        $sql = "
-            UPDATE reports SET
-                inspection_notes = :inspection_notes,
-                quality_rating = :quality_rating,
-                checklist_verified = :checklist_verified,
-                test_driven = :test_driven,
-                concerns_addressed = :concerns_addressed,
-                report_summary = :report_summary,
-                next_service_recommendation = :next_service_recommendation,
-                status = :status,    /* Added */
-            service_interval_km = :service_interval, /* Added */
-            last_service_mileage = :next_service_due,
-                updated_at = NOW()
-            WHERE report_id = :report_id
-        ";
+public function update(int $reportId, array $data): bool
+{
+    $sql = "
+        UPDATE reports SET
+            inspection_notes = :inspection_notes,
+            quality_rating = :quality_rating,
+            checklist_verified = :checklist_verified,
+            test_driven = :test_driven,
+            concerns_addressed = :concerns_addressed,
+            report_summary = :report_summary,
+            next_service_recommendation = :next_service_recommendation,
+            status = :status,    
+            updated_at = NOW()
+        WHERE report_id = :report_id
+    ";
 
-        $data['report_id'] = $reportId;
+    $params = [
+        'inspection_notes'            => $data['inspection_notes'],
+        'quality_rating'              => $data['quality_rating'],
+        'checklist_verified'          => $data['checklist_verified'],
+        'test_driven'                 => $data['test_driven'],
+        'concerns_addressed'          => $data['concerns_addressed'],
+        'report_summary'              => $data['report_summary'],
+        'next_service_recommendation' => $data['next_service_recommendation'] ?? null,
+        'status'                      => $data['status'],
+        'report_id'                   => $reportId
+    ];
 
-        $stmt = $this->pdo->prepare($sql);
-        return $stmt->execute($data);
-    }
+    $stmt = $this->pdo->prepare($sql);
+    return $stmt->execute($params);
+}
 
     public function delete(int $reportId): bool
     {
@@ -212,7 +201,6 @@ public function getLastInsertId(): int
     return (int)$this->pdo->lastInsertId();
 }
 
-// Get single photo by ID
 public function getPhotosByReportId(int $reportId)
 {
     $sql = "SELECT * FROM report_photos WHERE report_id = :report_id";
@@ -235,13 +223,11 @@ public function deletePhoto(int $id)
     return $stmt->execute([$id]);
 }
 
-/** Daily Job Completion Report */
 public function getDailyJobCompletion(?string $date = null, ?string $mechanicCode = null, ?int $branchId = null): array
 {
     $where = ["w.status = 'completed'"];
     $params = [];
 
-    // Filter by Branch ID in the mechanics table
     if ($branchId) {
         $where[] = "m.branch_id = :branch_id";
         $params['branch_id'] = $branchId;
@@ -281,15 +267,9 @@ public function getDailyJobCompletion(?string $date = null, ?string $mechanicCod
 
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
-/**
- * Get all mechanics for dropdown
- */
-/**
- * Get all mechanics for dropdown without duplicates
- */
+
 public function getAllMechanics(?int $branchId = null): array
 {
-    // branch_id is in the mechanics (m) table
     $sql = "SELECT DISTINCT mechanic_code 
             FROM mechanics 
             WHERE branch_id = :branch_id
@@ -299,8 +279,6 @@ public function getAllMechanics(?int $branchId = null): array
     $stmt->execute(['branch_id' => $branchId]);
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
-
-// app/model/supervisor/Report.php
 
 public function getMechanicActivity(?string $date = null, ?string $mechanicCode = null, ?int $branchId = null): array
 {
@@ -313,7 +291,7 @@ public function getMechanicActivity(?string $date = null, ?string $mechanicCode 
     }
 
     if ($date) {
-        $where[] = "DATE(w.created_at) = :date";
+        $where[] = "DATE(w.started_at) = :date";
         $params['date'] = $date;
     }
 
@@ -345,26 +323,32 @@ public function getMechanicActivity(?string $date = null, ?string $mechanicCode 
     $stmt->execute($params);
     return $stmt->fetchAll(\PDO::FETCH_ASSOC);
 }
-/** * Summary Stats for the top 3 boxes 
- */
+
 public function getBranchPerformanceSummary(int $branchId, string $date): array
 {
     $sql = "SELECT 
-        ROUND(AVG(TIMESTAMPDIFF(MINUTE, w.started_at, w.completed_at)), 0) as avg_comp,
-        ROUND(AVG(i.total_amount), 2) as avg_invoice,
-        ROUND(AVG(TIMESTAMPDIFF(HOUR, a.created_at, w.started_at)), 1) as avg_appr
+        IFNULL(ROUND(AVG(TIMESTAMPDIFF(MINUTE, w.started_at, w.completed_at)), 0), 0) as avg_comp,
+        IFNULL(ROUND(AVG(i.total_amount), 2), 0) as avg_invoice,
+        IFNULL(ROUND(AVG(TIMESTAMPDIFF(HOUR, a.created_at, w.started_at)), 1), 0) as avg_appr
         FROM work_orders w
-        JOIN appointments a ON w.appointment_id = a.appointment_id
-        JOIN invoices i ON w.work_order_id = i.work_order_id
-        WHERE a.branch_id = :branch_id AND DATE(w.completed_at) = :date";
+        INNER JOIN appointments a ON w.appointment_id = a.appointment_id
+        LEFT JOIN invoices i ON w.work_order_id = i.work_order_id
+        WHERE a.branch_id = :branch_id 
+        AND DATE(w.completed_at) = :date
+        AND w.status = 'completed'"; 
     
     $stmt = $this->pdo->prepare($sql);
     $stmt->execute(['branch_id' => $branchId, 'date' => $date]);
-    return $stmt->fetch(PDO::FETCH_ASSOC) ?: ['avg_comp' => 0, 'avg_invoice' => 0, 'avg_appr' => 0];
+    
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    return [
+        'avg_comp' => $result['avg_comp'] ?? 0,
+        'avg_invoice' => $result['avg_invoice'] ?? 0,
+        'avg_appr' => $result['avg_appr'] ?? 0
+    ];
 }
 
-/** * Data for the Appointment Status Donut Chart 
- */
 public function getAppointmentStatusStats(int $branchId, string $date): array
 {
     $sql = "SELECT status as label, COUNT(*) as count 
@@ -381,8 +365,6 @@ public function getAppointmentStatusStats(int $branchId, string $date): array
     ];
 }
 
-/** * Data for the Hourly Bar Chart (Busiest times) 
- */
 public function getHourlyJobStats(int $branchId, string $date): array
 {
     $sql = "SELECT HOUR(completed_at) as hour, COUNT(*) as count 
@@ -400,8 +382,6 @@ public function getHourlyJobStats(int $branchId, string $date): array
     ];
 }
 
-/** * Data for the Booking Trend Line Chart (Last 7 Days) 
- */
 public function getWeeklyBookingTrend(int $branchId): array
 {
     $sql = "SELECT DATE(created_at) as date, COUNT(*) as total 
@@ -419,41 +399,61 @@ public function getWeeklyBookingTrend(int $branchId): array
     ];
 }
 
-/** * Data for the "Jobs Completed" Bar Chart 
- */
-public function getMechanicCompletionComparison(int $branchId): array
+public function getMechanicCompletionComparison(int $branchId, ?string $date = null, ?string $mechanicCode = null): array
 {
     $sql = "SELECT m.mechanic_code, COUNT(w.work_order_id) as completed_count
             FROM mechanics m
             JOIN work_orders w ON m.mechanic_id = w.mechanic_id
-            WHERE m.branch_id = :branch_id AND w.status = 'completed'
-            GROUP BY m.mechanic_id, m.mechanic_code";
+            WHERE m.branch_id = :branch_id AND w.status = 'completed'";
+    
+    $params = ['branch_id' => $branchId];
+
+    if ($date) {
+        $sql .= " AND DATE(w.completed_at) = :selected_date"; 
+        $params['selected_date'] = $date;
+    }
+
+    if ($mechanicCode) {
+        $sql .= " AND m.mechanic_code = :mechanic_code";
+        $params['mechanic_code'] = $mechanicCode;
+    }
+
+    $sql .= " GROUP BY m.mechanic_id, m.mechanic_code";
             
     $stmt = $this->pdo->prepare($sql);
-    $stmt->execute(['branch_id' => $branchId]);
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $stmt->execute($params);
+    return $stmt->fetchAll(\PDO::FETCH_ASSOC);
 }
 
-/** * Data for the "Efficiency" Horizontal Bar Chart 
- */
-public function getMechanicEfficiencyStats(int $branchId): array
+
+public function getMechanicEfficiencyStats(int $branchId, ?string $date = null, ?string $mechanicCode = null): array
 {
     $sql = "SELECT m.mechanic_code, 
             ROUND(AVG(TIMESTAMPDIFF(MINUTE, w.started_at, w.completed_at)), 0) as avg_mins
             FROM mechanics m
             JOIN work_orders w ON m.mechanic_id = w.mechanic_id
-            WHERE m.branch_id = :branch_id AND w.status = 'completed'
-            GROUP BY m.mechanic_id, m.mechanic_code";
+            WHERE m.branch_id = :branch_id AND w.status = 'completed'";
+            
+    $params = ['branch_id' => $branchId];
+
+    if ($date) {
+        $sql .= " AND DATE(w.completed_at) = :selected_date";
+        $params['selected_date'] = $date;
+    }
+
+    if ($mechanicCode) {
+        $sql .= " AND m.mechanic_code = :mechanic_code";
+        $params['mechanic_code'] = $mechanicCode;
+    }
+
+    $sql .= " GROUP BY m.mechanic_id, m.mechanic_code";
             
     $stmt = $this->pdo->prepare($sql);
-    $stmt->execute(['branch_id' => $branchId]);
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $stmt->execute($params);
+    return $stmt->fetchAll(\PDO::FETCH_ASSOC);
 }
 
 
-/**
- * Updates the master vehicle record with the latest mileage from a work order
- */
 public function updateVehicleMileage(int $workOrderId, int $mileage): bool
 {
     $sql = "UPDATE vehicles v
@@ -466,6 +466,43 @@ public function updateVehicleMileage(int $workOrderId, int $mileage): bool
         'mileage' => $mileage,
         'wo_id'   => $workOrderId
     ]);
+}
+
+public function getWorkOrderWithVehicleData(int $workOrderId)
+{
+    $sql = "SELECT w.*, v.last_service_mileage, v.service_interval_km, v.license_plate, s.name, m.mechanic_code,
+                   u.first_name AS customer_first_name, u.last_name AS customer_last_name
+            FROM work_orders w
+            JOIN appointments a ON w.appointment_id = a.appointment_id
+            JOIN vehicles v ON a.vehicle_id = v.vehicle_id
+            LEFT JOIN customers c ON a.customer_id = c.customer_id
+            LEFT JOIN services s ON a.service_id = s.service_id
+            LEFT JOIN mechanics m ON w.mechanic_id = m.mechanic_id
+            LEFT JOIN users u ON c.user_id = u.user_id
+            WHERE w.work_order_id = ?";
+            
+    $stmt = $this->pdo->prepare($sql);
+    $stmt->execute([$workOrderId]);
+    return $stmt->fetch();
+}
+
+public function getServiceTasks($workOrderId) {
+    $sql = "SELECT item_name, status FROM checklist WHERE work_order_id = ?";
+    
+    $stmt = $this->pdo->prepare($sql);
+    
+    $stmt->execute([$workOrderId]);
+    
+    return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+}
+
+public function getReportPhotos($reportId) {
+    $sql = "SELECT file_path FROM report_photos WHERE report_id = ?";
+    
+    $stmt = $this->pdo->prepare($sql);
+    $stmt->execute([$reportId]);
+    
+    return $stmt->fetchAll(\PDO::FETCH_ASSOC);
 }
 
 }

@@ -32,7 +32,6 @@
     <form method="post" action="<?= $base ?>/supervisor/workorders/<?= (int)$wo['work_order_id'] ?>">
       <div class="form-grid">
 
-        <!-- Appointment (read-only) -->
         <div class="form-group">
           <label class="required">Appointment</label>
           <select id="appointment_id" disabled>
@@ -47,36 +46,29 @@
           <div class="help">The appointment cannot be changed for this work order.</div>
         </div>
 
-        <!-- Mechanic -->
         <div class="form-group">
     <label class="required">Mechanic</label>
     <select name="mechanic_id" id="mechanic_id" class="form-control">
     <option value="">-- Select Mechanic --</option>
     <?php foreach ($activeMechanics as $mech): 
-        // Normalize status for reliable comparison
         $rawStatus = $mech['status'] ?? 'available';
         $status = strtolower($rawStatus); 
         $isSelected = ($selectedMechanicId == $mech['mechanic_id']);
         
-        // Default UI states
         $style = "";
         $labelSuffix = "";
         $isDisabledAttr = "";
 
-        // Logic for specialized statuses
         if ($status === 'on break') {
             $style = "filter: blur(1px); opacity: 0.5; color: #999;";
             $labelSuffix = " (On Break)";
-            // Only disable if it's NOT the currently assigned mechanic
             if (!$isSelected) $isDisabledAttr = "disabled"; 
             
         } elseif ($status === 'busy') {
             $labelSuffix = " (Busy - 5+ Jobs)";
-            // We keep them enabled so supervisors can still assign if urgent
             $style = "color: #d9534f; font-weight: bold;"; 
             
         } elseif ($status === 'off-duty') {
-            // Hide off-duty mechanics entirely unless they are already assigned to this WO
             if (!$isSelected) continue; 
             $labelSuffix = " (Off-Duty)";
             $isDisabledAttr = "disabled";
@@ -86,7 +78,6 @@
                 style="<?= $style ?>" 
                 <?= $isDisabledAttr ?>
                 <?php 
-            // Compare the mechanic in the loop to the mechanic saved in the work order
             if ((int)$mech['mechanic_id'] === (int)($wo['mechanic_id'] ?? 0)) {
                 echo 'selected';
             }
@@ -99,13 +90,11 @@
 </select>
 </div>
 
-        <!-- Service Name (readonly) -->
         <div class="form-group">
           <label>Service (from appointment)</label>
           <input type="text" id="service_display"
             value="<?= htmlspecialchars($wo['service_name'] ?? '') ?>" readonly>
         </div>
-        <!-- Status -->
         <div class="form-group">
           <label class="required">Status</label>
           <select name="status">
@@ -118,7 +107,6 @@
           </select>
         </div>
 
-                <!-- Service Summary -->
                 <div class="form-group">
           <label>Service Summary</label>
           <textarea name="service_summary"><?= htmlspecialchars($wo['service_summary'] ?? '') ?></textarea>

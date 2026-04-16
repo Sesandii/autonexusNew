@@ -13,52 +13,35 @@ class VehicleReportsController extends Controller
         $this->requireAdmin();
     }
 
-    /* =========================
-       REPORT LIST
-    ========================= */
-
-    // Controller: app/controllers/supervisor/VehicleReportsController.php
-
 public function index()
 {
-    // Optional: you can pass data to the view if needed
-    // For now, no data is required, just show the dashboard
-
-    $this->view('supervisor/reports/index'); // the file: views/supervisor/reports/dashboard.php
+    $this->view('supervisor/reports/index'); 
 }
 
     public function indexp()
     {
         $model = new Report();
-        $reports = $model->all(); // fetch all reports
+        $reports = $model->all();
 
         $this->view('supervisor/reports/indexp', [
             'reports' => $reports
         ]);
     }
 
-    /* =========================
-       CREATE REPORT (FORM)
-       URL: /supervisor/reports/create/{workOrderId}
-    ========================= */
     public function create()
 {
     $woModel = new WorkOrder();
 
-    // Check if a work order id is selected via GET
     $workOrderId = $_GET['id'] ?? null;
 
     if ($workOrderId) {
-        // Fetch selected work order
         $workOrder = $woModel->find((int)$workOrderId);
 
-        // Only completed jobs allowed
         if (!$workOrder || $workOrder['status'] !== 'completed') {
             header('Location: ' . rtrim(BASE_URL, '/') . '/supervisor/reports');
             exit;
         }
 
-        // Fetch service summary from checklist
         $services = $woModel->getServiceSummaryFromChecklist((int)$workOrderId);
 
         $this->view('supervisor/reports/create', [
@@ -67,12 +50,8 @@ public function index()
         ]);
 
     } else {
-        // --- UPDATED LOGIC ---
-        // We use branch_id because supervisors oversee a branch, 
-        // and work_orders are tied to branches via appointments.
         $branchId = $_SESSION['user']['branch_id'] ?? null; 
 
-        // Security Fallback: If branch_id isn't in session, fetch it from the DB
         if (!$branchId) {
             $db = db();
             $stmt = $db->prepare("SELECT branch_id FROM supervisors WHERE user_id = ?");
@@ -80,7 +59,6 @@ public function index()
             $branchId = $stmt->fetchColumn();
         }
 
-        // Fetch completed orders for this branch that don't have a report yet
         $completedOrders = $woModel->getCompletedWorkOrdersWithoutReport((int)$branchId);
 
         $this->view('supervisor/reports/create', [
@@ -89,10 +67,6 @@ public function index()
     }
 }
 
-    /* =========================
-       STORE REPORT
-       URL: POST /supervisor/reports/store/{workOrderId}
-    ========================= */
     public function store()
     {
         if (session_status() !== PHP_SESSION_ACTIVE) session_start();
@@ -102,7 +76,6 @@ public function index()
         $db = db();
         $model = new Report();
     
-        // Fetch supervisor_id
         $stmt = $db->prepare("SELECT supervisor_id FROM supervisors WHERE user_id = ?");
         $stmt->execute([$userId]);
         $supervisor = $stmt->fetch();
@@ -112,8 +85,6 @@ public function index()
             die('Supervisor record not found.');
         }
     
-        // 1. Create the Report (Report table only)
-// 1. Create the Report and CAPTURE the ID
 $reportId = $model->create([
     'work_order_id'      => $workOrderId,
     'supervisor_id'      => $realSupervisorId,
@@ -123,18 +94,17 @@ $reportId = $model->create([
     'test_driven'        => in_array('test_driven', $_POST['checklist'] ?? []) ? 1 : 0,
     'concerns_addressed' => in_array('concerns_addressed', $_POST['checklist'] ?? []) ? 1 : 0,
     'report_summary'     => $_POST['report_summary'] ?? '',
-    'status'             => $_POST['status'] ?? 'draft'
+    'status'             => $_POST['status']
 ]);
 
-// 2. Calculate and Update Vehicle (quantitative tracking)
-if (($_POST['status'] ?? '') === 'submitted') {
-    
-    // Use current mileage for calculation ONLY
-    $odoAtService = (int)($_POST['current_mileage'] ?? 0); 
-    $interval     = (int)($_POST['service_interval'] ?? 5000);
-    $nextDue      = $odoAtService + $interval;
+$status = $_POST['status'] ?? 'draft';
 
-    // Save only what we need to keep
+if ($status === 'submitted' || $status === 'draft') {
+    
+    $current  = (int)($_POST['current_mileage'] ?? 0);
+        $interval = (int)($_POST['service_interval'] ?? 5000);
+        $nextDue  = $current + $interval;
+
     $model->updateVehicleServiceData(
         (int)$workOrderId, 
         $nextDue, 
@@ -142,7 +112,6 @@ if (($_POST['status'] ?? '') === 'submitted') {
     );
 }
 
-// 3. Handle photo uploads (This is where the error was)
 if (!empty($_FILES['work_images']['name'][0])) {
     $uploadDir = __DIR__ . '/../../../public/assets/img/report_photos/';
     if (!is_dir($uploadDir)) mkdir($uploadDir, 0777, true);
@@ -154,7 +123,6 @@ if (!empty($_FILES['work_images']['name'][0])) {
             $targetPath = $uploadDir . $fileName;
 
             if (move_uploaded_file($tmpName, $targetPath)) {
-                // Now $reportId is a valid integer, so this won't crash
                 $model->savePhoto(
                     $reportId, 
                     'assets/img/report_photos/' . $fileName
@@ -163,15 +131,10 @@ if (!empty($_FILES['work_images']['name'][0])) {
         }
     }
 }
-        // 5. Redirect
         header('Location: ' . rtrim(BASE_URL, '/') . '/supervisor/reports/indexp');
         exit;
     }
 
-
-    /* =========================
-       DELETE REPORT
-    ========================= */
     public function delete($id)
     {
         $model = new Report();
@@ -181,9 +144,7 @@ if (!empty($_FILES['work_images']['name'][0])) {
         exit;
     }
 
-    /* =========================
-       AUTH
-    ========================= */
+
     private function requireAdmin(): void
     {
         if (session_status() !== PHP_SESSION_ACTIVE) session_start();
@@ -196,39 +157,31 @@ if (!empty($_FILES['work_images']['name'][0])) {
     }
 
     public function show($id)
-    {
-        $reportModel = new Report();
-        $woModel     = new WorkOrder();
+{
+    $reportModel = new Report();
     
-        // Fetch report
-        $report = $reportModel->find((int)$id);
-        if (!$report) {
-            header('Location: ' . rtrim(BASE_URL, '/') . '/supervisor/reports');
-            exit;
-        }
-    
-        // Fetch related work order
-        $workOrder = $woModel->find((int)$report['work_order_id']);
-    
-        // Fetch service summary from checklist
-        $services = $woModel->getServiceSummaryFromChecklist(
-            (int)$report['work_order_id']
-        );
-
-        $photos = $reportModel->getPhotos($id);
-    
-        $this->view('supervisor/reports/view', [
-            'report'    => $report,
-            'workOrder' => $workOrder,
-            'services'  => $services,
-            'photos'    => $photos
-        ]);
-
-        
+    $report = $reportModel->find((int)$id);
+    if (!$report) {
+        header('Location: ' . rtrim(BASE_URL, '/') . '/supervisor/reports');
+        exit;
     }
-    
 
-    // Show edit form
+    $workOrder = $reportModel->getWorkOrderWithVehicleData((int)$report['work_order_id']);
+
+    $services = (new \app\model\supervisor\WorkOrder())->getServiceSummaryFromChecklist(
+        (int)$report['work_order_id']
+    );
+
+    $photos = $reportModel->getPhotos($id);
+
+    $this->view('supervisor/reports/view', [
+        'report'    => $report,
+        'workOrder' => $workOrder, 
+        'services'  => $services,
+        'photos'    => $photos
+    ]);
+}
+    
 public function edit(int $id)
 {
     $reportModel = new Report();
@@ -254,17 +207,16 @@ public function edit(int $id)
     ]);
 }
 
-// Handle update
 public function update(int $reportId)
 {
     $reportModel = new Report();
 
-    // 1. Calculate the 'Next Due' value locally (not stored in reports table)
+    $status = $_POST['status'] ?? 'draft';
+
     $odoAtService = (int)($_POST['current_mileage'] ?? 0);
     $interval     = (int)($_POST['service_interval'] ?? 5000);
     $nextDue      = $odoAtService + $interval;
 
-    // 2. Qualitative Data for the Reports table
     $data = [
         'inspection_notes'   => $_POST['inspection_notes'] ?? '',
         'quality_rating'     => (int)($_POST['quality_rating'] ?? 0),
@@ -275,15 +227,12 @@ public function update(int $reportId)
         'status'             => $_POST['status'] ?? 'draft'
     ];
 
-    // Save report notes
     $reportModel->update($reportId, $data);
 
-    // 3. Sync to Vehicles table only on submission
-    if (($_POST['status'] ?? '') === 'submitted') {
+    if ($status === 'submitted' || $status === 'draft') {
         $report = $reportModel->find($reportId);
         
         if ($report && !empty($report['work_order_id'])) {
-            // Update the vehicle record using the calculated values
             $reportModel->updateVehicleServiceData(
                 (int)$report['work_order_id'], 
                 $nextDue, 
@@ -292,7 +241,6 @@ public function update(int $reportId)
         }
     }
 
-    // 3. Handle photo uploads (unchanged)
     if (!empty($_FILES['work_images']['name'][0])) {
         $uploadDir = __DIR__ . '/../../../public/assets/img/report_photos/';
         if (!is_dir($uploadDir)) mkdir($uploadDir, 0777, true);
@@ -318,20 +266,17 @@ public function deletePhoto(int $id)
 {
     $reportModel = new Report();
 
-    // Find the photo
     $photo = $reportModel->getPhotoById($id);
     if (!$photo) {
         header('Location: ' . BASE_URL . '/supervisor/reports');
         exit;
     }
 
-    // Delete file from server
     $filePath = __DIR__ . '/../../../public/assets/img/report_photos/' . basename($photo['file_path']);
     if (file_exists($filePath)) {
         unlink($filePath);
     }
 
-    // Delete DB record
     $reportModel->deletePhoto($id);
 
     header('Location: ' . BASE_URL . '/supervisor/reports/edit/' . $photo['report_id']);
@@ -342,13 +287,11 @@ public function dailyJobs()
 {
     $reportModel = new \app\model\supervisor\Report();
     
-    // SECURE: Only fetch data for the logged-in supervisor's branch
     $branchId = $_SESSION['user']['branch_id'] ?? null;
 
     $date = $_GET['report_date'] ?? date('Y-m-d');
     $mechanicCode = $_GET['mechanic_code'] ?? null;
 
-    // Pass $branchId to all methods
     $dailyReport = $reportModel->getDailyJobCompletion($date, $mechanicCode, $branchId);
     $mechanics   = $reportModel->getAllMechanics($branchId);
     $statusStats = $reportModel->getAppointmentStatusStats($branchId, $date);
@@ -372,22 +315,17 @@ public function mechanicActivity()
 {
     $reportModel = new \app\model\supervisor\Report();
     
-    // SECURE: Grab branch_id from session
     $branchId = $_SESSION['user']['branch_id'] ?? null;
 
-    // Optional filters
     $date = $_GET['date'] ?? null;
     $mechanicCode = $_GET['mechanic_code'] ?? null;
 
-    // 1. Table Data (Branch Restricted)
     $activity = $reportModel->getMechanicActivity($date, $mechanicCode, $branchId);
 
-    // 2. Dropdown List (Only mechanics in this branch)
     $mechanics = $reportModel->getAllMechanics($branchId);
 
-    // 3. Chart Data (Branch Performance Comparison)
-    $comparison = $reportModel->getMechanicCompletionComparison($branchId);
-    $efficiency = $reportModel->getMechanicEfficiencyStats($branchId);
+    $comparison = $reportModel->getMechanicCompletionComparison($branchId, $date, $mechanicCode);
+    $efficiency = $reportModel->getMechanicEfficiencyStats($branchId, $date, $mechanicCode);
 
     $this->view('supervisor/reports/mechanic-activity', [
         'activity'         => $activity,
@@ -399,5 +337,168 @@ public function mechanicActivity()
     ]);
 }
 
+public function download(int $reportId)
+{
+    $reportModel = new Report();
+    $report = $reportModel->find($reportId);
+    
+    if (!$report) {
+        die("Error: Report not found.");
+    }
+
+    $format = $_GET['format'] ?? 'pdf';
+
+    if ($format === 'pdf') {
+        $this->generatePDF($report);
+    } else {
+        $this->generateCSV($report);
+    }
+}
+
+private function generatePDF($report)
+{
+    $workOrderModel = new \app\model\supervisor\WorkOrder();
+    $reportModel = new \app\model\supervisor\Report();
+    $workOrder = $workOrderModel->find($report['work_order_id']);
+    $services = $reportModel->getServiceTasks($report['work_order_id']); 
+    $photos = $reportModel->getReportPhotos($report['report_id']); 
+
+    ob_start();
+    include __DIR__ . '/../../views/supervisor/reports/pdf_template.php';
+    $html = ob_get_clean();
+
+    if (ob_get_length()) ob_clean();
+
+    $options = new \Dompdf\Options();
+    $options->set('isHtml5ParserEnabled', true);
+    $options->set('isRemoteEnabled', true);
+    $options->set('isHtml5ParserEnabled', true);
+    $options->set('chroot', $_SERVER['DOCUMENT_ROOT']);
+    $dompdf = new \Dompdf\Dompdf($options);
+
+    $dompdf->loadHtml($html);
+    $dompdf->setPaper('A4', 'portrait');
+    $dompdf->render();
+    
+    $dompdf->stream("Report_{$report['report_id']}.pdf", ["Attachment" => true]);
+    exit;
+}
+
+public function exportMechanic()
+{
+    $reportModel = new Report();
+    $branchId = $_SESSION['user']['branch_id'] ?? null;
+    
+    $date = $_POST['date'] ?? $_GET['date'] ?? null;
+    $mechanicCode = $_POST['mechanic'] ?? $_GET['mechanic'] ?? null;
+    $format = $_GET['format'] ?? 'pdf';
+    
+    $chart1 = $_POST['chart1'] ?? null;
+    $chart2 = $_POST['chart2'] ?? null;
+
+    $activity = $reportModel->getMechanicActivity($date, $mechanicCode, $branchId);
+
+    if ($format === 'csv') {
+        $this->generateMechanicCSV($activity, $date);
+    } else {
+        $this->generateMechanicPDF($activity, $date, $chart1, $chart2);
+    }
+}
+
+private function generateMechanicCSV($data, $date)
+{
+    header('Content-Type: text/csv');
+    header('Content-Disposition: attachment; filename="mechanic_report_' . ($date ?? 'all') . '.csv"');
+
+    $output = fopen('php://output', 'w');
+    fputcsv($output, ['Mechanic Name', 'Code', 'Assigned', 'Completed', 'In Progress', 'Pending', 'Avg Duration (Mins)']);
+
+    foreach ($data as $row) {
+        fputcsv($output, [
+            $row['mechanic_name'],
+            $row['mechanic_code'],
+            $row['total_assigned'],
+            $row['completed'],
+            $row['in_progress'],
+            $row['open'],
+            $row['avg_duration_mins']
+        ]);
+    }
+    fclose($output);
+    exit;
+}
+
+private function generateMechanicPDF($activity, $date)
+{
+    $options = new \Dompdf\Options();
+    $options->set('isHtml5ParserEnabled', true);
+    $options->set('isRemoteEnabled', true); 
+    $dompdf = new \Dompdf\Dompdf($options);
+
+    ob_start();
+    include __DIR__ . '/../../views/supervisor/reports/mechanic_pdf_template.php';
+    $html = ob_get_clean();
+
+    $dompdf->loadHtml($html);
+    $dompdf->setPaper('A4', 'portrait');
+    $dompdf->render();
+
+    $filename = "Mechanic_Report_" . ($date ?? date('Y-m-d')) . ".pdf";
+    $dompdf->stream($filename, ["Attachment" => true]);
+    exit;
+}
+
+public function exportDaily()
+{
+    $reportModel = new \app\model\supervisor\Report();
+    $branchId = $_SESSION['user']['branch_id'] ?? null;
+    
+    $date = $_REQUEST['date'] ?? date('Y-m-d');
+    $mechanicCode = $_REQUEST['mechanic'] ?? null;
+    $format = $_GET['format'] ?? 'csv';
+
+    $dailyReport = $reportModel->getDailyJobCompletion($date, $mechanicCode, $branchId);
+    $summary = $reportModel->getBranchPerformanceSummary($branchId, $date);
+
+    if ($format === 'csv') {
+        header('Content-Type: text/csv');
+        header('Content-Disposition: attachment; filename="Daily_Report_'.date('Y-m-d').'.csv"');
+        
+        $output = fopen('php://output', 'w');
+        
+        fputcsv($output, ['Report Date       ', 'Mechanic Code', 'Total Completed', 'On-Time', 'Delayed', 'Avg Time (Mins)']);
+        
+        foreach ($dailyReport as $row) {
+            fputcsv($output, [
+                $row['report_date'] . "\t", 
+                $row['mechanic_code'],
+                $row['total_completed'],
+                $row['on_time'],
+                $row['delayed_count'],
+                round($row['avg_completion_time'], 2)
+            ]);
+        }
+        fclose($output);
+        exit;
+    } else {
+        $options = new \Dompdf\Options();
+        $options->set('isRemoteEnabled', true);
+        $dompdf = new \Dompdf\Dompdf($options);
+
+        $chartStatus = $_POST['chart_status'] ?? null;
+        $chartHourly = $_POST['chart_hourly'] ?? null;
+        $chartTrend  = $_POST['chart_trend'] ?? null;
+
+        ob_start();
+        include __DIR__ . '/../../views/supervisor/reports/daily_jobs_pdf.php';
+        $html = ob_get_clean();
+
+        $dompdf->loadHtml($html);
+        $dompdf->setPaper('A4', 'portrait');
+        $dompdf->render();
+        $dompdf->stream("Daily_Report_$date.pdf", ["Attachment" => true]);
+        exit;
+    }
+}
 
 }

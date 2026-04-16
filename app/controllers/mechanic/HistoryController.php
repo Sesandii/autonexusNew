@@ -11,13 +11,9 @@ class HistoryController extends Controller
     public function __construct()
     {
         $this->requireAdmin();
-        // ✅ Use global db() helper which returns the PDO instance
         $this->appointmentModel = new Appointment(db());
     }
 
-    /** 
-     * ✅ Show the vehicle history search page 
-     */
     public function index()
     {
         $this->view('mechanic/history/index');
@@ -49,7 +45,6 @@ class HistoryController extends Controller
         );
     }
 
-        // ✅ Render the history result view
         $this->view('mechanic/history/show', [
             'vehicle' => $vehicle,
             'appointments' => $appointments
@@ -57,16 +52,10 @@ class HistoryController extends Controller
     }
 
     
-
-    /**
-     * ✅ Show detailed info for a specific appointment
-     * Example URL: /mechanic/history/details/12
-     */
     public function details($appointmentId)
     {
         $appointmentId = (int)$appointmentId;
 
-        // Get full appointment details (joins: services, vehicle, customer, work_order)
         $details = $this->appointmentModel->getAppointmentDetails($appointmentId);
 
         if (!$details) {
@@ -78,7 +67,6 @@ class HistoryController extends Controller
             exit;
         }
 
-        // ✅ Render the details view
         $this->view('mechanic/history/details', ['details' => $details]);
     }
     private function requireAdmin(): void

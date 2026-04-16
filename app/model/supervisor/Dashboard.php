@@ -14,7 +14,7 @@ class Dashboard
 
     public function getSupervisorBranch(int $supervisor_id): int
 {
-    // Check if the column is 'user_id' or 'supervisor_id' in your DB
+
     $sql = "SELECT branch_id FROM supervisors WHERE user_id = ? LIMIT 1";
     
     $stmt = $this->pdo->prepare($sql);
@@ -22,8 +22,7 @@ class Dashboard
     $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if (!$result) {
-        // DEBUG: If no row is found, this will help us know
-        // error_log("No supervisor found in table for ID: " . $supervisor_id);
+
         return 0; 
     }
 
@@ -68,7 +67,6 @@ public function getWorkorderStats(int $supervisor_id, int $branch_id): array
         ";
 
         $stmt = $this->pdo->prepare($sql);
-        // Pass branch_id for the branch filters and supervisor_id for 'my_assigned'
         $stmt->execute([$branch_id, $branch_id, $branch_id, $branch_id, $supervisor_id, $branch_id]);
 
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -101,8 +99,7 @@ public function getWorkorderStats(int $supervisor_id, int $branch_id): array
     ";
 
     $stmt = $this->pdo->prepare($sql);
-    
-    // ✅ PASS THE VARIABLE HERE
+
     $stmt->execute([$branch_id]); 
     
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -130,9 +127,6 @@ public function getWorkorderStats(int $supervisor_id, int $branch_id): array
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    /**
-     * 🔹 New Method: Get number of appointments for each day in the last 7 days
-     */
     public function getWeeklyAppointments(int $branch_id): array
 {
     $sql = "

@@ -16,14 +16,11 @@
     Coordinate <span class="sep"></span> 
   </div>
 <h1>Mechanic Coordination</h1>
-<!-- Filter Form -->
 <form method="get" class="filter-form">
-    <!-- Filter Form -->
 <div class="filter-form">
     <select id="filter-code">
         <option value="">All Mechanic Codes</option>
         <?php
-        // Get unique mechanic codes
         $codes = array_unique(array_column($mechanics, 'mechanic_code'));
         foreach ($codes as $code): ?>
             <option value="<?= htmlspecialchars($code) ?>"><?= htmlspecialchars($code) ?></option>
@@ -38,7 +35,6 @@
             <option value="<?= htmlspecialchars($spec) ?>"><?= htmlspecialchars($spec) ?></option>
         <?php endforeach; ?>
     </select>
-
     <select id="filter-status">
         <option value="">All Statuses</option>
         <?php
@@ -47,11 +43,9 @@
             <option value="<?= $st ?>"><?= $st ?></option>
         <?php endforeach; ?>
     </select>
-
     <button type="button" id="reset-filters" class="btn reset">Reset</button>
 </div>
 </form>
-
 <div class="mechanic-board">
 
 <?php foreach($mechanics as $mech): 
@@ -97,7 +91,6 @@ $end   = new DateTime($wo['calculated_end']);
     <?php endif; endforeach; ?>
   </div>
 
-  <!-- Update Status -->
   <form method="post" action="<?= BASE_URL ?>/supervisor/coordination/updateMechanicStatus">
     <input type="hidden" name="mechanic_id" value="<?= $mech['mechanic_id'] ?>">
     <input type="hidden" name="mechanic_code" value="<?= htmlspecialchars($mech['mechanic_code']) ?>">
@@ -109,7 +102,6 @@ $end   = new DateTime($wo['calculated_end']);
 </select>
     <button class="update-btn">Update</button>
   </form>
-<!-- Assign Job Button -->
 <form method="get" action="<?= BASE_URL ?>/supervisor/workorders/create">
     <input type="hidden" name="mechanic_id" value="<?= $mech['mechanic_id'] ?>">
     <input type="hidden" name="mechanic_spec" value="<?= htmlspecialchars($mech['specialization']) ?>">
@@ -117,10 +109,7 @@ $end   = new DateTime($wo['calculated_end']);
 </form>
 </div>
 <?php endforeach; ?>
-
 </div>
-
-
 </main>
 <script>
 const codeInput = document.getElementById('filter-code');
@@ -151,7 +140,6 @@ function filterMechanics() {
     });
 }
 
-// Event listeners
 codeInput.addEventListener('change', filterMechanics);
 specSelect.addEventListener('change', filterMechanics);
 statusSelect.addEventListener('change', filterMechanics);
@@ -163,7 +151,6 @@ resetBtn.addEventListener('click', () => {
     filterMechanics();
 });
 
-// Initial filter on page load
 filterMechanics();
 
 </script>

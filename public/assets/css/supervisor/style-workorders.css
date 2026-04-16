@@ -97,9 +97,9 @@ header {
 
 .workorders td:last-child {
   display: flex;
-  gap: 8px; /* Adds space between buttons */
+  gap: 8px; 
   align-items: center;
-  white-space: nowrap; /* Prevents buttons from wrapping weirdly */
+  white-space: nowrap; 
 }
 
 .status {
@@ -129,7 +129,6 @@ header {
   color: #14532d;
 }
 
-/* Modal */
 .modal {
   position: fixed;
   inset: 0;
@@ -191,7 +190,6 @@ header {
   border-radius: 6px;
 }
 
-/* Drawer (View Panel) */
 .drawer {
   position: fixed;
   right: 0;
@@ -222,7 +220,6 @@ header {
   cursor: pointer;
 }
 
-/* Bottom-right container */
 .toast-container {
   position: fixed;
   bottom: 20px;
@@ -230,23 +227,19 @@ header {
   z-index: 99999;
 }
 
-/* Toast box */
 .toast-message {
-  background: #000; /* black */
+  background: #000; 
   color: #fff;
   padding: 14px 18px;
   border-radius: 8px;
   min-width: 250px;
   font-size: 14px;
   box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-
-  /* animation */
   opacity: 0;
   transform: translateY(30px);
   animation: slideUp 0.4s ease forwards, fadeOut 0.4s ease 3s forwards;
 }
 
-/* Type colors (left border only) */
 .toast-message.success {
   border-left: 5px solid #28a745;
 }
@@ -259,7 +252,6 @@ header {
   border-left: 5px solid #ffc107;
 }
 
-/* Animations */
 @keyframes slideUp {
   to {
       opacity: 1;
@@ -274,23 +266,19 @@ header {
   }
 }
 
-/* Fade out animation (optional) */
 .toast.hide {
   opacity: 0;
   transform: translateX(50px);
 }
 
-
-/* Filter bar layout */
 .table-filters {
   display: flex;
   align-items: center;
   gap: 10px;
-  flex-wrap: nowrap;   /* keep in one line */
+  flex-wrap: nowrap;   
   margin-top: 12px;
 }
 
-/* Small inputs & dropdowns */
 .table-filters input,
 .table-filters select {
   min-width: 130px;
@@ -324,7 +312,7 @@ header {
 .second-row {
   grid-template-columns: repeat(2, 1fr);
   max-width: 66%;
-  margin: 20px auto 0 auto; /* centers the row */
+  margin: 20px auto 0 auto; 
 }
 
 .info-tile {
@@ -343,7 +331,6 @@ header {
   box-shadow: 0 14px 30px rgba(0, 0, 0, 0.08);
 }
 
-/* Top accent line */
 .info-tile::before {
   content: "";
   position: absolute;
@@ -354,10 +341,6 @@ header {
   background: linear-gradient(to right, #f63b3b, #000000);
 }
 
-/* ============================= */
-/* TILE HEADER */
-/* ============================= */
-
 .info-tile h3 {
   font-size: 17px;
   font-weight: 600;
@@ -365,10 +348,6 @@ header {
   color: #1f2937;
   letter-spacing: 0.3px;
 }
-
-/* ============================= */
-/* TILE CONTENT */
-/* ============================= */
 
 .tile-content p {
   font-size: 14px;
@@ -380,7 +359,6 @@ header {
   color: #111827;
 }
 
-/* Summary Box */
 .summary {
   background: #f9fafb;
   padding: 10px;
@@ -390,10 +368,6 @@ header {
   border: 1px solid #e5e7eb;
 }
 
-/* ============================= */
-/* STATUS BADGES */
-/* ============================= */
-
 .status {
   display: inline-block;
   padding: 5px 12px;
@@ -402,7 +376,6 @@ header {
   font-weight: 600;
 }
 
-/* Customize based on status value */
 .status.Pending {
   background: #fef3c7;
   color: #92400e;
@@ -442,7 +415,6 @@ header {
   font-weight: 600;
 }
 
-/* Modal Overlay */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -456,7 +428,6 @@ header {
   z-index: 9999;
 }
 
-/* Modal Box */
 .modal-box {
   background: #fff;
   padding: 25px;
@@ -476,13 +447,11 @@ header {
   justify-content: space-between;
 }
 
-/* Smooth animation */
 @keyframes fadeIn {
   from { transform: translateY(-10px); opacity: 0; }
   to { transform: translateY(0); opacity: 1; }
 }
 
-/* Specific override for the Reset Button */
 #resetFilters.btn {
   background-color: #000000 !important;
   color: #ffffff !important;
@@ -490,13 +459,11 @@ header {
   transition: background-color 0.2s ease;
 }
 
-/* Hover effect so users know it's clickable */
 #resetFilters.btn:hover {
   background-color: #333333 !important;
   border-color: #333333 !important;
 }
 
-/* Container and Header Styling */
 .container2 {
   max-width: 1200px;
   margin: 0 auto;
@@ -515,7 +482,6 @@ header {
   padding-bottom: 20px;
 }
 
-/* The Tiles Grid */
 .tiles-container2 {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -523,7 +489,6 @@ header {
   margin-bottom: 20px;
 }
 
-/* Individual Tile Styling */
 .info-tile2 {
   background: #ffffff;
   border-radius: 12px;
@@ -539,15 +504,14 @@ header {
 
 .info-tile2 h3 {
   font-size: 1.1rem;
-  color: #002d5b; /* Professional Dark Blue */
+  color: #002d5b; 
   margin-bottom: 18px;
-  border-left: 4px solid #f05a5a; /* Accent line */
+  border-left: 4px solid #f05a5a; 
   padding-left: 12px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
-/* Content Layout inside tiles */
 .tile-content2 p {
   margin: 12px 0;
   display: flex;
@@ -561,7 +525,6 @@ header {
   font-weight: 500;
 }
 
-/* Status Badge Styles */
 .status2 {
   padding: 4px 12px;
   border-radius: 20px;
@@ -575,7 +538,6 @@ header {
 .status2.on_hold { background: #fffaf0; color: #dd6b20; }
 .status2.open { background: #ebf8ff; color: #3182ce; }
 
-/* Large Summary Text */
 .summary {
   background: #f8fafc;
   padding: 12px;
@@ -592,23 +554,22 @@ header {
   gap: 8px;
   margin-bottom: 12px;
   font-size: 0.8rem;
-  color: #718096; /* Muted grey for secondary info */
+  color: #718096; 
   text-transform: uppercase;
   letter-spacing: 0.5px;
   font-weight: 500;
 }
 
 .breadcrumb-text .sep {
-  color: #cbd5e0; /* Even lighter grey for the arrow */
+  color: #cbd5e0;
   font-weight: 400;
 }
 
 .breadcrumb-text .active-page {
-  color: #f05a5a; /* Red accent to show current location */
+  color: #f05a5a; 
   font-weight: 600;
 }
 
-/* Styles the select box itself when a blurred mechanic is somehow selected */
 #mechanicSelect option:disabled {
   cursor: not-allowed;
   filter: blur(1px);
@@ -620,7 +581,7 @@ header {
 }
 
 .status.draft {
-  background-color: #e2e8f0; /* Light Gray */
+  background-color: #e2e8f0; 
   color: #475569;
   padding: 4px 12px;
   border-radius: 20px;
@@ -630,10 +591,19 @@ header {
 }
 
 .status.submitted {
-  background-color: #dcfce7; /* Light Green */
+  background-color: #dcfce7; 
   color: #166534;
   padding: 4px 12px;
   border-radius: 20px;
   font-size: 12px;
   font-weight: 600;
+}
+
+.btn.small.download {
+  background-color: #059669; 
+  color: white;
+}
+
+.btn.small.download:hover {
+  background-color: #047857;
 }

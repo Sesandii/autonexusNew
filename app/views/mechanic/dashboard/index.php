@@ -45,24 +45,7 @@ $currentMechanicId = $_SESSION['user']['mechanic_id'] ?? null;
             <p><?= $stats['completed'] ?? 0 ?></p>
         </div>
     </div>
-
-    
-    <section class="details-column">
-    <div class="active-job-card">
-    <?php if ($active_job): ?>
-        <div class="job-content">
-            <span class="badge-status">IN PROGRESS</span>
-            <h4><?= htmlspecialchars($active_job['service_name']) ?></h4>
-            <p><?= htmlspecialchars($active_job['vehicle']) ?></p>
-        </div>
-        <a href="<?= $base ?>/mechanic/jobs/view/<?= $active_job['work_order_id'] ?>" class="btn-edit-black">
-             Edit
-        </a>
-    <?php else: ?>
-        <p class="no-job-text">No active job in progress.</p>
-    <?php endif; ?>
-</div>
-<div class="table-container">
+    <div class="table-container">
     <div class="table-header">
         <h3>Today's Appointments</h3>
         <select id="assignmentFilter" class="filter-select">
@@ -100,6 +83,21 @@ $currentMechanicId = $_SESSION['user']['mechanic_id'] ?? null;
             </tbody>
         </table>
     </div>
+</div>
+    <section class="details-column">
+    <div class="active-job-card">
+    <?php if ($active_job): ?>
+        <div class="job-content">
+            <span class="badge-status">IN PROGRESS</span>
+            <h4><?= htmlspecialchars($active_job['service_name']) ?></h4>
+            <p><?= htmlspecialchars($active_job['vehicle']) ?></p>
+        </div>
+        <a href="<?= $base ?>/mechanic/jobs/view/<?= $active_job['work_order_id'] ?>" class="btn-edit-black">
+             Edit
+        </a>
+    <?php else: ?>
+        <p class="no-job-text">No active job in progress.</p>
+    <?php endif; ?>
 </div>    
     </section>
   </div>
