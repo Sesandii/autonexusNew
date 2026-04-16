@@ -19,20 +19,18 @@ class DashboardController extends Controller
     $userId = $_SESSION['user']['user_id'];
     $model = new Dashboard();
 
-    // 1. Convert user_id → mechanic_id
     $mechanicId = $model->getMechanicIdByUser($userId);
  
     if (!$mechanicId) {
         die('Mechanic profile not found');
     }
 
-    // 2. Get the branch_id for this mechanic
     $branchId = $model->getBranchIdByMechanic($mechanicId);
 
 $data = [
     'mechanic_id' => $mechanicId,
     'stats' => $model->getWorkorderStatsByUser($userId),
-    'branch_pending' => $model->getPendingAppointmentsCountByBranch($branchId), // New key
+    'branch_pending' => $model->getPendingAppointmentsCountByBranch($branchId),
     'appointments' => $model->getTodayAppointments($branchId),
     'active_job' => $model->getCurrentActiveJob($userId)
 ];

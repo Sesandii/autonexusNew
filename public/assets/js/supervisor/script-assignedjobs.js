@@ -53,7 +53,7 @@ document.addEventListener("DOMContentLoaded", function () {
         serviceFilter.value = "";
         mechanicFilter.value = "";
         statusFilter.value = "";
-        filterJobs(); // ✅ correct function name
+        filterJobs(); 
     });
     filterJobs();
     

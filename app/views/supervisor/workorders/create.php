@@ -27,7 +27,6 @@
     <form method="post" action="<?= $base ?>/supervisor/workorders">
       <div class="form-grid">
 
-        <!-- Appointment Dropdown -->
         <div class="form-group">
           <label class="required">Appointment</label>
           <select name="appointment_id" id="appointment_id" required>
@@ -47,36 +46,29 @@
           <div class="help">Only “requested” appointments are shown.</div>
         </div>
 
-        <!-- Mechanic Dropdown -->
         <div class="form-group">
     <label class="required">Mechanic</label>
     <select name="mechanic_id" id="mechanic_id" class="form-control">
     <option value="">-- Select Mechanic --</option>
     <?php foreach ($activeMechanics as $mech): 
-        // Normalize status for reliable comparison
         $rawStatus = $mech['status'] ?? 'available';
         $status = strtolower($rawStatus); 
         $isSelected = ($selectedMechanicId == $mech['mechanic_id']);
         
-        // Default UI states
         $style = "";
         $labelSuffix = "";
         $isDisabledAttr = "";
 
-        // Logic for specialized statuses
         if ($status === 'on break') {
             $style = "filter: blur(1px); opacity: 0.5; color: #999;";
             $labelSuffix = " (On Break)";
-            // Only disable if it's NOT the currently assigned mechanic
             if (!$isSelected) $isDisabledAttr = "disabled"; 
             
         } elseif ($status === 'busy') {
             $labelSuffix = " (Busy)";
-            // We keep them enabled so supervisors can still assign if urgent
             $style = "color: #d9534f; font-weight: bold;"; 
             
         } elseif ($status === 'off-duty') {
-            // Hide off-duty mechanics entirely unless they are already assigned to this WO
             if (!$isSelected) continue; 
             $labelSuffix = " (Off-Duty)";
             $isDisabledAttr = "disabled";
@@ -93,14 +85,12 @@
     <?php endforeach; ?>
 </select>
 </div>
-        <!-- Service Display -->
         <div class="form-group">
           <label>Service (from appointment)</label>
           <input type="text" id="service_display" value="" readonly>
           <div class="help">This is derived from the selected appointment.</div>
         </div>
 
-        <!-- Status -->
         <div class="form-group">
           <label class="required">Status</label>
           <select name="status">
@@ -112,7 +102,6 @@
           </select>
         </div>
 
-        <!-- Service Summary -->
         <div class="form-group summary-group">
     <label>Service Summary</label>
     <textarea name="service_summary" placeholder="Notes, observations, extra work…"></textarea>
@@ -141,7 +130,6 @@
     const svc  = document.getElementById('service_display');
     const checklistDisplay = document.getElementById('checklist-display');
 
-    // Templates passed from backend
     const templates = <?= json_encode($allTemplates ?? []) ?>;
 
     function applyFromOption(opt) {
@@ -169,7 +157,6 @@
             applyFromOption(appt.options[appt.selectedIndex]);
         });
 
-        // Apply service & checklist if a value is pre-selected
         if (appt.value) {
             applyFromOption(appt.options[appt.selectedIndex]);
         }
@@ -180,7 +167,7 @@ document.addEventListener("DOMContentLoaded", function () {
     if (toast) {
         setTimeout(() => {
             toast.classList.add('hide');
-        }, 3000); // hide after 5 seconds
+        }, 3000);
     }
 });
 

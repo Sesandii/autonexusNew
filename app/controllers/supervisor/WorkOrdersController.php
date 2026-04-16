@@ -22,13 +22,11 @@ class WorkOrdersController extends Controller
     $branchId = $_SESSION['user']['branch_id'] ?? null;
 
     if (!$branchId) {
-        // Optional: handle cases where a user isn't assigned to a branch
         die("Error: No branch assigned to this user.");
     }
 
     $m = new WorkOrder();
 
-    // Pass the branchId here
     $workOrders = $m->getAll((int)$branchId);
 
     $data = [
@@ -48,11 +46,8 @@ class WorkOrdersController extends Controller
         
         if (session_status() !== PHP_SESSION_ACTIVE) session_start();
         
-        // 1. Get Supervisor's branch from the session
-        // This assumes your login process stores the branch_id in the session
         $branchId = $_SESSION['user']['branch_id'] ?? null;
     
-        // Appointment coming from dashboard
         $appointmentId = $_GET['appointment_id'] ?? null;
     
         if ($appointmentId) {
@@ -78,12 +73,9 @@ class WorkOrdersController extends Controller
                 }
             }
         }
-    
-        // 2. Fetch mechanics ONLY for the supervisor's branch
-        // We update the method call to pass $branchId
+
         $activeMechanics = $m->getActiveMechanicsByBranch($branchId);
     
-        // Count active work orders per mechanic_code
         $mechanicLimits = [];
         foreach ($activeMechanics as $mech) {
             $mechanicCode = $mech['mechanic_code'] ?? null;
@@ -92,7 +84,6 @@ class WorkOrdersController extends Controller
             }
         }
     
-        // Pre-selected mechanic (from coordination page)
         $selectedMechanicId   = $_GET['mechanic_id'] ?? null;
         $selectedMechanicSpec = $_GET['mechanic_spec'] ?? null;
     
@@ -129,14 +120,12 @@ public function store()
     $appointment_id = (int)($_POST['appointment_id'] ?? 0);
     $mechanic_id = !empty($_POST['mechanic_id']) ? (int)$_POST['mechanic_id'] : null;
 
-    // ✅ Validate mechanic selection
     if (!$mechanic_id) {
         $this->flash('danger', 'Please select a mechanic.');
         header('Location: ' . rtrim(BASE_URL,'/') . '/supervisor/workorders/create');
         exit;
     }
 
-    // 🔹 Mechanic limit check (max 5 active work orders per mechanic_code)
     $mechanic = $m->getMechanicById($mechanic_id);
     $mechanicCode = $mechanic['mechanic_code'] ?? null;
 
@@ -155,23 +144,16 @@ public function store()
         exit;
     }
 
-    // 🔹 CREATE WORK ORDER
-   // 🔹 Determine correct status (only 1 in_progress allowed)
-//$hasActive = $m->hasActiveInProgressJob($mechanic_id);
-//$status = $hasActive ? 'open' : 'in_progress';
 $status = $_POST['status'] ?? 'open';
 
 if ($mechanic_id && ($status === 'in_progress')) {
         
-    // We check if this mechanic already has ANY job that is 'in_progress' or 'on_hold'
-    // Using the model method we discussed earlier
     if ($m->hasActiveJobInRestrictedStatuss($mechanic_id)) {
         $this->flash('danger', "This mechanic already has a job 'In Progress'. Please pause or complete it first.");
         header('Location: ' . rtrim(BASE_URL,'/') . '/supervisor/workorders');
         exit;
     }
 }
-// 🔹 CREATE WORK ORDER
 $workOrderId = $m->create([
     'appointment_id'  => $appointment_id,
     'mechanic_id'     => $mechanic_id,
@@ -182,7 +164,6 @@ $workOrderId = $m->create([
 ]);
 
 
-    // After creating the work order in WorkOrdersController->store()
 if ($mechanic_id) {
     $mechanic = $m->getMechanicById($mechanic_id);
     $mechanicCode = $mechanic['mechanic_code'] ?? null;
@@ -192,8 +173,6 @@ if ($mechanic_id) {
     }
 }
 
-
-    // 🔹 CREATE CHECKLIST (existing logic remains)
     $serviceId = $m->getServiceIdByAppointment($appointment_id);
 
     if ($serviceId) {
@@ -211,8 +190,6 @@ if ($mechanic_id) {
 
     $apptData = $m->getAppointmentById($appointment_id);
 $vehicleId = $apptData['vehicle_id'] ?? null;
-
-// ... existing code: $workOrderId = $m->create([...]);
 
 $appt = $m->getAppointmentById($appointment_id);
 if ($appt && !empty($appt['vehicle_id'])) {
@@ -246,8 +223,7 @@ if ($appt && !empty($appt['vehicle_id'])) {
 {
     if (session_status() !== PHP_SESSION_ACTIVE) session_start();
     $supervisor_id = $_SESSION['user']['user_id'] ?? null;
-    
-    // 1. Get the branch ID from the session
+
     $branchId = $_SESSION['user']['branch_id'] ?? null;
 
     $m = new WorkOrder();
@@ -261,17 +237,14 @@ if ($appt && !empty($appt['vehicle_id'])) {
 
     $checklistModel = new \app\model\supervisor\Checklist();
 
-    // Get existing checklist items
     $checklist = $checklistModel->getByWorkOrder((int)$id);
 
-    // Get template items
     $serviceId = $wo['service_id'] ?? null;
     $templateItems = [];
     if ($serviceId) {
         $templateItems = $checklistModel->getTemplateByService($serviceId);
     }
 
-    // Merge template logic
     $finalChecklist = [];
     $existingNames = array_column($checklist, 'item_name');
 
@@ -282,13 +255,10 @@ if ($appt && !empty($appt['vehicle_id'])) {
     }
     $finalChecklist = array_merge($checklist, $finalChecklist);
 
-    // Get only branch-based appointments
     $availableAppointments = $m->getAvailableAppointments($supervisor_id);
 
-    // 2. Updated: Get ONLY mechanics for the supervisor's branch
     $activeMechanics = $m->getActiveMechanicsByBranch($branchId);
 
-    // Count active work orders per mechanic_code
     $mechanicLimits = [];
     foreach ($activeMechanics as $mech) {
         $mechanicCode = $mech['mechanic_code'] ?? null;
@@ -301,7 +271,7 @@ if ($appt && !empty($appt['vehicle_id'])) {
     $data = [
         'wo'                    => $wo,
         'availableAppointments' => $availableAppointments,
-        'activeMechanics'       => $activeMechanics, // Now filtered by branch
+        'activeMechanics'       => $activeMechanics, 
         'mechanicLimits'        => $mechanicLimits,
         'checklist'             => $finalChecklist,
         'selectedMechanicId'    => $wo['mechanic_id']
@@ -330,7 +300,6 @@ if ($appt && !empty($appt['vehicle_id'])) {
             exit;
         }
     
-        // 🔹 Get the mechanic ID from form and validate
         $newMechanicId = !empty($_POST['mechanic_id']) ? (int)$_POST['mechanic_id'] : null;
         if (!$newMechanicId) {
             $this->flash('danger', 'Please select a mechanic.');
@@ -338,18 +307,14 @@ if ($appt && !empty($appt['vehicle_id'])) {
             exit;
         }
     
-        // 🔹 Mechanic limit check (max 5 active work orders per mechanic_code)
         $newStatus = $_POST['status'] ?? 'open';
     $currentStatus = strtolower($wo['status'] ?? '');
 
-    // 🔹 REASSIGNMENT & STATUS VALIDATION
     $isActiveState = ($newStatus === 'in_progress');
     $mechanicChanged = ($newMechanicId != $wo['mechanic_id']);
 
     if ($isActiveState || ($mechanicChanged && $isActiveState)) {
         
-        // Pass the current $id to EXCLUDE this specific work order from the count
-        // We only care if they have a DIFFERENT job that is active
         if ($m->hasActiveJobInRestrictedStatus($newMechanicId, (int)$id)) {
             $this->flash('danger', "This mechanic already has a job 'In Progress' or 'On Hold'. You cannot assign them another active task.");
             header('Location: ' . rtrim(BASE_URL,'/') . "/supervisor/workorders");
@@ -357,7 +322,6 @@ if ($appt && !empty($appt['vehicle_id'])) {
         }
     }
 
-    // 🔹 Mechanic total limit check (max 5 jobs total)
     if ($mechanicChanged) {
         $mechanic = $m->getMechanicById($newMechanicId);
         $mechanicCode = $mechanic['mechanic_code'] ?? null;
@@ -371,7 +335,6 @@ if ($appt && !empty($appt['vehicle_id'])) {
         }
     }
 
-        // After checking the mechanic limit and before updating
 if ($newMechanicId) {
     $newMechanic = $m->getMechanicById($newMechanicId);
     $newMechanicCode = $newMechanic['mechanic_code'] ?? null;
@@ -381,7 +344,6 @@ if ($newMechanicId) {
     }
 }
 
-// Optional: Also update old mechanic if reassigned
 $oldMechanicId = $wo['mechanic_id'] ?? null;
 if ($oldMechanicId && $oldMechanicId != $newMechanicId) {
     $oldMechanic = $m->getMechanicById($oldMechanicId);
@@ -392,7 +354,6 @@ if ($oldMechanicId && $oldMechanicId != $newMechanicId) {
 }
 
     
-        // 🔹 Update work order
         $payload = [
             'appointment_id'  => (int)($_POST['appointment_id'] ?? 0),
             'mechanic_id'     => $newMechanicId,
@@ -401,15 +362,11 @@ if ($oldMechanicId && $oldMechanicId != $newMechanicId) {
         ];
         $m->update((int)$id, $payload, $supervisor_id);
     
-        // 🔹 Update status
-        // 🔹 Update status with timer logic
 $newStatus = $_POST['status'] ?? 'open';
 $currentStatus = strtolower($wo['status'] ?? '');
 
 
-// 🔹 NEW VALIDATION: One "in_progress" job per mechanic
 if (($newStatus === 'in_progress') && $currentStatus !== $newStatus) {
-    // We pass the $id to exclude the current work order from the check
     if ($m->hasActiveInProgressJob($newMechanicId, (int)$id)) {
         $this->flash('danger', "This mechanic already has a job 'In Progress'. Please pause or complete it first.");
         header('Location: ' . rtrim(BASE_URL,'/') . "/supervisor/workorders");
@@ -421,9 +378,6 @@ if (($newStatus === 'in_progress') && $currentStatus !== $newStatus) {
 
 if ($newStatus !== $currentStatus) {
 
-    // ===============================
-    // WHEN PAUSING (in_progress → on_hold)
-    // ===============================
     if ($newStatus === 'on_hold' && $currentStatus === 'in_progress') {
 
         if (!empty($wo['job_start_time'])) {
@@ -440,13 +394,9 @@ if ($newStatus !== $currentStatus) {
         }
     }
 
-    // ===============================
-    // WHEN RESUMING (on_hold → in_progress)
-    // ===============================
     if ($newStatus === 'in_progress' && $wo['status'] === 'on_hold') {
         $paused = (int)($wo['paused_remaining_seconds'] ?? 0);
-    
-        // Fetch service duration
+
         $stmt = db()->prepare("
             SELECT s.base_duration_minutes
             FROM work_orders w
@@ -475,11 +425,9 @@ if ($newStatus !== $currentStatus) {
         }
     }
 
-    // Finally update status
     $m->setStatusFromActor((int)$id, $newStatus, $supervisor_id);
 }
 
-        // 🔹 SYNC CHECKLIST (ADD / REMOVE / EDIT)
         $checklistModel = new \app\model\supervisor\Checklist();
         $checklistModel->deleteByWorkOrder((int)$id);
     
@@ -495,8 +443,6 @@ if ($newStatus !== $currentStatus) {
                 ]);
             }
         }
-
-        // ... existing code: $m->setStatusFromActor((int)$id, $newStatus, $supervisor_id);
 
 $vehicleId = $m->getVehicleIdByWorkOrder((int)$id);
 if ($vehicleId) {
@@ -535,15 +481,12 @@ if ($vehicleId) {
         exit;
     }
 
-    // ✅ Reset appointment status
     if (!empty($wo['appointment_id'])) {
         $m->setAppointmentStatus((int)$wo['appointment_id'], 'confirmed');
     }
 
-    // ✅ Delete work order
     $m->delete((int)$id, $supervisor_id);
 
-    // ✅ Update mechanic status AFTER deletion
     if (!empty($wo['mechanic_id'])) {
         $mechanic = $m->getMechanicById((int)$wo['mechanic_id']);
         if ($mechanic) {
@@ -552,10 +495,7 @@ if ($vehicleId) {
     }
 
 
-    // Fetch vehicle ID before the record is gone
 $vehicleId = $m->getVehicleIdByWorkOrder((int)$id);
-
-// ... existing code: $m->delete((int)$id, $supervisor_id);
 
 if ($vehicleId) {
     $m->updateVehicleStatus($vehicleId, 'available');

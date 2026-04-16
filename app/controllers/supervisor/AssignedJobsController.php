@@ -24,7 +24,7 @@ class AssignedJobsController extends Controller
     }
 
     $m = new WorkOrder();
-    $checklistModel = new Checklist(); // Initialize the Checklist model
+    $checklistModel = new Checklist(); 
     $workOrders = $m->getAssigned($supervisor_id);
 
     foreach ($workOrders as &$job) {
@@ -57,7 +57,6 @@ class AssignedJobsController extends Controller
         $counts = $checklistModel->getProgressCounts((int)$job['work_order_id']);
         
         if ($counts['total'] > 0) {
-            // Each item is worth (25 / total) percent
             $itemWeight = 25 / $counts['total'];
             $checklistProgress = $counts['completed'] * $itemWeight;
             $progress += $checklistProgress;
@@ -89,7 +88,6 @@ class AssignedJobsController extends Controller
     $photoModel     = new \app\model\supervisor\ServicePhoto();
 
 
-    // ✅ NOW $work_order_id EXISTS
     $job = $workOrderModel->getFullJobDetails($id);
     if (!$job) {
         die("404 Not found");
@@ -147,13 +145,11 @@ public function uploadPhoto()
         die('Upload failed');
     }
 
-    // ✅ Validate image type
     $allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp'];
     if (!in_array($file['type'], $allowedTypes)) {
         die('JPG, WEBP, PNG, JPEG allowed');
     }
 
-    // ✅ Generate safe file name
     $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
     $fileName  = uniqid('service_', true) . '.' . $extension;
 
@@ -164,11 +160,9 @@ public function uploadPhoto()
         die('Failed to save file');
     }
 
-    // ✅ Save to database
     $photoModel = new \app\model\supervisor\ServicePhoto();
     $photoModel->create($workOrderId, $fileName);
 
-    // 🔁 Redirect back to edit page
     header('Location: /autonexus/supervisor/assignedjobs/' . $workOrderId);
     exit;
 }
@@ -190,22 +184,18 @@ public function deletePhoto()
 
     $photoModel = new \app\model\supervisor\ServicePhoto();
 
-    // 1️⃣ Get photo details
     $photo = $photoModel->findById($photoId);
     if (!$photo) {
         die('Photo not found');
     }
 
-    // 2️⃣ Delete file from folder
     $filePath = dirname(__DIR__, 3) . '/public/assets/img/service_photos/' . $photo['file_name'];
     if (file_exists($filePath)) {
         unlink($filePath);
     }
 
-    // 3️⃣ Delete DB record
     $photoModel->delete($photoId);
 
-    // 4️⃣ Redirect back
     header('Location: /autonexus/supervisor/assignedjobs/' . $workOrderId);
     exit;
 }

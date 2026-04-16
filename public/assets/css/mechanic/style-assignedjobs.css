@@ -57,7 +57,7 @@ header h1 {
 }
 
 
-/* --- Job Section --- */
+
 .job-section h2 {
   margin-top: 10px;
   font-size: 24px;
@@ -68,7 +68,7 @@ header h1 {
   color: #777;
 }
 
-/* --- Job Grid (Tiles Layout) --- */
+
 .job-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -76,7 +76,6 @@ header h1 {
   margin-top: 20px;
 }
 
-/* --- Individual Job Card --- */
 .job-card {
   background: #fff;
   border-radius: 15px;
@@ -90,7 +89,6 @@ header h1 {
   box-shadow: 0 6px 12px rgba(0,0,0,0.15);
 }
 
-/* --- Job Card Content --- */
 .job-card h3 {
   margin-bottom: 10px;
   font-size: 18px;
@@ -108,7 +106,6 @@ header h1 {
   color: #000;
 }
 
-/* --- Actions --- */
 .job-actions {
   margin-top: 15px;
   display: flex;
@@ -177,10 +174,9 @@ header h1 {
   transition: width 0.4s ease;
 }
 
-/* Add to your existing style-assignedjobs.css */
 .job-card.disabled {
   opacity: 0.5;
-  pointer-events: none; /* disables clicks */
+  pointer-events: none; 
   filter: blur(1px);
 }
 
@@ -192,13 +188,13 @@ header h1 {
 
 .btn-black-tile {
   display: inline-block;
-  background-color: #000000; /* Pure black */
-  color: #ffffff;            /* White text */
-  padding: 10px 12px;        /* Vertical and Horizontal padding */
-  border-radius: 12px;       /* Smooth rounded corners like the image */
-  text-decoration: none;     /* Remove underline from link */
-  font-weight: bold;         /* Bold "View" text */
-  font-size: 0.75rem;         /* Slightly larger font */
+  background-color: #000000; 
+  color: #ffffff;            
+  padding: 10px 12px;        
+  border-radius: 12px;      
+  text-decoration: none;     
+  font-weight: bold;         
+  font-size: 0.75rem;        
   text-align: center;
   transition: background-color 0.2s ease, transform 0.1s ease;
   border: none;
@@ -206,10 +202,10 @@ header h1 {
 }
 
 .btn-black-tile:hover {
-  background-color: #222222; /* Dark grey on hover */
+  background-color: #222222;
   color: #ffffff;
 }
 
 .btn-black-tile:active {
-  transform: scale(0.96);    /* Slight "press" effect */
+  transform: scale(0.96);  
 }

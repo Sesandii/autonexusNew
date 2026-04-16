@@ -30,8 +30,8 @@ header {
 .search, 
 .filters select, 
 .btn.small {
-    height: 42px; /* Fixed height for perfect alignment */
-    box-sizing: border-box; /* Includes padding/border in the height */
+    height: 42px; 
+    box-sizing: border-box;
     font-size: 14px;
 }
 
@@ -68,7 +68,6 @@ header h1 {
   margin-bottom: 5px;
 }
 
-/* --- Job Section --- */
 .main h1 {
   margin-top: 10px;
   font-size: 30px;
@@ -85,7 +84,6 @@ header h1 {
   gap: 20px;
 }
 
-/* --- Job Grid (Tiles Layout) --- */
 .job-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -93,9 +91,6 @@ header h1 {
   margin-top: 20px;
 }
 
-
-
-/* --- Individual Job Card --- */
 .job-card {
   background: #fff;
   border-radius: 15px;
@@ -109,7 +104,6 @@ header h1 {
   box-shadow: 0 6px 12px rgba(0,0,0,0.15);
 }
 
-/* --- Job Card Content --- */
 .job-card h3 {
   margin-bottom: 10px;
   font-size: 18px;
@@ -127,7 +121,6 @@ header h1 {
   color: #000;
 }
 
-/* --- Actions --- */
 .job-actions {
   margin-top: 15px;
   display: flex;
@@ -166,22 +159,20 @@ header h1 {
 }
 
 .photos-box {
-  grid-column: 1 / -1; /* 👈 full width */
+  grid-column: 1 / -1; 
 }
 
-/* Checklist container */
 .checklist-box {
   background: #ffffff;
   border-radius: 14px;
   padding: 20px;
   margin-top: 20px;
-  grid-column: 1 / -1; /* 👈 spans all 3 columns */
+  grid-column: 1 / -1; 
 margin-top: 10px;
   border: 1px solid #e5e7eb;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
 }
 
-/* Title */
 .checklist-title {
   font-size: 16px;
   font-weight: 600;
@@ -189,20 +180,17 @@ margin-top: 10px;
   color: #111827;
 }
 
-/* Empty message */
 .checklist-empty {
   color: #dc2626;
   font-size: 14px;
 }
 
-/* Table */
 .checklist-table {
   width: 100%;
   border-collapse: collapse;
   font-size: 14px;
 }
 
-/* Header */
 .checklist-table thead th {
   background: #f9fafb;
   color: #374151;
@@ -211,18 +199,15 @@ margin-top: 10px;
   border-bottom: 1px solid #e5e7eb;
 }
 
-/* Rows */
 .checklist-table tbody td {
   padding: 12px;
   border-bottom: 1px solid #f1f5f9;
 }
 
-/* Hover effect */
 .checklist-table tbody tr:hover {
   background: #f9fafb;
 }
 
-/* Status badge */
 .status-badge {
   display: inline-block;
   padding: 5px 10px;
@@ -231,7 +216,6 @@ margin-top: 10px;
   font-weight: 500;
 }
 
-/* Status colors */
 .status-badge.done {
   background: #dcfce7;
   color: #166534;
@@ -242,12 +226,10 @@ margin-top: 10px;
   color: #92400e;
 }
 
-/* Inline form */
 .inline-form {
   display: inline;
 }
 
-/* Action buttons */
 .btn-action {
   border: none;
   border-radius: 8px;
@@ -257,7 +239,6 @@ margin-top: 10px;
   transition: background 0.2s ease;
 }
 
-/* Done button */
 .btn-action.done {
   background: #4ade80;
   color: #064e3b;
@@ -267,7 +248,6 @@ margin-top: 10px;
   background: #22c55e;
 }
 
-/* Undo button */
 .btn-action.undo {
   background: #fee2e2;
   color: #7f1d1d;
@@ -295,7 +275,6 @@ margin-top: 10px;
   border: 1px solid #ccc;
 }
 
-/* Shared card layout */
 .info-card {
   background: #ffffff;
   border-radius: 14px;
@@ -305,7 +284,6 @@ margin-top: 10px;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
 }
 
-/* Card title */
 .info-title {
   font-size: 20px;
   font-weight: 600;
@@ -313,7 +291,6 @@ margin-top: 10px;
   color: #111827;
 }
 
-/* Row layout */
 .info-row {
   display: flex;
   justify-content: space-between;
@@ -327,19 +304,16 @@ margin-top: 10px;
   border-bottom: none;
 }
 
-/* Labels */
 .info-row span:first-child {
   color: #6b7280;
   font-weight: 500;
 }
 
-/* Values */
 .info-row span:last-child {
   color: #111827;
   font-weight: 500;
 }
 
-/* Status pill */
 .status-pill {
   padding: 4px 10px;
   border-radius: 999px;
@@ -348,7 +322,6 @@ margin-top: 10px;
   text-transform: capitalize;
 }
 
-/* Status colors */
 .status-pill.completed {
   background: #dcfce7;
   color: #166534;
@@ -369,7 +342,6 @@ margin-top: 10px;
   color: #7f1d1d;
 }
 
-/* Upload form */
 .photo-upload-form {
   display: flex;
   gap: 12px;
@@ -385,14 +357,12 @@ margin-top: 10px;
   background: #f9fafb;
 }
 
-/* Photo grid */
 .photo-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
   gap: 16px;
 }
 
-/* Photo card */
 .photo-card {
   background: #ffffff;
   border-radius: 12px;
@@ -408,7 +378,6 @@ margin-top: 10px;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
 }
 
-/* Image */
 .photo-img {
   width: 100%;
   height: 120px;
@@ -418,14 +387,12 @@ margin-top: 10px;
   cursor: pointer;
 }
 
-/* Empty text */
 .empty-text {
   color: #6b7280;
   font-style: italic;
   margin-top: 10px;
 }
 
-/* Button reuse (if not already present) */
 .btn {
   padding: 6px 14px;
   border-radius: 8px;
@@ -450,37 +417,29 @@ margin-top: 10px;
   font-size: 12px;
 }
 
-/* ============================= */
-/*        FILTERS SECTION        */
-/* ============================= */
-
 .filters {
   display: flex;
   gap: 10px;
   align-items: center;
 }
 
-/* Dropdowns */
 .filters select {
-  padding: 0 30px 0 12px; /* Leaves room for the arrow icon */
+  padding: 0 30px 0 12px; 
   border: 1px solid #cbd5e0;
   border-radius: 6px;
   background-color: #fff;
 }
 
-/* Hover */
 .filters select:hover {
   border-color: #2563eb;
 }
 
-/* Focus */
 .filters select:focus {
   outline: none;
   border-color: #2563eb;
   box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
 }
 
-/* Mobile responsiveness */
 @media (max-width: 768px) {
   .filters {
     flex-direction: column;
@@ -517,7 +476,7 @@ margin-top: 10px;
 }
 
 .back-button-wrapper {
-  grid-column: 1 / -1;      /* full width */
+  grid-column: 1 / -1;      
   display: flex;
   margin: 30px 0 10px;
 }
@@ -564,7 +523,7 @@ margin-top: 10px;
   left: 0;
   width: 100%;
   height: 100%;
-  display: none; /* IMPORTANT */
+  display: none; 
   justify-content: center;
   align-items: center;
   background: rgba(0,0,0,0.5);
@@ -592,19 +551,19 @@ margin-top: 10px;
   gap: 8px;
   margin-bottom: 12px;
   font-size: 0.8rem;
-  color: #718096; /* Muted grey for secondary info */
+  color: #718096;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   font-weight: 500;
 }
 
 .breadcrumb-text .sep {
-  color: #cbd5e0; /* Even lighter grey for the arrow */
+  color: #cbd5e0; 
   font-weight: 400;
 }
 
 .breadcrumb-text .active-page {
-  color: #f05a5a; /* Red accent to show current location */
+  color: #f05a5a; 
   font-weight: 600;
 }
 
@@ -615,7 +574,6 @@ margin-top: 10px;
   transition: background-color 0.2s ease;
 }
 
-/* Hover effect so users know it's clickable */
 #resetFilters.btn:hover {
   background-color: #333333 !important;
   border-color: #333333 !important;

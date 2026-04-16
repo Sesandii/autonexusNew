@@ -7,7 +7,7 @@ class Mechanic {
 
     public function __construct()
     {
-        $this->pdo = db(); // existing helper
+        $this->pdo = db(); 
     }
 
     public function getMechanicsByBranch(int $branchId) {

@@ -16,10 +16,8 @@ class ComplaintsController extends Controller
 
     public function index()
     {
-        // Fetch all complaints with related info
         $complaints = $this->complaintModel->getAllComplaints();
 
-        // Pass to view
         $this->view('supervisor/complaints/index', [
             'complaints' => $complaints
         ]);

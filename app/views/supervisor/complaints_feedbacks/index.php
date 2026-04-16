@@ -15,7 +15,6 @@
     Supervisor <span class="sep">&gt;</span> 
     Complaints & Feedbacks <span class="sep"></span> 
   </div>
-  <!-- Toggle Buttons -->
   <header class="page-header">
   <h1>Customer Complaints & Feedbacks</h1>
     <div class="table-toggle">
@@ -25,7 +24,6 @@
     
   </header>
 
-  <!-- Complaints Filters -->
   <div id="complaints-filters" class="filter-bar">
     <input type="text" placeholder="Search complaints..." class="search" id="searchComplaints"/>
     <input type="date" id="dateComplaints"/>
@@ -44,7 +42,6 @@
     <button type="button" id="resetComplaints" class="reset-btn">Reset</button>
   </div>
 
-  <!-- Complaints Section -->
 <section class="data-section" id="complaints">
   <div class="complaints-grid">
     <?php if (!empty($complaints)): ?>
@@ -83,7 +80,6 @@
   </div>
 </section>
 
-<!-- Feedbacks Section -->
 <section class="data-section hidden" id="feedbacks">
   <div id="feedback-filters" class="filter-bar">
     <input type="text" placeholder="Search by customer, service..." class="search" id="searchFeedback"/>
@@ -115,8 +111,7 @@
                     </div>
                     <div class="rating-container">
     <?php 
-        // Determine color class based on rating
-        $ratingClass = 'rate-red'; // Default 1
+        $ratingClass = 'rate-red'; 
         if ($f['rating'] >= 4) {
             $ratingClass = 'rate-green';
         } elseif ($f['rating'] >= 2) {
@@ -148,7 +143,6 @@
 
 <script>
 document.addEventListener("DOMContentLoaded", function () {
-  // ---- Toggle Sections ----
   const buttons = document.querySelectorAll(".toggle-btn");
   const sections = document.querySelectorAll(".data-section");
   const complaintsFilters = document.getElementById("complaints-filters");
@@ -163,13 +157,11 @@ document.addEventListener("DOMContentLoaded", function () {
       const target = document.getElementById(btn.dataset.target);
       if(target) target.classList.remove("hidden");
 
-      // Show relevant filters
       complaintsFilters.style.display = (btn.dataset.target === "complaints") ? "flex" : "none";
       feedbackFilters.style.display = (btn.dataset.target === "feedbacks") ? "flex" : "none";
     });
   });
 
-  // ---- Complaints Filters ----
   const searchComplaints = document.getElementById("searchComplaints");
   const dateComplaints = document.getElementById("dateComplaints");
   const statusComplaints = document.getElementById("statusComplaints");
@@ -214,12 +206,9 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 
-// ---- Feedback Filters ----
-// ---- Feedback Filters ----
 const searchFeedback = document.getElementById("searchFeedback");
 const dateFeedback = document.getElementById("dateFeedback");
 const ratingFilter = document.getElementById("ratingFilter");
-// FIX: Changed ".card" to ".feedback-card" to match your HTML
 const feedbackCards = document.querySelectorAll(".feedback-card"); 
 const resetFeedback = document.getElementById("resetFeedback");
 
@@ -229,12 +218,10 @@ function filterFeedback() {
     const ratingVal = ratingFilter.value;
 
     feedbackCards.forEach(card => {
-        // Use textContent for better performance than innerText
         const text = card.textContent.toLowerCase();
         const cardDate = card.dataset.date;
         const cardRating = card.dataset.rating;
 
-        // Compare filters
         const matchesSearch = !searchVal || text.includes(searchVal);
         const matchesDate   = !dateVal   || cardDate === dateVal;
         const matchesRating = !ratingVal || cardRating === ratingVal;
@@ -247,12 +234,10 @@ function filterFeedback() {
     });
 }
 
-// Event Listeners for real-time filtering
-searchFeedback.addEventListener("input", filterFeedback); // 'input' is better than 'keyup' for catch-all
+searchFeedback.addEventListener("input", filterFeedback);
 dateFeedback.addEventListener("change", filterFeedback);
 ratingFilter.addEventListener("change", filterFeedback);
 
-// Reset functionality
 resetFeedback.addEventListener("click", () => {
     searchFeedback.value = "";
     dateFeedback.value = "";

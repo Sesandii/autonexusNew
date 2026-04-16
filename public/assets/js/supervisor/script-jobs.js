@@ -1,7 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
-  console.log("✅ scripts.js loaded");
+  console.log("scripts.js loaded");
 
-  // --- ELEMENT REFERENCES ---
   const modal = document.getElementById("jobModal");
   const modalTitle = document.getElementById("modalTitle");
   const jobForm = document.getElementById("jobForm");
@@ -20,11 +19,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const formAction = document.getElementById("form_action");
 
   if (!modal || !jobForm) {
-    console.error("❌ Required elements missing in HTML.");
+    console.error("Required elements missing in HTML.");
     return;
   }
 
-  // --- MODAL CONTROL ---
   const openModal = () => {
     modal.style.display = "flex";
     modal.setAttribute("aria-hidden", "false");
@@ -41,7 +39,6 @@ document.addEventListener("DOMContentLoaded", () => {
     saveBtn.textContent = "Create Job";
   };
 
-  // --- BUTTON HANDLERS ---
   if (addJobBtn) {
     addJobBtn.addEventListener("click", () => {
       console.log("➕ Add Job clicked");
@@ -58,13 +55,11 @@ document.addEventListener("DOMContentLoaded", () => {
   modalClose?.addEventListener("click", closeModal);
   modal.addEventListener("click", e => { if (e.target === modal) closeModal(); });
 
-  // --- DYNAMIC EVENT DELEGATION ---
   document.body.addEventListener("click", (e) => {
-    // ==== EDIT BUTTON ====
     if (e.target.classList.contains("edit-btn")) {
       const row = e.target.closest("tr");
       if (!row || !row.dataset.job) {
-        console.error("❌ Missing data-job attribute in row.");
+        console.error("Missing data-job attribute in row.");
         return;
       }
 
@@ -72,7 +67,7 @@ document.addEventListener("DOMContentLoaded", () => {
       try {
         job = JSON.parse(row.dataset.job);
       } catch (err) {
-        console.error("❌ Invalid JSON in data-job:", err);
+        console.error("Invalid JSON in data-job:", err);
         return;
       }
 
@@ -93,11 +88,10 @@ document.addEventListener("DOMContentLoaded", () => {
       openModal();
     }
 
-    // ==== VIEW BUTTON ====
     if (e.target.classList.contains("view-btn")) {
       const row = e.target.closest("tr");
       if (!row || !row.dataset.job) {
-        console.error("❌ Missing data-job attribute in row.");
+        console.error("Missing data-job attribute in row.");
         return;
       }
 
@@ -105,11 +99,11 @@ document.addEventListener("DOMContentLoaded", () => {
       try {
         job = JSON.parse(row.dataset.job);
       } catch (err) {
-        console.error("❌ Invalid JSON in data-job:", err);
+        console.error("Invalid JSON in data-job:", err);
         return;
       }
 
-      console.log("👁 Viewing job:", job);
+      console.log("Viewing job:", job);
 
       modalTitle.textContent = "View Job Details";
       formAction.value = "";
@@ -128,7 +122,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // --- CONFIRM UPDATE ---
   jobForm.addEventListener("submit", (e) => {
     if (formAction.value === "update_job") {
       const confirmUpdate = confirm("Do you want to save the changes to this job?");
@@ -136,5 +129,5 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  console.log("✅ scripts.js initialized successfully");
+  console.log("scripts.js initialized successfully");
 }); 
