@@ -179,12 +179,12 @@ $router->post('/admin/admin-appointments/delete', [AppointmentsController::class
 
 
 
-/** ======================
- *  ADMIN: View Services (route by code)
- *  ====================== */
-
 use app\controllers\admin\ServicesController;
+use app\controllers\admin\PackagesController;
 
+/** ======================
+ *  ADMIN: Services
+ *  ====================== */
 $router->get('/admin/admin-viewservices', [ServicesController::class, 'index']);
 $router->get('/admin/services', [ServicesController::class, 'index']);
 $router->get('/admin/services/create', [ServicesController::class, 'create']);
@@ -194,12 +194,14 @@ $router->post('/admin/services/{id}', [ServicesController::class, 'update']);
 $router->post('/admin/services/{id}/delete', [ServicesController::class, 'destroy']);
 
 /** ======================
- *  ADMIN: View Packages
+ *  ADMIN: Packages
  *  ====================== */
-$router->get('/admin/packages/create', [ServicesController::class, 'createPackage']);
-$router->post('/admin/packages', [ServicesController::class, 'storePackage']);
-$router->get('/admin/packages/{id}/edit', [ServicesController::class, 'editPackage']);
-$router->post('/admin/packages/{id}', [ServicesController::class, 'updatePackage']);
+$router->get('/admin/packages', [PackagesController::class, 'index']);
+$router->get('/admin/packages/create', [PackagesController::class, 'create']);
+$router->post('/admin/packages', [PackagesController::class, 'store']);
+$router->get('/admin/packages/{id}/edit', [PackagesController::class, 'edit']);
+$router->post('/admin/packages/{id}', [PackagesController::class, 'update']);
+$router->post('/admin/packages/{id}/delete', [PackagesController::class, 'destroy']);
 
 
 use app\controllers\admin\PricingController;
