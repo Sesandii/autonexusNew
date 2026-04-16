@@ -19,21 +19,21 @@ class Service
             FROM services
             WHERE service_code REGEXP '^SER[0-9]+$'
         ";
-        $row  = $this->pdo->query($sql)->fetch(PDO::FETCH_ASSOC);
-        $next = (int)($row['max_num'] ?? 0) + 1;
+        $row = $this->pdo->query($sql)->fetch(PDO::FETCH_ASSOC);
+        $next = (int) ($row['max_num'] ?? 0) + 1;
 
-        return 'SER' . str_pad((string)$next, 3, '0', STR_PAD_LEFT);
+        return 'SER' . str_pad((string) $next, 3, '0', STR_PAD_LEFT);
     }
 
     public function create(array $data): int
     {
         $cols = array_keys($data);
-        $sql  = "INSERT INTO services (" . implode(',', $cols) . ")
+        $sql = "INSERT INTO services (" . implode(',', $cols) . ")
                  VALUES (:" . implode(',:', $cols) . ")";
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute($data);
 
-        return (int)$this->pdo->lastInsertId();
+        return (int) $this->pdo->lastInsertId();
     }
 
     public function updateById(int $id, array $data): void
@@ -49,7 +49,7 @@ class Service
         $set = implode(', ', array_map(fn($k) => "$k = :$k", array_keys($data)));
         $sql = "UPDATE services SET {$set}, updated_at = NOW() WHERE service_id = :id";
 
-        $params       = $data;
+        $params = $data;
         $params['id'] = $id;
 
         $stmt = $this->pdo->prepare($sql);
@@ -157,7 +157,7 @@ class Service
         $stmt->execute();
 
         $value = $stmt->fetchColumn();
-        return $value !== false ? (int)$value : null;
+        return $value !== false ? (int) $value : null;
     }
 
     public function isPackageType(?int $typeId): bool
@@ -174,7 +174,7 @@ class Service
         ");
         $stmt->execute(['id' => $typeId]);
 
-        return (int)$stmt->fetchColumn() > 0;
+        return (int) $stmt->fetchColumn() > 0;
     }
 
     public function packageAnalytics(): array
@@ -201,13 +201,13 @@ class Service
         ";
 
         $rows = $this->pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
-        $map  = [];
+        $map = [];
 
         foreach ($rows as $row) {
-            $map[(int)$row['service_id']] = [
-                'usage_count'       => (int)($row['usage_count'] ?? 0),
-                'last_booked_date'  => $row['last_booked_date'] ?? null,
-                'estimated_revenue' => (float)($row['estimated_revenue'] ?? 0),
+            $map[(int) $row['service_id']] = [
+                'usage_count' => (int) ($row['usage_count'] ?? 0),
+                'last_booked_date' => $row['last_booked_date'] ?? null,
+                'estimated_revenue' => (float) ($row['estimated_revenue'] ?? 0),
             ];
         }
 
@@ -230,8 +230,93 @@ class Service
         $row = $stmt->fetch(PDO::FETCH_ASSOC) ?: [];
 
         return [
-            'total_duration' => (int)($row['total_duration'] ?? 0),
-            'base_total'     => (float)($row['base_total'] ?? 0),
+            'total_duration' => (int) ($row['total_duration'] ?? 0),
+            'base_total' => (float) ($row['base_total'] ?? 0),
         ];
+    }
+
+    public function nextPackageCode(): string
+    {
+        $sql = "
+            SELECT MAX(CAST(SUBSTRING(package_code, 4) AS UNSIGNED)) AS max_num
+            FROM packages
+            WHERE package_code REGEXP '^PKG[0-9]+$'
+        ";
+        $row = $this->pdo->query($sql)->fetch(PDO::FETCH_ASSOC);
+        $next = (int) ($row['max_num'] ?? 0) + 1;
+
+        return 'PKG' . str_pad((string) $next, 3, '0', STR_PAD_LEFT);
+    }
+
+    public function createPackageRecord(array $data): int
+    {
+        $packageCode = $this->nextPackageCode();
+
+        $sql = "INSERT INTO packages
+                (package_code, name, description, total_duration_minutes, total_price, service_type_id, status, created_at)
+                VALUES (:package_code, :name, :description, :total_duration, :total_price, :service_type_id, 'active', NOW())";
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([
+            ':package_code' => $packageCode,
+            ':name' => $data['name'] ?? '',
+            ':description' => $data['description'] ?? '',
+            ':total_duration' => $data['base_duration_minutes'] ?? 0,
+            ':total_price' => $data['default_price'] ?? 0,
+            ':service_type_id' => $data['type_id'] ?? 0,
+        ]);
+
+        return (int) $this->pdo->lastInsertId();
+    }
+
+    public function updatePackageRecord(int $packageId, array $data): void
+    {
+        $sql = "UPDATE packages
+                SET name = :name,
+                    description = :description,
+                    total_duration_minutes = :total_duration,
+                    total_price = :total_price,
+                    service_type_id = :service_type_id
+                WHERE package_id = :package_id";
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([
+            ':package_id' => $packageId,
+            ':name' => $data['name'] ?? '',
+            ':description' => $data['description'] ?? '',
+            ':total_duration' => $data['base_duration_minutes'] ?? 0,
+            ':total_price' => $data['default_price'] ?? 0,
+            ':service_type_id' => $data['type_id'] ?? 0,
+        ]);
+    }
+
+    public function getPackageIdForService(int $serviceId): ?int
+    {
+        $stmt = $this->pdo->prepare("
+            SELECT package_id FROM packages
+            WHERE name COLLATE utf8mb4_unicode_ci IN (
+                SELECT name COLLATE utf8mb4_unicode_ci FROM services WHERE service_id = :service_id
+            )
+            LIMIT 1
+        ");
+        $stmt->execute(['service_id' => $serviceId]);
+
+        $value = $stmt->fetchColumn();
+        return $value !== false ? (int) $value : null;
+    }
+
+    public function getPackageCodeForService(int $serviceId): ?string
+    {
+        $stmt = $this->pdo->prepare("
+            SELECT package_code FROM packages
+            WHERE name COLLATE utf8mb4_unicode_ci IN (
+                SELECT name COLLATE utf8mb4_unicode_ci FROM services WHERE service_id = :service_id
+            )
+            LIMIT 1
+        ");
+        $stmt->execute(['service_id' => $serviceId]);
+
+        $value = $stmt->fetchColumn();
+        return $value !== false ? (string) $value : null;
     }
 }
