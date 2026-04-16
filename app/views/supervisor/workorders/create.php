@@ -51,7 +51,7 @@
     <select name="mechanic_id" id="mechanic_id" class="form-control">
     <option value="">-- Select Mechanic --</option>
     <?php foreach ($activeMechanics as $mech): 
-        $rawStatus = $mech['status'] ?? 'available';
+        $rawStatus = $mech['status'] ?? 'active';
         $status = strtolower($rawStatus); 
         $isSelected = ($selectedMechanicId == $mech['mechanic_id']);
         
@@ -94,7 +94,6 @@
         <div class="form-group">
           <label class="required">Status</label>
           <select name="status">
-          <option value="">-- Select Status --</option>
             <option value="open">open</option>
             <option value="in_progress">in_progress</option>
             <option value="on_hold">on_hold</option>

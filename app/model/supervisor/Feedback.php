@@ -36,4 +36,19 @@ class Feedback {
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public function saveFeedbackReply($data) {
+        $stmt = $this->db->prepare("UPDATE feedback 
+                                    SET reply_text = :reply_text, 
+                                        replied_at = NOW(), 
+                                        replied_by = :replied_by, 
+                                        replied_status = 'replied' 
+                                    WHERE feedback_id = :feedback_id");
+        
+        return $stmt->execute([
+            ':reply_text' => $data['reply_text'],
+            ':replied_by' => $data['replied_by'],
+            ':feedback_id' => $data['feedback_id']
+        ]);
+    }
 }
