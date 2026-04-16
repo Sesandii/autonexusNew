@@ -597,7 +597,11 @@ $router->post('/mechanic/jobs/update-status', [JobsMVController::class, 'updateS
 
 // Supervisor 
 $router->get('/supervisor/dashboard', [\app\controllers\supervisor\SupervisorController::class, 'index']);
-$router->get('/supervisor/complaints_feedbacks', [\app\controllers\supervisor\ComplaintsFeedbackController::class, 'index']);
+
+use app\controllers\supervisor\ComplaintsFeedbackController;
+$router->get('/supervisor/complaints_feedbacks', [ComplaintsFeedbackController::class, 'index']);
+$router->post('/supervisor/complaints_feedbacks/updateComplaintStatus', [ComplaintsFeedbackController::class, 'updateComplaintStatus']);
+$router->post('/supervisor/complaints_feedbacks/addFeedbackReply', [ComplaintsFeedbackController::class, 'addFeedbackReply']);
 
 use app\controllers\supervisor\SupervisorProfileController;
 $router->get('/supervisor/profile/edit', [SupervisorProfileController::class, 'edit']);

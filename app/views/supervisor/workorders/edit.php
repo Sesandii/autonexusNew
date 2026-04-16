@@ -51,7 +51,7 @@
     <select name="mechanic_id" id="mechanic_id" class="form-control">
     <option value="">-- Select Mechanic --</option>
     <?php foreach ($activeMechanics as $mech): 
-        $rawStatus = $mech['status'] ?? 'available';
+        $rawStatus = $mech['status'] ?? 'active';
         $status = strtolower($rawStatus); 
         $isSelected = ($selectedMechanicId == $mech['mechanic_id']);
         

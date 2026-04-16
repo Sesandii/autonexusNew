@@ -32,6 +32,7 @@
       <option value="open">Open</option>
       <option value="in_progress">In Progress</option>
       <option value="resolved">Resolved</option>
+      <option value="closed">Closed</option>
     </select>
     <select id="priorityComplaints">
       <option value="">All Priority</option>
@@ -69,9 +70,20 @@
           <p class="description"><?= htmlspecialchars($c['description']); ?></p>
 
           <div class="complaint-footer">
-            <p><strong>Status:</strong> <span class="status"><?= htmlspecialchars($c['status']); ?></span></p>
-            <p><strong>Assigned To:</strong> <?= htmlspecialchars($c['assigned_user_name'] ?? 'Unassigned'); ?></p>
-          </div>
+    <form action="<?= $base ?>/supervisor/complaints_feedbacks/updateComplaintStatus" method="POST">
+        <input type="hidden" name="complaint_id" value="<?= $c['complaint_id']; ?>">
+        
+        <p><strong>Status:</strong> 
+            <select name="status" onchange="this.form.submit()" class="status-dropdown">
+                <option value="open" <?= $c['status'] == 'open' ? 'selected' : '' ?>>Open</option>
+                <option value="in_progress" <?= $c['status'] == 'in_progress' ? 'selected' : '' ?>>In Progress</option>
+                <option value="resolved" <?= $c['status'] == 'resolved' ? 'selected' : '' ?>>Resolved</option>
+                <option value="closed" <?= $c['status'] == 'closed' ? 'selected' : '' ?>>Closed</option>
+            </select>
+        </p>
+    </form>
+    <p><strong>Assigned To:</strong> <?= htmlspecialchars($c['assigned_user_name'] ?? 'Unassigned'); ?></p>
+</div>
         </div>
       <?php endforeach; ?>
     <?php else: ?>
@@ -127,10 +139,36 @@
                 <p class="comment-text">"<?= htmlspecialchars($f['comment']); ?>"</p>
 
                 <div class="reply-section">
-                    <span class="reply-status">Replied</span>
-                    <label class="reply-label">Your Reply:</label>
-                    <p class="current-reply"><?= htmlspecialchars($f['reply_text']); ?></p>
-                </div>
+    <?php if (!empty($f['reply_text'])): ?>
+        <div id="display-reply-<?= $f['feedback_id']; ?>">
+            <span class="reply-status">Replied</span>
+            <button type="button" class="edit-reply-btn" onclick="toggleEdit(<?= $f['feedback_id']; ?>)">Edit</button>
+            <label class="reply-label">Your Reply:</label>
+            <p class="current-reply"><?= htmlspecialchars($f['reply_text']); ?></p>
+        </div>
+
+        <div id="edit-form-<?= $f['feedback_id']; ?>" style="display: none;">
+    <span class="reply-status">Editing Reply</span>
+    <form action="<?= $base ?>/supervisor/complaints_feedbacks/addFeedbackReply" method="POST" class="reply-form">
+        <input type="hidden" name="feedback_id" value="<?= $f['feedback_id']; ?>">
+        <textarea name="reply_text" required><?= htmlspecialchars($f['reply_text']); ?></textarea>
+        
+        <div class="reply-actions">
+            <button type="submit" class="submit-reply-btn">Update</button>
+            <button type="button" class="cancel-btn" onclick="toggleEdit(<?= $f['feedback_id']; ?>)">Cancel</button>
+        </div>
+    </form>
+</div>
+
+    <?php else: ?>
+        <span class="reply-status pending">Pending Reply</span>
+        <form action="<?= $base ?>/supervisor/complaints_feedbacks/addFeedbackReply" method="POST" class="reply-form">
+            <input type="hidden" name="feedback_id" value="<?= $f['feedback_id']; ?>">
+            <textarea name="reply_text" placeholder="Write your reply here..." required></textarea>
+            <button type="submit" class="submit-reply-btn">Send Reply</button>
+        </form>
+    <?php endif; ?>
+</div>
             </div>
         <?php endforeach; ?>
     <?php else: ?>
@@ -248,6 +286,19 @@ resetFeedback.addEventListener("click", () => {
     });
 });
 });
+
+function toggleEdit(id) {
+    const displayDiv = document.getElementById(`display-reply-${id}`);
+    const editDiv = document.getElementById(`edit-form-${id}`);
+
+    if (displayDiv.style.display === "none") {
+        displayDiv.style.display = "block";
+        editDiv.style.display = "none";
+    } else {
+        displayDiv.style.display = "none";
+        editDiv.style.display = "block";
+    }
+}
 </script>
 
 </body>

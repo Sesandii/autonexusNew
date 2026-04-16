@@ -28,6 +28,36 @@ class ComplaintsFeedbackController extends Controller
         ]);
     }
 
+    public function updateComplaintStatus() {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $id = $_POST['complaint_id'];
+            $status = $_POST['status'];
+    
+            if ($this->complaintModel->updateStatus($id, $status)) {
+                header("Location: " . BASE_URL . "/supervisor/complaints_feedbacks");
+                exit();
+            }
+        }
+    }
+
+    public function addFeedbackReply() {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // DEBUG: See what is actually being sent
+            // var_dump($_POST); die(); 
+    
+            $data = [
+                'feedback_id' => $_POST['feedback_id'],
+                'reply_text'  => $_POST['reply_text'],
+                'replied_by'  => $_SESSION['user_id'] ?? 1
+            ];
+    
+            if ($this->feedbackModel->saveFeedbackReply($data)) {
+                header("Location: " . BASE_URL . "/supervisor/complaints_feedbacks");
+                exit();
+            }
+        }
+    }
+
     private function requireAdmin(): void
     {
         if (session_status() !== PHP_SESSION_ACTIVE) session_start();

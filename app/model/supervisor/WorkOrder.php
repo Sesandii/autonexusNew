@@ -617,11 +617,11 @@ public function updateMechanicStatus(string $mechanicCode): void
 {
     $stmt = $this->pdo->prepare("SELECT status FROM mechanics WHERE mechanic_code = ?");
     $stmt->execute([$mechanicCode]);
-    $currentStatus = strtolower($stmt->fetchColumn() ?: 'available');
+    $currentStatus = strtolower($stmt->fetchColumn() ?: 'active');
     $activeCount = $this->countActiveByMechanicCode($mechanicCode);
 
-    if ($currentStatus === 'available' || $currentStatus === 'busy') {
-        $newStatus = ($activeCount >= 5) ? 'busy' : 'available';
+    if ($currentStatus === 'active' || $currentStatus === 'busy') {
+        $newStatus = ($activeCount >= 5) ? 'busy' : 'active';
 
         $sql = "UPDATE mechanics SET status = :status WHERE mechanic_code = :code";
         $stmt = $this->pdo->prepare($sql);
