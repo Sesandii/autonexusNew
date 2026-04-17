@@ -20,20 +20,18 @@ class AppointmentsController extends Controller
     /** GET /admin/appointments */
     public function index(): void
     {
-        // Get date range parameters for filtering
-        $dateFrom = $_GET['dateFrom'] ?? '';
-        $dateTo = $_GET['dateTo'] ?? '';
-        $date = $_GET['date'] ?? date('Y-m-d');
+        $dateFrom = trim($_GET['dateFrom'] ?? '');
+        $dateTo   = trim($_GET['dateTo'] ?? '');
+        $date     = trim($_GET['date'] ?? date('Y-m-d'));
 
-        // Validate date format
         if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) {
             $date = date('Y-m-d');
         }
 
-        // Validate date range parameters
         $validDateRange = false;
         if (
-            $dateFrom && $dateTo &&
+            $dateFrom !== '' &&
+            $dateTo !== '' &&
             preg_match('/^\d{4}-\d{2}-\d{2}$/', $dateFrom) &&
             preg_match('/^\d{4}-\d{2}-\d{2}$/', $dateTo) &&
             $dateFrom <= $dateTo
@@ -41,16 +39,14 @@ class AppointmentsController extends Controller
             $validDateRange = true;
         }
 
-        // Get appointments - use date range if provided, otherwise use single date
         if ($validDateRange) {
             $rows = $this->appointments->getAppointmentsByDateRange($dateFrom, $dateTo);
-            $selectedDate = $dateFrom; // For display purposes
+            $selectedDate = $dateFrom;
         } else {
             $rows = $this->appointments->getAppointmentsByDate($date);
             $selectedDate = $date;
         }
 
-        // Add helper fields for view
         $appointments = [];
         foreach ($rows as $r) {
             $datetime = $r['appointment_date'] . ' ' . $r['appointment_time'];
@@ -75,7 +71,6 @@ class AppointmentsController extends Controller
         $branches = $this->appointments->getBranches();
         $services = $this->appointments->getServices();
 
-        // Get user from session
         if (session_status() !== PHP_SESSION_ACTIVE) {
             session_start();
         }
@@ -85,7 +80,9 @@ class AppointmentsController extends Controller
             'appointments' => $appointments,
             'branches' => $branches,
             'services' => $services,
-            'selectedDate' => $date,
+            'selectedDate' => $selectedDate,
+            'dateFrom' => $dateFrom,
+            'dateTo' => $dateTo,
             'user' => $user,
             'pageTitle' => 'Appointments - AutoNexus',
             'current' => 'appointments',
