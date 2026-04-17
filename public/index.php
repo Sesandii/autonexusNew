@@ -168,11 +168,11 @@ $router->get('/admin/appointments', [AppointmentsController::class, 'index']);
 // Show details page
 $router->get('/admin/admin-appointments/show', [AppointmentsController::class, 'show']);
 
-// Edit form
-$router->get('/admin/admin-appointments/edit', [AppointmentsController::class, 'edit']);
+// // Edit form
+// $router->get('/admin/admin-appointments/edit', [AppointmentsController::class, 'edit']);
 
-// Handle update form submit
-$router->post('/admin/admin-appointments/update', [AppointmentsController::class, 'update']);
+// // Handle update form submit
+// $router->post('/admin/admin-appointments/update', [AppointmentsController::class, 'update']);
 
 // Handle cancel/delete
 $router->post('/admin/admin-appointments/delete', [AppointmentsController::class, 'delete']);

@@ -8,6 +8,8 @@
 $current = $current ?? 'appointments';
 $B = rtrim(BASE_URL, '/');
 $selectedDate = $selectedDate ?? date('Y-m-d');
+$dateFrom = $dateFrom ?? '';
+$dateTo = $dateTo ?? '';
 $displayDate = new DateTime($selectedDate);
 $adminName = trim((($user['first_name'] ?? '') . ' ' . ($user['last_name'] ?? ''))) ?: 'Admin User';
 
@@ -436,11 +438,11 @@ function e($value) {
           </div>
           <div class="filter-input">
             <label for="dateFrom">From Date</label>
-            <input type="date" id="dateFrom" value="<?= e($selectedDate) ?>" />
+            <input type="date" id="dateFrom" value="<?= e($dateFrom) ?>" />
           </div>
           <div class="filter-input">
             <label for="dateTo">To Date</label>
-            <input type="date" id="dateTo" value="<?= e($selectedDate) ?>" />
+            <input type="date" id="dateTo" value="<?= e($dateTo) ?>" />
           </div>
         </div>
         <div class="filter-actions" style="margin-top: 12px;">
@@ -457,57 +459,62 @@ function e($value) {
       <section class="panel">
         <?php if (!empty($appointments)): ?>
           <div class="table-wrap">
-            <table class="table" id="appointmentsTable">
-              <thead>
-                <tr>
-                  <th>Time</th>
-                  <th>Customer</th>
-                  <th>Service</th>
-                  <th>Branch</th>
-                  <th>Supervisor</th>
-                  <th>Status</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                <?php foreach ($appointments as $a): 
-                  $time = DateTime::createFromFormat('H:i:s', $a['time']);
-                  $timeFormatted = $time ? $time->format('h:i A') : $a['time'];
-                  $statusLabel = $a['status'];
-                  $statusClass = 'status-pill--' . str_replace(' ', '-', strtolower($statusLabel));
-                ?>
-                  <tr class="appointment-row" 
-                      data-customer="<?= e($a['customer']) ?>"
-                      data-service-id="<?= (int)$a['service_id'] ?>"
-                      data-branch-id="<?= (int)$a['branch_id'] ?>"
-                      data-status="<?= e($statusLabel) ?>"
-                      data-date="<?= e($a['date']) ?>">
-                    <td><?= e($timeFormatted) ?></td>
-                    <td><?= e($a['customer']) ?></td>
-                    <td><?= e($a['service']) ?></td>
-                    <td><?= e($a['branch']) ?></td>
-                    <td><?= e($a['supervisor']) ?></td>
-                    <td>
-                      <span class="status-pill <?= e($statusClass) ?>">
-                        <?= e($statusLabel) ?>
-                      </span>
-                    </td>
-                    <td>
-                      <div class="action-buttons">
-                        <a href="<?= $B ?>/admin/admin-appointments/show?id=<?= (int)$a['id'] ?>" 
-                           class="action-btn action-btn--view" title="View appointment">
-                          <i class="fa-regular fa-eye"></i> View
-                        </a>
-                        <a href="<?= $B ?>/admin/admin-appointments/edit?id=<?= (int)$a['id'] ?>" 
-                           class="action-btn action-btn--edit" title="Edit appointment">
-                          <i class="fa-solid fa-pen"></i> Edit
-                        </a>
-                      </div>
-                    </td>
-                  </tr>
-                <?php endforeach; ?>
-              </tbody>
-            </table>
+            <div class="table-wrap">
+  <table class="table" id="appointmentsTable">
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Time</th>
+        <th>Customer</th>
+        <th>Service</th>
+        <th>Branch</th>
+        <th>Supervisor</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <?php foreach ($appointments as $a): 
+        $time = DateTime::createFromFormat('H:i:s', $a['time']);
+        $timeFormatted = $time ? $time->format('h:i A') : $a['time'];
+
+        $dateFormatted = !empty($a['date'])
+          ? date('d M Y', strtotime($a['date']))
+          : '';
+
+        $statusLabel = $a['status'];
+        $statusClass = 'status-pill--' . str_replace(' ', '-', strtolower($statusLabel));
+      ?>
+        <tr class="appointment-row" 
+            data-customer="<?= e($a['customer']) ?>"
+            data-service-id="<?= (int)$a['service_id'] ?>"
+            data-branch-id="<?= (int)$a['branch_id'] ?>"
+            data-status="<?= e($statusLabel) ?>"
+            data-date="<?= !empty($a['date']) ? e(date('Y-m-d', strtotime($a['date']))) : '' ?>">
+          <td><?= e($dateFormatted) ?></td>
+          <td><?= e($timeFormatted) ?></td>
+          <td><?= e($a['customer']) ?></td>
+          <td><?= e($a['service']) ?></td>
+          <td><?= e($a['branch']) ?></td>
+          <td><?= e($a['supervisor']) ?></td>
+          <td>
+            <span class="status-pill <?= e($statusClass) ?>">
+              <?= e($statusLabel) ?>
+            </span>
+          </td>
+          <td>
+            <div class="action-buttons">
+              <a href="<?= $B ?>/admin/admin-appointments/show?id=<?= (int)$a['id'] ?>" 
+                 class="action-btn action-btn--view" title="View appointment">
+                <i class="fa-regular fa-eye"></i> View
+              </a>
+            </div>
+          </td>
+        </tr>
+      <?php endforeach; ?>
+    </tbody>
+  </table>
+</div>
           </div>
         <?php else: ?>
           <div class="empty-state">
@@ -519,123 +526,132 @@ function e($value) {
     </section>
   </main>
 
-  <script>
-    function applyFilters() {
-      const customerSearch = document.getElementById('customerSearch').value.toLowerCase().trim();
-      const serviceFilter = document.getElementById('serviceFilter').value.trim();
-      const branchFilter = document.getElementById('branchFilter').value.trim();
-      const statusFilter = document.getElementById('statusFilter').value.trim();
-      const dateFrom = document.getElementById('dateFrom').value.trim();
-      const dateTo = document.getElementById('dateTo').value.trim();
+<script>
+  function applyFilters() {
+    const customerSearch = document.getElementById('customerSearch').value.toLowerCase().trim();
+    const serviceFilter = document.getElementById('serviceFilter').value.trim();
+    const branchFilter = document.getElementById('branchFilter').value.trim();
+    const statusFilter = document.getElementById('statusFilter').value.trim();
+    const dateFrom = document.getElementById('dateFrom').value.trim();
+    const dateTo = document.getElementById('dateTo').value.trim();
 
-      // If date range is specified, reload page with date range parameters
-      if (dateFrom && dateTo) {
-        let url = '<?= $B ?>/admin/admin-appointments?dateFrom=' + encodeURIComponent(dateFrom) + '&dateTo=' + encodeURIComponent(dateTo);
-        window.location.href = url;
-        return;
+    if (dateFrom && dateTo) {
+      const url = new URL(window.location.href);
+      url.searchParams.set('dateFrom', dateFrom);
+      url.searchParams.set('dateTo', dateTo);
+      url.searchParams.delete('date');
+      window.location.href = url.toString();
+      return;
+    }
+
+    const rows = document.querySelectorAll('.appointment-row');
+    let visibleCount = 0;
+
+    rows.forEach(row => {
+      const customer = (row.dataset.customer || '').toLowerCase();
+      const serviceId = row.dataset.serviceId || '';
+      const branchId = row.dataset.branchId || '';
+      const status = (row.dataset.status || '').trim();
+
+      const matchCustomer = !customerSearch || customer.includes(customerSearch);
+      const matchService = !serviceFilter || serviceId === serviceFilter;
+      const matchBranch = !branchFilter || branchId === branchFilter;
+      const matchStatus = !statusFilter || status === statusFilter;
+
+      const shouldShow =
+        matchCustomer &&
+        matchService &&
+        matchBranch &&
+        matchStatus;
+
+      row.style.display = shouldShow ? '' : 'none';
+
+      if (shouldShow) {
+        visibleCount++;
       }
-
-      // Otherwise, apply client-side filtering
-      const rows = document.querySelectorAll('.appointment-row');
-      let visibleCount = 0;
-
-      rows.forEach(row => {
-        const customer = row.dataset.customer.toLowerCase();
-        const serviceId = row.dataset.serviceId;
-        const branchId = row.dataset.branchId;
-        const status = row.dataset.status;
-        const date = row.dataset.date;
-
-        // Check customer search
-        const matchCustomer = !customerSearch || customer.includes(customerSearch);
-
-        // Check service filter
-        const matchService = !serviceFilter || serviceId === serviceFilter;
-
-        // Check branch filter
-        const matchBranch = !branchFilter || branchId === branchFilter;
-
-        // Check status filter
-        const matchStatus = !statusFilter || status === statusFilter;
-
-        // Show or hide row
-        const shouldShow = matchCustomer && matchService && matchBranch && matchStatus;
-        row.style.display = shouldShow ? '' : 'none';
-        if (shouldShow) visibleCount++;
-      });
-
-      // Show/hide empty state message
-      updateEmptyState(visibleCount);
-    }
-
-    function clearFilters() {
-      document.getElementById('customerSearch').value = '';
-      document.getElementById('serviceFilter').value = '';
-      document.getElementById('branchFilter').value = '';
-      document.getElementById('statusFilter').value = '';
-      document.getElementById('dateFrom').value = '<?= e($selectedDate) ?>';
-      document.getElementById('dateTo').value = '<?= e($selectedDate) ?>';
-      
-      // Redirect to today's date to reset date range
-      window.location.href = '<?= $B ?>/admin/admin-appointments?date=' + new Date().toISOString().split('T')[0];
-    }
-
-    function updateEmptyState(visibleCount) {
-      const table = document.getElementById('appointmentsTable');
-      if (!table) return;
-
-      let emptyState = document.getElementById('appointmentsEmptyState');
-      
-      if (visibleCount === 0) {
-        if (!emptyState) {
-          emptyState = document.createElement('div');
-          emptyState.id = 'appointmentsEmptyState';
-          emptyState.className = 'empty-state';
-          emptyState.innerHTML = `
-            <i class="fa-regular fa-inbox"></i>
-            <p>No appointments match your filters</p>
-          `;
-          table.parentElement.replaceChild(emptyState, table);
-        }
-      } else {
-        if (emptyState) {
-          const wrapper = document.createElement('div');
-          wrapper.className = 'table-wrap';
-          wrapper.appendChild(table);
-          emptyState.parentElement.replaceChild(wrapper, emptyState);
-        }
-      }
-    }
-
-    // Apply filters when user presses Enter in search field
-    document.getElementById('customerSearch')?.addEventListener('keypress', function(e) {
-      if (e.key === 'Enter') applyFilters();
     });
 
-    // Date navigation functions
-    function goToDate(dateStr) {
-      window.location.href = '<?= $B ?>/admin/admin-appointments?date=' + dateStr;
-    }
+    updateEmptyState(visibleCount);
+  }
 
-    function goToPreviousDay() {
-      const date = new Date('<?= $selectedDate ?>');
-      date.setDate(date.getDate() - 1);
-      const dateStr = date.toISOString().split('T')[0];
-      goToDate(dateStr);
-    }
+  function clearFilters() {
+    document.getElementById('customerSearch').value = '';
+    document.getElementById('serviceFilter').value = '';
+    document.getElementById('branchFilter').value = '';
+    document.getElementById('statusFilter').value = '';
+    document.getElementById('dateFrom').value = '';
+    document.getElementById('dateTo').value = '';
 
-    function goToNextDay() {
-      const date = new Date('<?= $selectedDate ?>');
-      date.setDate(date.getDate() + 1);
-      const dateStr = date.toISOString().split('T')[0];
-      goToDate(dateStr);
-    }
+    window.location.href = '<?= $B ?>/admin/admin-appointments?date=<?= e($selectedDate) ?>';
+  }
 
-    function goToToday() {
-      const today = new Date().toISOString().split('T')[0];
-      goToDate(today);
+  function updateEmptyState(visibleCount) {
+    const table = document.getElementById('appointmentsTable');
+    if (!table) return;
+
+    let emptyState = document.getElementById('appointmentsEmptyState');
+    const tableWrap = table.closest('.table-wrap');
+
+    if (visibleCount === 0) {
+      if (tableWrap) {
+        tableWrap.style.display = 'none';
+      }
+
+      if (!emptyState) {
+        emptyState = document.createElement('div');
+        emptyState.id = 'appointmentsEmptyState';
+        emptyState.className = 'empty-state';
+        emptyState.innerHTML = `
+          <i class="fa-regular fa-inbox"></i>
+          <p>No appointments match your filters</p>
+        `;
+
+        if (tableWrap && tableWrap.parentElement) {
+          tableWrap.parentElement.appendChild(emptyState);
+        }
+      } else {
+        emptyState.style.display = '';
+      }
+    } else {
+      if (tableWrap) {
+        tableWrap.style.display = '';
+      }
+
+      if (emptyState) {
+        emptyState.style.display = 'none';
+      }
     }
-  </script>
+  }
+
+  document.getElementById('customerSearch')?.addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+      applyFilters();
+    }
+  });
+
+  function goToDate(dateStr) {
+    window.location.href = '<?= $B ?>/admin/admin-appointments?date=' + encodeURIComponent(dateStr);
+  }
+
+  function goToPreviousDay() {
+    const date = new Date('<?= $selectedDate ?>');
+    date.setDate(date.getDate() - 1);
+    const dateStr = date.toISOString().split('T')[0];
+    goToDate(dateStr);
+  }
+
+  function goToNextDay() {
+    const date = new Date('<?= $selectedDate ?>');
+    date.setDate(date.getDate() + 1);
+    const dateStr = date.toISOString().split('T')[0];
+    goToDate(dateStr);
+  }
+
+  function goToToday() {
+    const today = new Date().toISOString().split('T')[0];
+    goToDate(today);
+  }
+</script>
 </body>
 
 </html>
