@@ -16,35 +16,70 @@
     <p>Here's an overview of your <span><?= htmlspecialchars($_SESSION['user']['name'] ?? 'Supervisor') ?></span> dashboard</p>
   </section>
   <section class="dashboard-top">
-    <div class="dashboard-left">
-      <div class="cards">
-        <div class="card green">
-          <div class="card-header"><h3>Appointments Pending</h3></div>
-          <p><?= (int)($stats['pending_appointments'] ?? 0) ?></p>
-        </div>
-        <div class="card blue">
-          <div class="card-header"><h3>My Assigned Workorders</h3></div>
-          <p><?= (int)($stats['my_assigned'] ?? 0) ?></p>
-        </div>
-        <div class="card red">
-          <div class="card-header"><h3>In-Progress Workorders</h3></div>
-          <p><?= (int)($stats['in_progress'] ?? 0) ?></p>
-        </div>
-        <div class="card purple">
-          <div class="card-header"><h3>On-Hold Workorders</h3></div>
-          <p><?= (int)($stats['on_hold'] ?? 0) ?></p>
-        </div>
-        <div class="card purple">
-          <div class="card-header"><h3>Completed Workorders</h3></div>
-          <p><?= (int)($stats['completed'] ?? 0) ?></p>
-        </div>
-        <div class="card purple">
-          <div class="card-header"><h3>Total Workorders</h3></div>
-          <p><?= (int)($stats['total'] ?? 0) ?></p>
-        </div>
+  <div class="stat-cards-container">
+    
+    <div class="stat-card">
+      <div class="stat-icon-box bg-light-orange">
+        <i class="fa-solid fa-calendar-day icon-orange"></i>
+      </div>
+      <div class="stat-content">
+        <span class="stat-label">Appointments Pending</span>
+        <h2 class="stat-number"><?= (int)($stats['pending_appointments'] ?? 0) ?></h2>
       </div>
     </div>
-  </section>
+
+    <div class="stat-card">
+      <div class="stat-icon-box bg-light-blue">
+        <i class="fa-solid fa-user-check icon-blue"></i>
+      </div>
+      <div class="stat-content">
+        <span class="stat-label">My Assigned Workorders</span>
+        <h2 class="stat-number"><?= (int)($stats['my_assigned'] ?? 0) ?></h2>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon-box bg-light-green">
+        <i class="fa-solid fa-spinner fa-spin icon-green"></i>
+      </div>
+      <div class="stat-content">
+        <span class="stat-label">In-Progress Workorders</span>
+        <h2 class="stat-number"><?= (int)($stats['in_progress'] ?? 0) ?></h2>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon-box bg-light-red">
+        <i class="fa-solid fa-circle-pause icon-red"></i>
+      </div>
+      <div class="stat-content">
+        <span class="stat-label">On-Hold Workorders</span>
+        <h2 class="stat-number"><?= (int)($stats['on_hold'] ?? 0) ?></h2>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon-box bg-light-purple">
+        <i class="fa-solid fa-circle-check icon-purple"></i>
+      </div>
+      <div class="stat-content">
+        <span class="stat-label">Completed Workorders</span>
+        <h2 class="stat-number"><?= (int)($stats['completed'] ?? 0) ?></h2>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon-box bg-light-gray">
+        <i class="fa-solid fa-list-check icon-gray"></i>
+      </div>
+      <div class="stat-content">
+        <span class="stat-label">Total Workorders</span>
+        <h2 class="stat-number"><?= (int)($stats['total'] ?? 0) ?></h2>
+      </div>
+    </div>
+
+  </div>
+</section>
 
   <section class="dashboard-grid-container">
     
