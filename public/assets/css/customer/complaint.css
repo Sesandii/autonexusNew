@@ -33,7 +33,6 @@ body {
 
 /* Main container - offset for sidebar */
 .complaint-container {
-  margin-left: 240px;
   padding: 32px;
   min-height: 100vh;
   max-width: 900px;
@@ -283,7 +282,6 @@ body {
 /* Responsive */
 @media (max-width: 720px) {
   .complaint-container {
-    margin-left: 210px;
     padding: 20px;
   }
 }

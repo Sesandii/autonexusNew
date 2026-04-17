@@ -79,7 +79,7 @@ try {
     } else {
         password_verify($password, password_hash('dummy', PASSWORD_DEFAULT));
     }
-
+// Log failure if not ok or user missing
     if (!$ok || !$user) {
         $pdo->prepare('INSERT INTO login_attempts (email, ip, success) VALUES (:e,:i,0)')
             ->execute(['e'=>$email,'i'=>$ip]);
@@ -87,6 +87,7 @@ try {
         header('Location: ' . $base . '/login');
         exit;
     }
+    // Check if account is active
 
     if (($user['status'] ?? '') !== 'active') {
         $pdo->prepare('INSERT INTO login_attempts (email, ip, success) VALUES (:e,:i,0)')

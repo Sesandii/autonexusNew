@@ -19,7 +19,7 @@ $sidebarCssVersion = @filemtime(dirname(APP_ROOT) . '/public/assets/css/customer
   <?php include APP_ROOT . '/views/layouts/customer-sidebar.php'; ?>
 
   <div class="sh-layout">
-    <main class="sh-main">
+    <main class="sh-main customer-layout-main">
       <?php
         $headerIcon = 'fa-solid fa-clipboard-list';
         $headerTitle = 'Service History';

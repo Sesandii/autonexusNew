@@ -27,7 +27,6 @@ $statusInfo = $statusMap[$rawStatus] ?? ['label' => ucfirst($rawStatus), 'class'
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         .appointment-details-main {
-            margin-left: 240px;
             padding: 20px 30px;
             background: #f5f6fa;
             min-height: 100vh;
@@ -164,7 +163,6 @@ $statusInfo = $statusMap[$rawStatus] ?? ['label' => ucfirst($rawStatus), 'class'
         }
         @media (max-width: 768px) {
             .appointment-details-main {
-                margin-left: 0;
                 padding: 15px;
             }
             .details-header {
@@ -181,7 +179,7 @@ $statusInfo = $statusMap[$rawStatus] ?? ['label' => ucfirst($rawStatus), 'class'
 <body>
     <?php include APP_ROOT . '/views/layouts/customer-sidebar.php'; ?>
     
-    <main class="appointment-details-main">
+    <main class="appointment-details-main customer-layout-main">
         <div class="details-header">
             <h1><i class="fas fa-calendar-alt"></i> Appointment Details</h1>
             <a href="<?= $base ?>/customer/appointments" class="back-btn">

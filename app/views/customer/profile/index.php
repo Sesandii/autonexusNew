@@ -13,7 +13,7 @@
 
   <?php include APP_ROOT . '/views/layouts/customer-sidebar.php'; ?>
 
-  <div class="main-content">
+  <div class="main-content customer-layout-main">
 
     <?php if (!empty($flash)): ?>
       <div class="flash"><?= htmlspecialchars($flash) ?></div>
@@ -88,7 +88,7 @@
                   <div><span><?= htmlspecialchars($v['color'] ?? '—') ?></span></div>
                   <div><span><?= htmlspecialchars($v['year'] ?? '—') ?></span></div>
                 </div>
-
+                
                 <div class="vehicle-actions">
                   <a class="btn edit" href="<?= $base ?>/customer/profile/vehicle?id=<?= (int)$v['vehicle_id'] ?>">
                     <i class="fa fa-pen"></i> Edit

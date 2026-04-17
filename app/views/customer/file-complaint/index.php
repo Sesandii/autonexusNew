@@ -40,7 +40,7 @@ if (defined('APP_ROOT') && file_exists(APP_ROOT . '/views/layouts/customer-sideb
 }
 ?>
 
-<div class="complaint-container">
+<div class="complaint-container customer-layout-main">
     <?php
       $headerIcon = 'fa-solid fa-triangle-exclamation';
       $headerTitle = 'File a Complaint';

@@ -7,6 +7,8 @@
   --customer-sidebar-active-text: #111827;
   --customer-sidebar-icon: #ef4444;
   --customer-sidebar-border: rgba(255, 255, 255, 0.08);
+  --customer-sidebar-width: 250px;
+  --customer-layout-gap: 32px;
 }
 
 body {
@@ -20,7 +22,7 @@ body .sidebar {
   left: 0;
   bottom: 0;
   z-index: 1000;
-  width: 240px;
+  width: var(--customer-sidebar-width);
   min-height: 100vh;
   overflow-y: auto;
   background: var(--customer-sidebar-bg);
@@ -103,22 +105,51 @@ body .sidebar .menu a.active i {
   color: var(--customer-sidebar-icon);
 }
 
-body .main-content,
-body .appointments-main,
-body .sh-main,
-body .customer-main-shell {
-  margin-left: 240px;
+body .customer-layout-main {
+  margin-left: calc(var(--customer-sidebar-width) + var(--customer-layout-gap));
+  box-sizing: border-box;
 }
 
-@media (max-width: 720px) {
+@media (max-width: 1100px) {
+  :root {
+    --customer-layout-gap: 24px;
+  }
+}
+
+@media (max-width: 900px) {
   body .sidebar {
-    width: 210px;
+    position: static;
+    width: 100%;
+    min-height: auto;
+    overflow-y: visible;
+    padding: 14px 12px;
+    border-right: 0;
+    border-bottom: 1px solid var(--customer-sidebar-border);
   }
 
-  body .main-content,
-  body .appointments-main,
-  body .sh-main,
-  body .customer-main-shell {
-    margin-left: 210px;
+  body .sidebar .logo {
+    margin-bottom: 12px;
+  }
+
+  body .sidebar .menu {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    gap: 8px;
+    padding-bottom: 4px;
+  }
+
+  body .sidebar .menu li {
+    flex: 0 0 auto;
+  }
+
+  body .sidebar .menu a {
+    white-space: nowrap;
+    padding: 10px 12px;
+    border-radius: 999px;
+  }
+
+  body .customer-layout-main {
+    margin-left: 0 !important;
   }
 }

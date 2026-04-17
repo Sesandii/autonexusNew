@@ -14,6 +14,7 @@ $prefillRebookId  = (int)($prefill['appointment_id'] ?? 0);
   <meta charset="UTF-8" />
   <title><?= htmlspecialchars($title ?? 'Book Service') ?></title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="<?= $base ?>/public/assets/css/customer/sidebar.css" />
   <link rel="stylesheet" href="<?= $base ?>/public/assets/css/customer/page-header.css" />
   <link rel="stylesheet" href="<?= $base ?>/public/assets/css/customer/booking.css" />
   <link rel="stylesheet" href="<?= rtrim(BASE_URL,'/') ?>/public/assets/css/home.css" />
@@ -94,7 +95,9 @@ $prefillRebookId  = (int)($prefill['appointment_id'] ?? 0);
   </style>
 </head>
 <body>
-  <div class="container">
+  <?php include APP_ROOT . '/views/layouts/customer-sidebar.php'; ?>
+
+  <div class="container customer-layout-main">
     <?php
       $branchSubtitle = !empty($branch_name) ? 'Selected branch: ' . htmlspecialchars($branch_name) : 'Choose your preferred branch and time slot.';
       $headerIcon = 'fa-solid fa-calendar-plus';

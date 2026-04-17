@@ -13,7 +13,7 @@
 
   <?php include APP_ROOT . '/views/layouts/customer-sidebar.php'; ?>
 
-  <div class="main-content">
+  <div class="main-content customer-layout-main">
 
     <?php if (!empty($flash)): ?>
       <div class="flash"><?= htmlspecialchars($flash) ?></div>

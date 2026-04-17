@@ -1,6 +1,7 @@
 <?php
 $base    = rtrim(BASE_URL, '/');
 $initial = $services ?? [];
+$trackCssVersion = @filemtime(dirname(APP_ROOT) . '/public/assets/css/customer/track-services.css') ?: time();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -10,7 +11,7 @@ $initial = $services ?? [];
   <title><?= htmlspecialchars($title ?? 'Track Services') ?> - AutoNexus</title>
 
   <link rel="stylesheet" href="<?= $base ?>/public/assets/css/customer/page-header.css">
-  <link rel="stylesheet" href="<?= $base ?>/public/assets/css/customer/track-services.css">
+  <link rel="stylesheet" href="<?= $base ?>/public/assets/css/customer/track-services.css?v=<?= (int)$trackCssVersion ?>">
   <link rel="stylesheet" href="<?= $base ?>/public/assets/css/customer/sidebar.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -18,8 +19,8 @@ $initial = $services ?? [];
 
   <?php include APP_ROOT . '/views/layouts/customer-sidebar.php'; ?>
 
-  <div class="container">
-    <main class="main-content">
+  <div class="track-layout customer-layout-main">
+    <main class="track-main">
       <?php
         $headerIcon = 'fa-solid fa-list-check';
         $headerTitle = 'Track Services';
