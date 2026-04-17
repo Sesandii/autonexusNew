@@ -185,18 +185,35 @@ document.addEventListener("DOMContentLoaded", function () {
   const sections = document.querySelectorAll(".data-section");
   const complaintsFilters = document.getElementById("complaints-filters");
   const feedbackFilters = document.getElementById("feedback-filters");
-
-  buttons.forEach(btn => {
-    btn.addEventListener("click", () => {
+  
+  function switchTab(targetId) {
+    const btn = document.querySelector(`.toggle-btn[data-target="${targetId}"]`);
+    if (btn) {
       buttons.forEach(b => b.classList.remove("active"));
       btn.classList.add("active");
 
       sections.forEach(sec => sec.classList.add("hidden"));
-      const target = document.getElementById(btn.dataset.target);
-      if(target) target.classList.remove("hidden");
+      const targetSection = document.getElementById(targetId);
+      if (targetSection) targetSection.classList.remove("hidden");
 
-      complaintsFilters.style.display = (btn.dataset.target === "complaints") ? "flex" : "none";
-      feedbackFilters.style.display = (btn.dataset.target === "feedbacks") ? "flex" : "none";
+      if (complaintsFilters) complaintsFilters.style.display = (targetId === "complaints") ? "flex" : "none";
+      if (feedbackFilters) feedbackFilters.style.display = (targetId === "feedbacks") ? "flex" : "none";
+    }
+  }
+
+  <?php if (isset($_SESSION['active_tab'])): ?>
+    const sessionTab = "<?= $_SESSION['active_tab']; ?>";
+    switchTab(sessionTab);
+    <?php unset($_SESSION['active_tab']);?>
+  <?php else: ?>
+    if (window.location.hash) {
+      switchTab(window.location.hash.substring(1));
+    }
+  <?php endif; ?>
+
+  buttons.forEach(btn => {
+    btn.addEventListener("click", () => {
+      switchTab(btn.dataset.target);
     });
   });
 
@@ -219,85 +236,84 @@ document.addEventListener("DOMContentLoaded", function () {
       const rowStatus = row.dataset.status;
       const rowPriority = row.dataset.priority;
 
-      const match = (!searchVal || rowText.includes(searchVal))
-                    && (!dateVal || rowDate === dateVal)
-                    && (!statusVal || rowStatus === statusVal)
-                    && (!priorityVal || rowPriority === priorityVal);
+      const match = (!searchVal || rowText.includes(searchVal)) &&
+        (!dateVal || rowDate === dateVal) &&
+        (!statusVal || rowStatus === statusVal) &&
+        (!priorityVal || rowPriority === priorityVal);
       row.style.display = match ? "block" : "none";
     });
   }
 
-  searchComplaints.addEventListener("keyup", filterComplaints);
-  dateComplaints.addEventListener("change", filterComplaints);
-  statusComplaints.addEventListener("change", filterComplaints);
-  priorityComplaints.addEventListener("change", filterComplaints);
+  if (searchComplaints) {
+    searchComplaints.addEventListener("keyup", filterComplaints);
+    dateComplaints.addEventListener("change", filterComplaints);
+    statusComplaints.addEventListener("change", filterComplaints);
+    priorityComplaints.addEventListener("change", filterComplaints);
+  }
 
-  resetComplaints.addEventListener("click", () => {
-  searchComplaints.value = "";
-  dateComplaints.value = "";
-  statusComplaints.value = "";
-  priorityComplaints.value = "";
+  if (resetComplaints) {
+    resetComplaints.addEventListener("click", () => {
+      searchComplaints.value = "";
+      dateComplaints.value = "";
+      statusComplaints.value = "";
+      priorityComplaints.value = "";
+      complaintRows.forEach(row => row.style.display = "block");
+    });
+  }
 
-  complaintRows.forEach(row => {
-    row.style.display = "block";
-  });
-});
+  const searchFeedback = document.getElementById("searchFeedback");
+  const dateFeedback = document.getElementById("dateFeedback");
+  const ratingFilter = document.getElementById("ratingFilter");
+  const feedbackCards = document.querySelectorAll(".feedback-card");
+  const resetFeedback = document.getElementById("resetFeedback");
 
-
-const searchFeedback = document.getElementById("searchFeedback");
-const dateFeedback = document.getElementById("dateFeedback");
-const ratingFilter = document.getElementById("ratingFilter");
-const feedbackCards = document.querySelectorAll(".feedback-card"); 
-const resetFeedback = document.getElementById("resetFeedback");
-
-function filterFeedback() {
+  function filterFeedback() {
     const searchVal = searchFeedback.value.toLowerCase();
     const dateVal = dateFeedback.value;
     const ratingVal = ratingFilter.value;
 
     feedbackCards.forEach(card => {
-        const text = card.textContent.toLowerCase();
-        const cardDate = card.dataset.date;
-        const cardRating = card.dataset.rating;
+      const text = card.textContent.toLowerCase();
+      const cardDate = card.dataset.date;
+      const cardRating = card.dataset.rating;
 
-        const matchesSearch = !searchVal || text.includes(searchVal);
-        const matchesDate   = !dateVal   || cardDate === dateVal;
-        const matchesRating = !ratingVal || cardRating === ratingVal;
+      const matchesSearch = !searchVal || text.includes(searchVal);
+      const matchesDate = !dateVal || cardDate === dateVal;
+      const matchesRating = !ratingVal || cardRating === ratingVal;
 
-        if (matchesSearch && matchesDate && matchesRating) {
-            card.style.display = "block";
-        } else {
-            card.style.display = "none";
-        }
+      card.style.display = (matchesSearch && matchesDate && matchesRating) ? "block" : "none";
     });
-}
+  }
 
-searchFeedback.addEventListener("input", filterFeedback);
-dateFeedback.addEventListener("change", filterFeedback);
-ratingFilter.addEventListener("change", filterFeedback);
+  if (searchFeedback) {
+    searchFeedback.addEventListener("input", filterFeedback);
+    dateFeedback.addEventListener("change", filterFeedback);
+    ratingFilter.addEventListener("change", filterFeedback);
+  }
 
-resetFeedback.addEventListener("click", () => {
-    searchFeedback.value = "";
-    dateFeedback.value = "";
-    ratingFilter.value = "";
-    
-    feedbackCards.forEach(card => {
-        card.style.display = "block";
+  if (resetFeedback) {
+    resetFeedback.addEventListener("click", () => {
+      searchFeedback.value = "";
+      dateFeedback.value = "";
+      ratingFilter.value = "";
+      feedbackCards.forEach(card => card.style.display = "block");
     });
-});
+  }
 });
 
 function toggleEdit(id) {
-    const displayDiv = document.getElementById(`display-reply-${id}`);
-    const editDiv = document.getElementById(`edit-form-${id}`);
+  const displayDiv = document.getElementById(`display-reply-${id}`);
+  const editDiv = document.getElementById(`edit-form-${id}`);
 
+  if (displayDiv && editDiv) {
     if (displayDiv.style.display === "none") {
-        displayDiv.style.display = "block";
-        editDiv.style.display = "none";
+      displayDiv.style.display = "block";
+      editDiv.style.display = "none";
     } else {
-        displayDiv.style.display = "none";
-        editDiv.style.display = "block";
+      displayDiv.style.display = "none";
+      editDiv.style.display = "block";
     }
+  }
 }
 </script>
 
