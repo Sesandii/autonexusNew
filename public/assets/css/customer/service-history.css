@@ -255,7 +255,16 @@ body {
     border-top: 1px solid #f3f4f6;
     display: flex;
     justify-content: flex-end;
+    align-items: center;
     background: #fafbfc;
+}
+
+.sh-btn-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
 }
 
 .sh-btn-outline {
@@ -284,6 +293,44 @@ body {
     border-color: #dc2626;
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+}
+
+.sh-btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: 1.5px solid #dc2626;
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: #ffffff;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.sh-btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.28);
+}
+
+.sh-btn-primary i {
+    font-size: 0.85rem;
+}
+
+.sh-report-pending {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    background: #fff7ed;
+    color: #9a3412;
+    border: 1px solid #fed7aa;
+    font-size: 0.82rem;
+    font-weight: 600;
 }
 
 /* ====== Responsive ====== */
@@ -315,7 +362,22 @@ body {
         justify-content: flex-start;
     }
 
+    .sh-btn-group {
+        width: 100%;
+        justify-content: flex-start;
+    }
+
     .sh-btn-outline {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .sh-btn-primary {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .sh-report-pending {
         width: 100%;
         justify-content: center;
     }

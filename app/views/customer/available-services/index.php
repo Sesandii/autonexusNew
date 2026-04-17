@@ -7,6 +7,7 @@ if (!empty($branch_name)) {
 } elseif (!empty($branch_code)) {
   $branchTitle = " — " . htmlspecialchars($branch_code);
 }
+$availServicesJsVersion = @filemtime(dirname(APP_ROOT) . '/public/assets/js/customer/available-services.js') ?: time();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -101,7 +102,9 @@ if (!empty($branch_name)) {
             <?php foreach ($groups[$cat] as $row): ?>
               <article class="card"
                        data-name="<?= htmlspecialchars($row['service_name']) ?>"
-                       data-price="<?= htmlspecialchars(number_format((float)$row['default_price'], 2)) ?>">
+                       data-service-id="<?= (int)$row['service_id'] ?>"
+                       data-price="<?= htmlspecialchars(number_format((float)$row['default_price'], 2, '.', '')) ?>"
+                       data-price-cents="<?= (int)round(((float)$row['default_price']) * 100) ?>">
                 <div class="card-head">
                   <i class="fa-solid fa-screwdriver-wrench icon"></i>
                   <h3><?= htmlspecialchars($row['service_name']) ?></h3>
@@ -150,6 +153,6 @@ if (!empty($branch_name)) {
   </div>
 
   <script>const BASE_URL="<?= $base ?>"; const BRANCH_CODE="<?= htmlspecialchars($branch_code ?? '') ?>";</script>
-  <script src="<?= $base ?>/public/assets/js/customer/available-services.js"></script>
+  <script src="<?= $base ?>/public/assets/js/customer/available-services.js?v=<?= (int)$availServicesJsVersion ?>"></script>
 </body>
 </html>
