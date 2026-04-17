@@ -93,6 +93,13 @@
                   <a class="btn edit" href="<?= $base ?>/customer/profile/vehicle?id=<?= (int)$v['vehicle_id'] ?>">
                     <i class="fa fa-pen"></i> Edit
                   </a>
+
+                  <form method="post" action="<?= $base ?>/customer/profile/vehicle/delete" onsubmit="return confirm('Delete this vehicle? This action cannot be undone.');">
+                    <input type="hidden" name="vehicle_id" value="<?= (int)$v['vehicle_id'] ?>">
+                    <button type="submit" class="btn delete" aria-label="Delete vehicle <?= htmlspecialchars($v['license_plate'] ?? '') ?>">
+                      <i class="fa fa-trash"></i> Delete
+                    </button>
+                  </form>
                 </div>
               </article>
             <?php endforeach; ?>

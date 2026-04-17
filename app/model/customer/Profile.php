@@ -183,26 +183,30 @@ class Profile
         return (int)$st->fetchColumn() > 0;
     }
 
-  public function deleteVehicleOwnedBy(int $userId, int $vehicleId): bool
-{
-    $cid = $this->customerIdByUserId($userId);
-    if (!$cid) return false;
+    public function deleteVehicleOwnedBy(int $userId, int $vehicleId): bool
+    {
+        $cid = $this->customerIdByUserId($userId);
+        if (!$cid || $vehicleId <= 0) {
+            return false;
+        }
 
-    // Block delete if any appointment references this vehicle
-    $chk = $this->pdo->prepare(
-        "SELECT COUNT(*) FROM appointments WHERE vehicle_id = :vid"
-    );
-    $chk->execute(['vid' => $vehicleId]);
+        // Block delete if any appointment references this vehicle
+        $chk = $this->pdo->prepare(
+            "SELECT COUNT(*) FROM appointments WHERE vehicle_id = :vid"
+        );
+        $chk->execute(['vid' => $vehicleId]);
 
-    if ((int)$chk->fetchColumn() > 0) {
-        return false; // caller will set a friendly flash message
+        if ((int)$chk->fetchColumn() > 0) {
+            return false; // caller will set a friendly flash message
+        }
+
+        $st = $this->pdo->prepare(
+            "DELETE FROM vehicles WHERE vehicle_id = :vid AND customer_id = :cid"
+        );
+
+        $ok = $st->execute(['vid' => $vehicleId, 'cid' => $cid]);
+        return $ok && $st->rowCount() > 0;
     }
-
-    $st = $this->pdo->prepare(
-        "DELETE FROM vehicles WHERE vehicle_id = :vid AND customer_id = :cid"
-    );
-    return $st->execute(['vid' => $vehicleId, 'cid' => $cid]);
-}
 
 
 }
