@@ -17,9 +17,7 @@ class BookingController extends Controller
 
         $branchCode  = trim($_GET['branch'] ?? '');
         $serviceIdFromQuery = (int)($_GET['service_id'] ?? 0);
-        $serviceIdsFromQuery = [];
         $itemsParam  = (string)($_GET['items'] ?? '');
-        $serviceIdsParam = trim((string)($_GET['service_ids'] ?? ''));
         $rebookId    = (int)($_GET['rebook'] ?? ($_GET['reschedule'] ?? 0));
         $bp          = new BranchPublic();
         $branches    = $bp->allActive();
@@ -28,31 +26,14 @@ class BookingController extends Controller
         $userId   = (int)($this->userId());
         $vehicles = (new Vehicles())->byUserId($userId);
 
-        $addServiceId = static function (array &$bucket, int $id): void {
-            if ($id > 0 && !in_array($id, $bucket, true)) {
-                $bucket[] = $id;
-            }
-        };
-
-        if ($serviceIdFromQuery > 0) {
-            $addServiceId($serviceIdsFromQuery, $serviceIdFromQuery);
-        }
-
-        if ($serviceIdsParam !== '') {
-            foreach (explode(',', $serviceIdsParam) as $rawId) {
-                $addServiceId($serviceIdsFromQuery, (int)trim($rawId));
-            }
-        }
-
-        if ($itemsParam !== '') {
+        if ($serviceIdFromQuery <= 0 && $itemsParam !== '') {
             $decoded = json_decode($itemsParam, true);
             if (is_array($decoded)) {
-                foreach ($decoded as $item) {
-                    if (is_array($item)) {
-                        $serviceIdFromItems = (int)($item['serviceId'] ?? ($item['service_id'] ?? 0));
-                        if ($serviceIdFromItems > 0) {
-                            $addServiceId($serviceIdsFromQuery, $serviceIdFromItems);
-                        }
+                $first = $decoded[0] ?? null;
+                if (is_array($first)) {
+                    $serviceIdFromItems = (int)($first['serviceId'] ?? ($first['service_id'] ?? 0));
+                    if ($serviceIdFromItems > 0) {
+                        $serviceIdFromQuery = $serviceIdFromItems;
                     }
                 }
             }
@@ -76,7 +57,6 @@ class BookingController extends Controller
                     'branch_code'    => $branchCode,
                     'vehicle_id'     => (int)($appt['vehicle_id'] ?? 0),
                     'service_id'     => (int)($appt['service_id'] ?? 0),
-                    'service_ids'    => [(int)($appt['service_id'] ?? 0)],
                     'date'           => $prefillDate,
                     'time'           => $prefillTime,
                     'service_name'   => $appt['service_name'] ?? null,
@@ -85,9 +65,8 @@ class BookingController extends Controller
             }
         }
 
-        if (!$rebookId && !empty($serviceIdsFromQuery)) {
-            $prefill['service_ids'] = $serviceIdsFromQuery;
-            $prefill['service_id'] = (int)$serviceIdsFromQuery[0];
+        if (!$rebookId && $serviceIdFromQuery > 0) {
+            $prefill['service_id'] = $serviceIdFromQuery;
         }
 
         // services for selected branch (server-rendered)
@@ -117,15 +96,11 @@ class BookingController extends Controller
         $userId     = (int)$this->userId();
         $branchCode = trim($_POST['branch_code'] ?? '');
         $vehicleId  = (int)($_POST['vehicle_id'] ?? 0);
-        $serviceIdsRaw = $_POST['service_ids'] ?? [];
-        if (!is_array($serviceIdsRaw)) {
-            $serviceIdsRaw = [];
-        }
-        $serviceIds = array_values(array_unique(array_filter(array_map('intval', $serviceIdsRaw), fn($id) => $id > 0)));
-        if (empty($serviceIds)) {
-            $fallbackServiceId = (int)($_POST['service_id'] ?? 0);
-            if ($fallbackServiceId > 0) {
-                $serviceIds = [$fallbackServiceId];
+        $serviceId  = (int)($_POST['service_id'] ?? 0);
+        if ($serviceId <= 0) {
+            $serviceIdsRaw = $_POST['service_ids'] ?? [];
+            if (is_array($serviceIdsRaw) && !empty($serviceIdsRaw[0])) {
+                $serviceId = (int)$serviceIdsRaw[0];
             }
         }
         $dateYmd    = trim($_POST['date'] ?? '');
@@ -133,16 +108,16 @@ class BookingController extends Controller
         $rebookId   = (int)($_POST['rebook_id'] ?? 0);
 
         // very light validation
-        if (!$branchCode || !$vehicleId || empty($serviceIds) || !$dateYmd || !$time) {
+        if (!$branchCode || !$vehicleId || !$serviceId || !$dateYmd || !$time) {
             $_SESSION['flash'] = 'Please complete all fields.';
             $rebookParam = $rebookId > 0 ? '&rebook=' . $rebookId : '';
-            $serviceIdsParam = !empty($serviceIds) ? '&service_ids=' . urlencode(implode(',', $serviceIds)) : '';
-            header('Location: ' . $this->baseUrl() . '/customer/book?branch=' . urlencode($branchCode) . $serviceIdsParam . $rebookParam);
+            $serviceParam = $serviceId > 0 ? '&service_id=' . urlencode((string)$serviceId) : '';
+            header('Location: ' . $this->baseUrl() . '/customer/book?branch=' . urlencode($branchCode) . $serviceParam . $rebookParam);
             return;
         }
 
-        [$ok, $msg] = (new Appointments())->createBookings(
-            $userId, $branchCode, $vehicleId, $serviceIds, $dateYmd, $time
+        [$ok, $msg] = (new Appointments())->createBooking(
+            $userId, $branchCode, $vehicleId, $serviceId, $dateYmd, $time
         );
 
         if ($ok && $rebookId > 0) {
@@ -155,8 +130,8 @@ class BookingController extends Controller
             $dest = '/customer/appointments';
         } else {
             $rebookParam = $rebookId > 0 ? '&rebook=' . $rebookId : '';
-            $serviceIdsParam = !empty($serviceIds) ? '&service_ids=' . urlencode(implode(',', $serviceIds)) : '';
-            $dest = '/customer/book?branch=' . urlencode($branchCode) . $serviceIdsParam . $rebookParam;
+            $serviceParam = $serviceId > 0 ? '&service_id=' . urlencode((string)$serviceId) : '';
+            $dest = '/customer/book?branch=' . urlencode($branchCode) . $serviceParam . $rebookParam;
         }
         header('Location: ' . $this->baseUrl() . $dest);
     }
