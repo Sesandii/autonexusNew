@@ -149,8 +149,8 @@ class Profile
         } else {
             // INSERT must include vehicle_code
             $code = $this->nextVehicleCode();
-            $sql = "INSERT INTO vehicles (vehicle_code, license_plate, make, model, year, color, customer_id)
-                    VALUES (:code, :plate, :make, :model, :year, :color, :cid)";
+            $sql = "INSERT INTO vehicles (vehicle_code, license_plate, make, model, year, color, service_interval_km, customer_id)
+                    VALUES (:code, :plate, :make, :model, :year, :color, :service_interval_km, :cid)";
             $st = $this->pdo->prepare($sql);
             return $st->execute([
                 'code'  => $code,
@@ -159,6 +159,7 @@ class Profile
                 'model' => $data['model'] ?? '',
                 'year'  => (int)($data['year'] ?? 0),
                 'color' => $data['color'] ?? '',
+                'service_interval_km' => (int)($data['service_interval_km'] ?? 5000),
                 'cid'   => $cid,
             ]);
         }

@@ -73,6 +73,9 @@
         <section class="panel vehicle-panel">
           <div class="panel-head">
             <h2>My Vehicles</h2>
+            <button type="button" class="btn yellow" id="addVehicleBtn">
+              <i class="fa fa-plus"></i> Add Vehicle
+            </button>
           </div>
 
           <div class="vehicles-container">
@@ -103,5 +106,7 @@
     </div>
   </div>
 
+  <?php include APP_ROOT . '/views/customer/profile/modals.php'; ?>
+  <script src="<?= $base ?>/public/assets/js/customer/profile.js?v=20260415"></script>
 </body>
 </html>

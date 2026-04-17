@@ -1,8 +1,8 @@
-# /config/config.php
+/config/config.php
+
 # Debug logs
 debug.log
 *.log
-
 # Vendor directory
 /vendor/
 

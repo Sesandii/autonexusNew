@@ -102,8 +102,8 @@ try {
         $pdo->prepare('UPDATE users SET password_hash = :h WHERE user_id = :id')
             ->execute(['h'=>$newHash, 'id'=>(int)$user['user_id']]);
     }
+    // Log successful login
 
-    // Log success
     $pdo->prepare('INSERT INTO login_attempts (email, ip, success) VALUES (:e,:i,1)')
         ->execute(['e'=>$email,'i'=>$ip]);
 

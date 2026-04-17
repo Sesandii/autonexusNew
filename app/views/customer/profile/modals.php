@@ -46,7 +46,7 @@
 </div>
 
 <!-- Vehicle Modal -->
-<div id="vehicleModal" class="modal" hidden>
+<div id="vehicleModal" class="modal" hidden aria-hidden="true">
   <div class="modal-content">
     <button type="button" class="close" data-close aria-label="Close">×</button>
 
@@ -57,12 +57,12 @@
       <input type="hidden" name="vehicle_id" id="veh_id" />
 
       <label>License Plate
-        <input type="text" name="reg_no" id="veh_plate" required />
+        <input type="text" name="license_plate" id="veh_plate" required />
       </label>
 
       <div class="grid-2">
-        <label>Make (Brand)
-          <input type="text" name="brand" id="veh_make" required />
+        <label>Brand
+          <input type="text" name="make" id="veh_make" required />
         </label>
         <label>Model
           <input type="text" name="model" id="veh_model" required />
