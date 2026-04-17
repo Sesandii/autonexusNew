@@ -174,12 +174,14 @@ public function getAll(int $branchId): array
             LEFT JOIN appointments a ON w.appointment_id = a.appointment_id
             LEFT JOIN services s ON a.service_id = s.service_id
             LEFT JOIN mechanics m ON w.mechanic_id = m.mechanic_id
-            LEFT JOIN supervisors p ON w.supervisor_id = p.user_id
+            /* Fix 1: Join using supervisor_id PK, not user_id */
+            LEFT JOIN supervisors p ON w.supervisor_id = p.supervisor_id
             LEFT JOIN vehicles v ON a.vehicle_id = v.vehicle_id
             LEFT JOIN customers c ON a.customer_id = c.customer_id
+            /* We join users to get the CUSTOMER'S name */
             LEFT JOIN users u ON c.user_id = u.user_id
-            INNER JOIN supervisors sup_owner ON w.supervisor_id = sup_owner.user_id
-            WHERE sup_owner.branch_id = :branch_id
+            /* Fix 2: Use the supervisor record we joined above to filter by branch */
+            WHERE p.branch_id = :branch_id
             ORDER BY w.work_order_id DESC";
 
     $stmt = $this->pdo->prepare($sql);
@@ -187,7 +189,6 @@ public function getAll(int $branchId): array
 
     return $stmt->fetchAll(\PDO::FETCH_ASSOC);
 }
-
     public function find(int $id): ?array
     {
         $sql = "SELECT w.*, a.appointment_date, a.appointment_time,
