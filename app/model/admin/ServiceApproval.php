@@ -186,4 +186,30 @@ class ServiceApproval
             ':id'    => $id,
         ]);
     }
+
+    public function updateServiceDetails(int $id, array $data): bool
+{
+    $sql = "
+        UPDATE services
+        SET
+            name = :name,
+            type_id = :type_id,
+            base_duration_minutes = :base_duration_minutes,
+            default_price = :default_price,
+            description = :description,
+            updated_at = NOW()
+        WHERE service_id = :id
+    ";
+
+    $stmt = $this->db->prepare($sql);
+
+    return $stmt->execute([
+        ':name'                  => $data['name'],
+        ':type_id'               => $data['type_id'],
+        ':base_duration_minutes' => $data['base_duration_minutes'],
+        ':default_price'         => $data['default_price'],
+        ':description'           => $data['description'],
+        ':id'                    => $id,
+    ]);
+}
 }

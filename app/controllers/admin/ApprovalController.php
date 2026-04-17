@@ -22,21 +22,19 @@ class ApprovalController extends Controller
     {
         $filters = [
             'q'         => trim($_GET['q'] ?? ''),
-            'from'      => $_GET['from']      ?? '',
-            'to'        => $_GET['to']        ?? '',
+            'from'      => $_GET['from'] ?? '',
+            'to'        => $_GET['to'] ?? '',
             'branch_id' => $_GET['branch_id'] ?? '',
-            'type_id'   => $_GET['type_id']   ?? '',
+            'type_id'   => $_GET['type_id'] ?? '',
         ];
 
         $rows         = $this->approval->listPending($filters);
         $branches     = $this->approval->getBranches();
         $serviceTypes = $this->approval->getServiceTypes();
 
-        // simple flash message
         $message = $_SESSION['flash'] ?? null;
         unset($_SESSION['flash']);
 
-        // map DB rows → card data
         $cards = [];
         foreach ($rows as $r) {
             $cards[] = [
@@ -104,10 +102,13 @@ class ApprovalController extends Controller
             return;
         }
 
+        $serviceTypes = $this->approval->getServiceTypes();
+
         $this->view('admin/admin-serviceapproval/edit', [
-            'pageTitle' => 'Review Service',
-            'current'   => 'approval',
-            'service'   => $service,
+            'pageTitle'    => 'Edit / Review Service',
+            'current'      => 'approval',
+            'service'      => $service,
+            'serviceTypes' => $serviceTypes,
         ]);
     }
 
@@ -116,45 +117,72 @@ class ApprovalController extends Controller
     {
         if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
             header('Location: ' . rtrim(BASE_URL, '/') . '/admin/admin-serviceapproval');
-            return;
+            exit;
         }
 
         $id     = (int)($_POST['id'] ?? 0);
-        $action = $_POST['action'] ?? '';
+        $action = trim($_POST['action'] ?? '');
 
-        if ($id <= 0 || !in_array($action, ['approve','reject'], true)) {
+        if ($id <= 0) {
             header('Location: ' . rtrim(BASE_URL, '/') . '/admin/admin-serviceapproval');
-            return;
+            exit;
         }
 
         if (session_status() !== PHP_SESSION_ACTIVE) {
             session_start();
         }
-        $adminId = (int)($_SESSION['user']['user_id'] ?? 0);
 
+        $adminId = (int)($_SESSION['user']['user_id'] ?? 0);
         if ($adminId <= 0) {
             header('Location: ' . rtrim(BASE_URL, '/') . '/login');
-            return;
+            exit;
+        }
+
+        if ($action === 'save') {
+            $data = [
+                'name'                  => trim($_POST['name'] ?? ''),
+                'type_id'               => (int)($_POST['type_id'] ?? 0),
+                'base_duration_minutes' => (int)($_POST['base_duration_minutes'] ?? 0),
+                'default_price'         => (float)($_POST['default_price'] ?? 0),
+                'description'           => trim($_POST['description'] ?? ''),
+            ];
+
+            if ($data['name'] === '' || $data['type_id'] <= 0 || $data['base_duration_minutes'] <= 0) {
+                $_SESSION['flash'] = 'Please fill all required fields correctly.';
+                header('Location: ' . rtrim(BASE_URL, '/') . '/admin/admin-serviceapproval/edit?id=' . $id);
+                exit;
+            }
+
+            $this->approval->updateServiceDetails($id, $data);
+            $_SESSION['flash'] = 'Service details updated successfully.';
+header('Location: ' . rtrim(BASE_URL, '/') . '/admin/admin-serviceapproval/show?id=' . $id);
+exit;
         }
 
         if ($action === 'approve') {
             $this->approval->approve($id, $adminId);
             $_SESSION['flash'] = 'Service approved successfully.';
-        } else {
+            header('Location: ' . rtrim(BASE_URL, '/') . '/admin/admin-serviceapproval');
+            exit;
+        }
+
+        if ($action === 'reject') {
             $this->approval->reject($id, $adminId);
             $_SESSION['flash'] = 'Service rejected.';
+            header('Location: ' . rtrim(BASE_URL, '/') . '/admin/admin-serviceapproval');
+            exit;
         }
 
         header('Location: ' . rtrim(BASE_URL, '/') . '/admin/admin-serviceapproval');
         exit;
     }
 
-    /** Guard: only admins can access */
     private function requireAdmin(): void
     {
         if (session_status() !== PHP_SESSION_ACTIVE) {
             session_start();
         }
+
         $u = $_SESSION['user'] ?? null;
         if (!$u || (($u['role'] ?? '') !== 'admin')) {
             header('Location: ' . rtrim(BASE_URL, '/') . '/login');
