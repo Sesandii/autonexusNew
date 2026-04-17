@@ -288,7 +288,7 @@ $statusInfo = $statusMap[$rawStatus] ?? ['label' => ucfirst($rawStatus), 'class'
             <div class="details-card">
                 <div class="action-buttons">
                     <?php if (in_array($rawStatus, ['requested', 'confirmed'])): ?>
-                        <a href="<?= $base ?>/customer/book?reschedule=<?= (int)$a['appointment_id'] ?>" class="action-btn btn-reschedule">
+                        <a href="<?= $base ?>/customer/book?rebook=<?= (int)$a['appointment_id'] ?>" class="action-btn btn-reschedule">
                             <i class="fas fa-calendar-plus"></i> Reschedule
                         </a>
                         <form method="POST" action="<?= $base ?>/customer/appointments/cancel" style="display:inline;">

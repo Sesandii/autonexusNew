@@ -30,10 +30,10 @@ $sidebarCssVersion = @filemtime(dirname(APP_ROOT) . '/public/assets/css/customer
 
         <div class="topbar-right">
           <?php require APP_ROOT . '/views/partials/lang-switcher.php'; ?>
-          <div class="user-chip">
+          <a class="user-chip user-chip-link" href="<?= $base ?>/customer/profile" aria-label="Open profile">
             <div class="avatar"><i class="fa-solid fa-user"></i></div>
-            <span><?= htmlspecialchars($user_first_name ?? 'Customer') ?></span>
-          </div>
+            <span><?= htmlspecialchars($user_display_name ?? $user_first_name ?? 'Customer') ?></span>
+          </a>
         </div>
       </header>
 
@@ -49,23 +49,32 @@ $sidebarCssVersion = @filemtime(dirname(APP_ROOT) . '/public/assets/css/customer
           </article>
         </a>
 
-        <article class="kpi-card">
-          <div class="kpi-icon"><i class="fa-solid fa-gauge-high"></i></div>
-          <div class="kpi-meta">
-            <h3>Mileage</h3>
-            <p class="kpi-value"><?= number_format((int)($mileage['current'] ?? 0)) ?> km</p>
-            <div class="kpi-delta">Next service at <?= number_format((int)($mileage['next_service_at'] ?? 0)) ?> km</div>
-          </div>
-        </article>
+        <a class="kpi-card-link" href="<?= $base ?>/customer/track-services">
+          <article class="kpi-card">
+            <div class="kpi-icon"><i class="fa-solid fa-location-crosshairs"></i></div>
+            <div class="kpi-meta">
+              <h3>Track Service</h3>
+              <p class="kpi-value">
+                <?= (int)($track_summary['active'] ?? 0) ?> Active
+                Service<?= (int)($track_summary['active'] ?? 0) === 1 ? '' : 's' ?>
+              </p>
+              <div class="kpi-delta">
+                <?= htmlspecialchars((string)($track_summary['note'] ?? 'No active services right now')) ?>
+              </div>
+            </div>
+          </article>
+        </a>
 
-        <article class="kpi-card">
-          <div class="kpi-icon"><i class="fa-regular fa-message"></i></div>
-          <div class="kpi-meta">
-            <h3>Feedback Pending</h3>
-            <p class="kpi-value"><?= (int)($feedback_pending ?? 0) ?> Service<?= (int)($feedback_pending ?? 0) === 1 ? '' : 's' ?></p>
-            <div class="kpi-delta">Needs your review</div>
-          </div>
-        </article>
+        <a class="kpi-card-link" href="<?= $base ?>/customer/rate-service">
+          <article class="kpi-card">
+            <div class="kpi-icon"><i class="fa-regular fa-message"></i></div>
+            <div class="kpi-meta">
+              <h3>Feedback Pending</h3>
+              <p class="kpi-value"><?= (int)($feedback_pending ?? 0) ?> Service<?= (int)($feedback_pending ?? 0) === 1 ? '' : 's' ?></p>
+              <div class="kpi-delta"><?= (int)($feedback_pending ?? 0) > 0 ? 'Needs your review' : 'All caught up' ?></div>
+            </div>
+          </article>
+        </a>
       </section>
 
       <section class="content-grid">

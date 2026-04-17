@@ -16,7 +16,7 @@ class BookingController extends Controller
         if (method_exists($this, 'requireLogin')) $this->requireLogin();
 
         $branchCode  = trim($_GET['branch'] ?? '');
-        $rebookId    = (int)($_GET['rebook'] ?? 0);
+        $rebookId    = (int)($_GET['rebook'] ?? ($_GET['reschedule'] ?? 0));
         $bp          = new BranchPublic();
         $branches    = $bp->allActive();
         $branchName  = $branchCode ? ($bp->findNameByCode($branchCode) ?? null) : null;
@@ -80,11 +80,13 @@ class BookingController extends Controller
         $serviceId  = (int)($_POST['service_id'] ?? 0);
         $dateYmd    = trim($_POST['date'] ?? '');
         $time       = trim($_POST['time'] ?? '');
+        $rebookId   = (int)($_POST['rebook_id'] ?? 0);
 
         // very light validation
         if (!$branchCode || !$vehicleId || !$serviceId || !$dateYmd || !$time) {
             $_SESSION['flash'] = 'Please complete all fields.';
-            header('Location: ' . $this->baseUrl() . '/customer/book?branch=' . urlencode($branchCode));
+            $rebookParam = $rebookId > 0 ? '&rebook=' . $rebookId : '';
+            header('Location: ' . $this->baseUrl() . '/customer/book?branch=' . urlencode($branchCode) . $rebookParam);
             return;
         }
 
@@ -92,9 +94,18 @@ class BookingController extends Controller
             $userId, $branchCode, $vehicleId, $serviceId, $dateYmd, $time
         );
 
+        if ($ok && $rebookId > 0) {
+            (new Appointments())->cancelIfCustomerOwns($userId, $rebookId);
+        }
+
         $_SESSION['flash'] = $msg;
         // on success go to appointments page
-        $dest = $ok ? '/customer/appointments' : '/customer/book?branch=' . urlencode($branchCode);
+        if ($ok) {
+            $dest = '/customer/appointments';
+        } else {
+            $rebookParam = $rebookId > 0 ? '&rebook=' . $rebookId : '';
+            $dest = '/customer/book?branch=' . urlencode($branchCode) . $rebookParam;
+        }
         header('Location: ' . $this->baseUrl() . $dest);
     }
 

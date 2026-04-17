@@ -6,6 +6,7 @@ $prefillVehicleId = (int)($prefill['vehicle_id'] ?? 0);
 $prefillServiceId = (int)($prefill['service_id'] ?? 0);
 $prefillDate      = $prefill['date'] ?? '';
 $prefillTime      = $prefill['time'] ?? '';
+$prefillRebookId  = (int)($prefill['appointment_id'] ?? 0);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -108,6 +109,9 @@ $prefillTime      = $prefill['time'] ?? '';
 
     <!-- Wrap everything in a POST form -->
     <form action="<?= $base ?>/customer/book" method="post" id="bookingForm">
+      <?php if ($prefillRebookId > 0): ?>
+        <input type="hidden" name="rebook_id" value="<?= $prefillRebookId ?>">
+      <?php endif; ?>
 
       <!-- STEP 1: Branch -->
       <section class="card">
@@ -277,13 +281,15 @@ $prefillTime      = $prefill['time'] ?? '';
     const branchCodeInput = document.getElementById('branch_code');
     const dateInput = document.getElementById('date');
     const timeInput = document.getElementById('time');
+    const rebookId = <?= $prefillRebookId ?>;
 
     // 1) when a branch is picked, reload page with ?branch=CODE (to load services server-side)
     document.querySelectorAll('input[name="branch_pick"]').forEach(r => {
       r.addEventListener('change', e => {
         const code = e.target.value;
         branchCodeInput.value = code;
-        window.location.href = base + '/customer/book?branch=' + encodeURIComponent(code);
+        const rebookParam = rebookId ? '&rebook=' + encodeURIComponent(String(rebookId)) : '';
+        window.location.href = base + '/customer/book?branch=' + encodeURIComponent(code) + rebookParam;
       });
     });
 
