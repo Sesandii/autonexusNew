@@ -62,6 +62,7 @@ $sidebarCssVersion = @filemtime(dirname(APP_ROOT) . '/public/assets/css/customer
 
               $dateText = !empty($s['date']) ? date('M d, Y', strtotime($s['date'])) : 'Date not set';
               $timeText = $s['time'] ?? '';
+              $hasFinalReport = !empty($s['has_final_report']) || !empty($s['report_id']);
             ?>
 
             <article class="sh-card">
@@ -127,10 +128,24 @@ $sidebarCssVersion = @filemtime(dirname(APP_ROOT) . '/public/assets/css/customer
               </div>
 
               <div class="sh-card-footer">
-                <a href="<?= $base ?>/customer/service-history/<?= (int)$s['work_order_id'] ?>" class="sh-btn-outline">
-                  <i class="fa-solid fa-file-lines"></i>
-                  View Details
-                </a>
+                <div class="sh-btn-group">
+                  <a href="<?= $base ?>/customer/service-history/<?= (int)$s['work_order_id'] ?>" class="sh-btn-outline">
+                    <i class="fa-solid fa-file-lines"></i>
+                    <?= $hasFinalReport ? 'View Report' : 'View Details' ?>
+                  </a>
+
+                  <?php if ($hasFinalReport): ?>
+                    <a href="<?= $base ?>/customer/service-history/<?= (int)$s['work_order_id'] ?>/pdf" class="sh-btn-primary" title="Download Final Report">
+                      <i class="fa-solid fa-file-arrow-down"></i>
+                      Download Report
+                    </a>
+                  <?php else: ?>
+                    <span class="sh-report-pending">
+                      <i class="fa-solid fa-hourglass-half"></i>
+                      Final report pending
+                    </span>
+                  <?php endif; ?>
+                </div>
               </div>
             </article>
           <?php endforeach; ?>

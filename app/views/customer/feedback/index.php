@@ -18,6 +18,7 @@ $base = rtrim(BASE_URL, '/');
 
   <?php include APP_ROOT . '/views/layouts/customer-sidebar.php'; ?>
 
+  <!-- Keep customer-layout-main so shared sidebar spacing stays consistent across customer pages. -->
   <div class="container customer-layout-main">
     <main class="main-content">
 
@@ -36,7 +37,6 @@ $base = rtrim(BASE_URL, '/');
         </div>
         <?php unset($_SESSION['flash']); ?>
       <?php endif; ?>
-// If no appointments, show empty state. Otherwise show form.
       <?php if (empty($appointments)): ?>
         <div class="empty-appointments">
           <i class="fa-regular fa-calendar-xmark"></i>
@@ -44,7 +44,6 @@ $base = rtrim(BASE_URL, '/');
           <p>You don't have any completed services without feedback yet.</p>
         </div>
       <?php else: ?>
-// Show rating form
       <form class="form-container" method="POST" action="<?= $base ?>/customer/rate-service" id="ratingForm">
         
         <!-- Step 1: Select Service -->
@@ -53,7 +52,6 @@ $base = rtrim(BASE_URL, '/');
             <span class="step-badge">1</span>
             Select Completed Service
           </h2>
- // Dropdown with appointments that need feedback         
           <div class="form-group">
             <label for="appointment">Choose a service to rate</label>
             <select id="appointment" name="appointment_id" required>
@@ -141,6 +139,7 @@ $base = rtrim(BASE_URL, '/');
         </div>
 
         <!-- Feedback Section -->
+         
         <div class="form-section full-width" id="feedbackSection" style="display: none;">
           <h2 class="section-title">
             <span class="step-badge">4</span>
@@ -162,6 +161,7 @@ $base = rtrim(BASE_URL, '/');
         </div>
 
         <!-- Submit Button -->
+
         <div class="form-group full-width actions-row" id="submitSection" style="display: none;">
           <button type="button" class="btn-secondary" onclick="window.location.href='<?= $base ?>/customer/dashboard'">
             <i class="fa-solid fa-xmark"></i>
