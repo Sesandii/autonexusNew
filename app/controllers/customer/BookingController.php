@@ -16,6 +16,8 @@ class BookingController extends Controller
         if (method_exists($this, 'requireLogin')) $this->requireLogin();
 
         $branchCode  = trim($_GET['branch'] ?? '');
+        $serviceIdFromQuery = (int)($_GET['service_id'] ?? 0);
+        $itemsParam  = (string)($_GET['items'] ?? '');
         $rebookId    = (int)($_GET['rebook'] ?? ($_GET['reschedule'] ?? 0));
         $bp          = new BranchPublic();
         $branches    = $bp->allActive();
@@ -23,6 +25,19 @@ class BookingController extends Controller
 
         $userId   = (int)($this->userId());
         $vehicles = (new Vehicles())->byUserId($userId);
+
+        if ($serviceIdFromQuery <= 0 && $itemsParam !== '') {
+            $decoded = json_decode($itemsParam, true);
+            if (is_array($decoded)) {
+                $first = $decoded[0] ?? null;
+                if (is_array($first)) {
+                    $serviceIdFromItems = (int)($first['serviceId'] ?? ($first['service_id'] ?? 0));
+                    if ($serviceIdFromItems > 0) {
+                        $serviceIdFromQuery = $serviceIdFromItems;
+                    }
+                }
+            }
+        }
 
         // Prefill data when rebooking
         $prefill = [];
@@ -48,6 +63,10 @@ class BookingController extends Controller
                     'license_plate'  => $appt['license_plate'] ?? null,
                 ];
             }
+        }
+
+        if (!$rebookId && $serviceIdFromQuery > 0) {
+            $prefill['service_id'] = $serviceIdFromQuery;
         }
 
         // services for selected branch (server-rendered)
@@ -78,6 +97,12 @@ class BookingController extends Controller
         $branchCode = trim($_POST['branch_code'] ?? '');
         $vehicleId  = (int)($_POST['vehicle_id'] ?? 0);
         $serviceId  = (int)($_POST['service_id'] ?? 0);
+        if ($serviceId <= 0) {
+            $serviceIdsRaw = $_POST['service_ids'] ?? [];
+            if (is_array($serviceIdsRaw) && !empty($serviceIdsRaw[0])) {
+                $serviceId = (int)$serviceIdsRaw[0];
+            }
+        }
         $dateYmd    = trim($_POST['date'] ?? '');
         $time       = trim($_POST['time'] ?? '');
         $rebookId   = (int)($_POST['rebook_id'] ?? 0);
@@ -86,7 +111,8 @@ class BookingController extends Controller
         if (!$branchCode || !$vehicleId || !$serviceId || !$dateYmd || !$time) {
             $_SESSION['flash'] = 'Please complete all fields.';
             $rebookParam = $rebookId > 0 ? '&rebook=' . $rebookId : '';
-            header('Location: ' . $this->baseUrl() . '/customer/book?branch=' . urlencode($branchCode) . $rebookParam);
+            $serviceParam = $serviceId > 0 ? '&service_id=' . urlencode((string)$serviceId) : '';
+            header('Location: ' . $this->baseUrl() . '/customer/book?branch=' . urlencode($branchCode) . $serviceParam . $rebookParam);
             return;
         }
 
@@ -104,7 +130,8 @@ class BookingController extends Controller
             $dest = '/customer/appointments';
         } else {
             $rebookParam = $rebookId > 0 ? '&rebook=' . $rebookId : '';
-            $dest = '/customer/book?branch=' . urlencode($branchCode) . $rebookParam;
+            $serviceParam = $serviceId > 0 ? '&service_id=' . urlencode((string)$serviceId) : '';
+            $dest = '/customer/book?branch=' . urlencode($branchCode) . $serviceParam . $rebookParam;
         }
         header('Location: ' . $this->baseUrl() . $dest);
     }

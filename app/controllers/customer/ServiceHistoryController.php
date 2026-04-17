@@ -65,9 +65,17 @@ class ServiceHistoryController extends Controller
             exit;
         }
 
+        $serviceTasks = $model->getServiceTasks($id);
+        $photos = [];
+        if (!empty($service['report_id'])) {
+            $photos = $model->getReportPhotos((int)$service['report_id']);
+        }
+
         $this->view('customer/service-history/show', [
-            'title' => 'Service Details',
+            'title' => !empty($service['report_id']) ? 'Final Service Report' : 'Service Details',
             'service' => $service,
+            'serviceTasks' => $serviceTasks,
+            'photos' => $photos,
         ]);
     }
 
@@ -102,6 +110,14 @@ class ServiceHistoryController extends Controller
             exit;
         }
 
+        if (empty($service['report_id'])) {
+            $_SESSION['flash'] = 'Final report is not available for this service yet.';
+            header('Location: ' . BASE_URL . '/customer/service-history/' . $id);
+            exit;
+        }
+
+        $serviceTasks = $model->getServiceTasks($id);
+
         // Generate PDF
         $options = new Options();
         $options->set('isHtml5ParserEnabled', true);
@@ -110,18 +126,20 @@ class ServiceHistoryController extends Controller
 
         $dompdf = new Dompdf($options);
 
-        $html = $this->generatePdfHtml($service);
+        $html = $this->generatePdfHtml($service, $serviceTasks);
         $dompdf->loadHtml($html);
         $dompdf->setPaper('A4', 'portrait');
         $dompdf->render();
 
-        $filename = 'ServiceDetails_WO' . $service['work_order_id'] . '_' . date('Ymd') . '.pdf';
+        $filename = 'FinalReport_WO' . $service['work_order_id'] . '_' . date('Ymd') . '.pdf';
         $dompdf->stream($filename, ['Attachment' => true]);
     }
 
-    private function generatePdfHtml(array $service): string
+    private function generatePdfHtml(array $service, array $serviceTasks = []): string
     {
-        $date = date('M d, Y', strtotime($service['date']));
+        $date = !empty($service['date'])
+            ? date('M d, Y', strtotime((string)$service['date']))
+            : 'N/A';
         $generatedDate = date('M d, Y');
         $price = number_format((float)($service['price'] ?? 0), 2);
         $make = htmlspecialchars((string)($service['make'] ?? ''));
@@ -131,17 +149,58 @@ class ServiceHistoryController extends Controller
         $technician = htmlspecialchars((string)($service['technician'] ?? 'Not assigned'));
         $branch = htmlspecialchars((string)($service['branch_name'] ?? 'Main Branch'));
         $serviceType = htmlspecialchars((string)($service['service_type'] ?? 'N/A'));
-        $status = ucfirst((string)($service['status'] ?? 'completed'));
+        $status = htmlspecialchars(ucfirst((string)($service['status'] ?? 'completed')));
+        $reportStatus = htmlspecialchars(ucfirst((string)($service['report_status'] ?? 'submitted')));
         $description = nl2br(htmlspecialchars((string)($service['description'] ?? '')));
+        $reportSummaryRaw = trim((string)($service['report_summary'] ?? ''));
+        if ($reportSummaryRaw === '') {
+            $reportSummaryRaw = (string)($service['description'] ?? '');
+        }
+        $reportSummary = nl2br(htmlspecialchars($reportSummaryRaw));
+        $inspectionNotes = nl2br(htmlspecialchars((string)($service['inspection_notes'] ?? '-')));
         $time = htmlspecialchars((string)($service['time'] ?? 'N/A'));
         $workOrderId = htmlspecialchars((string)($service['work_order_id']));
+        $customerName = htmlspecialchars((string)($service['customer_name'] ?? 'Customer'));
+        $qualityRating = max(0, min(5, (int)($service['quality_rating'] ?? 0)));
+        $qualityText = $qualityRating . ' / 5';
+        $checklistVerified = !empty($service['checklist_verified']) ? 'Yes' : 'No';
+        $testDriven = !empty($service['test_driven']) ? 'Yes' : 'No';
+        $concernsAddressed = !empty($service['concerns_addressed']) ? 'Yes' : 'No';
+        $nextServiceDue = !empty($service['last_service_mileage'])
+            ? htmlspecialchars((string)$service['last_service_mileage']) . ' km'
+            : 'Not set';
+        $serviceInterval = !empty($service['service_interval_km'])
+            ? htmlspecialchars((string)$service['service_interval_km']) . ' km'
+            : '5000 km';
+        $recommendation = trim((string)($service['next_service_recommendation'] ?? ''));
+        $recommendationHtml = '';
+        if ($recommendation !== '') {
+            $recommendationSafe = nl2br(htmlspecialchars($recommendation));
+            $recommendationHtml = "
+                <div class=\"section\">
+                    <div class=\"section-title\">Next Service Recommendation</div>
+                    <div class=\"description-box\">{$recommendationSafe}</div>
+                </div>
+            ";
+        }
+
+        $serviceTaskRows = '';
+        if (!empty($serviceTasks)) {
+            foreach ($serviceTasks as $task) {
+                $itemName = htmlspecialchars((string)($task['item_name'] ?? 'Service task'));
+                $itemStatus = htmlspecialchars(ucfirst((string)($task['status'] ?? 'pending')));
+                $serviceTaskRows .= "<tr><td>{$itemName}</td><td>{$itemStatus}</td></tr>";
+            }
+        } else {
+            $serviceTaskRows = '<tr><td colspan="2">No service task details available.</td></tr>';
+        }
 
         return <<<HTML
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Service Details - Work Order #{$workOrderId}</title>
+    <title>Final Service Report - Work Order #{$workOrderId}</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -230,11 +289,11 @@ class ServiceHistoryController extends Controller
 <body>
     <div class="header">
         <h1>AutoNexus</h1>
-        <p>Service Details Report</p>
+        <p>Customer Final Service Report</p>
     </div>
 
     <div class="section">
-        <div class="section-title">Service Information</div>
+        <div class="section-title">Job Inspection & Reporting</div>
         <div class="grid">
             <div class="grid-row">
                 <div class="grid-cell">
@@ -242,8 +301,18 @@ class ServiceHistoryController extends Controller
                     <div class="value">{$workOrderId}</div>
                 </div>
                 <div class="grid-cell">
-                    <div class="label">Status</div>
+                    <div class="label">Service Status</div>
                     <div class="value"><span class="status-badge">{$status}</span></div>
+                </div>
+            </div>
+            <div class="grid-row">
+                <div class="grid-cell">
+                    <div class="label">Customer</div>
+                    <div class="value">{$customerName}</div>
+                </div>
+                <div class="grid-cell">
+                    <div class="label">Final Report Status</div>
+                    <div class="value">{$reportStatus}</div>
                 </div>
             </div>
             <div class="grid-row">
@@ -309,7 +378,58 @@ class ServiceHistoryController extends Controller
     </div>
 
     <div class="section">
-        <div class="section-title">Service Summary</div>
+        <div class="section-title">Service Tasks</div>
+        <table style="width:100%; border-collapse: collapse; margin-top: 8px;">
+            <thead>
+                <tr>
+                    <th style="text-align:left; border-bottom:1px solid #e5e7eb; padding:8px 6px;">Task</th>
+                    <th style="text-align:left; border-bottom:1px solid #e5e7eb; padding:8px 6px;">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {$serviceTaskRows}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="section">
+        <div class="section-title">Final Inspection</div>
+        <div class="description-box">
+            <div style="margin-bottom:8px;"><strong>Inspection Notes:</strong><br>{$inspectionNotes}</div>
+            <div><strong>Quality Rating:</strong> {$qualityText}</div>
+            <div style="margin-top:8px;"><strong>Tasks Verified:</strong> {$checklistVerified}</div>
+            <div><strong>Vehicle Test Driven:</strong> {$testDriven}</div>
+            <div><strong>Customer Concerns Addressed:</strong> {$concernsAddressed}</div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">Final Report Summary</div>
+        <div class="description-box">
+            {$reportSummary}
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">Service Continuity</div>
+        <div class="grid">
+            <div class="grid-row">
+                <div class="grid-cell">
+                    <div class="label">Next Service Due</div>
+                    <div class="value">{$nextServiceDue}</div>
+                </div>
+                <div class="grid-cell">
+                    <div class="label">Service Interval</div>
+                    <div class="value">{$serviceInterval}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {$recommendationHtml}
+
+    <div class="section">
+        <div class="section-title">Internal Service Notes</div>
         <div class="description-box">
             {$description}
         </div>

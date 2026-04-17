@@ -183,9 +183,9 @@ $prefillRebookId  = (int)($prefill['appointment_id'] ?? 0);
 
         <?php if (!empty($services)): ?>
           <div class="date-row">
-            <div class="date-field" style="min-width:320px;">
+            <div class="date-field" style="min-width:360px;">
               <label for="service_id">Available services at this branch</label><br>
-              <select id="service_id" name="service_id" required>
+              <select id="service_id" name="service_id" required aria-label="Available services">
                 <option value="" disabled <?= $prefillServiceId ? '' : 'selected' ?>>-- Choose a service --</option>
                 <?php
                   // Group by type_name as <optgroup>
@@ -205,7 +205,7 @@ $prefillRebookId  = (int)($prefill['appointment_id'] ?? 0);
                   </optgroup>
                 <?php endforeach; ?>
               </select>
-              <div class="notes">This list updates when you change the branch.</div>
+              <div class="notes">Select one service. This list updates when you change the branch.</div>
             </div>
           </div>
         <?php else: ?>
@@ -291,8 +291,12 @@ $prefillRebookId  = (int)($prefill['appointment_id'] ?? 0);
       r.addEventListener('change', e => {
         const code = e.target.value;
         branchCodeInput.value = code;
+        const selectedService = document.getElementById('service_id')?.value || '';
+        const serviceParam = selectedService
+          ? '&service_id=' + encodeURIComponent(selectedService)
+          : '';
         const rebookParam = rebookId ? '&rebook=' + encodeURIComponent(String(rebookId)) : '';
-        window.location.href = base + '/customer/book?branch=' + encodeURIComponent(code) + rebookParam;
+        window.location.href = base + '/customer/book?branch=' + encodeURIComponent(code) + serviceParam + rebookParam;
       });
     });
 
@@ -402,10 +406,10 @@ $prefillRebookId  = (int)($prefill['appointment_id'] ?? 0);
     document.getElementById('bookingForm').addEventListener('submit', (e) => {
       const branch = branchCodeInput.value.trim();
       const veh    = document.getElementById('vehicle_id')?.value || '';
-      const serv   = document.getElementById('service_id')?.value || '';
+      const selectedService = document.getElementById('service_id')?.value || '';
       const date   = dateInput.value;
       const time   = timeInput.value;
-      if (!branch || !veh || !serv || !date || !time) {
+      if (!branch || !veh || !selectedService || !date || !time) {
         e.preventDefault();
         alert('Please complete all fields (branch, vehicle, service, date & time).');
       }

@@ -12,6 +12,17 @@ class Appointments
     private PDO $pdo;
     public function __construct() { $this->pdo = db(); }
 
+    private function normalizeTime(string $time): string
+    {
+        if (preg_match('/^\d{2}:\d{2}(:\d{2})?$/', $time)) {
+            if (strlen($time) === 5) {
+                return $time . ':00';
+            }
+            return $time;
+        }
+        return '00:00:00';
+    }
+
     /** Map user -> customer_id */
     private function customerIdByUserId(int $userId): ?int
     {
@@ -86,6 +97,25 @@ class Appointments
     public function createBooking(
         int $userId, string $branchCode, int $vehicleId, int $serviceId, string $dateYmd, string $time
     ): array {
+        [$ok, $msg] = $this->createBookings($userId, $branchCode, $vehicleId, [$serviceId], $dateYmd, $time);
+        if (!$ok) {
+            return [$ok, $msg];
+        }
+        return [true, 'Booking created successfully.'];
+    }
+
+    /**
+     * Create multiple bookings in one submission (one appointment per selected service).
+     * Returns [ok, message].
+     */
+    public function createBookings(
+        int $userId,
+        string $branchCode,
+        int $vehicleId,
+        array $serviceIds,
+        string $dateYmd,
+        string $time
+    ): array {
         try {
             $customerId = $this->customerIdByUserId($userId);
             if (!$customerId) return [false, 'Customer profile not found.'];
@@ -97,20 +127,39 @@ class Appointments
                 return [false, 'Selected vehicle does not belong to your account.'];
             }
 
-           // normalize time to HH:MM:SS
-if (preg_match('/^\d{2}:\d{2}(:\d{2})?$/', $time)) {
-    if (strlen($time) === 5) {
-        $time .= ':00';
-    }
-} else {
-    $time = '00:00:00';
-}
+            $serviceIds = array_values(array_unique(array_filter(array_map('intval', $serviceIds), fn($id) => $id > 0)));
+            if (empty($serviceIds)) {
+                return [false, 'Please select at least one service.'];
+            }
+
+            $placeholders = implode(',', array_fill(0, count($serviceIds), '?'));
+            $serviceValidationSql = "
+                SELECT COUNT(DISTINCT bs.service_id)
+                FROM branch_services bs
+                JOIN services s ON s.service_id = bs.service_id
+                WHERE bs.branch_id = ?
+                  AND COALESCE(s.status, 'active') = 'active'
+                  AND bs.service_id IN ({$placeholders})
+            ";
+            $serviceValidationStmt = $this->pdo->prepare($serviceValidationSql);
+            $serviceValidationStmt->execute(array_merge([$branchId], $serviceIds));
+            $validServiceCount = (int)$serviceValidationStmt->fetchColumn();
+            if ($validServiceCount !== count($serviceIds)) {
+                return [false, 'One or more selected services are not available for this branch.'];
+            }
+
+            $time = $this->normalizeTime($time);
 
             // simple slot cap (max 3 per slot, as discussed earlier)
             $cap   = 3;
             $count = $this->countAtSlot($branchId, $dateYmd, $time);
-            if ($count >= $cap) {
-                return [false, 'Selected time slot is full. Please choose another time.'];
+            $requested = count($serviceIds);
+            $available = max(0, $cap - $count);
+            if ($requested > $available) {
+                if ($available === 0) {
+                    return [false, 'Selected time slot is full. Please choose another time.'];
+                }
+                return [false, "Only {$available} slot(s) are available for the selected time."];
             }
 
             $sql = "INSERT INTO appointments
@@ -118,17 +167,28 @@ if (preg_match('/^\d{2}:\d{2}(:\d{2})?$/', $time)) {
                     VALUES
                         (:cid, :bid, :vid, :sid, :d, :t, 'requested', NOW())";
             $st = $this->pdo->prepare($sql);
-            $st->execute([
-                'cid' => $customerId,
-                'bid' => $branchId,
-                'vid' => $vehicleId,
-                'sid' => $serviceId,
-                'd'   => $dateYmd,
-                't'   => $time,
-            ]);
 
-            return [true, 'Booking created successfully.'];
+            $this->pdo->beginTransaction();
+            foreach ($serviceIds as $serviceId) {
+                $st->execute([
+                    'cid' => $customerId,
+                    'bid' => $branchId,
+                    'vid' => $vehicleId,
+                    'sid' => $serviceId,
+                    'd'   => $dateYmd,
+                    't'   => $time,
+                ]);
+            }
+            $this->pdo->commit();
+
+            if ($requested === 1) {
+                return [true, 'Booking created successfully.'];
+            }
+            return [true, "{$requested} bookings created successfully."];
         } catch (PDOException $e) {
+            if ($this->pdo->inTransaction()) {
+                $this->pdo->rollBack();
+            }
             // optional: log $e->getMessage()
             return [false, 'Failed to create booking.'];
         }
