@@ -4,6 +4,19 @@ $selCode = $branch_code ?? '';
 $prefill = $prefill ?? [];
 $prefillVehicleId = (int)($prefill['vehicle_id'] ?? 0);
 $prefillServiceId = (int)($prefill['service_id'] ?? 0);
+$prefillServiceIds = [];
+if (!empty($prefill['service_ids']) && is_array($prefill['service_ids'])) {
+  foreach ($prefill['service_ids'] as $sid) {
+    $sidInt = (int)$sid;
+    if ($sidInt > 0 && !in_array($sidInt, $prefillServiceIds, true)) {
+      $prefillServiceIds[] = $sidInt;
+    }
+  }
+}
+if (empty($prefillServiceIds) && $prefillServiceId > 0) {
+  $prefillServiceIds[] = $prefillServiceId;
+}
+$prefillServiceMap = array_fill_keys($prefillServiceIds, true);
 $prefillDate      = $prefill['date'] ?? '';
 $prefillTime      = $prefill['time'] ?? '';
 $prefillRebookId  = (int)($prefill['appointment_id'] ?? 0);
@@ -178,15 +191,14 @@ $prefillRebookId  = (int)($prefill['appointment_id'] ?? 0);
       <section class="card">
         <div class="step-title">
           <span class="step-badge">3</span>
-          <h3>Select Service</h3>
+          <h3>Select Services</h3>
         </div>
 
         <?php if (!empty($services)): ?>
           <div class="date-row">
-            <div class="date-field" style="min-width:320px;">
-              <label for="service_id">Available services at this branch</label><br>
-              <select id="service_id" name="service_id" required>
-                <option value="" disabled <?= $prefillServiceId ? '' : 'selected' ?>>-- Choose a service --</option>
+            <div class="date-field" style="min-width:360px;">
+              <label for="service_ids">Available services at this branch</label><br>
+              <select id="service_ids" name="service_ids[]" multiple required size="8" aria-label="Available services">
                 <?php
                   // Group by type_name as <optgroup>
                   $byType = [];
@@ -197,7 +209,7 @@ $prefillRebookId  = (int)($prefill['appointment_id'] ?? 0);
                 ?>
                   <optgroup label="<?= htmlspecialchars($type) ?>">
                     <?php foreach ($rows as $r): ?>
-                      <?php $sel = ($prefillServiceId && (int)$r['service_id'] === $prefillServiceId) ? 'selected' : ''; ?>
+                      <?php $sel = !empty($prefillServiceMap[(int)$r['service_id']]) ? 'selected' : ''; ?>
                       <option value="<?= (int)$r['service_id'] ?>" <?= $sel ?>>
                         <?= htmlspecialchars($r['service_name']) ?> — $<?= number_format((float)$r['default_price'], 2) ?>
                       </option>
@@ -205,7 +217,7 @@ $prefillRebookId  = (int)($prefill['appointment_id'] ?? 0);
                   </optgroup>
                 <?php endforeach; ?>
               </select>
-              <div class="notes">This list updates when you change the branch.</div>
+              <div class="notes">Select one or more services. This list updates when you change the branch.</div>
             </div>
           </div>
         <?php else: ?>
@@ -291,8 +303,15 @@ $prefillRebookId  = (int)($prefill['appointment_id'] ?? 0);
       r.addEventListener('change', e => {
         const code = e.target.value;
         branchCodeInput.value = code;
+        const serviceSelect = document.getElementById('service_ids');
+        const selectedServices = serviceSelect
+          ? Array.from(serviceSelect.selectedOptions).map((opt) => opt.value).filter(Boolean)
+          : [];
+        const serviceIdsParam = selectedServices.length
+          ? '&service_ids=' + encodeURIComponent(selectedServices.join(','))
+          : '';
         const rebookParam = rebookId ? '&rebook=' + encodeURIComponent(String(rebookId)) : '';
-        window.location.href = base + '/customer/book?branch=' + encodeURIComponent(code) + rebookParam;
+        window.location.href = base + '/customer/book?branch=' + encodeURIComponent(code) + serviceIdsParam + rebookParam;
       });
     });
 
@@ -402,12 +421,15 @@ $prefillRebookId  = (int)($prefill['appointment_id'] ?? 0);
     document.getElementById('bookingForm').addEventListener('submit', (e) => {
       const branch = branchCodeInput.value.trim();
       const veh    = document.getElementById('vehicle_id')?.value || '';
-      const serv   = document.getElementById('service_id')?.value || '';
+      const serviceSelect = document.getElementById('service_ids');
+      const selectedServices = serviceSelect
+        ? Array.from(serviceSelect.selectedOptions).map((opt) => opt.value).filter(Boolean)
+        : [];
       const date   = dateInput.value;
       const time   = timeInput.value;
-      if (!branch || !veh || !serv || !date || !time) {
+      if (!branch || !veh || !selectedServices.length || !date || !time) {
         e.preventDefault();
-        alert('Please complete all fields (branch, vehicle, service, date & time).');
+        alert('Please complete all fields (branch, vehicle, service(s), date & time).');
       }
     });
   </script>

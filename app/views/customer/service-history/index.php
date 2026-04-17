@@ -125,8 +125,8 @@ $sidebarCssVersion = @filemtime(dirname(APP_ROOT) . '/public/assets/css/customer
                     <div class="sh-value"><?= htmlspecialchars($s['branch_name'] ?? 'Main Branch') ?></div>
                   </div>
                 </div>
+                
               </div>
-
               <div class="sh-card-footer">
                 <div class="sh-btn-group">
                   <a href="<?= $base ?>/customer/service-history/<?= (int)$s['work_order_id'] ?>" class="sh-btn-outline">
