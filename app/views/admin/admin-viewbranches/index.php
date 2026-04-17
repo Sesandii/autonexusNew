@@ -1,116 +1,489 @@
 <?php
 /** @var array $branches */
 /** @var string $base */
+/** @var string $q */
+/** @var string $status */
+
 $current  = 'branches';
 $branches = $branches ?? [];
 $base     = rtrim($base ?? BASE_URL, '/');
+$q        = $q ?? '';
+$status   = $status ?? 'all';
+
+function e($value): string
+{
+    return htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8');
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Branches Management</title>
 
-  <!-- Use absolute URLs so they don't break under /admin/branches -->
-  <link rel="stylesheet" href="<?= $base ?>/app/views/layouts/admin-shared/management.css">
   <link rel="stylesheet" href="<?= $base ?>/app/views/layouts/admin-sidebar/styles.css">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="<?= $B ?>/app/views/layouts/admin-shared/management.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
   <style>
-    .sidebar { position: fixed; top:0; left:0; width:260px; height:100vh; overflow-y:auto; }
-    .main-content { margin-left:260px; padding:30px; background:#fff; min-height:100vh; }
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background: #f3f4f6;
+      color: #111827;
+    }
+
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 260px;
+      height: 100vh;
+      overflow-y: auto;
+    }
+
+    .main-content {
+      margin-left: 260px;
+      min-height: 100vh;
+      padding: 28px;
+      background: #f3f4f6;
+    }
+
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+
+    .page-title-wrap h1 {
+      margin: 0;
+      font-size: 32px;
+      line-height: 1.15;
+      font-weight: 800;
+      color: #0f172a;
+    }
+
+    .page-title-wrap p {
+      margin: 8px 0 0;
+      font-size: 15px;
+      color: #64748b;
+    }
+
+    .toolbar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .toolbar form {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin: 0;
+    }
+
+    .search-wrap {
+      position: relative;
+    }
+
+    .search-input {
+      width: 290px;
+      height: 46px;
+      border: 1px solid #d1d5db;
+      border-radius: 999px;
+      padding: 0 18px;
+      font-size: 15px;
+      background: #fff;
+      color: #111827;
+      outline: none;
+      transition: border-color .2s ease, box-shadow .2s ease;
+    }
+
+    .search-input::placeholder {
+      color: #94a3b8;
+    }
+
+    .search-input:focus {
+      border-color: #fb923c;
+      box-shadow: 0 0 0 3px rgba(251, 146, 60, 0.16);
+    }
+
+    .status-filter {
+      height: 46px;
+      border: 1px solid #d1d5db;
+      border-radius: 12px;
+      padding: 0 14px;
+      font-size: 14px;
+      background: #fff;
+      color: #111827;
+      outline: none;
+    }
+
+    .filter-btn {
+      height: 46px;
+      padding: 0 16px;
+      border: 1px solid #d1d5db;
+      border-radius: 12px;
+      background: #fff;
+      color: #374151;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all .2s ease;
+    }
+
+    .filter-btn:hover {
+      background: #f9fafb;
+      border-color: #9ca3af;
+    }
+
+    .add-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      height: 48px;
+      padding: 0 18px;
+      border-radius: 999px;
+      background: #d94801;
+      color: #fff;
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 700;
+      transition: all .2s ease;
+      white-space: nowrap;
+    }
+
+    .add-btn:hover {
+      background: #c2410c;
+    }
+
+    .table-card {
+      background: #fff;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 2px 10px rgba(15, 23, 42, 0.06);
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 980px;
+    }
+
+    thead th {
+      background: #f8fafc;
+      color: #334155;
+      font-size: 14px;
+      font-weight: 700;
+      text-align: left;
+      padding: 18px 20px;
+      border-bottom: 1px solid #e5e7eb;
+      white-space: nowrap;
+    }
+
+    tbody td {
+      padding: 14px 20px;
+      font-size: 14px;
+      color: #0f172a;
+      border-bottom: 1px solid #eef2f7;
+      vertical-align: middle;
+      white-space: nowrap;
+    }
+
+    tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 700;
+      border: 1px solid transparent;
+      white-space: nowrap;
+    }
+
+    .status-pill .dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      flex: 0 0 9px;
+    }
+
+    .status-pill.active {
+      background: #dcfce7;
+      border-color: #bbf7d0;
+      color: #166534;
+    }
+
+    .status-pill.active .dot {
+      background: #22c55e;
+    }
+
+    .status-pill.inactive {
+      background: #fee2e2;
+      border-color: #fecaca;
+      color: #991b1b;
+    }
+
+    .status-pill.inactive .dot {
+      background: #dc2626;
+    }
+
+    .table-actions {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: nowrap;
+      white-space: nowrap;
+    }
+
+    .chip-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 12px;
+      border-radius: 999px;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 700;
+      border: 1px solid transparent;
+      transition: all .18s ease;
+      cursor: pointer;
+    }
+
+    .chip-btn i {
+      font-size: 13px;
+    }
+
+    .chip-btn--view {
+      background: #f3f4f6;
+      border-color: #e5e7eb;
+      color: #111827;
+    }
+
+    .chip-btn--view:hover {
+      background: #e5e7eb;
+    }
+
+    .chip-btn--edit {
+      background: #0f172a;
+      color: #fff;
+    }
+
+    .chip-btn--edit:hover {
+      background: #020617;
+    }
+
+    .chip-btn--delete {
+      background: #fee2e2;
+      border-color: #fecaca;
+      color: #b91c1c;
+    }
+
+    .chip-btn--delete:hover {
+      background: #fecaca;
+    }
+
+    .inline-form {
+      display: inline;
+      margin: 0;
+    }
+
+    button.chip-btn {
+      border: none;
+      font-family: inherit;
+    }
+
+    .empty-row {
+      text-align: center;
+      color: #6b7280;
+      padding: 28px 20px !important;
+      font-size: 14px;
+    }
+
+    @media (max-width: 1100px) {
+      .main-content {
+        padding: 20px;
+      }
+
+      .search-input {
+        width: 240px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .main-content {
+        margin-left: 0;
+        padding: 16px;
+      }
+
+      .sidebar {
+        position: static;
+        width: 100%;
+        height: auto;
+      }
+
+      .page-title-wrap h1 {
+        font-size: 26px;
+      }
+
+      .toolbar,
+      .toolbar form {
+        width: 100%;
+      }
+
+      .search-wrap,
+      .search-input,
+      .status-filter,
+      .filter-btn,
+      .add-btn {
+        width: 100%;
+      }
+    }
   </style>
 </head>
 <body>
   <?php include(__DIR__ . '/../../layouts/admin-sidebar/sidebar.php'); ?>
 
   <main class="main-content">
-    <div class="management-header">
-      <h2>Branch Management</h2>
+    <header class="page-header">
+      <div class="page-title-wrap">
+        <h1>Branches Management</h1>
+        <p>Monitor and manage service branches</p>
+      </div>
 
-      <!-- Filter must submit to /admin/branches -->
-      <form method="get" action="<?= htmlspecialchars($base . '/admin/branches', ENT_QUOTES, 'UTF-8') ?>" class="tools">
-        <input
-          type="text"
-          class="search-input"
-          name="q"
-          placeholder="Search by branch_code/name..."
-          value="<?= htmlspecialchars($q ?? '', ENT_QUOTES, 'UTF-8') ?>"
-        />
-        <select class="status-filter" name="status">
-          <?php
-            $opts = ['all'=>'All Status','active'=>'Active','inactive'=>'Inactive'];
-            foreach ($opts as $val => $label):
-          ?>
-            <option value="<?= $val ?>" <?= ($status === $val ? 'selected' : '') ?>><?= $label ?></option>
-          <?php endforeach; ?>
-        </select>
-        <button type="submit" class="btn btn-secondary">Filter</button>
+      <div class="toolbar">
+        <form method="get" action="<?= e($base . '/admin/branches') ?>">
+          <div class="search-wrap">
+            <input
+              type="text"
+              class="search-input"
+              name="q"
+              placeholder="Search branch..."
+              value="<?= e($q) ?>"
+            />
+          </div>
 
-        <!-- Create page under /admin/branches/create -->
-        <a href="<?= htmlspecialchars($base . '/admin/branches/create', ENT_QUOTES, 'UTF-8') ?>" class="add-btn">+ Add New Branch</a>
-      </form>
-    </div>
+          <select class="status-filter" name="status">
+            <option value="all" <?= $status === 'all' ? 'selected' : '' ?>>All Status</option>
+            <option value="active" <?= $status === 'active' ? 'selected' : '' ?>>Active</option>
+            <option value="inactive" <?= $status === 'inactive' ? 'selected' : '' ?>>Inactive</option>
+          </select>
 
-    <div style="margin-top:20px; overflow:auto;">
-      <table id="tbl">
-        <thead>
-          <tr>
-            <th>Branch Code</th>
-            <th>Name</th>
-            <th>City</th>
-            <th>Manager ID</th>
-            <th>Phone</th>
-            <th>Email</th>
-            <th>Status</th>
-            <th>Created</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-        <?php if (!empty($branches)): ?>
-          <?php foreach ($branches as $b):
-            $statusClass = (($b['status'] ?? 'active') === 'inactive') ? 'status--inactive' : 'status--active';
-            $code = (string)($b['branch_code'] ?? '');
-          ?>
-          <tr>
-            <td><?= htmlspecialchars($code, ENT_QUOTES, 'UTF-8') ?></td>
-            <td><?= htmlspecialchars($b['name'] ?? '', ENT_QUOTES, 'UTF-8') ?></td>
-            <td><?= htmlspecialchars($b['city'] ?? '', ENT_QUOTES, 'UTF-8') ?></td>
-            <td><?= htmlspecialchars($b['manager_id'] ?? '', ENT_QUOTES, 'UTF-8') ?></td>
-            <td><?= htmlspecialchars($b['phone'] ?? '', ENT_QUOTES, 'UTF-8') ?></td>
-            <td><?= htmlspecialchars($b['email'] ?? '', ENT_QUOTES, 'UTF-8') ?></td>
-            <td class="<?= $statusClass ?>"><?= htmlspecialchars($b['status'] ?? '', ENT_QUOTES, 'UTF-8') ?></td>
-            <td><?= htmlspecialchars($b['created_at'] ?? '', ENT_QUOTES, 'UTF-8') ?></td>
-            <td>
-              <!-- Routes must be /admin/branches/... -->
-              <a class="icon-btn" title="View"
-                 href="<?= htmlspecialchars($base . '/admin/branches/' . rawurlencode($code), ENT_QUOTES, 'UTF-8') ?>">
-                <i class="fas fa-eye"></i>
-              </a>
+          <button type="submit" class="filter-btn">Filter</button>
 
-              <a class="icon-btn" title="Edit"
-                 href="<?= htmlspecialchars($base . '/admin/branches/' . rawurlencode($code) . '/edit', ENT_QUOTES, 'UTF-8') ?>">
-                <i class="fas fa-pen"></i>
-              </a>
+          <a href="<?= e($base . '/admin/branches/create') ?>" class="add-btn">
+            <i class="fa-solid fa-building-circle-arrow-right"></i>
+            <span>Add Branch</span>
+          </a>
+        </form>
+      </div>
+    </header>
 
-              <form class="inline" method="post"
-                    action="<?= htmlspecialchars($base . '/admin/branches/' . rawurlencode($code) . '/delete', ENT_QUOTES, 'UTF-8') ?>"
-                    onsubmit="return confirm('Delete this branch?');"
-                    style="display:inline-block">
-                <button type="submit" class="icon-btn" title="Delete">
-                  <i class="fas fa-trash"></i>
-                </button>
-              </form>
-            </td>
-          </tr>
-          <?php endforeach; ?>
-        <?php else: ?>
-          <tr><td colspan="9" class="muted">No branches found.</td></tr>
-        <?php endif; ?>
-        </tbody>
-      </table>
-    </div>
+    <section class="table-card">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Branch Code</th>
+              <th>Branch Name</th>
+              <th>City</th>
+              <th>Manager Name</th>
+              <th>Contact</th>
+              <th>Status</th>
+              <th style="text-align:right;">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <?php if (!empty($branches)): ?>
+              <?php foreach ($branches as $b): ?>
+                <?php
+                  $code = (string)($b['branch_code'] ?? '');
+                  $rowStatus = strtolower((string)($b['status'] ?? 'active'));
+                  $isInactive = $rowStatus === 'inactive';
+                  $statusClass = $isInactive ? 'inactive' : 'active';
+                  $statusLabel = $isInactive ? 'Inactive' : 'Active';
+
+                  $managerName = trim(
+                    ((string)($b['m_first'] ?? '')) . ' ' . ((string)($b['m_last'] ?? ''))
+                  );
+                  $managerName = $managerName !== '' ? $managerName : 'Not assigned';
+                ?>
+                <tr>
+                  <td><?= e($code) ?></td>
+                  <td><?= e($b['name'] ?? '') ?></td>
+                  <td><?= e($b['city'] ?? '') ?></td>
+                  <td><?= e($managerName) ?></td>
+                  <td><?= e($b['phone'] ?? '') ?></td>
+                  <td>
+                    <span class="status-pill <?= e($statusClass) ?>">
+                      <span class="dot"></span>
+                      <?= e($statusLabel) ?>
+                    </span>
+                  </td>
+                  <td>
+                    <div class="table-actions">
+                      <a
+                        href="<?= e($base . '/admin/branches/' . rawurlencode($code)) ?>"
+                        class="chip-btn chip-btn--view"
+                        title="View"
+                      >
+                        <i class="fa-solid fa-eye"></i>
+                        <span>View</span>
+                      </a>
+
+                      <a
+                        href="<?= e($base . '/admin/branches/' . rawurlencode($code) . '/edit') ?>"
+                        class="chip-btn chip-btn--edit"
+                        title="Edit"
+                      >
+                        <i class="fa-solid fa-pen"></i>
+                        <span>Edit</span>
+                      </a>
+
+                      <form
+                        method="post"
+                        action="<?= e($base . '/admin/branches/' . rawurlencode($code) . '/delete') ?>"
+                        class="inline-form"
+                        onsubmit="return confirm('Delete this branch?');"
+                      >
+                        <button type="submit" class="chip-btn chip-btn--delete" title="Delete">
+                          <i class="fa-solid fa-trash"></i>
+                          <span>Delete</span>
+                        </button>
+                      </form>
+                    </div>
+                  </td>
+                </tr>
+              <?php endforeach; ?>
+            <?php else: ?>
+              <tr>
+                <td colspan="7" class="empty-row">No branches found.</td>
+              </tr>
+            <?php endif; ?>
+          </tbody>
+        </table>
+      </div>
+    </section>
   </main>
 </body>
 </html>
