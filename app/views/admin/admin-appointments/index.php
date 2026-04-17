@@ -2,230 +2,640 @@
 /** @var array  $appointments */
 /** @var array  $branches */
 /** @var array  $services */
+/** @var string $selectedDate */
 /** @var string $pageTitle */
 /** @var string $current */
 $current = $current ?? 'appointments';
 $B = rtrim(BASE_URL, '/');
+$selectedDate = $selectedDate ?? date('Y-m-d');
+$displayDate = new DateTime($selectedDate);
+$adminName = trim((($user['first_name'] ?? '') . ' ' . ($user['last_name'] ?? ''))) ?: 'Admin User';
+
+function e($value) {
+    return htmlspecialchars((string)$value);
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title><?= htmlspecialchars($pageTitle ?? 'Appointments') ?></title>
-  <link rel="stylesheet" href="<?= $B ?>/app/views/layouts/admin-shared/management.css">
   <link rel="stylesheet" href="<?= $B ?>/app/views/layouts/admin-sidebar/styles.css">
-  <link rel="stylesheet" href="<?= $B ?>/public/assets/css/admin/appointments/style.css">
+  <link rel="stylesheet" href="<?= $B ?>/public/assets/css/admin-dashboard.css?v=4">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    .filter-section {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 2px 8px rgba(15,23,42,.06);
+      padding: 16px;
+      margin-bottom: 18px;
+    }
+
+    .filter-title {
+      margin: 0 0 12px 0;
+      font-size: 15px;
+      font-weight: 600;
+      color: #111827;
+    }
+
+    .filter-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+    }
+
+    .filter-input {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .filter-input label {
+      font-size: 12px;
+      font-weight: 600;
+      color: #374151;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    .filter-input input,
+    .filter-input select {
+      padding: 8px 10px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      font-size: 13px;
+      font-family: inherit;
+      transition: border-color 0.2s;
+    }
+
+    .filter-input input:focus,
+    .filter-input select:focus {
+      outline: none;
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+
+    .filter-actions {
+      display: flex;
+      gap: 8px;
+      align-items: flex-end;
+    }
+
+    .filter-btn {
+      padding: 8px 16px;
+      background: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .filter-btn:hover {
+      background: #1d4ed8;
+    }
+
+    .filter-btn.secondary {
+      background: #f3f4f6;
+      color: #374151;
+    }
+
+    .filter-btn.secondary:hover {
+      background: #e5e7eb;
+    }
+
+    .nav-btn {
+      padding: 6px 12px;
+      background: white;
+      color: #374151;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .nav-btn:hover {
+      background: #f3f4f6;
+      border-color: #2563eb;
+      color: #2563eb;
+    }
+
+    .nav-btn.secondary {
+      background: #2563eb;
+      color: white;
+      border-color: #2563eb;
+    }
+
+    .nav-btn.secondary:hover {
+      background: #1d4ed8;
+      border-color: #1d4ed8;
+    }
+
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .table th,
+    .table td {
+      text-align: left;
+      padding: 8px 6px;
+      border-bottom: 1px solid #e5e7eb;
+      font-size: 13px;
+      vertical-align: top;
+    }
+
+    .table th {
+      font-weight: 700;
+      color: #374151;
+      background: #f9fafb;
+    }
+
+    .row-link {
+      text-decoration: none;
+      color: inherit;
+      display: block;
+    }
+
+    .row-link:hover {
+      color: #2563eb;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .action-btn {
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 12px;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .action-btn--view {
+      background: #dbeafe;
+      color: #0369a1;
+      border: 1px solid #bae6fd;
+    }
+
+    .action-btn--view:hover {
+      background: #bae6fd;
+      border-color: #0284c7;
+      color: #0284c7;
+    }
+
+    .action-btn--edit {
+      background: #fef3c7;
+      color: #92400e;
+      border: 1px solid #fde68a;
+    }
+
+    .action-btn--edit:hover {
+      background: #fde68a;
+      border-color: #b45309;
+      color: #b45309;
+    }
+
+    .status-pill {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: #f3f4f6;
+      font-size: 11px;
+      font-weight: 700;
+      color: #374151;
+    }
+
+    .status-pill--scheduled {
+      background: #e0f2fe;
+      color: #0369a1;
+    }
+
+    .status-pill--confirmed {
+      background: #ccfbf1;
+      color: #0d7377;
+    }
+
+    .status-pill--progress {
+      background: #fef9c3;
+      color: #854d0e;
+    }
+
+    .status-pill--completed {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .status-pill--cancelled {
+      background: #fee2e2;
+      color: #b91c1c;
+    }
+
+    .panel {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 2px 8px rgba(15,23,42,.06);
+      padding: 14px 16px;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    .empty-state {
+      color: #6b7280;
+      font-size: 13px;
+      margin: 0;
+      padding: 6px 0;
+      text-align: center;
+      padding: 40px 20px;
+    }
+
+    .empty-state i {
+      display: block;
+      font-size: 40px;
+      margin-bottom: 12px;
+      opacity: 0.5;
+    }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .stat-card {
+      background: white;
+      border-radius: 12px;
+      padding: 12px 14px;
+      box-shadow: 0 1px 3px rgba(15,23,42,.06);
+    }
+
+    .stat-label {
+      font-size: 11px;
+      color: #6b7280;
+      text-transform: uppercase;
+      font-weight: 700;
+      margin-bottom: 3px;
+    }
+
+    .stat-value {
+      font-size: 22px;
+      font-weight: 700;
+      color: #1f2937;
+    }
+
+    @media (max-width: 1024px) {
+      .filter-grid {
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      }
+    }
+
+    @media (max-width: 768px) {
+      .filter-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .filter-actions {
+        flex-direction: column;
+      }
+
+      .filter-actions button {
+        width: 100%;
+      }
+
+      .stat-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .table th,
+      .table td {
+        padding: 6px 4px;
+        font-size: 12px;
+      }
+    }
+  </style>
 </head>
+
 <body>
-<?php include APP_ROOT . '/views/layouts/admin-sidebar/sidebar.php'; ?>
-<main class="main-content appointments-main">
-  <header class="page-header">
-    <div class="page-breadcrumb">
-      <span>Admin</span>
-      <span>›</span>
-      <span>Appointments</span>
-    </div>
-    <div class="page-header-main">
-      <div class="page-title-wrap">
-        <div class="page-icon"><i class="fa-regular fa-calendar-check"></i></div>
-        <div>
-          <h2>Appointments</h2>
-          <p class="appointments-subtitle">Review and manage upcoming and past bookings.</p>
+  <?php include APP_ROOT . '/views/layouts/admin-sidebar/sidebar.php'; ?>
+  <main class="main-content">
+    <header class="topbar">
+      <div>
+        <h1 class="page-title">Appointments</h1>
+        <p class="subtitle">Manage and track service appointments</p>
+        <?php require APP_ROOT . '/views/partials/lang-switcher.php'; ?>
+      </div>
+
+      <a class="user-chip user-chip--link" href="<?= $B ?>/admin/profile" aria-label="Open profile">
+        <div class="avatar"><i class="fa-solid fa-user"></i></div>
+        <span><?= e($adminName) ?></span>
+      </a>
+    </header>
+
+    <section class="dash-wrap">
+      <!-- Statistics -->
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="stat-label">Total</div>
+          <div class="stat-value"><?= count($appointments) ?></div>
+        </div>
+        <?php 
+          $scheduled = count(array_filter($appointments, fn($a) => $a['db_status'] === 'requested'));
+          $confirmed = count(array_filter($appointments, fn($a) => $a['db_status'] === 'confirmed'));
+          $inProgress = count(array_filter($appointments, fn($a) => $a['db_status'] === 'in_progress'));
+        ?>
+        <div class="stat-card">
+          <div class="stat-label">Scheduled</div>
+          <div class="stat-value"><?= $scheduled ?></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Confirmed</div>
+          <div class="stat-value"><?= $confirmed ?></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">In Progress</div>
+          <div class="stat-value"><?= $inProgress ?></div>
         </div>
       </div>
-      <span class="page-chip">Today: <?= date('M j, Y'); ?></span>
-    </div>
-  </header>
-  <section class="appointments-section">
-    <div class="appointments-filters">
-      <!-- search -->
-      <div class="filter-item">
-        <label for="searchInput">Search</label>
-        <div class="filter-input-icon">
-          <i class="fa-solid fa-magnifying-glass"></i>
-          <input id="searchInput"
-                 type="text"
-                 placeholder="Search by customer or service..."/>
-        </div>
-      </div>
-      <!-- status -->
-      <div class="filter-item">
-        <label for="statusSelect">Status</label>
-        <select id="statusSelect">
-          <option value="">All</option>
-          <option value="Scheduled">Scheduled</option>
-          <option value="In Progress">In Progress</option>
-          <option value="Completed">Completed</option>
-          <option value="Cancelled">Cancelled</option>
-        </select>
-      </div>
-      <!-- branch filter -->
-      <div class="filter-item">
-        <label for="branchSelect">Branch</label>
-        <select id="branchSelect">
-          <option value="">All branches</option>
-          <?php foreach ($branches as $b): ?>
-            <option value="<?= (int)$b['branch_id'] ?>">
-              <?= htmlspecialchars($b['name']) ?>
-            </option>
-          <?php endforeach; ?>
-        </select>
-      </div>
-      <!-- service filter -->
-      <div class="filter-item">
-        <label for="serviceSelect">Service</label>
-        <select id="serviceSelect">
-          <option value="">All services</option>
-          <?php foreach ($services as $s): ?>
-            <option value="<?= (int)$s['service_id'] ?>">
-              <?= htmlspecialchars($s['name']) ?>
-            </option>
-          <?php endforeach; ?>
-        </select>
-      </div>
-      <!-- date & time filters -->
-      <div class="filter-item">
-        <label for="dateInput">Date</label>
-        <input id="dateInput" type="date"/>
-      </div>
-      <div class="filter-item">
-        <label for="timeInput">From time</label>
-        <input id="timeInput" type="time"/>
-      </div>
-    </div>
-    <div id="cardsContainer" class="appointments-cards">
-      <?php foreach ($appointments as $a):
-        $dt = new DateTime($a['datetime']);
-        $dateISO = $dt->format('Y-m-d');
-        $timeFmt = $dt->format('M j, g:i A');
-        $time24  = $dt->format('H:i');
-        $status  = $a['status'];
-        $badgeClass = [
-          'Scheduled'   => 'status-pill--scheduled',
-          'In Progress' => 'status-pill--progress',
-          'Completed'   => 'status-pill--completed',
-          'Cancelled'   => 'status-pill--cancelled',
-        ][$status] ?? 'status-pill--scheduled';
-      ?>
-        <article class="appointment-card"
-          data-id="<?= (int)$a['id'] ?>"
-          data-customer="<?= htmlspecialchars($a['customer']) ?>"
-          data-service="<?= htmlspecialchars($a['service']) ?>"
-          data-service-id="<?= (int)$a['service_id'] ?>"
-          data-branch="<?= htmlspecialchars($a['branch']) ?>"
-          data-branch-id="<?= (int)$a['branch_id'] ?>"
-          data-status="<?= htmlspecialchars($status) ?>"
-          data-date="<?= $dateISO ?>"
-          data-time="<?= $time24 ?>">
-          <header class="appointment-card__header">
-            <div>
-              <p class="appointment-card__customer">
-                <?= htmlspecialchars($a['customer']) ?>
-              </p>
-              <p class="appointment-card__service">
-                <?= htmlspecialchars($a['service']) ?>
-              </p>
+
+      <!-- Filters -->
+      <section class="filter-section">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+          <h3 class="filter-title"><i class="fa-solid fa-filter"></i> Search & Filter</h3>
+          <div class="date-navigation" style="display: flex; gap: 8px; align-items: center;">
+            <button class="nav-btn" onclick="goToPreviousDay()" title="Previous day">
+              <i class="fa-solid fa-chevron-left"></i> Previous
+            </button>
+            <div class="current-date-display" style="min-width: 140px; text-align: center; font-weight: 600; color: #374151;">
+              <?= $displayDate->format('M d, Y') ?>
             </div>
-            <span class="status-pill <?= $badgeClass ?>">
-              <?= htmlspecialchars($status) ?>
-            </span>
-          </header>
-          <div class="appointment-card__meta">
-            <p><i class="fa-solid fa-location-dot"></i>
-               <span><?= htmlspecialchars($a['branch']) ?></span></p>
-            <p><i class="fa-regular fa-clock"></i>
-               <span><?= htmlspecialchars($timeFmt) ?></span></p>
+            <button class="nav-btn" onclick="goToNextDay()" title="Next day">
+              Next <i class="fa-solid fa-chevron-right"></i>
+            </button>
+            <button class="nav-btn secondary" onclick="goToToday()" title="Go to today">
+              <i class="fa-solid fa-calendar-days"></i> Today
+            </button>
           </div>
-          <footer class="appointment-card__actions">
-            <button class="chip-btn chip-btn--light view-btn"
-                    data-url="<?= $B ?>/admin/admin-appointments/show?id=<?= (int)$a['id'] ?>">
-              <i class="fa-regular fa-eye"></i>
-              <span>View</span>
-            </button>
-            <button class="chip-btn chip-btn--dark edit-btn"
-                    data-url="<?= $B ?>/admin/admin-appointments/edit?id=<?= (int)$a['id'] ?>">
-              <i class="fa-regular fa-pen-to-square"></i>
-              <span>Edit</span>
-            </button>
-            <form action="<?= $B ?>/admin/admin-appointments/delete"
-                  method="post"
-                  class="inline-form"
-                  onsubmit="return confirm('Cancel / delete this appointment?');">
-              <input type="hidden" name="id" value="<?= (int)$a['id'] ?>">
-              <button type="submit" class="chip-btn chip-btn--danger cancel-btn">
-                <i class="fa-regular fa-circle-xmark"></i>
-                <span>Cancel</span>
-              </button>
-            </form>
-          </footer>
-        </article>
-      <?php endforeach; ?>
-      <?php if (empty($appointments)): ?>
-        <p class="appointments-empty">
-          <i class="fa-regular fa-folder-open"></i>
-          No appointments found for the selected filters.
-        </p>
-      <?php endif; ?>
-    </div>
-  </section>
-</main>
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-  const cardsContainer = document.getElementById('cardsContainer');
-  if (!cardsContainer) return;
-  const cards        = Array.from(cardsContainer.querySelectorAll('.appointment-card'));
-  const searchInput  = document.getElementById('searchInput');
-  const statusSelect = document.getElementById('statusSelect');
-  const branchSelect = document.getElementById('branchSelect');
-  const serviceSelect = document.getElementById('serviceSelect');
-  const dateInput    = document.getElementById('dateInput');
-  const timeInput    = document.getElementById('timeInput');
-  function applyFilters() {
-    const searchTerm   = (searchInput && searchInput.value || '').toLowerCase().trim();
-    const statusValue  = statusSelect && statusSelect.value || '';
-    const branchValue  = branchSelect && branchSelect.value || '';
-    const serviceValue = serviceSelect && serviceSelect.value || '';
-    const dateValue    = dateInput && dateInput.value || '';
-    const timeValue    = timeInput && timeInput.value || '';
-    cards.forEach(card => {
-      const customer = (card.dataset.customer || '').toLowerCase();
-      const service  = (card.dataset.service || '').toLowerCase();
-      const status   = card.dataset.status || '';
-      const branchId = card.dataset.branchId || '';
-      const serviceId = card.dataset.serviceId || '';
-      const date     = card.dataset.date || '';
-      const time     = card.dataset.time || '';
-      const matchesSearch =
-        !searchTerm ||
-        customer.includes(searchTerm) ||
-        service.includes(searchTerm);
-      const matchesStatus  = !statusValue || status === statusValue;
-      const matchesBranch  = !branchValue || branchId === branchValue;
-      const matchesService = !serviceValue || serviceId === serviceValue;
-      const matchesDate    = !dateValue || date === dateValue;
-      const matchesTime    = !timeValue || (time && time.startsWith(timeValue));
-      const visible = matchesSearch && matchesStatus &&
-                      matchesBranch && matchesService &&
-                      matchesDate && matchesTime;
-      card.style.display = visible ? '' : 'none';
+        </div>
+        <div class="filter-grid">
+          <div class="filter-input">
+            <label for="customerSearch">Customer Name</label>
+            <input type="text" id="customerSearch" placeholder="Search..." />
+          </div>
+          <div class="filter-input">
+            <label for="serviceFilter">Service</label>
+            <select id="serviceFilter">
+              <option value="">All Services</option>
+              <?php foreach ($services as $s): ?>
+                <option value="<?= (int)$s['service_id'] ?>">
+                  <?= e($s['name']) ?>
+                </option>
+              <?php endforeach; ?>
+            </select>
+          </div>
+          <div class="filter-input">
+            <label for="branchFilter">Branch</label>
+            <select id="branchFilter">
+              <option value="">All Branches</option>
+              <?php foreach ($branches as $b): ?>
+                <option value="<?= (int)$b['branch_id'] ?>">
+                  <?= e($b['name']) ?>
+                </option>
+              <?php endforeach; ?>
+            </select>
+          </div>
+          <div class="filter-input">
+            <label for="statusFilter">Status</label>
+            <select id="statusFilter">
+              <option value="">All Status</option>
+              <option value="Scheduled">Scheduled</option>
+              <option value="Confirmed">Confirmed</option>
+              <option value="In Progress">In Progress</option>
+              <option value="Completed">Completed</option>
+              <option value="Cancelled">Cancelled</option>
+            </select>
+          </div>
+          <div class="filter-input">
+            <label for="dateFrom">From Date</label>
+            <input type="date" id="dateFrom" value="<?= e($selectedDate) ?>" />
+          </div>
+          <div class="filter-input">
+            <label for="dateTo">To Date</label>
+            <input type="date" id="dateTo" value="<?= e($selectedDate) ?>" />
+          </div>
+        </div>
+        <div class="filter-actions" style="margin-top: 12px;">
+          <button class="filter-btn" onclick="applyFilters()">
+            <i class="fa-solid fa-search"></i> Apply Filters
+          </button>
+          <button class="filter-btn secondary" onclick="clearFilters()">
+            <i class="fa-solid fa-xmark"></i> Clear
+          </button>
+        </div>
+      </section>
+
+      <!-- Appointments Table -->
+      <section class="panel">
+        <?php if (!empty($appointments)): ?>
+          <div class="table-wrap">
+            <table class="table" id="appointmentsTable">
+              <thead>
+                <tr>
+                  <th>Time</th>
+                  <th>Customer</th>
+                  <th>Service</th>
+                  <th>Branch</th>
+                  <th>Supervisor</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <?php foreach ($appointments as $a): 
+                  $time = DateTime::createFromFormat('H:i:s', $a['time']);
+                  $timeFormatted = $time ? $time->format('h:i A') : $a['time'];
+                  $statusLabel = $a['status'];
+                  $statusClass = 'status-pill--' . str_replace(' ', '-', strtolower($statusLabel));
+                ?>
+                  <tr class="appointment-row" 
+                      data-customer="<?= e($a['customer']) ?>"
+                      data-service-id="<?= (int)$a['service_id'] ?>"
+                      data-branch-id="<?= (int)$a['branch_id'] ?>"
+                      data-status="<?= e($statusLabel) ?>"
+                      data-date="<?= e($a['date']) ?>">
+                    <td><?= e($timeFormatted) ?></td>
+                    <td><?= e($a['customer']) ?></td>
+                    <td><?= e($a['service']) ?></td>
+                    <td><?= e($a['branch']) ?></td>
+                    <td><?= e($a['supervisor']) ?></td>
+                    <td>
+                      <span class="status-pill <?= e($statusClass) ?>">
+                        <?= e($statusLabel) ?>
+                      </span>
+                    </td>
+                    <td>
+                      <div class="action-buttons">
+                        <a href="<?= $B ?>/admin/admin-appointments/show?id=<?= (int)$a['id'] ?>" 
+                           class="action-btn action-btn--view" title="View appointment">
+                          <i class="fa-regular fa-eye"></i> View
+                        </a>
+                        <a href="<?= $B ?>/admin/admin-appointments/edit?id=<?= (int)$a['id'] ?>" 
+                           class="action-btn action-btn--edit" title="Edit appointment">
+                          <i class="fa-solid fa-pen"></i> Edit
+                        </a>
+                      </div>
+                    </td>
+                  </tr>
+                <?php endforeach; ?>
+              </tbody>
+            </table>
+          </div>
+        <?php else: ?>
+          <div class="empty-state">
+            <i class="fa-regular fa-calendar"></i>
+            <p>No appointments found</p>
+          </div>
+        <?php endif; ?>
+      </section>
+    </section>
+  </main>
+
+  <script>
+    function applyFilters() {
+      const customerSearch = document.getElementById('customerSearch').value.toLowerCase().trim();
+      const serviceFilter = document.getElementById('serviceFilter').value.trim();
+      const branchFilter = document.getElementById('branchFilter').value.trim();
+      const statusFilter = document.getElementById('statusFilter').value.trim();
+      const dateFrom = document.getElementById('dateFrom').value.trim();
+      const dateTo = document.getElementById('dateTo').value.trim();
+
+      // If date range is specified, reload page with date range parameters
+      if (dateFrom && dateTo) {
+        let url = '<?= $B ?>/admin/admin-appointments?dateFrom=' + encodeURIComponent(dateFrom) + '&dateTo=' + encodeURIComponent(dateTo);
+        window.location.href = url;
+        return;
+      }
+
+      // Otherwise, apply client-side filtering
+      const rows = document.querySelectorAll('.appointment-row');
+      let visibleCount = 0;
+
+      rows.forEach(row => {
+        const customer = row.dataset.customer.toLowerCase();
+        const serviceId = row.dataset.serviceId;
+        const branchId = row.dataset.branchId;
+        const status = row.dataset.status;
+        const date = row.dataset.date;
+
+        // Check customer search
+        const matchCustomer = !customerSearch || customer.includes(customerSearch);
+
+        // Check service filter
+        const matchService = !serviceFilter || serviceId === serviceFilter;
+
+        // Check branch filter
+        const matchBranch = !branchFilter || branchId === branchFilter;
+
+        // Check status filter
+        const matchStatus = !statusFilter || status === statusFilter;
+
+        // Show or hide row
+        const shouldShow = matchCustomer && matchService && matchBranch && matchStatus;
+        row.style.display = shouldShow ? '' : 'none';
+        if (shouldShow) visibleCount++;
+      });
+
+      // Show/hide empty state message
+      updateEmptyState(visibleCount);
+    }
+
+    function clearFilters() {
+      document.getElementById('customerSearch').value = '';
+      document.getElementById('serviceFilter').value = '';
+      document.getElementById('branchFilter').value = '';
+      document.getElementById('statusFilter').value = '';
+      document.getElementById('dateFrom').value = '<?= e($selectedDate) ?>';
+      document.getElementById('dateTo').value = '<?= e($selectedDate) ?>';
+      
+      // Redirect to today's date to reset date range
+      window.location.href = '<?= $B ?>/admin/admin-appointments?date=' + new Date().toISOString().split('T')[0];
+    }
+
+    function updateEmptyState(visibleCount) {
+      const table = document.getElementById('appointmentsTable');
+      if (!table) return;
+
+      let emptyState = document.getElementById('appointmentsEmptyState');
+      
+      if (visibleCount === 0) {
+        if (!emptyState) {
+          emptyState = document.createElement('div');
+          emptyState.id = 'appointmentsEmptyState';
+          emptyState.className = 'empty-state';
+          emptyState.innerHTML = `
+            <i class="fa-regular fa-inbox"></i>
+            <p>No appointments match your filters</p>
+          `;
+          table.parentElement.replaceChild(emptyState, table);
+        }
+      } else {
+        if (emptyState) {
+          const wrapper = document.createElement('div');
+          wrapper.className = 'table-wrap';
+          wrapper.appendChild(table);
+          emptyState.parentElement.replaceChild(wrapper, emptyState);
+        }
+      }
+    }
+
+    // Apply filters when user presses Enter in search field
+    document.getElementById('customerSearch')?.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') applyFilters();
     });
-  }
-  if (searchInput)  searchInput.addEventListener('input', applyFilters);
-  if (statusSelect) statusSelect.addEventListener('change', applyFilters);
-  if (branchSelect) branchSelect.addEventListener('change', applyFilters);
-  if (serviceSelect) serviceSelect.addEventListener('change', applyFilters);
-  if (dateInput)     dateInput.addEventListener('change', applyFilters);
-  if (timeInput)     timeInput.addEventListener('change', applyFilters);
-  // View / Edit navigation
-  cardsContainer.addEventListener('click', (e) => {
-    const btn = e.target.closest('.view-btn, .edit-btn');
-    if (!btn) return;
-    const url = btn.dataset.url;
-    if (url) window.location.href = url;
-  });
-});
-</script>
+
+    // Date navigation functions
+    function goToDate(dateStr) {
+      window.location.href = '<?= $B ?>/admin/admin-appointments?date=' + dateStr;
+    }
+
+    function goToPreviousDay() {
+      const date = new Date('<?= $selectedDate ?>');
+      date.setDate(date.getDate() - 1);
+      const dateStr = date.toISOString().split('T')[0];
+      goToDate(dateStr);
+    }
+
+    function goToNextDay() {
+      const date = new Date('<?= $selectedDate ?>');
+      date.setDate(date.getDate() + 1);
+      const dateStr = date.toISOString().split('T')[0];
+      goToDate(dateStr);
+    }
+
+    function goToToday() {
+      const today = new Date().toISOString().split('T')[0];
+      goToDate(today);
+    }
+  </script>
 </body>
+
 </html>
