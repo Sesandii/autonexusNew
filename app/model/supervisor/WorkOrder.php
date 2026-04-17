@@ -82,40 +82,42 @@ class WorkOrder
         return (int)$stmt->fetchColumn() > 0;
     }
 
-    public function getAvailableAppointments(int $supervisorId): array
-    {
-        $stmt = $this->pdo->prepare(
-            "SELECT branch_id FROM supervisors WHERE user_id = ?"
-        );
-        $stmt->execute([$supervisorId]);
-        $branchId = $stmt->fetchColumn();
-    
-        if (!$branchId) {
-            return [];
-        }
+    public function getAvailableAppointments(int $userId): array
+{
+    $stmt = $this->pdo->prepare("SELECT branch_id, supervisor_id FROM supervisors WHERE user_id = ?");
+    $stmt->execute([$userId]);
+    $supervisorData = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        $sql = "
-            SELECT a.*, 
-                   s.name AS service_name, 
-                   c.customer_code
-            FROM appointments a
-            LEFT JOIN services s ON a.service_id = s.service_id
-            LEFT JOIN customers c ON a.customer_id = c.customer_id
-            WHERE a.branch_id = ?
-              AND a.status IN ('confirmed')
-              AND a.appointment_id NOT IN (
-                  SELECT appointment_id 
-                  FROM work_orders 
-                  WHERE appointment_id IS NOT NULL
-              )
-            ORDER BY a.appointment_date DESC, a.appointment_time DESC
-        ";
-    
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([$branchId]);
-    
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    if (!$supervisorData) {
+        return [];
     }
+
+    $branchId = $supervisorData['branch_id'];
+    $supervisorId = $supervisorData['supervisor_id']; 
+
+    $sql = "
+        SELECT a.*, 
+               s.name AS service_name, 
+               c.customer_code
+        FROM appointments a
+        LEFT JOIN services s ON a.service_id = s.service_id
+        LEFT JOIN customers c ON a.customer_id = c.customer_id
+        WHERE a.branch_id = ?
+          AND a.assigned_to = ?  -- Now matches the supervisor_id column
+          AND a.status IN ('confirmed')
+          AND a.appointment_id NOT IN (
+              SELECT appointment_id 
+              FROM work_orders 
+              WHERE appointment_id IS NOT NULL
+          )
+        ORDER BY a.appointment_date DESC, a.appointment_time DESC
+    ";
+
+    $stmt = $this->pdo->prepare($sql);
+    $stmt->execute([$branchId, $supervisorId]);
+
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
 
     public function getActiveMechanics(): array
 {

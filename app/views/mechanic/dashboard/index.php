@@ -21,29 +21,54 @@ $currentMechanicId = $_SESSION['user']['mechanic_id'] ?? null;
   <div class="dashboard-layout">
     <div class="tiles-grid">
         <div class="stat-card">
-            <h3>Appointments<br>Pending</h3>
-            <p><?= $branch_pending ?? 0 ?></p>
+        <div class="stat-icon-box bg-light-orange">
+        <i class="fa-solid fa-calendar-day icon-orange"></i>
+      </div>
+        <div class="stat-content">
+        <span class="stat-label">Appointments Pending</span>
+        <h2 class="stat-number"><?= $branch_pending ?? 0 ?></h2>
+        </div>
         </div>
         
         <div class="stat-card">
-            <h3>Assigned<br>Workorders</h3>
-            <p><?= $stats['assigned'] ?? 0 ?></p>
-        </div>
+      <div class="stat-icon-box bg-light-blue">
+        <i class="fa-solid fa-user-check icon-blue"></i>
+      </div>
+      <div class="stat-content">
+        <span class="stat-label">My Assigned Workorders</span>
+        <h2 class="stat-number"><?= (int)($stats['assigned'] ?? 0) ?></h2>
+      </div>
+    </div>
 
         <div class="stat-card">
-            <h3>In-Progress<br>Workorders</h3>
-            <p><?= $stats['ongoing'] ?? 0 ?></p>
-        </div>
+      <div class="stat-icon-box bg-light-green">
+        <i class="fa-solid fa-spinner fa-spin icon-green"></i>
+      </div>
+      <div class="stat-content">
+        <span class="stat-label">In-Progress Workorders</span>
+        <h2 class="stat-number"><?= (int)($stats['in_progress'] ?? 0) ?></h2>
+      </div>
+    </div>
 
-        <div class="stat-card">
-            <h3>On-Hold<br>Workorders</h3>
-            <p><?= $stats['onhold'] ?? 0 ?></p>
-        </div>
+    <div class="stat-card">
+      <div class="stat-icon-box bg-light-red">
+        <i class="fa-solid fa-circle-pause icon-red"></i>
+      </div>
+      <div class="stat-content">
+        <span class="stat-label">On-Hold Workorders</span>
+        <h2 class="stat-number"><?= (int)($stats['on_hold'] ?? 0) ?></h2>
+      </div>
+    </div>
 
-        <div class="stat-card full-width">
-            <h3>Completed<br>Workorders</h3>
-            <p><?= $stats['completed'] ?? 0 ?></p>
-        </div>
+    <div class="stat-card">
+      <div class="stat-icon-box bg-light-purple">
+        <i class="fa-solid fa-circle-check icon-purple"></i>
+      </div>
+      <div class="stat-content">
+        <span class="stat-label">Completed Workorders</span>
+        <h2 class="stat-number"><?= (int)($stats['completed'] ?? 0) ?></h2>
+      </div>
+    </div>
     </div>
     <div class="table-container">
     <div class="table-header">
