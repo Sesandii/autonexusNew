@@ -398,7 +398,7 @@ $serviceInterval = !empty($service['service_interval_km'])
            class="download-btn" 
            title="Download Final Report PDF">
           <i class="fa-solid fa-file-pdf"></i>
-          Download Report
+          Download Final Report PDF
         </a>
         <?php endif; ?>
       </div>

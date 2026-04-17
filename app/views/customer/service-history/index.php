@@ -131,13 +131,13 @@ $sidebarCssVersion = @filemtime(dirname(APP_ROOT) . '/public/assets/css/customer
                 <div class="sh-btn-group">
                   <a href="<?= $base ?>/customer/service-history/<?= (int)$s['work_order_id'] ?>" class="sh-btn-outline">
                     <i class="fa-solid fa-file-lines"></i>
-                    <?= $hasFinalReport ? 'View Report' : 'View Details' ?>
+                    <?= $hasFinalReport ? 'View Final Report' : 'View Details' ?>
                   </a>
 
                   <?php if ($hasFinalReport): ?>
-                    <a href="<?= $base ?>/customer/service-history/<?= (int)$s['work_order_id'] ?>/pdf" class="sh-btn-primary" title="Download Final Report">
+                    <a href="<?= $base ?>/customer/service-history/<?= (int)$s['work_order_id'] ?>/pdf" class="sh-btn-primary" title="Download Final Report PDF">
                       <i class="fa-solid fa-file-arrow-down"></i>
-                      Download Report
+                      Download Final Report
                     </a>
                   <?php else: ?>
                     <span class="sh-report-pending">
