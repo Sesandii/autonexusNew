@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace app\model\admin;
 
-use app\core\Database;
 use PDO;
 
 class Appointment
@@ -12,7 +11,7 @@ class Appointment
 
     public function __construct()
     {
-        $this->pdo = db(); // your global db() function
+        $this->pdo = db();
     }
 
     /**
@@ -137,106 +136,74 @@ class Appointment
     }
 
     /**
-     * Single appointment with full details for show / edit.
+     * Single appointment with full details for show page.
      */
     public function findWithDetails(int $id): ?array
-    {
-        $sql = "
-            SELECT
-                a.*,
+{
+    $sql = "
+        SELECT
+            a.*,
 
-                c.customer_id,
-                CONCAT(cu.first_name, ' ', cu.last_name) AS customer_name,
-                cu.phone        AS customer_phone,
-                cu.email        AS customer_email,
+            c.customer_id,
+            CONCAT(cu.first_name, ' ', cu.last_name) AS customer_name,
+            cu.phone        AS customer_phone,
+            cu.email        AS customer_email,
 
-                v.vehicle_id,
-                v.vehicle_code,
-                v.license_plate,
-                v.make,
-                v.model,
-                v.year,
-                v.color,
+            v.vehicle_id,
+            v.vehicle_code,
+            v.license_plate,
+            v.make,
+            v.model,
+            v.year,
+            v.color,
 
-                s.service_id,
-                s.name          AS service_name,
-                s.default_price,
+            s.service_id,
+            s.name          AS service_name,
+            s.service_code,
+            st.type_name    AS service_type,
+            s.default_price,
 
-                b.branch_id,
-                b.name          AS branch_name,
-                b.city          AS branch_city,
-                b.address_line  AS branch_address,
-                b.phone         AS branch_phone,
-                b.manager_id,
+            b.branch_id,
+            b.name          AS branch_name,
+            b.branch_code,
+            b.city          AS branch_city,
+            b.address_line  AS branch_address,
+            b.phone         AS branch_phone,
+            b.manager_id,
 
-                -- Work order / mechanic (may be null)
-                w.work_order_id,
-                w.status        AS work_status,
-                w.started_at,
-                w.completed_at,
-                w.total_cost,
-                w.service_summary,
+            w.work_order_id,
+            w.status        AS work_status,
+            w.started_at,
+            w.completed_at,
+            w.total_cost,
+            w.service_summary,
 
-                mech.mechanic_id,
-                CONCAT(mu.first_name, ' ', mu.last_name) AS mechanic_name,
+            mech.mechanic_id,
+            CONCAT(mu.first_name, ' ', mu.last_name) AS mechanic_name,
 
-                CONCAT(su.first_name, ' ', su.last_name) AS supervisor_name
-            FROM appointments a
-            JOIN customers c       ON c.customer_id = a.customer_id
-            JOIN users cu          ON cu.user_id = c.user_id
-            LEFT JOIN vehicles v   ON v.vehicle_id = a.vehicle_id
-            JOIN services s        ON s.service_id = a.service_id
-            JOIN branches b        ON b.branch_id = a.branch_id
+            CONCAT(su.first_name, ' ', su.last_name) AS supervisor_name
+        FROM appointments a
+        JOIN customers c           ON c.customer_id = a.customer_id
+        JOIN users cu              ON cu.user_id = c.user_id
+        LEFT JOIN vehicles v       ON v.vehicle_id = a.vehicle_id
+        JOIN services s            ON s.service_id = a.service_id
+        LEFT JOIN service_types st ON st.type_id = s.type_id
+        JOIN branches b            ON b.branch_id = a.branch_id
+        LEFT JOIN work_orders w    ON w.appointment_id = a.appointment_id
+        LEFT JOIN mechanics mech   ON mech.mechanic_id = w.mechanic_id
+        LEFT JOIN users mu         ON mu.user_id = mech.user_id
+        LEFT JOIN supervisors sup  ON sup.supervisor_id = a.assigned_to
+        LEFT JOIN users su         ON su.user_id = sup.user_id
+        WHERE a.appointment_id = :id
+        LIMIT 1
+    ";
 
-            LEFT JOIN work_orders w ON w.appointment_id = a.appointment_id
-            LEFT JOIN mechanics mech ON mech.mechanic_id = w.mechanic_id
-            LEFT JOIN users mu ON mu.user_id = mech.user_id
+    $stmt = $this->pdo->prepare($sql);
+    $stmt->execute([':id' => $id]);
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            LEFT JOIN supervisors sup ON sup.supervisor_id = a.assigned_to
-            LEFT JOIN users su ON su.user_id = sup.user_id
-
-            WHERE a.appointment_id = :id
-            LIMIT 1
-        ";
-
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([':id' => $id]);
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        return $row ?: null;
-    }
-
-    /**
-     * Update appointment core fields.
-     */
-    public function update(int $id, array $data): bool
-    {
-        $sql = "
-            UPDATE appointments
-            SET
-                branch_id        = :branch_id,
-                service_id       = :service_id,
-                appointment_date = :appointment_date,
-                appointment_time = :appointment_time,
-                status           = :status,
-                notes            = :notes,
-                updated_at       = NOW()
-            WHERE appointment_id   = :id
-            LIMIT 1
-        ";
-
-        $stmt = $this->pdo->prepare($sql);
-
-        return $stmt->execute([
-            ':branch_id' => $data['branch_id'],
-            ':service_id' => $data['service_id'],
-            ':appointment_date' => $data['appointment_date'],
-            ':appointment_time' => $data['appointment_time'],
-            ':status' => $data['status'],
-            ':notes' => $data['notes'],
-            ':id' => $id,
-        ]);
-    }
+    return $row ?: null;
+}
 
     /**
      * Delete appointment row.

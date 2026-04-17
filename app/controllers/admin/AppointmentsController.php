@@ -113,65 +113,6 @@ class AppointmentsController extends Controller
         ]);
     }
 
-    /** GET /admin/appointments/edit?id=123 */
-    public function edit(): void
-    {
-        $id = (int) ($_GET['id'] ?? 0);
-        if ($id <= 0) {
-            http_response_code(400);
-            echo "Invalid appointment id.";
-            return;
-        }
-
-        $appointment = $this->appointments->findWithDetails($id);
-        if (!$appointment) {
-            http_response_code(404);
-            echo "Appointment not found.";
-            return;
-        }
-
-        $branches = $this->appointments->getBranches();
-        $services = $this->appointments->getServices();
-
-        $this->view('admin/admin-appointments/edit', [
-            'appointment' => $appointment,
-            'branches' => $branches,
-            'services' => $services,
-            'pageTitle' => 'Edit Appointment #' . $id,
-            'current' => 'appointments',
-        ]);
-    }
-
-    /** POST /admin/appointments/update */
-    public function update(): void
-    {
-        if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
-            header('Location: ' . rtrim(BASE_URL, '/') . '/admin/appointments');
-            return;
-        }
-
-        $id = (int) ($_POST['appointment_id'] ?? 0);
-        if ($id <= 0) {
-            http_response_code(400);
-            echo "Invalid appointment id.";
-            return;
-        }
-
-        $data = [
-            'branch_id' => (int) ($_POST['branch_id'] ?? 0),
-            'service_id' => (int) ($_POST['service_id'] ?? 0),
-            'appointment_date' => trim($_POST['appointment_date'] ?? ''),
-            'appointment_time' => trim($_POST['appointment_time'] ?? ''),
-            'status' => trim($_POST['status'] ?? ''),
-            'notes' => trim($_POST['notes'] ?? ''),
-        ];
-
-        $this->appointments->update($id, $data);
-
-        header('Location: ' . rtrim(BASE_URL, '/') . '/admin/appointments');
-        exit;
-    }
-
     /** POST /admin/appointments/delete */
     public function delete(): void
     {
