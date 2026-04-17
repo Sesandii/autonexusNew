@@ -30,19 +30,19 @@ public function create()
 
 
     /** GET /admin/branches */
-    public function index()
-    {
-        $branches = $this->Branch->all();
-        $q      = isset($_GET['q']) ? trim((string)$_GET['q']) : '';
-        $status = isset($_GET['status']) ? trim((string)$_GET['status']) : 'all';
+   public function index()
+{
+    $branches = $this->Branch->allWithManager();
+    $q      = isset($_GET['q']) ? trim((string)$_GET['q']) : '';
+    $status = isset($_GET['status']) ? trim((string)$_GET['status']) : 'all';
 
-        $this->view('admin/admin-viewbranches/index', [
-            'branches' => $branches,
-            'q'        => $q,
-            'status'   => $status,
-            'base'     => BASE_URL,
-        ]);
-    }
+    $this->view('admin/admin-viewbranches/index', [
+        'branches' => $branches,
+        'q'        => $q,
+        'status'   => $status,
+        'base'     => BASE_URL,
+    ]);
+}
 
     /** GET /admin/branches/{code} */
     public function show($code)
