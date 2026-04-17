@@ -18,7 +18,7 @@ $base = rtrim(BASE_URL, '/');
 
   <?php include APP_ROOT . '/views/layouts/customer-sidebar.php'; ?>
 
-  <div class="container">
+  <div class="container customer-layout-main">
     <main class="main-content">
 
       <?php
@@ -36,7 +36,7 @@ $base = rtrim(BASE_URL, '/');
         </div>
         <?php unset($_SESSION['flash']); ?>
       <?php endif; ?>
-
+// If no appointments, show empty state. Otherwise show form.
       <?php if (empty($appointments)): ?>
         <div class="empty-appointments">
           <i class="fa-regular fa-calendar-xmark"></i>
@@ -44,7 +44,7 @@ $base = rtrim(BASE_URL, '/');
           <p>You don't have any completed services without feedback yet.</p>
         </div>
       <?php else: ?>
-
+// Show rating form
       <form class="form-container" method="POST" action="<?= $base ?>/customer/rate-service" id="ratingForm">
         
         <!-- Step 1: Select Service -->
@@ -53,7 +53,7 @@ $base = rtrim(BASE_URL, '/');
             <span class="step-badge">1</span>
             Select Completed Service
           </h2>
-          
+ // Dropdown with appointments that need feedback         
           <div class="form-group">
             <label for="appointment">Choose a service to rate</label>
             <select id="appointment" name="appointment_id" required>
@@ -67,6 +67,8 @@ $base = rtrim(BASE_URL, '/');
                   data-date="<?= htmlspecialchars($a['service_date'] ?? '') ?>"
                   data-time="<?= htmlspecialchars($a['service_time'] ?? '') ?>"
                 >
+                
+                
                   <?= htmlspecialchars(
                     date('M d, Y', strtotime($a['service_date'])) . ' - ' . 
                     $a['service_name'] . ' - ' . 

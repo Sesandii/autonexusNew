@@ -21,7 +21,6 @@ body {
 }
 
 .main-content {
-  margin-left: 240px;                 /* keep in sync with sidebar width */
   padding: 32px 40px 40px;
   max-width: 1180px;
   box-sizing: border-box;
@@ -288,8 +287,14 @@ body {
 .vehicle-actions {
   display: flex;
   justify-content: center;
+  align-items: center;
+  gap: 8px;
   padding-top: 10px;
   border-top: 1px dashed #d9d5df;
+}
+
+.vehicle-actions form {
+  margin: 0;
 }
 
 .vehicle-actions .btn.edit {
@@ -301,6 +306,17 @@ body {
 
 .vehicle-actions .btn.edit:hover {
   background: #e8e7ee;
+}
+
+.vehicle-actions .btn.delete {
+  background: #fff1f2;
+  color: #b91c1c;
+  box-shadow: none;
+  border: 1px solid #fecdd3;
+}
+
+.vehicle-actions .btn.delete:hover {
+  background: #ffe4e6;
 }
 
 .form-section-title {
@@ -599,6 +615,9 @@ body {
 .vehicle-card .vehicle-actions {
   display: flex;
   gap: 8px;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
   margin-top: 10px;
 }
 
@@ -713,7 +732,6 @@ textarea {
 
 @media (max-width: 640px) {
   .main-content {
-    margin-left: 0;
     padding: 20px 16px 28px;
   }
 

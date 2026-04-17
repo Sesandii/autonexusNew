@@ -16,7 +16,6 @@ body {
 }
 
 .appointments-main.main-content {
-  margin-left: 240px;
   padding: 30px;
   min-height: 100vh;
 }
@@ -456,7 +455,6 @@ body {
 
 @media (max-width: 1080px) {
   .appointments-main.main-content {
-    margin-left: 220px;
     padding: 22px;
   }
 
@@ -475,7 +473,6 @@ body {
 
 @media (max-width: 760px) {
   .appointments-main.main-content {
-    margin-left: 0;
     padding: 16px;
   }
 
