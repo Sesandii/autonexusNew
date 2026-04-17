@@ -10,7 +10,7 @@ class Appointment
 {
     private PDO $pdo;
 
-     public function __construct()
+    public function __construct()
     {
         $this->pdo = db(); // your global db() function
     }
@@ -49,6 +49,90 @@ class Appointment
         ";
 
         $stmt = $this->pdo->query($sql);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Get appointments for a specific date with related data.
+     */
+    public function getAppointmentsByDate(string $date): array
+    {
+        $sql = "
+            SELECT
+                a.appointment_id,
+                a.appointment_date,
+                a.appointment_time,
+                a.status            AS db_status,
+                a.assigned_to,
+                a.notes,
+                a.created_at,
+                a.updated_at,
+
+                c.customer_id,
+                CONCAT(u.first_name, ' ', u.last_name) AS customer_name,
+
+                s.service_id,
+                s.name               AS service_name,
+
+                b.branch_id,
+                b.name               AS branch_name,
+
+                CONCAT(su.first_name, ' ', su.last_name) AS supervisor_name
+            FROM appointments a
+            JOIN customers c   ON c.customer_id = a.customer_id
+            JOIN users u       ON u.user_id = c.user_id
+            JOIN services s    ON s.service_id = a.service_id
+            JOIN branches b    ON b.branch_id = a.branch_id
+            LEFT JOIN supervisors sup ON sup.supervisor_id = a.assigned_to
+            LEFT JOIN users su ON su.user_id = sup.user_id
+            WHERE a.appointment_date = :date
+            ORDER BY a.appointment_date ASC, a.appointment_time ASC
+        ";
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([':date' => $date]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Get appointments for a date range with related data.
+     */
+    public function getAppointmentsByDateRange(string $dateFrom, string $dateTo): array
+    {
+        $sql = "
+            SELECT
+                a.appointment_id,
+                a.appointment_date,
+                a.appointment_time,
+                a.status            AS db_status,
+                a.assigned_to,
+                a.notes,
+                a.created_at,
+                a.updated_at,
+
+                c.customer_id,
+                CONCAT(u.first_name, ' ', u.last_name) AS customer_name,
+
+                s.service_id,
+                s.name               AS service_name,
+
+                b.branch_id,
+                b.name               AS branch_name,
+
+                CONCAT(su.first_name, ' ', su.last_name) AS supervisor_name
+            FROM appointments a
+            JOIN customers c   ON c.customer_id = a.customer_id
+            JOIN users u       ON u.user_id = c.user_id
+            JOIN services s    ON s.service_id = a.service_id
+            JOIN branches b    ON b.branch_id = a.branch_id
+            LEFT JOIN supervisors sup ON sup.supervisor_id = a.assigned_to
+            LEFT JOIN users su ON su.user_id = sup.user_id
+            WHERE a.appointment_date BETWEEN :dateFrom AND :dateTo
+            ORDER BY a.appointment_date ASC, a.appointment_time ASC
+        ";
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([':dateFrom' => $dateFrom, ':dateTo' => $dateTo]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
@@ -108,7 +192,8 @@ class Appointment
             LEFT JOIN mechanics mech ON mech.mechanic_id = w.mechanic_id
             LEFT JOIN users mu ON mu.user_id = mech.user_id
 
-            LEFT JOIN users su ON su.user_id = b.manager_id
+            LEFT JOIN supervisors sup ON sup.supervisor_id = a.assigned_to
+            LEFT JOIN users su ON su.user_id = sup.user_id
 
             WHERE a.appointment_id = :id
             LIMIT 1
@@ -143,13 +228,13 @@ class Appointment
         $stmt = $this->pdo->prepare($sql);
 
         return $stmt->execute([
-            ':branch_id'        => $data['branch_id'],
-            ':service_id'       => $data['service_id'],
+            ':branch_id' => $data['branch_id'],
+            ':service_id' => $data['service_id'],
             ':appointment_date' => $data['appointment_date'],
             ':appointment_time' => $data['appointment_time'],
-            ':status'           => $data['status'],
-            ':notes'            => $data['notes'],
-            ':id'               => $id,
+            ':status' => $data['status'],
+            ':notes' => $data['notes'],
+            ':id' => $id,
         ]);
     }
 
@@ -184,8 +269,9 @@ class Appointment
     {
         switch ($dbStatus) {
             case 'requested':
-            case 'confirmed':
                 return 'Scheduled';
+            case 'confirmed':
+                return 'Confirmed';
             case 'in_progress':
                 return 'In Progress';
             case 'completed':
