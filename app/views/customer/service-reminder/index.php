@@ -21,7 +21,7 @@ $base = rtrim(BASE_URL, '/');
 
 <?php include APP_ROOT . '/views/layouts/customer-sidebar.php'; ?>
 
-<div class="cx-container">
+<div class="cx-container customer-layout-main">
   <main class="cx-main">
     <?php
       $headerIcon = 'fa-solid fa-gauge-high';

@@ -21,7 +21,6 @@ body {
     flex: 1;
     padding: 24px;
     max-width: 1100px;
-    margin-left: 240px;
     margin-right: auto;
 }
 
@@ -288,12 +287,6 @@ body {
 }
 
 /* ====== Responsive ====== */
-@media (max-width: 720px) {
-    .sh-main {
-        margin-left: 210px;
-    }
-}
-
 @media (max-width: 768px) {
     .sh-main {
         padding: 16px;

@@ -20,7 +20,7 @@ $sidebarCssVersion = @filemtime(dirname(APP_ROOT) . '/public/assets/css/customer
 
   <?php include APP_ROOT . '/views/layouts/customer-sidebar.php'; ?>
 
-  <main class="main-content customer-dashboard">
+  <main class="main-content customer-dashboard customer-layout-main">
     <div class="dash-wrap">
       <header class="topbar">
         <div>

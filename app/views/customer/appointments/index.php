@@ -93,7 +93,7 @@ foreach ($rows as $row) {
 
   <?php include APP_ROOT . '/views/layouts/customer-sidebar.php'; ?>
 
-  <main class="main-content appointments-main">
+  <main class="main-content appointments-main customer-layout-main">
     <div class="appointments-page">
       <?php
         $headerIcon = 'fa-solid fa-calendar-check';

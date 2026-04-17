@@ -21,22 +21,11 @@ if (!empty($branch_name)) {
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
-  <style>
-    .customer-main-shell {
-      margin-left: 240px;
-    }
-
-    @media (max-width: 720px) {
-      .customer-main-shell {
-        margin-left: 210px;
-      }
-    }
-  </style>
 </head>
 <body>
   <?php include APP_ROOT . '/views/layouts/customer-sidebar.php'; ?>
 
-  <div class="customer-main-shell">
+  <div class="customer-main-shell customer-layout-main">
 
   <?php
     $headerIcon = 'fa-solid fa-car-side';

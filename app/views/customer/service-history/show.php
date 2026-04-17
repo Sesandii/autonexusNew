@@ -172,7 +172,7 @@ $base = rtrim(BASE_URL, '/');
 <body>
   <?php include APP_ROOT . '/views/layouts/customer-sidebar.php'; ?>
 
-  <div class="sh-layout">
+  <div class="sh-layout customer-layout-main">
     <div class="detail-container">
       <div class="detail-hero">
         <a href="<?= $base ?>/customer/service-history" class="back-link">

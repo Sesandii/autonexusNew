@@ -28,7 +28,6 @@ body {
 }
 
 .main-content.customer-dashboard {
-  margin-left: 240px;
   min-height: 100vh;
   padding: 24px 28px 40px;
 }
@@ -355,7 +354,6 @@ body {
 
 @media (max-width: 700px) {
   .main-content.customer-dashboard {
-    margin-left: 210px;
     padding: 18px;
   }
 
