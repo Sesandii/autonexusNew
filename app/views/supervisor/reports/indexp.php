@@ -80,12 +80,12 @@
     <tbody>
   <?php if (!empty($reports)): ?>
     <?php 
-    $currentSupervisorId = $_SESSION['user']['user_id'] ?? 0;
+    $currentSupervisorId = $currentSupervisorId ?? 0;
     ?>
     
     <?php foreach ($reports as $r): ?>
   <?php 
-    $reportOwnerId = $r['supervisor_id'] ?? $r['user_id'] ?? null;
+    $reportOwnerId = $r['supervisor_id'] ?? null;
 
     $isOwner = ($reportOwnerId !== null && (int)$reportOwnerId === (int)$currentSupervisorId);
   ?>

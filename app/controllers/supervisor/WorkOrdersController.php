@@ -15,29 +15,40 @@ class WorkOrdersController extends Controller
     }
 
     public function index()
-{
-    if (session_status() !== PHP_SESSION_ACTIVE) session_start();
+    {
+        if (session_status() !== PHP_SESSION_ACTIVE) session_start();
+        
+        // 1. Get the User ID from the session
+        $userId = $_SESSION['user']['user_id'] ?? null;
+        $branchId = $_SESSION['user']['branch_id'] ?? null;
     
-    $currentSupervisorId = $_SESSION['user']['user_id'] ?? null;
-    $branchId = $_SESSION['user']['branch_id'] ?? null;
-
-    if (!$branchId) {
-        die("Error: No branch assigned to this user.");
+        if (!$branchId) {
+            die("Error: No branch assigned to this user.");
+        }
+    
+        $m = new WorkOrder();
+    
+        /** * 2. BRIDGE THE MISMATCH: 
+         * Fetch the actual supervisor_id using the user_id 
+         */
+        $stmt = db()->prepare("SELECT supervisor_id FROM supervisors WHERE user_id = ?");
+        $stmt->execute([$userId]);
+        $supervisorRecord = $stmt->fetch();
+        
+        // This is the ID that matches the supervisor_id column in work_orders table
+        $realSupervisorId = $supervisorRecord ? (int)$supervisorRecord['supervisor_id'] : 0;
+    
+        $workOrders = $m->getAll((int)$branchId);
+    
+        $data = [
+            'workOrders'            => $workOrders,
+            'currentSupervisorId'   => $realSupervisorId, // Send the REAL ID to the view
+            'availableAppointments' => $m->getAvailableAppointments($realSupervisorId), // Use REAL ID for filtering
+            'activeMechanics'       => $m->getActiveMechanicsByBranch($branchId)
+        ];
+    
+        $this->view('supervisor/workorders/index', $data);
     }
-
-    $m = new WorkOrder();
-
-    $workOrders = $m->getAll((int)$branchId);
-
-    $data = [
-        'workOrders'            => $workOrders,
-        'currentSupervisorId'   => $currentSupervisorId,
-        'availableAppointments' => $m->getAvailableAppointments($currentSupervisorId),
-        'activeMechanics'       => $m->getActiveMechanicsByBranch($branchId)
-    ];
-
-    $this->view('supervisor/workorders/index', $data);
-}
 
     public function createForm()
     {
@@ -113,9 +124,20 @@ public function store()
     }
 
     if (session_status() !== PHP_SESSION_ACTIVE) session_start();
-    $supervisor_id = $_SESSION['user']['user_id'] ?? null;
+    $userId = $_SESSION['user']['user_id'] ?? null;
 
     $m = new WorkOrder();
+    $stmt = db()->prepare("SELECT supervisor_id FROM supervisors WHERE user_id = ?");
+    $stmt->execute([$userId]);
+    $supervisorData = $stmt->fetch();
+    
+    if (!$supervisorData) {
+        $this->flash('danger', 'Critical Error: Supervisor record not found for this user.');
+        header('Location: ' . BASE_URL . '/supervisor/workorders');
+        exit;
+    }
+
+    $realSupervisorId = $supervisorData['supervisor_id']; // This is the ID the DB wants
 
     $appointment_id = (int)($_POST['appointment_id'] ?? 0);
     $mechanic_id = !empty($_POST['mechanic_id']) ? (int)$_POST['mechanic_id'] : null;
@@ -160,7 +182,7 @@ $workOrderId = $m->create([
     'service_summary' => trim($_POST['service_summary'] ?? ''),
     'total_cost'      => 0,
     'status'          => $status,
-    'supervisor_id'   => $supervisor_id,
+    'supervisor_id'   => $realSupervisorId,
 ]);
 
 
@@ -222,16 +244,20 @@ if ($appt && !empty($appt['vehicle_id'])) {
     public function editForm($id)
 {
     if (session_status() !== PHP_SESSION_ACTIVE) session_start();
-    $supervisor_id = $_SESSION['user']['user_id'] ?? null;
+    $userId = $_SESSION['user']['user_id'] ?? null;
+    $stmt = db()->prepare("SELECT supervisor_id FROM supervisors WHERE user_id = ?");
+    $stmt->execute([$userId]);
+    $sup = $stmt->fetch();
+    $realSupervisorId = $sup ? (int)$sup['supervisor_id'] : 0;
 
     $branchId = $_SESSION['user']['branch_id'] ?? null;
 
     $m = new WorkOrder();
     $wo = $m->find((int)$id);
 
-    if (!$wo || ($wo['supervisor_id'] ?? 0) !== $supervisor_id) {
+    if (!$wo || (int)($wo['supervisor_id'] ?? 0) !== $realSupervisorId) {
         $this->flash('danger', 'Work order unauthorized.');
-        header('Location: ' . rtrim(BASE_URL,'/') . '/supervisor/workorders'); 
+        header('Location: ' . BASE_URL . '/supervisor/workorders'); 
         exit;
     }
 
@@ -255,7 +281,7 @@ if ($appt && !empty($appt['vehicle_id'])) {
     }
     $finalChecklist = array_merge($checklist, $finalChecklist);
 
-    $availableAppointments = $m->getAvailableAppointments($supervisor_id);
+    $availableAppointments = $m->getAvailableAppointments($realSupervisorId);
 
     $activeMechanics = $m->getActiveMechanicsByBranch($branchId);
 
@@ -289,14 +315,19 @@ if ($appt && !empty($appt['vehicle_id'])) {
         }
     
         if (session_status() !== PHP_SESSION_ACTIVE) session_start();
-        $supervisor_id = $_SESSION['user']['user_id'] ?? null;
+        $userId = $_SESSION['user']['user_id'] ?? null;
+
+        $stmt = db()->prepare("SELECT supervisor_id FROM supervisors WHERE user_id = ?");
+    $stmt->execute([$userId]);
+    $sup = $stmt->fetch();
+    $realSupervisorId = $sup ? (int)$sup['supervisor_id'] : 0;
     
         $m = new WorkOrder();
         $wo = $m->find((int)$id);
     
-        if (!$wo || ($wo['supervisor_id'] ?? 0) !== $supervisor_id) {
+        if (!$wo || (int)($wo['supervisor_id'] ?? 0) !== $realSupervisorId) {
             $this->flash('danger', 'Unauthorized update.');
-            header('Location: ' . rtrim(BASE_URL,'/') . '/supervisor/workorders');
+            header('Location: ' . BASE_URL . '/supervisor/workorders');
             exit;
         }
     
@@ -360,7 +391,7 @@ if ($oldMechanicId && $oldMechanicId != $newMechanicId) {
             'service_summary' => trim($_POST['service_summary'] ?? ''),
             'total_cost'      => (float)($_POST['total_cost'] ?? 0),
         ];
-        $m->update((int)$id, $payload, $supervisor_id);
+        $m->update((int)$id, $payload, $realSupervisorId);
     
 $newStatus = $_POST['status'] ?? 'open';
 $currentStatus = strtolower($wo['status'] ?? '');
@@ -470,14 +501,19 @@ if ($vehicleId) {
     public function destroy($id)
 {
     if (session_status() !== PHP_SESSION_ACTIVE) session_start();
-    $supervisor_id = $_SESSION['user']['user_id'] ?? null;
+    $userId = $_SESSION['user']['user_id'] ?? null;
+
+    $stmt = db()->prepare("SELECT supervisor_id FROM supervisors WHERE user_id = ?");
+    $stmt->execute([$userId]);
+    $sup = $stmt->fetch();
+    $realSupervisorId = $sup ? (int)$sup['supervisor_id'] : 0;
 
     $m = new WorkOrder();
     $wo = $m->find((int)$id);
 
-    if (!$wo || ($wo['supervisor_id'] ?? 0) !== $supervisor_id) {
+    if (!$wo || (int)($wo['supervisor_id'] ?? 0) !== $realSupervisorId) {
         $this->flash('danger', 'Unauthorized delete.');
-        header('Location: ' . rtrim(BASE_URL,'/') . '/supervisor/workorders'); 
+        header('Location: ' . BASE_URL . '/supervisor/workorders'); 
         exit;
     }
 
@@ -485,7 +521,7 @@ if ($vehicleId) {
         $m->setAppointmentStatus((int)$wo['appointment_id'], 'confirmed');
     }
 
-    $m->delete((int)$id, $supervisor_id);
+    $m->delete((int)$id, $realSupervisorId);
 
     if (!empty($wo['mechanic_id'])) {
         $mechanic = $m->getMechanicById((int)$wo['mechanic_id']);

@@ -46,7 +46,9 @@ class Report
             CONCAT(v.make, ' ', v.model) AS vehicle,
             CONCAT(u.first_name, ' ', u.last_name) AS customer_name,
             su.supervisor_code,
-            su.user_id AS supervisor_id, 
+            -- FIX: Get the ID directly from the report table 
+            -- to ensure it matches what was saved in store()
+            r.supervisor_id, 
             s.name,
             m.mechanic_code
         FROM reports r
@@ -54,7 +56,8 @@ class Report
         JOIN appointments a ON w.appointment_id = a.appointment_id
         LEFT JOIN vehicles v ON a.vehicle_id = v.vehicle_id
         LEFT JOIN services s ON a.service_id = s.service_id
-        LEFT JOIN supervisors su ON w.supervisor_id = su.user_id
+        -- JOIN on supervisor_id to get the code/name correctly
+        LEFT JOIN supervisors su ON r.supervisor_id = su.supervisor_id
         LEFT JOIN customers c ON a.customer_id = c.customer_id
         LEFT JOIN users u ON c.user_id = u.user_id
         LEFT JOIN mechanics m ON w.mechanic_id = m.mechanic_id
@@ -66,7 +69,6 @@ class Report
 
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
-
     public function create(array $data): int
 {
     $sql = "
