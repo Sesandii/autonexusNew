@@ -6,7 +6,7 @@ $current = 'branches';
 
 function e($value): string
 {
-    return htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8');
+  return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
 }
 
 $st = $row['status'] ?? 'active';
@@ -14,6 +14,7 @@ $statusClass = $st === 'inactive' ? 'status-pill inactive' : 'status-pill active
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -27,11 +28,13 @@ $statusClass = $st === 'inactive' ? 'status-pill inactive' : 'status-pill active
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 
   <style>
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
 
     body {
       margin: 0;
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background: #f3f4f6;
       color: #111827;
     }
@@ -244,6 +247,7 @@ $statusClass = $st === 'inactive' ? 'status-pill inactive' : 'status-pill active
     }
   </style>
 </head>
+
 <body>
   <?php include(__DIR__ . '/../../layouts/admin-sidebar/sidebar.php'); ?>
 
@@ -256,7 +260,7 @@ $statusClass = $st === 'inactive' ? 'status-pill inactive' : 'status-pill active
     <section class="details-card">
       <div class="details-card-header">
         <h2><?= e($row['name'] ?? '') ?></h2>
-        <span class="<?= e($statusClass) ?>"><?= e(ucfirst((string)$st)) ?></span>
+        <span class="<?= e($statusClass) ?>"><?= e(ucfirst((string) $st)) ?></span>
       </div>
 
       <div class="details-body">
@@ -318,7 +322,8 @@ $statusClass = $st === 'inactive' ? 'status-pill inactive' : 'status-pill active
             <span>Back to list</span>
           </a>
 
-          <a class="btn-primary" href="<?= e($base . '/admin/branches/' . rawurlencode((string)$row['branch_code']) . '/edit') ?>">
+          <a class="btn-primary"
+            href="<?= e($base . '/admin/branches/' . rawurlencode((string) $row['branch_code']) . '/edit') ?>">
             <i class="fa-solid fa-pen"></i>
             <span>Edit Branch</span>
           </a>
@@ -327,4 +332,5 @@ $statusClass = $st === 'inactive' ? 'status-pill inactive' : 'status-pill active
     </section>
   </main>
 </body>
+
 </html>

@@ -8,11 +8,12 @@ $nextCode = $nextCode ?? 'BR001';
 
 function e($value): string
 {
-    return htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8');
+  return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
 }
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -26,11 +27,13 @@ function e($value): string
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 
   <style>
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
 
     body {
       margin: 0;
-      font-family: 'Inter', Arial, sans-serif;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background: #f3f4f6;
       color: #111827;
     }
@@ -218,6 +221,7 @@ function e($value): string
     }
   </style>
 </head>
+
 <body>
   <?php include(__DIR__ . '/../../layouts/admin-sidebar/sidebar.php'); ?>
 
@@ -263,12 +267,12 @@ function e($value): string
               <option value="">— None —</option>
               <?php foreach (($managers ?? []) as $m): ?>
                 <?php
-                  $id   = (int)($m['manager_id'] ?? 0);
-                  $code = (string)($m['manager_code'] ?? '');
-                  $name = trim(($m['first_name'] ?? '') . ' ' . ($m['last_name'] ?? ''));
-                  $label = $code ? "$code — $name" : $name;
+                $id = (int) ($m['manager_id'] ?? 0);
+                $code = (string) ($m['manager_code'] ?? '');
+                $name = trim(($m['first_name'] ?? '') . ' ' . ($m['last_name'] ?? ''));
+                $label = $code ? "$code — $name" : $name;
                 ?>
-                <option value="<?= e((string)$id) ?>"><?= e($label) ?></option>
+                <option value="<?= e((string) $id) ?>"><?= e($label) ?></option>
               <?php endforeach; ?>
             </select>
           </div>
@@ -324,4 +328,5 @@ function e($value): string
     </form>
   </main>
 </body>
+
 </html>

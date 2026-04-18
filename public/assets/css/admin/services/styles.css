@@ -3,7 +3,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: 'Segoe UI', sans-serif;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 body {
@@ -95,7 +95,7 @@ body {
 .table-container {
   background-color: white;
   border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   overflow: hidden;
 }
 
@@ -171,6 +171,7 @@ table.active .replacement {
   border: none;
   height: 100vh;
 }
+
 .container {
   display: flex;
 }
@@ -180,7 +181,8 @@ table.active .replacement {
 /* Layout */
 .sidebar {
   position: fixed;
-  top: 0; left: 0;
+  top: 0;
+  left: 0;
   width: 260px;
   height: 100vh;
   overflow-y: auto;
@@ -190,8 +192,9 @@ table.active .replacement {
   margin-left: 260px;
   padding: 28px;
   min-height: 100vh;
-  background: #f8fafc; /* light background */
-  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  background: #f8fafc;
+  /* light background */
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 /* Headings */
@@ -200,12 +203,14 @@ table.active .replacement {
   font-size: 28px;
   line-height: 1.2;
   font-weight: 700;
-  color: #0f172a; /* slate-900 */
+  color: #0f172a;
+  /* slate-900 */
 }
 
 .subtitle {
   margin: 0 0 18px;
-  color: #64748b; /* slate-500 */
+  color: #64748b;
+  /* slate-500 */
   font-size: 14px;
 }
 
@@ -227,7 +232,11 @@ table.active .replacement {
 }
 
 /* Fields */
-.field { display: flex; flex-direction: column; gap: 6px; }
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
 
 .field label {
   font-weight: 600;
@@ -250,12 +259,15 @@ textarea {
   transition: border-color .15s, box-shadow .15s;
 }
 
-textarea { resize: vertical; }
+textarea {
+  resize: vertical;
+}
 
 input:focus,
 select:focus,
 textarea:focus {
-  border-color: #38bdf8; /* sky-400 */
+  border-color: #38bdf8;
+  /* sky-400 */
   box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.15);
 }
 
@@ -282,11 +294,16 @@ textarea:focus {
 }
 
 #branch-picker label:hover {
-  background: #f1f5f9; /* slate-100 */
+  background: #f1f5f9;
+  /* slate-100 */
 }
 
 /* Actions / Buttons */
-.actions { display: flex; gap: 10px; margin-top: 16px; }
+.actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+}
 
 .btn {
   appearance: none;
@@ -304,21 +321,33 @@ textarea:focus {
   user-select: none;
 }
 
-.btn:active { transform: translateY(1px); }
+.btn:active {
+  transform: translateY(1px);
+}
 
 .btn-primary {
-  background: #0ea5e9; /* sky-500 */
+  background: #0ea5e9;
+  /* sky-500 */
   color: #fff;
   box-shadow: 0 6px 12px rgba(14, 165, 233, .18);
 }
-.btn-primary:hover { background: #0284c7; } /* sky-600 */
+
+.btn-primary:hover {
+  background: #0284c7;
+}
+
+/* sky-600 */
 
 .btn-secondary {
-  background: #f3f4f6; /* gray-100 */
+  background: #f3f4f6;
+  /* gray-100 */
   color: #111827;
   border-color: #e5e7eb;
 }
-.btn-secondary:hover { background: #e5e7eb; }
+
+.btn-secondary:hover {
+  background: #e5e7eb;
+}
 
 /* Radios inline */
 .card .field input[type="radio"] {
@@ -327,19 +356,45 @@ textarea:focus {
 }
 
 /* Utility */
-[hidden] { display: none !important; }
+[hidden] {
+  display: none !important;
+}
 
 /* ====== Responsive ====== */
 @media (max-width: 1024px) {
-  .grid-2 { grid-template-columns: 1fr; }
+  .grid-2 {
+    grid-template-columns: 1fr;
+  }
 }
+
 @media (max-width: 768px) {
-  .sidebar { width: 220px; }
-  .main-content { margin-left: 220px; padding: 22px; }
+  .sidebar {
+    width: 220px;
+  }
+
+  .main-content {
+    margin-left: 220px;
+    padding: 22px;
+  }
 }
+
 @media (max-width: 640px) {
-  .sidebar { position: static; width: auto; height: auto; }
-  .main-content { margin-left: 0; padding: 18px; }
-  .actions { flex-direction: column; }
-  .btn { width: 100%; }
+  .sidebar {
+    position: static;
+    width: auto;
+    height: auto;
+  }
+
+  .main-content {
+    margin-left: 0;
+    padding: 18px;
+  }
+
+  .actions {
+    flex-direction: column;
+  }
+
+  .btn {
+    width: 100%;
+  }
 }
