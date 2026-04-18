@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="<?= BASE_URL ?>/public/assets/css/receptionist/sidebar.css">
   <link rel="stylesheet" href="<?= BASE_URL ?>/public/assets/css/receptionist/services.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
 
@@ -33,21 +34,6 @@
   <!-- ========================= -->
 
   <section id="service" class="tab-content active">
-
-    <div class="filter-container">
-      <select class="servicetype-filter">
-        <option value="">All Services</option>
-        <option value="maintenance">Maintenance</option>
-        <option value="tyre">Tyre</option>
-        <option value="cleaning">Cleaning</option>
-        <option value="nano">Nano</option>
-        <option value="paint">Paint</option>
-        <option value="electrical">Electrical</option>
-        <option value="brakes">Brakes</option>
-        <option value="air-conditioning">Air Conditioning</option>
-        <option value="packages">Packages</option>
-      </select>
-    </div>
 
     <div class="service-grid">
       <?php if (!empty($services)): ?>

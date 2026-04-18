@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="<?= BASE_URL ?>/public/assets/css/receptionist/sidebar.css">
   <link rel="stylesheet" href="<?= BASE_URL ?>/public/assets/css/receptionist/newComplaint.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 
 <body>
@@ -41,6 +42,11 @@
 <label>Vehicle Number:</label>
 <input type="text" name="vehicle_number" id="vehicle_number" disabled>
 
+<label>Related Appointment (Optional):</label>
+<select name="appointment_id" id="appointment_id">
+  <option value="">None</option>
+  <!-- Appointments will be populated via JavaScript -->
+</select>
 
   <label>Date:</label>
   <input type="date" name="complaint_date">

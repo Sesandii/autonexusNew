@@ -167,3 +167,16 @@ tbody tr:hover {
 .tab-content.active {
   display: block;
 }
+
+.filter-dropdown select {
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    background: #fff;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.filter-dropdown {
+    margin-bottom: 15px;
+}

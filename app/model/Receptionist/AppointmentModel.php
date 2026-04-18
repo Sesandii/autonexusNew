@@ -235,33 +235,59 @@ public function getAppointmentById($id): array
 
 public function updateAppointment(array $data): bool
 {
-    $stmt = $this->db->prepare("
-        UPDATE appointments
-        SET service_id = :service_id,
-            branch_id = :branch_id,
-            appointment_date = :appointment_date,
-            appointment_time = :appointment_time,
-            status = :status,
-            notes = :notes,
-            assigned_to = :assigned_to,
-            updated_at = NOW()
-        WHERE appointment_id = :appointment_id
+    // Get the original appointment first to check if branch changed
+    $originalStmt = $this->db->prepare("
+        SELECT branch_id FROM appointments WHERE appointment_id = :appointment_id
     ");
-
-    $stmt->execute([
-        'appointment_id'   => $data['appointment_id'],
-        'service_id'       => $data['service_id'],
-        'branch_id'        => $data['branch_id'],
-        'appointment_date' => $data['appointment_date'],
-        'appointment_time' => $data['appointment_time'],
-        'status'           => $data['status'],
-        'notes'            => $data['notes'],
-        'assigned_to'      => $data['assigned_to'] ?: null
-    ]);
-
-    return $stmt->rowCount() > 0;
+    $originalStmt->execute(['appointment_id' => $data['appointment_id']]);
+    $original = $originalStmt->fetch(PDO::FETCH_ASSOC);
+    
+    // Check if branch has changed
+    $branchChanged = ($original['branch_id'] != $data['branch_id']);
+    
+    if ($branchChanged) {
+        // Branch changed - reset assigned_to and set status to 'Requested'
+        $stmt = $this->db->prepare("
+            UPDATE appointments
+            SET service_id = :service_id,
+                branch_id = :branch_id,
+                appointment_date = :appointment_date,
+                appointment_time = :appointment_time,
+                notes = :notes,
+                assigned_to = NULL,
+                status = 'Requested',
+                updated_at = NOW()
+            WHERE appointment_id = :appointment_id
+        ");
+        
+        return $stmt->execute([
+            'appointment_id' => $data['appointment_id'],
+            'service_id' => $data['service_id'],
+            'branch_id' => $data['branch_id'],
+            'appointment_date' => $data['appointment_date'],
+            'appointment_time' => $data['appointment_time'],
+            'notes' => $data['notes'] ?? null
+        ]);
+    } else {
+        // Branch didn't change - only update editable fields
+        $stmt = $this->db->prepare("
+            UPDATE appointments
+            SET service_id = :service_id,
+                appointment_date = :appointment_date,
+                appointment_time = :appointment_time,
+                notes = :notes,
+                updated_at = NOW()
+            WHERE appointment_id = :appointment_id
+        ");
+        
+        return $stmt->execute([
+            'appointment_id' => $data['appointment_id'],
+            'service_id' => $data['service_id'],
+            'appointment_date' => $data['appointment_date'],
+            'appointment_time' => $data['appointment_time'],
+            'notes' => $data['notes'] ?? null
+        ]);
+    }
 }
 }
-
-
 ?>

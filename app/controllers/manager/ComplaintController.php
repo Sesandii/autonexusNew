@@ -4,7 +4,7 @@ namespace app\controllers\Manager;
 use app\core\Controller;
 use app\model\Manager\ComplaintModel;
 
-class ComplaintController extends Controller {
+class ComplaintController extends BaseManagerController {
 
     protected ComplaintModel $model;
 

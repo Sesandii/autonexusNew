@@ -4,38 +4,13 @@ namespace app\controllers\Manager;
 use app\core\Controller;
 use app\model\Manager\ScheduleModel;
 
-class ScheduleController extends Controller
+class ScheduleController extends BaseManagerController
 {
     protected ScheduleModel $model;
-
-    private function guardManager(): void
-    {
-        if (session_status() !== PHP_SESSION_ACTIVE) session_start();
-        $u = $_SESSION['user'] ?? null;
-
-        if (!$u || ($u['role'] ?? '') !== 'manager') {
-            header('Location: ' . rtrim(BASE_URL, '/') . '/login');
-            exit;
-        }
-
-        if (!isset($_SESSION['user']['branch_id'])) {
-            $stmt = db()->prepare('SELECT branch_id FROM managers WHERE user_id = :uid LIMIT 1');
-            $stmt->execute(['uid' => $u['user_id']]);
-            $manager = $stmt->fetch(\PDO::FETCH_ASSOC);
-
-            if (!$manager) {
-                header('Location: ' . rtrim(BASE_URL, '/') . '/login');
-                exit;
-            }
-
-            $_SESSION['user']['branch_id'] = $manager['branch_id'];
-        }
-    }
 
     public function __construct()
     {
         parent::__construct();
-        $this->guardManager();
         $db = db();
         $this->model = new ScheduleModel($db);
     }
@@ -43,7 +18,7 @@ class ScheduleController extends Controller
     // Default schedule view (Team Overview)
 public function index(): void
 {
-    $branchId = $_SESSION['user']['branch_id'];
+    $branchId = $this->getBranchId();
 
     $users = $this->model->getTeamMembers($branchId);
     // REMOVE THIS LINE - we don't need it anymore
@@ -70,7 +45,7 @@ public function index(): void
 
         $userId = (int)($_POST['user_id'] ?? 0);
         $role = $_POST['role'] ?? '';
-        $branchId = $_SESSION['user']['branch_id'];
+        $branchId = $this->getBranchId();
 
         if (!$userId || !$role) {
             header('Content-Type: application/json');
@@ -124,7 +99,7 @@ public function index(): void
 // Show add team member page
 public function addMemberForm(): void
 {
-    $branchId = $_SESSION['user']['branch_id'];
+    $branchId = $this->getBranchId();
     $search = $_GET['search'] ?? '';
     
     // Debug - check if search is received
@@ -153,7 +128,7 @@ public function assignToBranch(): void
     
     $userId = (int)($_POST['user_id'] ?? 0);
     $role = $_POST['role'] ?? '';
-    $branchId = $_SESSION['user']['branch_id'];
+    $branchId = $this->getBranchId();
     
     if ($userId && $role) {
         $this->model->assignToBranch($userId, $role, $branchId);
