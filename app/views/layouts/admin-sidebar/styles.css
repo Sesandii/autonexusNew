@@ -17,7 +17,12 @@ body {
   background: #e7e8ea; /* just to show page background */
 }
 
-/* Sidebar Container */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #e7e8ea;
+}
+
+/* Sidebar */
 .sidebar {
   width: 260px;
   min-height: 100vh;
@@ -171,8 +176,10 @@ body {
   list-style: none;
 }
 
-.menu-item > a,
-.submenu-toggle {
+/* Top-level links and buttons */
+.menu-item>a,
+.menu-item>.submenu-toggle,
+.submenu-toggle--inner {
   width: 100%;
   display: flex;
   align-items: center;
@@ -181,35 +188,60 @@ body {
   background: transparent;
   color: #fff;
   text-decoration: none;
-  padding: 14px 16px;
-  border-radius: 18px;
-  font-size: 15px;
-  font-weight: 500;
-  cursor: pointer;
   text-align: left;
-  transition: 0.2s ease;
+  cursor: pointer;
+  border-radius: var(--radius);
+  transition: background var(--transition), color var(--transition);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.2;
+  color: var(--text);
+  appearance: none;
+  -webkit-appearance: none;
 }
 
-.menu-item > a:hover,
-.submenu-toggle:hover {
-  background: rgba(255, 255, 255, 0.08);
+/* Force same text style everywhere */
+.menu-item>a span,
+.menu-item>.submenu-toggle span,
+.submenu-toggle--inner span,
+.submenu li a span {
+  font: inherit;
+  color: inherit;
 }
 
-.menu-item.active > a {
-  background: #f3f4f6;
-  color: #eceef0;
+/* Icons */
+.menu-item i:not(.caret) {
+  width: 22px;
+  min-width: 22px;
+  text-align: center;
+  color: var(--icon);
+  font-size: 17px;
+  flex-shrink: 0;
+}
+
+/* Hover */
+.menu-item>a:hover,
+.menu-item>.submenu-toggle:hover,
+.submenu-toggle--inner:hover,
+.submenu li a:hover {
+  background: var(--sidebar-hover);
+  color: #ffffff;
+}
+
+/* Active top-level item */
+.menu-item.active>a {
+  background: var(--sidebar-active);
+  color: var(--text-dark);
   font-weight: 700;
 }
 
-.menu-item.active > a i {
-  color: #ef4444;
+.menu-item.active>a span {
+  color: var(--text-dark);
 }
 
-.has-submenu > .submenu-toggle .caret,
-.submenu-group > .submenu-toggle .caret {
-  margin-left: auto;
-  transition: transform 0.2s ease;
-  color: #94a3b8;
+.menu-item.active>a i:not(.caret) {
+  color: var(--icon);
 }
 
 .has-submenu.open > .submenu-toggle .caret,
@@ -217,18 +249,28 @@ body {
   transform: rotate(90deg);
 }
 
-.submenu {
+/* Submenus */
+.has-submenu>.submenu,
+.submenu-group>.submenu {
   display: none;
   margin: 6px 0 10px 12px;
   padding-left: 12px;
   border-left: 1px solid rgba(255,255,255,0.08);
 }
 
-.has-submenu.open > .submenu,
-.submenu-group.open > .submenu {
+/* Open state */
+.has-submenu.open>.submenu,
+.submenu-group.open>.submenu {
   display: block;
 }
 
+.has-submenu.open>.submenu-toggle .caret,
+.submenu-group.open>.submenu-toggle .caret,
+.submenu-group.open>.submenu-toggle--inner .caret {
+  transform: rotate(90deg);
+}
+
+/* Submenu links */
 .submenu li a,
 .submenu-toggle--inner {
   width: 100%;
@@ -244,24 +286,25 @@ body {
   border: none;
   cursor: pointer;
   text-align: left;
-  transition: 0.2s ease;
+  transition: background var(--transition), color var(--transition);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.2;
+  color: var(--text-muted);
+  appearance: none;
+  -webkit-appearance: none;
 }
 
-.submenu li a:hover,
-.submenu-toggle--inner:hover {
-  background: rgba(255,255,255,0.06);
-  color: #fff;
-}
-
-.submenu li.active > a {
-  background: #f3f4f6;
-  color: #111827;
+/* Active submenu item */
+.submenu li.active>a {
+  background: var(--sidebar-active);
+  color: var(--text-dark);
   font-weight: 700;
 }
 
-.submenu-group > .submenu-toggle--inner {
-  color: #f9fafb;
-  font-weight: 600;
+.submenu li.active>a span {
+  color: var(--text-dark);
 }
 
 .submenu--inner {

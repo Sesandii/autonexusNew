@@ -2,7 +2,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: 'Segoe UI', sans-serif;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 body {
@@ -81,7 +81,8 @@ thead {
   text-align: left;
 }
 
-th, td {
+th,
+td {
   padding: 15px;
   border-bottom: 1px solid #eee;
 }
@@ -119,6 +120,7 @@ button.reject {
   border: none;
   height: 100vh;
 }
+
 .container {
   display: flex;
 }

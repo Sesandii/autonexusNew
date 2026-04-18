@@ -59,17 +59,24 @@ class CoordinationController {
     public function updateMechanicStatus()
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // Use ID if possible for more accuracy, but since you pass code:
             $mechanicCode = $_POST['mechanic_code'] ?? null;
             $status = $_POST['status'] ?? null;
-
-            $updated = $this->mechanicModel->updateStatus($mechanicCode, $status);
-
-            if ($updated) {
-                header('Location: /autonexus/supervisor/coordination');
-                exit;
-            } else {
-                echo "Failed to update status!";
+    
+            if ($mechanicCode && $status) {
+                $updated = $this->mechanicModel->updateStatus($mechanicCode, $status);
+    
+                if ($updated) {
+                    // Ensure BASE_URL is respected. If you are using /autonexus, 
+                    // make sure the redirect matches exactly where your index() is mapped.
+                    header('Location: ' . BASE_URL . '/supervisor/coordination');
+                    exit;
+                }
             }
+            
+            // If it fails, redirect anyway but maybe with an error flag
+            header('Location: ' . BASE_URL . '/supervisor/coordination?error=update_failed');
+            exit;
         }
     }
 
