@@ -7,27 +7,84 @@
 ?>
 <!doctype html>
 <html>
+
 <head>
   <meta charset="utf-8">
   <style>
-    body { font-family: DejaVu Sans, Arial, sans-serif; font-size: 12px; color: #111; }
-    h1 { font-size: 18px; margin: 0 0 8px; }
-    .meta { margin-bottom: 12px; color: #444; font-size: 11px; }
-    .meta div { margin: 2px 0; }
-    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-    th, td { border: 1px solid #ddd; padding: 8px; }
-    th { background: #f3f4f6; text-align: left; }
-    .right { text-align: right; }
-    .small { font-size: 11px; color: #555; }
+    body {
+      font-family: DejaVu Sans, Arial, sans-serif;
+      font-size: 12px;
+      color: #111;
+    }
+
+    h1 {
+      font-size: 18px;
+      margin: 0 0 8px;
+    }
+
+    .meta {
+      margin-bottom: 12px;
+      color: #444;
+      font-size: 11px;
+    }
+
+    .meta div {
+      margin: 2px 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    th,
+    td {
+      border: 1px solid #ddd;
+      padding: 8px;
+    }
+
+    th {
+      background: #f3f4f6;
+      text-align: left;
+    }
+
+    .right {
+      text-align: right;
+    }
+
+    .small {
+      font-size: 11px;
+      color: #555;
+    }
   </style>
 </head>
+
 <body>
   <h1><?= htmlspecialchars($pdfTitle) ?></h1>
 
   <div class="meta">
     <div><strong>Generated:</strong> <?= htmlspecialchars($generatedAt) ?></div>
-    <div><strong>From:</strong> <?= htmlspecialchars($filters['from'] ?? '') ?> &nbsp; <strong>To:</strong> <?= htmlspecialchars($filters['to'] ?? '') ?></div>
-    <div><strong>Branch ID:</strong> <?= htmlspecialchars((string)($filters['branch_id'] ?? '')) ?> &nbsp; <strong>Group:</strong> <?= htmlspecialchars($filters['group'] ?? '') ?></div>
+    <div>
+      <strong>Date Range:</strong>
+      <?php
+      $from = $filters['from'] ?? '';
+      $to = $filters['to'] ?? '';
+      if (empty($from) && empty($to)) {
+        echo 'All time';
+      } else {
+        echo htmlspecialchars($from ?: 'Start') . ' to ' . htmlspecialchars($to ?: 'End');
+      }
+      ?>
+    </div>
+    <div>
+      <strong>Branch:</strong>
+      <?php
+      $branchId = $filters['branch_id'] ?? '';
+      echo (empty($branchId) || $branchId === '0') ? 'All Branches' : htmlspecialchars((string) $branchId);
+      ?>
+    </div>
+    <div><strong>Group By:</strong> <?= htmlspecialchars($filters['group'] ?? 'month') ?></div>
     <div class="small"><strong>Dataset key:</strong> <?= htmlspecialchars($key) ?></div>
   </div>
 
@@ -40,16 +97,19 @@
     </thead>
     <tbody>
       <?php if (empty($rows)): ?>
-        <tr><td colspan="2">No data for selected filters.</td></tr>
+        <tr>
+          <td colspan="2">No data for selected filters.</td>
+        </tr>
       <?php else: ?>
         <?php foreach ($rows as $r): ?>
           <tr>
-            <td><?= htmlspecialchars((string)($r['label'] ?? '')) ?></td>
-            <td class="right"><?= htmlspecialchars((string)($r['value'] ?? '0')) ?></td>
+            <td><?= htmlspecialchars((string) ($r['label'] ?? '')) ?></td>
+            <td class="right"><?= htmlspecialchars((string) ($r['value'] ?? '0')) ?></td>
           </tr>
         <?php endforeach; ?>
       <?php endif; ?>
     </tbody>
   </table>
 </body>
+
 </html>
