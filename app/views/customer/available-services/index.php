@@ -45,6 +45,7 @@ $availServicesJsVersion = @filemtime(dirname(APP_ROOT) . '/public/assets/js/cust
 
     <div class="service-filters" role="tablist" aria-label="Service categories">
       <button type="button" class="service-chip active" data-filter="all" role="tab" aria-selected="true"><i class="fa-solid fa-layer-group"></i> All</button>
+      <button type="button" class="service-chip" data-filter="package" role="tab"><i class="fa-solid fa-box"></i> Packages</button>
       <button type="button" class="service-chip" data-filter="maintenance" role="tab"><i class="fa-solid fa-screwdriver-wrench"></i> Maintenance</button>
       <button type="button" class="service-chip" data-filter="tyre" role="tab"><i class="fa-solid fa-circle-notch"></i> Tyre</button>
       <button type="button" class="service-chip" data-filter="cleaning" role="tab"><i class="fa-solid fa-broom"></i> Cleaning</button>
@@ -62,11 +63,12 @@ $availServicesJsVersion = @filemtime(dirname(APP_ROOT) . '/public/assets/js/cust
 
     <section class="services" id="servicesRoot">
       <?php
-      $ORDER = ['maintenance','tyre','cleaning','nano','paint','electrical','brakes','ac','battery','suspension','glass','inspection','addons','other'];
+      $ORDER = [ 'package', 'maintenance', 'tyre', 'cleaning', 'nano', 'paint', 'electrical', 'brakes', 'ac', 'battery', 'suspension', 'glass', 'inspection', 'addons', 'other' ];
 
       function slug_type(?string $t): string {
         $t = strtolower(trim($t ?? ''));
         $map = [
+          'packages'      => 'package',
           'maintenance' => 'maintenance',
           'tyre'        => 'tyre',
           'tire'        => 'tyre',
