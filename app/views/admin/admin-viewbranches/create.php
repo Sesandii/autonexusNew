@@ -19,27 +19,37 @@ function e($value): string
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Add New Branch</title>
 
+  <link rel="stylesheet" href="<?= $base ?>/app/views/layouts/admin-shared/management.css">
   <link rel="stylesheet" href="<?= $base ?>/app/views/layouts/admin-sidebar/styles.css">
-  <link rel="stylesheet" href="<?= $base ?>/app/views/admin/admin-viewbranches/branches.css">
+  <link rel="stylesheet" href="<?= $base ?>/public/assets/css/admin/branches/create.css">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 </head>
 
 <body>
   <?php include(__DIR__ . '/../../layouts/admin-sidebar/sidebar.php'); ?>
 
-  <main class="main-content">
-    <header class="page-header">
-      <h1>Add New Branch</h1>
-      <p>Create a new service branch for AutoNexus</p>
+  <main class="main-content branch-create-page">
+    <div class="branch-create-shell">
+    <header class="create-header">
+      <div class="create-title">
+        <h1>Add New Branch</h1>
+        <p>Create a new service branch with contact, assignment, and capacity details.</p>
+      </div>
+      <a href="<?= e($base . '/admin/branches') ?>" class="btn-secondary">
+        <i class="fa-solid fa-arrow-left"></i>
+        <span>Back to Branches</span>
+      </a>
     </header>
 
-    <form class="form-card" method="post" action="<?= e($base . '/admin/branches') ?>">
-      <div class="form-card-header">
-        <h2>Branch Information</h2>
-      </div>
+    <form class="create-form-shell" method="post" action="<?= e($base . '/admin/branches') ?>">
+      <section class="create-card">
+        <div class="create-card-header">
+          <i class="fa-solid fa-building"></i>
+          <h2>Branch Information</h2>
+        </div>
 
-      <div class="form-card-body">
-        <div class="form-grid">
+        <div class="create-card-body">
+          <div class="form-grid">
           <div class="field">
             <label class="label">Branch Code</label>
             <input class="input" name="code" value="<?= e($nextCode) ?>" readonly>
@@ -114,20 +124,22 @@ function e($value): string
             <textarea class="input" name="notes" rows="4" placeholder="Optional notes..."></textarea>
           </div>
         </div>
-
-        <div class="actions">
-          <a href="<?= e($base . '/admin/branches') ?>" class="btn-secondary">
-            <i class="fa-solid fa-xmark"></i>
-            <span>Cancel</span>
-          </a>
-
-          <button type="submit" class="btn-primary">
-            <i class="fa-solid fa-plus"></i>
-            <span>Create Branch</span>
-          </button>
         </div>
+      </section>
+
+      <div class="form-actions">
+        <a href="<?= e($base . '/admin/branches') ?>" class="btn-secondary">
+          <i class="fa-solid fa-xmark"></i>
+          <span>Cancel</span>
+        </a>
+
+        <button type="submit" class="btn-primary">
+          <i class="fa-solid fa-plus"></i>
+          <span>Create Branch</span>
+        </button>
       </div>
     </form>
+    </div>
   </main>
 </body>
 

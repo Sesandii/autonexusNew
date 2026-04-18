@@ -18,43 +18,10 @@ $approvedName = trim(($service['approved_first'] ?? '') . ' ' . ($service['appro
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><?= htmlspecialchars($pageTitle) ?></title>
 
+  <link rel="stylesheet" href="<?= $B ?>/app/views/layouts/admin-shared/management.css">
   <link rel="stylesheet" href="<?= $B ?>/app/views/layouts/admin-sidebar/styles.css">
-  <link rel="stylesheet" href="<?= $B ?>/app/views/admin/admin-serviceapproval/service-approval.css">
+  <link rel="stylesheet" href="<?= $B ?>/public/assets/css/admin/serviceapproval/show.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-
-  .back-btn {
-  background: #f3f4f6;
-  color: #111827;
-  border: 1px solid #e5e7eb;
-  }
-
-  .back-btn:hover {
-  background: #e5e7eb;
-  }
-
-  .action-btn {
-  background: #2563eb;
-  color: #fff;
-  border: 1px solid #2563eb;
-  }
-
-  .action-btn:hover {
-  background: #1d4ed8;
-  }
-
-  @media (max-width: 992px) {
-  .main-content {
-  margin-left: 0;
-  padding: 16px;
-  }
-
-  .grid-three,
-  .grid-two {
-  grid-template-columns: 1fr;
-  }
-  }
-  </style>
 </head>
 
 <body>
@@ -68,7 +35,7 @@ $approvedName = trim(($service['approved_first'] ?? '') . ' ' . ($service['appro
           <?= htmlspecialchars($service['service_code']) ?></p>
       </div>
 
-      <div style="display:flex; gap:10px; flex-wrap:wrap;">
+      <div class="page-actions">
         <a href="<?= $B ?>/admin/admin-serviceapproval" class="back-btn">
           <i class="fa-solid fa-arrow-left"></i> Back to Queue
         </a>
@@ -95,7 +62,7 @@ $approvedName = trim(($service['approved_first'] ?? '') . ' ' . ($service['appro
       <div class="kpi-card">
         <div class="kpi-icon"><i class="fa-solid fa-circle-check"></i></div>
         <div class="kpi-label">Status</div>
-        <div style="margin-top:8px;"><span class="status-badge"><?= htmlspecialchars($service['status']) ?></span></div>
+        <div class="status-wrap"><span class="status-badge"><?= htmlspecialchars($service['status']) ?></span></div>
       </div>
     </div>
 
@@ -154,7 +121,7 @@ $approvedName = trim(($service['approved_first'] ?? '') . ' ' . ($service['appro
           <h3>Branches & Approval</h3>
         </div>
         <div class="card-body">
-          <div style="margin-bottom:16px;">
+          <div class="section-block">
             <div class="field-label">Branches</div>
             <?php if (empty($branches)): ?>
               <div class="field-value">No branches linked yet</div>
@@ -173,8 +140,7 @@ $approvedName = trim(($service['approved_first'] ?? '') . ' ' . ($service['appro
               <div class="field-label">Submitted By</div>
               <div class="field-value">
                 <?= $submittedName !== '' ? htmlspecialchars($submittedName) : '—' ?><br>
-                <span
-                  style="font-size:12px;color:#6b7280;"><?= htmlspecialchars($service['created_at'] ?? '—') ?></span>
+                <span class="meta-muted"><?= htmlspecialchars($service['created_at'] ?? '—') ?></span>
               </div>
             </div>
           </div>
@@ -185,8 +151,7 @@ $approvedName = trim(($service['approved_first'] ?? '') . ' ' . ($service['appro
               <div class="field-label">Approved By</div>
               <div class="field-value">
                 <?= $approvedName !== '' ? htmlspecialchars($approvedName) : '—' ?><br>
-                <span
-                  style="font-size:12px;color:#6b7280;"><?= htmlspecialchars($service['approved_at'] ?? '—') ?></span>
+                <span class="meta-muted"><?= htmlspecialchars($service['approved_at'] ?? '—') ?></span>
               </div>
             </div>
           </div>

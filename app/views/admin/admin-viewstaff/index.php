@@ -111,7 +111,7 @@
       display: flex;
       gap: 8px;
       align-items: center;
-      flex-wrap: wrap;
+      flex-wrap: nowrap;
     }
 
     .mini-form select {
@@ -280,7 +280,6 @@
               <th>Role</th>
               <th>Branch</th>
               <th>Status</th>
-              <th>Workload</th>
               <th>Quick Transfer</th>
               <th>Quick Status Update</th>
             </tr>
@@ -288,7 +287,7 @@
           <tbody>
             <?php if (empty($records)): ?>
               <tr>
-                <td colspan="7" class="empty-row"><i class="fa-regular fa-face-frown"></i> No staff records found.</td>
+                <td colspan="6" class="empty-row"><i class="fa-regular fa-face-frown"></i> No staff records found.</td>
               </tr>
             <?php endif; ?>
 
@@ -315,12 +314,6 @@
                   <span class="status-pill <?= $statusClass ?>">
                     <span class="dot"></span>
                     <?= ucfirst(htmlspecialchars((string) $row['staff_status'])) ?>
-                  </span>
-                </td>
-                <td>
-                  <span class="workload-pill">
-                    <i class="fa-solid fa-briefcase"></i>
-                    <?= (int) $row['workload_count'] ?> active items
                   </span>
                 </td>
                 <td>
