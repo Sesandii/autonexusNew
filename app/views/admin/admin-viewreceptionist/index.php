@@ -5,6 +5,7 @@ $B = rtrim(BASE_URL, '/');
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,155 +15,156 @@ $B = rtrim(BASE_URL, '/');
   <link rel="stylesheet" href="<?= $B ?>/app/views/layouts/admin-sidebar/styles.css">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 </head>
+
 <body>
-<?php include APP_ROOT . '/views/layouts/admin-sidebar/sidebar.php'; ?>
+  <?php include APP_ROOT . '/views/layouts/admin-sidebar/sidebar.php'; ?>
 
-<main class="main-content">
-  <section class="management">
-    <header class="management-header">
-      <div>
-        <h2>Receptionists</h2>
-        <p class="management-subtitle">Manage reception staff across all branches.</p>
-      </div>
+  <main class="main-content">
+    <section class="management">
+      <header class="management-header">
+        <div>
+          <h2>Receptionists</h2>
+          <p class="management-subtitle">Manage reception staff across all branches.</p>
+        </div>
 
-      <div class="tools">
-        <input
-          type="text"
-          class="search-input"
-          id="searchInput"
-          placeholder="Search by receptionist code, name, email…"
-        />
+        <div class="tools">
+          <a class="add-btn" href="<?= $B ?>/admin/admin-viewstaff"
+            style="display:inline-flex; align-items:center; gap:8px;">
+            <i class="fa-solid fa-arrow-left"></i>
+            <span>Back to Staff Management</span>
+          </a>
 
-        <select class="status-filter" id="statusFilter">
-          <option value="all">All Status</option>
-          <option value="active">Active</option>
-          <option value="inactive">Inactive</option>
-        </select>
+          <input type="text" class="search-input" id="searchInput"
+            placeholder="Search by receptionist code, name, email…" />
 
-        <a href="<?= $B ?>/admin/receptionists/create" class="add-btn">
-          <i class="fa-solid fa-user-plus"></i>
-          <span>Add Receptionist</span>
-        </a>
-      </div>
-    </header>
+          <select class="status-filter" id="statusFilter">
+            <option value="all">All Status</option>
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+          </select>
 
-    <div class="table-wrap">
-      <table id="receptionistsTable">
-        <thead>
-          <tr>
-            <th>Rec ID</th>
-            <th>Full Name</th>
-            <th>Email</th>
-            <th>Contact Number</th>
-            <th>Branch</th>
-            <th>Status</th>
-            <th>Created At</th>
-            <th class="th-actions">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-        <?php if (!empty($receptionists)): ?>
-          <?php foreach ($receptionists as $r): ?>
-            <?php
-              $status = strtolower($r['status'] ?? 'active');
-              $pill   = $status === 'inactive' ? 'status--inactive' : 'status--active';
-              $code   = $r['receptionist_code'] ?? ('R' . $r['receptionist_id']);
-              $name   = trim(($r['first_name'] ?? '') . ' ' . ($r['last_name'] ?? ''));
-            ?>
-            <tr data-status="<?= htmlspecialchars($status) ?>">
-              <td><?= htmlspecialchars($code) ?></td>
-              <td><?= htmlspecialchars($name ?: '—') ?></td>
-              <td><?= htmlspecialchars($r['email'] ?? '—') ?></td>
-              <td><?= htmlspecialchars($r['phone'] ?? '—') ?></td>
-              <td>
-                <?php if (!empty($r['branch_name'])): ?>
-                  <?= htmlspecialchars($r['branch_name']) ?>
-                  <?php if (!empty($r['branch_code'])): ?>
-                    (<?= htmlspecialchars($r['branch_code']) ?>)
-                  <?php endif; ?>
-                <?php else: ?>
-                  —
-                <?php endif; ?>
-              </td>
-              <td>
-                <span class="status-pill <?= $pill ?>">
-                  <span class="dot"></span>
-                  <?= htmlspecialchars(ucfirst($status)) ?>
-                </span>
-              </td>
-              <td><?= htmlspecialchars($r['created_at'] ?? '') ?></td>
-              <td class="table-actions">
-                <a href="<?= $B ?>/admin/receptionists/show?id=<?= urlencode((string)$r['receptionist_id']) ?>"
-                   class="chip-btn chip-btn--light" title="View">
-                  <i class="fas fa-eye"></i>
-                  <span>View</span>
-                </a>
+          <a href="<?= $B ?>/admin/receptionists/create" class="add-btn">
+            <i class="fa-solid fa-user-plus"></i>
+            <span>Add Receptionist</span>
+          </a>
+        </div>
+      </header>
 
-                <a href="<?= $B ?>/admin/receptionists/edit?id=<?= urlencode((string)$r['receptionist_id']) ?>"
-                   class="chip-btn chip-btn--dark" title="Edit">
-                  <i class="fas fa-pen"></i>
-                  <span>Edit</span>
-                </a>
-
-                <form class="inline-form"
-                      action="<?= $B ?>/admin/receptionists/delete"
-                      method="post"
-                      onsubmit="return confirm('Delete this receptionist?');">
-                  <input type="hidden" name="id"
-                         value="<?= htmlspecialchars((string)$r['receptionist_id']) ?>">
-                  <button type="submit" class="chip-btn chip-btn--danger" title="Delete">
-                    <i class="fa fa-trash"></i>
-                    <span>Delete</span>
-                  </button>
-                </form>
-              </td>
+      <div class="table-wrap">
+        <table id="receptionistsTable">
+          <thead>
+            <tr>
+              <th>Rec ID</th>
+              <th>Full Name</th>
+              <th>Email</th>
+              <th>Contact Number</th>
+              <th>Branch</th>
+              <th>Status</th>
+              <th>Created At</th>
+              <th class="th-actions">Actions</th>
             </tr>
-          <?php endforeach; ?>
-        <?php else: ?>
-          <tr>
-            <td colspan="8" class="empty-row">
-              <i class="fa-regular fa-face-smile"></i>
-              No receptionists added yet.
-            </td>
-          </tr>
-        <?php endif; ?>
-        </tbody>
-      </table>
-    </div>
-  </section>
-</main>
+          </thead>
+          <tbody>
+            <?php if (!empty($receptionists)): ?>
+              <?php foreach ($receptionists as $r): ?>
+                <?php
+                $status = strtolower($r['status'] ?? 'active');
+                $pill = $status === 'inactive' ? 'status--inactive' : 'status--active';
+                $code = $r['receptionist_code'] ?? ('R' . $r['receptionist_id']);
+                $name = trim(($r['first_name'] ?? '') . ' ' . ($r['last_name'] ?? ''));
+                ?>
+                <tr data-status="<?= htmlspecialchars($status) ?>">
+                  <td><?= htmlspecialchars($code) ?></td>
+                  <td><?= htmlspecialchars($name ?: '—') ?></td>
+                  <td><?= htmlspecialchars($r['email'] ?? '—') ?></td>
+                  <td><?= htmlspecialchars($r['phone'] ?? '—') ?></td>
+                  <td>
+                    <?php if (!empty($r['branch_name'])): ?>
+                      <?= htmlspecialchars($r['branch_name']) ?>
+                      <?php if (!empty($r['branch_code'])): ?>
+                        (<?= htmlspecialchars($r['branch_code']) ?>)
+                      <?php endif; ?>
+                    <?php else: ?>
+                      —
+                    <?php endif; ?>
+                  </td>
+                  <td>
+                    <span class="status-pill <?= $pill ?>">
+                      <span class="dot"></span>
+                      <?= htmlspecialchars(ucfirst($status)) ?>
+                    </span>
+                  </td>
+                  <td><?= htmlspecialchars($r['created_at'] ?? '') ?></td>
+                  <td class="table-actions">
+                    <a href="<?= $B ?>/admin/receptionists/show?id=<?= urlencode((string) $r['receptionist_id']) ?>"
+                      class="chip-btn chip-btn--light" title="View">
+                      <i class="fas fa-eye"></i>
+                      <span>View</span>
+                    </a>
 
-<script>
-  (function () {
-    const searchInput  = document.getElementById('searchInput');
-    const statusFilter = document.getElementById('statusFilter');
-    const rows         = document.querySelectorAll('#receptionistsTable tbody tr');
+                    <a href="<?= $B ?>/admin/receptionists/edit?id=<?= urlencode((string) $r['receptionist_id']) ?>"
+                      class="chip-btn chip-btn--dark" title="Edit">
+                      <i class="fas fa-pen"></i>
+                      <span>Edit</span>
+                    </a>
 
-    function applyFilters() {
-      const search = (searchInput.value || '').toLowerCase();
-      const status = statusFilter.value;
+                    <form class="inline-form" action="<?= $B ?>/admin/receptionists/delete" method="post"
+                      onsubmit="return confirm('Delete this receptionist?');">
+                      <input type="hidden" name="id" value="<?= htmlspecialchars((string) $r['receptionist_id']) ?>">
+                      <button type="submit" class="chip-btn chip-btn--danger" title="Delete">
+                        <i class="fa fa-trash"></i>
+                        <span>Delete</span>
+                      </button>
+                    </form>
+                  </td>
+                </tr>
+              <?php endforeach; ?>
+            <?php else: ?>
+              <tr>
+                <td colspan="8" class="empty-row">
+                  <i class="fa-regular fa-face-smile"></i>
+                  No receptionists added yet.
+                </td>
+              </tr>
+            <?php endif; ?>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
 
-      rows.forEach(row => {
-        const text      = row.innerText.toLowerCase();
-        const rowStatus = row.getAttribute('data-status');
+  <script>
+    (function () {
+      const searchInput = document.getElementById('searchInput');
+      const statusFilter = document.getElementById('statusFilter');
+      const rows = document.querySelectorAll('#receptionistsTable tbody tr');
 
-        const matchSearch = !search || text.includes(search);
-        const matchStatus = (status === 'all') || (status === rowStatus);
+      function applyFilters() {
+        const search = (searchInput.value || '').toLowerCase();
+        const status = statusFilter.value;
 
-        row.style.display = (matchSearch && matchStatus) ? '' : 'none';
-      });
-    }
+        rows.forEach(row => {
+          const text = row.innerText.toLowerCase();
+          const rowStatus = row.getAttribute('data-status');
 
-    if (searchInput)  searchInput.addEventListener('input', applyFilters);
-    if (statusFilter) statusFilter.addEventListener('change', applyFilters);
+          const matchSearch = !search || text.includes(search);
+          const matchStatus = (status === 'all') || (status === rowStatus);
 
-    // Default to active on load
-    if (statusFilter) {
-      statusFilter.value = 'active';
-      applyFilters();
-    }
-  })();
-</script>
+          row.style.display = (matchSearch && matchStatus) ? '' : 'none';
+        });
+      }
+
+      if (searchInput) searchInput.addEventListener('input', applyFilters);
+      if (statusFilter) statusFilter.addEventListener('change', applyFilters);
+
+      // Default to active on load
+      if (statusFilter) {
+        statusFilter.value = 'active';
+        applyFilters();
+      }
+    })();
+  </script>
 
 </body>
+
 </html>
