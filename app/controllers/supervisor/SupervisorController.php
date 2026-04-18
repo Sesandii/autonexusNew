@@ -13,27 +13,36 @@ class SupervisorController extends Controller
     }
     
     public function index()
-    {
-        if (session_status() !== PHP_SESSION_ACTIVE) session_start();
-        
-        $supervisor_id = $_SESSION['user']['user_id'] ?? 0;
-        
-        $model = new Dashboard();
+{
+    if (session_status() !== PHP_SESSION_ACTIVE) session_start();
     
-        $branch_id = $model->getSupervisorBranch((int)$supervisor_id);
-        
+    $userId = $_SESSION['user']['user_id'] ?? 0;
+
+    $db = db();
+    $stmt = $db->prepare("SELECT supervisor_id, branch_id FROM supervisors WHERE user_id = ?");
+    $stmt->execute([$userId]);
+    $sup = $stmt->fetch();
     
-        $_SESSION['user']['branch_id'] = $branch_id;
+    // FIX: Define these variables from the database result
+    $supervisor_id = $sup['supervisor_id'] ?? 0;
+    $branch_id     = $sup['branch_id'] ?? 0;
     
-        $data = [
-            'stats'          => $model->getWorkorderStats((int)$supervisor_id, (int)$branch_id),
-            'appointments'   => $model->getTodayAppointments((int)$branch_id), 
-            'inProgressJobs' => $model->getInProgressJobs((int)$supervisor_id),
-            'weeklyTrend'    => $model->getWeeklyAppointments((int)$branch_id) 
-        ];
-    
-        $this->view('supervisor/dashboard/index', $data);
-    }
+    // Update session so other parts of the app know the branch
+    $_SESSION['user']['branch_id'] = $branch_id;
+    $_SESSION['user']['supervisor_id'] = $supervisor_id;
+
+    $model = new Dashboard();
+
+    $data = [
+        // Now passing the actual IDs fetched from the DB
+        'stats'          => $model->getWorkorderStats((int)$supervisor_id, (int)$branch_id),
+        'appointments'   => $model->getTodayAppointments((int)$branch_id), 
+        'inProgressJobs' => $model->getInProgressJobs((int)$supervisor_id),
+        'weeklyTrend'    => $model->getWeeklyAppointments((int)$branch_id) 
+    ];
+
+    $this->view('supervisor/dashboard/index', $data);
+}
 
 
     private function requireAdmin(): void

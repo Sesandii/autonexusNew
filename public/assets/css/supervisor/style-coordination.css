@@ -185,6 +185,8 @@ font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 .filter-form select {
     padding: 6px 10px;
     font-size: 14px;
+    border: 1px solid #cbd5e0;
+    border-radius: 6px;
 }
 
 .workorder-card {
@@ -241,6 +243,7 @@ font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   border: 10px solid #000000 !important;
   transition: background-color 0.2s ease;
   border-radius: 8px;
+  cursor: pointer;
 }
 
 #reset-filters.btn:hover {
@@ -269,5 +272,9 @@ font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 .breadcrumb-text .active-page {
   color: #f05a5a; 
   font-weight: 600;
+}
+
+.hidden-card {
+  display: none !important;
 }
 

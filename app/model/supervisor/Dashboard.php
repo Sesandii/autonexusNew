@@ -43,31 +43,45 @@ public function getWorkorderStats(int $supervisor_id, int $branch_id): array
     try {
         $sql = "
             SELECT
+                -- Total work orders assigned to YOU in this branch
                 (SELECT COUNT(*) FROM work_orders wo 
                  JOIN appointments app ON wo.appointment_id = app.appointment_id 
-                 WHERE app.branch_id = ?) AS total,
+                 WHERE app.branch_id = ? AND wo.supervisor_id = ?) AS total,
 
+                -- Your active jobs
                 (SELECT COUNT(*) FROM work_orders wo 
                  JOIN appointments app ON wo.appointment_id = app.appointment_id 
-                 WHERE wo.status = 'in_progress' AND app.branch_id = ?) AS in_progress,
+                 WHERE wo.status = 'in_progress' AND app.branch_id = ? AND wo.supervisor_id = ?) AS in_progress,
 
+                -- Your jobs on hold
                 (SELECT COUNT(*) FROM work_orders wo 
                  JOIN appointments app ON wo.appointment_id = app.appointment_id 
-                 WHERE wo.status = 'on_hold' AND app.branch_id = ?) AS on_hold,
+                 WHERE wo.status = 'on_hold' AND app.branch_id = ? AND wo.supervisor_id = ?) AS on_hold,
 
+                -- Your finished jobs
                 (SELECT COUNT(*) FROM work_orders wo 
                  JOIN appointments app ON wo.appointment_id = app.appointment_id 
-                 WHERE wo.status = 'completed' AND app.branch_id = ?) AS completed,
+                 WHERE wo.status = 'completed' AND app.branch_id = ? AND wo.supervisor_id = ?) AS completed,
 
+                -- Alias for your total assigned
                 (SELECT COUNT(*) FROM work_orders WHERE supervisor_id = ?) AS my_assigned,
 
+                -- Shared branch pool: Appointments waiting for ANY supervisor to create a work order
                 (SELECT COUNT(*) FROM appointments a
                  LEFT JOIN work_orders w ON w.appointment_id = a.appointment_id
                  WHERE w.work_order_id IS NULL AND a.branch_id = ?) AS pending_appointments
         ";
 
         $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([$branch_id, $branch_id, $branch_id, $branch_id, $supervisor_id, $branch_id]);
+        // Bind parameters in correct order
+        $stmt->execute([
+            $branch_id, $supervisor_id, // total
+            $branch_id, $supervisor_id, // in_progress
+            $branch_id, $supervisor_id, // on_hold
+            $branch_id, $supervisor_id, // completed
+            $supervisor_id,             // my_assigned
+            $branch_id                  // pending_appointments
+        ]);
 
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         return is_array($row) ? array_merge($default, $row) : $default;
