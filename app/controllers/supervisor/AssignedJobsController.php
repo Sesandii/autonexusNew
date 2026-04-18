@@ -17,15 +17,20 @@ class AssignedJobsController extends Controller
 {
     if (session_status() !== PHP_SESSION_ACTIVE) session_start();
 
-    $supervisor_id = $_SESSION['user']['user_id'] ?? null;
+    $userId = $_SESSION['user']['user_id'] ?? null;
 
-    if (!$supervisor_id) {
+    if (!$userId) {
         die("Unauthorized");
     }
 
+    $stmt = db()->prepare("SELECT supervisor_id FROM supervisors WHERE user_id = ?");
+    $stmt->execute([$userId]);
+    $supRecord = $stmt->fetch();
+    $realSupervisorId = $supRecord ? (int)$supRecord['supervisor_id'] : 0;
+    
     $m = new WorkOrder();
     $checklistModel = new Checklist(); 
-    $workOrders = $m->getAssigned($supervisor_id);
+    $workOrders = $m->getAssigned($realSupervisorId);
 
     foreach ($workOrders as &$job) {
 

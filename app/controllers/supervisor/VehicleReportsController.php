@@ -18,15 +18,26 @@ public function index()
     $this->view('supervisor/reports/index'); 
 }
 
-    public function indexp()
-    {
-        $model = new Report();
-        $reports = $model->all();
+public function indexp()
+{
+    if (session_status() !== PHP_SESSION_ACTIVE) session_start();
+    $userId = $_SESSION['user']['user_id'] ?? null;
 
-        $this->view('supervisor/reports/indexp', [
-            'reports' => $reports
-        ]);
-    }
+    // BRIDGE: Get the real supervisor_id
+    $db = db();
+    $stmt = $db->prepare("SELECT supervisor_id FROM supervisors WHERE user_id = ?");
+    $stmt->execute([$userId]);
+    $supervisor = $stmt->fetch();
+    $realSupervisorId = $supervisor['supervisor_id'] ?? 0;
+
+    $model = new Report();
+    $reports = $model->all();
+
+    $this->view('supervisor/reports/indexp', [
+        'reports' => $reports,
+        'currentSupervisorId' => $realSupervisorId // Pass this to the view!
+    ]);
+}
 
     public function create()
 {
@@ -184,11 +195,27 @@ if (!empty($_FILES['work_images']['name'][0])) {
     
 public function edit(int $id)
 {
+    if (session_status() !== PHP_SESSION_ACTIVE) session_start();
+    $userId = $_SESSION['user']['user_id'] ?? null;
+
+    // BRIDGE
+    $db = db();
+    $stmt = $db->prepare("SELECT supervisor_id FROM supervisors WHERE user_id = ?");
+    $stmt->execute([$userId]);
+    $sup = $stmt->fetch();
+    $realSupervisorId = $sup ? (int)$sup['supervisor_id'] : 0;
+
     $reportModel = new Report();
     $report = $reportModel->find($id);
 
     if (!$report) {
         header('Location: ' . BASE_URL . '/supervisor/reports');
+        exit;
+    }
+
+    if ((int)$report['supervisor_id'] !== $realSupervisorId) {
+        // You can add a flash message here
+        header('Location: ' . BASE_URL . '/supervisor/reports/indexp');
         exit;
     }
 

@@ -7,7 +7,7 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
 $message = $_SESSION['message'] ?? null;
 unset($_SESSION['message']);
 
-$currentSupervisorId = $_SESSION['user']['user_id'] ?? 0;
+$currentSupervisorId = $currentSupervisorId ?? 0;
 ?>
 
 <!doctype html>
@@ -98,7 +98,7 @@ $currentSupervisorId = $_SESSION['user']['user_id'] ?? 0;
     <tbody>
     <?php foreach ($workOrders as $w): ?>
     <?php
-        $isOwner = ($w['supervisor_id'] ?? 0) == $currentSupervisorId;
+        $isOwner = ($w['supervisor_id'] == $currentSupervisorId);
 
         $expectedEnd = '-';
         if (!empty($w['started_at']) && !empty($w['base_duration_minutes']) && strtolower($w['status']) === 'in_progress') {
