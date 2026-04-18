@@ -1,14 +1,18 @@
-<?php $base = rtrim(BASE_URL, '/');
-$current = 'service-managers'; ?>
+<?php
+$base = rtrim($base ?? BASE_URL, '/');
+$current = 'service-managers';
+$errors = $errors ?? [];
+$old = $old ?? [];
+?>
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
   <meta charset="UTF-8">
   <title>Add Manager</title>
-  <link rel="stylesheet" href="../../app/views/layouts/admin-shared/management.css">
-  <link rel="stylesheet" href="../../app/views/layouts/admin-sidebar/styles.css">
-  <link rel="stylesheet" href="../../app/views/admin/admin-viewmanagers/service-managers.css">
+  <link rel="stylesheet" href="<?= $base ?>/app/views/layouts/admin-shared/management.css">
+  <link rel="stylesheet" href="<?= $base ?>/app/views/layouts/admin-sidebar/styles.css">
+  <link rel="stylesheet" href="<?= $base ?>/app/views/admin/admin-viewmanagers/service-managers.css">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 </head>
 
@@ -47,7 +51,8 @@ $current = 'service-managers'; ?>
         </div>
         <div>
           <div class="label">Phone</div>
-          <input class="input" name="phone" value="<?= htmlspecialchars($old['phone'] ?? '') ?>">
+          <input class="input" name="phone" type="tel" inputmode="numeric" pattern="^0[0-9]{9}$" maxlength="10"
+            placeholder="0712345678" value="<?= htmlspecialchars($old['phone'] ?? '') ?>">
         </div>
 
         <!-- Auto-generated Manager Code (read-only display) -->
@@ -59,11 +64,17 @@ $current = 'service-managers'; ?>
 
         <div>
           <div class="label">Password</div>
-          <input class="input" type="password" name="password" required>
+          <input class="input" type="password" name="password"
+            value="<?= htmlspecialchars($old['password'] ?? 'Manager@123') ?>">
+          <div class="hint">Default password is Manager@123.</div>
         </div>
         <div>
           <div class="label">Status</div>
-          <input class="input" name="status" value="<?= htmlspecialchars($old['status'] ?? 'active') ?>">
+          <select class="input" name="status">
+            <option value="active" <?= (($old['status'] ?? 'active') === 'active') ? 'selected' : '' ?>>Active</option>
+            <option value="inactive" <?= (($old['status'] ?? 'active') === 'inactive') ? 'selected' : '' ?>>Inactive
+            </option>
+          </select>
         </div>
       </div>
 

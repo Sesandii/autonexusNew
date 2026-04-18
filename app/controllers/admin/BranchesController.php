@@ -8,50 +8,56 @@ use app\model\admin\Manager;
 class BranchesController extends Controller
 {
     private Branch $Branch;
+    private Manager $Manager;
 
     public function __construct(array $config)
     {
         parent::__construct($config);
         $this->Branch = new Branch();
+        $this->Manager = new Manager();
     }
 
     /** GET /admin/branches/create */
-    /** GET /admin/branches/create */
-public function create()
-{
-    $managers = (new Manager())->all();
-    $nextCode = $this->Branch->nextCode();   // ← add this
-    $this->view('admin/admin-viewbranches/create', [
-        'base'      => BASE_URL,
-        'managers'  => $managers,
-        'nextCode'  => $nextCode,            // ← pass to view
-    ]);
-}
+    public function create()
+    {
+        $this->view('admin/admin-viewbranches/create', [
+            'base' => BASE_URL,
+            'managers' => $this->availableManagers(),
+            'nextCode' => $this->Branch->nextCode(),
+            'errors' => [],
+            'old' => [],
+        ]);
+    }
 
 
     /** GET /admin/branches */
-   public function index()
-{
-    $branches = $this->Branch->allWithManager();
-    $q      = isset($_GET['q']) ? trim((string)$_GET['q']) : '';
-    $status = isset($_GET['status']) ? trim((string)$_GET['status']) : 'all';
+    public function index()
+    {
+        $q = isset($_GET['q']) ? trim((string) $_GET['q']) : '';
+        $status = isset($_GET['status']) ? trim((string) $_GET['status']) : 'all';
 
-    $this->view('admin/admin-viewbranches/index', [
-        'branches' => $branches,
-        'q'        => $q,
-        'status'   => $status,
-        'base'     => BASE_URL,
-    ]);
-}
+        $branches = $this->Branch->allWithManager($q, $status);
+
+        $this->view('admin/admin-viewbranches/index', [
+            'branches' => $branches,
+            'q' => $q,
+            'status' => $status,
+            'base' => BASE_URL,
+        ]);
+    }
 
     /** GET /admin/branches/{code} */
     public function show($code)
     {
-        $row = $this->Branch->findByCode((string)$code);
-        if (!$row) { http_response_code(404); echo "Not found"; return; }
+        $row = $this->Branch->findByCode((string) $code);
+        if (!$row) {
+            http_response_code(404);
+            echo "Not found";
+            return;
+        }
 
         $this->view('admin/admin-viewbranches/show', [
-            'row'  => $row,
+            'row' => $row,
             'base' => BASE_URL,
         ]);
     }
@@ -59,58 +65,94 @@ public function create()
     /** GET /admin/branches/{code}/edit */
     public function edit($code)
     {
-        $row = $this->Branch->findByCode((string)$code);
-        if (!$row) { http_response_code(404); echo "Not found"; return; }
+        $row = $this->Branch->findByCode((string) $code);
+        if (!$row) {
+            http_response_code(404);
+            echo "Not found";
+            return;
+        }
 
-        $managers = (new Manager())->all();
+        $managers = $this->availableManagers((int) ($row['branch_id'] ?? 0));
 
         $this->view('admin/admin-viewbranches/edit', [
-            'row'      => $row,
-            'base'     => BASE_URL,
+            'row' => $row,
+            'base' => BASE_URL,
             'managers' => $managers,
+            'errors' => [],
+            'old' => [],
         ]);
     }
 
     /** POST /admin/branches */
-    /** POST /admin/branches */
-public function store()
-{
-    $data = $this->sanitize($_POST);
+    public function store()
+    {
+        $data = $this->sanitize($_POST);
 
-    // Auto-generate if empty (server-side source of truth)
-    if ($data['branch_code'] === '') {
-        $data['branch_code'] = $this->Branch->nextCode();
+        if ($data['branch_code'] === '') {
+            $data['branch_code'] = $this->Branch->nextCode();
+        }
+
+        $errors = $this->validate($data, true);
+        if ($errors) {
+            http_response_code(422);
+            $this->view('admin/admin-viewbranches/create', [
+                'base' => BASE_URL,
+                'managers' => $this->availableManagers(),
+                'nextCode' => $data['branch_code'],
+                'errors' => $errors,
+                'old' => $this->formValues($data),
+            ]);
+            return;
+        }
+
+        $this->Branch->create($data);
+        header('Location: ' . BASE_URL . '/admin/branches');
+        exit;
     }
-
-    $errors = $this->validate($data, creating: true);
-    if ($errors) { http_response_code(422); echo implode("\n", $errors); return; }
-
-    $this->Branch->create($data);
-    header('Location: ' . BASE_URL . '/admin/branches'); exit;
-}
 
 
     /** POST /admin/branches/{code} */
     public function update($code)
     {
-        $code = (string)$code;
-        if (!$this->Branch->findByCode($code)) { http_response_code(404); echo "Not found"; return; }
+        $code = (string) $code;
+        $row = $this->Branch->findByCode($code);
+        if (!$row) {
+            http_response_code(404);
+            echo "Not found";
+            return;
+        }
 
-        $data   = $this->sanitize($_POST);
-        $errors = $this->validate($data, creating: false);
-        if ($errors) { http_response_code(422); echo implode("\n", $errors); return; }
+        $data = $this->sanitize($_POST);
+        $errors = $this->validate($data, false, (int) ($row['branch_id'] ?? 0));
+        if ($errors) {
+            http_response_code(422);
+            $this->view('admin/admin-viewbranches/edit', [
+                'row' => array_merge($row, $this->formValues($data)),
+                'base' => BASE_URL,
+                'managers' => $this->availableManagers((int) ($row['branch_id'] ?? 0)),
+                'errors' => $errors,
+                'old' => $this->formValues($data),
+            ]);
+            return;
+        }
 
         $this->Branch->updateByCode($code, $data);
-        header('Location: ' . BASE_URL . '/admin/branches'); exit;
+        header('Location: ' . BASE_URL . '/admin/branches');
+        exit;
     }
 
     /** POST /admin/branches/{code}/delete */
     public function destroy($code)
     {
-        $code = (string)$code;
-        if (!$this->Branch->findByCode($code)) { http_response_code(404); echo "Not found"; return; }
+        $code = (string) $code;
+        if (!$this->Branch->findByCode($code)) {
+            http_response_code(404);
+            echo "Not found";
+            return;
+        }
         $this->Branch->deleteByCode($code);
-         header('Location: ' . BASE_URL . '/admin/branches'); exit;;
+        header('Location: ' . BASE_URL . '/admin/branches');
+        exit;
     }
 
     /* ----------------- Helpers ----------------- */
@@ -134,89 +176,139 @@ public function store()
     {
         $get = fn($k) => trim($src[$k] ?? '');
 
-        // map & normalize
-        $code   = strtoupper($get('code') ?: $get('branch_id')); // some UIs use branch_id text
-        $name   = $get('name') ?: $get('branch_name');
-        $city   = $get('city') ?: $get('location');
+        $code = strtoupper($get('code') ?: $get('branch_id')); // some UIs use branch_id text
+        $name = $get('name') ?: $get('branch_name');
+        $city = $get('city') ?: $get('location');
 
-        // UI doesn't have a real address field, so we store whatever they typed in "working_hours" into address_line
         $address_line = $get('address_line');
-        if ($address_line === '') {
-            $address_line = $get('working_hours'); // reuse that text to not lose information
-        }
 
-        // DB phone is VARCHAR(30) - trim length just in case
         $phone = substr($get('phone') ?: $get('contact'), 0, 30);
 
         $email = $get('email');
-        $status = in_array(($get('status') ?: 'active'), ['active','inactive'], true)
-                  ? ($get('status') ?: 'active') : 'active';
+        $status = in_array(($get('status') ?: 'active'), ['active', 'inactive'], true)
+            ? ($get('status') ?: 'active') : 'active';
 
-        // created_at is DATETIME; form gives date (YYYY-MM-DD)
-        // created_at is DATETIME; form may give date (YYYY-MM-DD) or full datetime
-$created_raw = $get('created_at');
-if ($created_raw === '') {
-    $created_at = date('Y-m-d 00:00:00');
-} elseif (preg_match('/^\d{4}-\d{2}-\d{2}$/', $created_raw)) {
-    // date only -> append midnight
-    $created_at = $created_raw . ' 00:00:00';
-} elseif (preg_match('/^\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}$/', $created_raw)) {
-    // already full datetime -> keep as is
-    $created_at = $created_raw;
-} else {
-    // unexpected format -> normalize to today midnight (or keep raw if you prefer)
-    $created_at = date('Y-m-d 00:00:00');
-}
+        $created_raw = $get('created_at');
+        if ($created_raw === '') {
+            $created_at = date('Y-m-d 00:00:00');
+        } elseif (preg_match('/^\d{4}-\d{2}-\d{2}$/', $created_raw)) {
+            $created_at = $created_raw . ' 00:00:00';
+        } elseif (preg_match('/^\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}$/', $created_raw)) {
+            $created_at = $created_raw;
+        } else {
+            $created_at = date('Y-m-d 00:00:00');
+        }
 
 
-        $capacity = is_numeric($get('capacity')) ? (int)$get('capacity') : 0;
-        $staff    = is_numeric($get('staff')) ? (int)$get('staff') : 0;
+        $capacity = is_numeric($get('capacity')) ? (int) $get('capacity') : 0;
+        $staff = is_numeric($get('staff')) ? (int) $get('staff') : 0;
 
         $notes = $get('notes');
 
-        // manager_id is INT; if UI gives a number in "manager", use it; else set null
         $manager_raw = $get('manager');
-        $manager_id = (is_numeric($manager_raw) ? (int)$manager_raw : null);
+        $manager_id = ($manager_raw !== '' && is_numeric($manager_raw)) ? (int) $manager_raw : null;
 
         return [
             'branch_code' => $code,
-            'name'        => $name,
-            'city'        => $city,
-            'address_line'=> $address_line,
-            'phone'       => $phone,
-            'email'       => $email,
-            'capacity'    => $capacity,
+            'name' => $name,
+            'city' => $city,
+            'address_line' => $address_line,
+            'phone' => $phone,
+            'email' => $email,
+            'capacity' => $capacity,
             'staff_count' => $staff,
-            'notes'       => $notes,
-            'status'      => $status,
-            'created_at'  => $created_at,
-            'manager_id'  => $manager_id,
+            'notes' => $notes,
+            'status' => $status,
+            'created_at' => $created_at,
+            'manager_id' => $manager_id,
         ];
     }
 
-  private function validate(array $d, bool $creating): array
-{
-    $e = [];
-    // DO NOT require code during create; we auto-generate if empty
-    if ($d['branch_code'] === '') {
-        $e[] = 'Branch code could not be generated'; // should not happen, but a safety net
-    }
-    if ($d['name'] === '') $e[] = 'Name is required';
-    if ($d['city'] === '') $e[] = 'City is required';
+    private function validate(array $d, bool $creating, int $currentBranchId = 0): array
+    {
+        $e = [];
 
-    if ($d['email'] !== '' && !filter_var($d['email'], FILTER_VALIDATE_EMAIL)) {
-        $e[] = 'Invalid email';
+        if ($d['branch_code'] === '') {
+            $e[] = 'Branch code could not be generated';
+        }
+        if ($d['name'] === '') {
+            $e[] = 'Name is required';
+        }
+        if ($d['city'] === '') {
+            $e[] = 'City is required';
+        }
+
+        if ($d['email'] !== '' && !filter_var($d['email'], FILTER_VALIDATE_EMAIL)) {
+            $e[] = 'Invalid email';
+        }
+
+        if ($d['phone'] !== '' && !preg_match('/^0\d{9}$/', $d['phone'])) {
+            $e[] = 'Phone number must be 10 digits and start with 0';
+        }
+
+        if ($d['created_at'] !== '' && !preg_match('/^\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}$/', $d['created_at'])) {
+            $e[] = 'Created at must be a valid date and time';
+        }
+
+        if (!in_array($d['status'], ['active', 'inactive'], true)) {
+            $e[] = 'Invalid status';
+        }
+
+        if ($d['manager_id'] === null) {
+            $e[] = 'Manager is required';
+        } else {
+            $manager = $this->Manager->find((int) $d['manager_id']);
+            if (!$manager) {
+                $e[] = 'Selected manager is invalid';
+            } else {
+                $assignedBranch = $this->Branch->findByManagerId((int) $d['manager_id']);
+                if ($assignedBranch && (int) ($assignedBranch['branch_id'] ?? 0) !== $currentBranchId) {
+                    $e[] = 'Selected manager is already assigned to another branch';
+                }
+            }
+        }
+
+        return array_values(array_unique($e));
     }
 
-    if ($d['created_at'] !== '' &&
-        !preg_match('/^\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}$/', $d['created_at'])) {
-        $e[] = 'created_at must be DATETIME (YYYY-MM-DD HH:MM:SS)';
+    private function availableManagers(int $currentBranchId = 0): array
+    {
+        $managers = $this->Manager->all();
+        $available = [];
+
+        foreach ($managers as $manager) {
+            $managerId = (int) ($manager['manager_id'] ?? 0);
+            if ($managerId <= 0) {
+                continue;
+            }
+
+            $assignedBranch = $this->Branch->findByManagerId($managerId);
+            if ($assignedBranch && (int) ($assignedBranch['branch_id'] ?? 0) !== $currentBranchId) {
+                continue;
+            }
+
+            $available[] = $manager;
+        }
+
+        return $available;
     }
 
-    if (!in_array($d['status'], ['active','inactive'], true)) {
-        $e[] = 'Invalid status';
+    private function formValues(array $data): array
+    {
+        return [
+            'branch_code' => $data['branch_code'] ?? '',
+            'name' => $data['name'] ?? '',
+            'city' => $data['city'] ?? '',
+            'address_line' => $data['address_line'] ?? '',
+            'phone' => $data['phone'] ?? '',
+            'email' => $data['email'] ?? '',
+            'capacity' => $data['capacity'] ?? 0,
+            'staff_count' => $data['staff_count'] ?? 0,
+            'notes' => $data['notes'] ?? '',
+            'status' => $data['status'] ?? 'active',
+            'created_at' => $data['created_at'] ?? '',
+            'manager_id' => $data['manager_id'] ?? null,
+        ];
     }
-    return $e;
-}
 
 }

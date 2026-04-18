@@ -20,29 +20,29 @@ class ReportsController extends Controller
     public function index(): void
     {
         $filters = [
-            'from'      => $_GET['from'] ?? '',
-            'to'        => $_GET['to'] ?? '',
+            'from' => $_GET['from'] ?? '',
+            'to' => $_GET['to'] ?? '',
             'branch_id' => $_GET['branch_id'] ?? '',
-            'group'     => $_GET['group'] ?? 'month',
+            'group' => $_GET['group'] ?? 'month',
         ];
 
-        $branches     = $this->reports->branches();
+        $branches = $this->reports->branches();
         $serviceTypes = $this->reports->serviceTypes();
 
-        $topServices       = $this->reports->topServices($filters);
-        $serviceTrend      = $this->reports->serviceTrend($filters);
-        $serviceTypeDist   = $this->reports->serviceTypeDistribution($filters);
+        $topServices = $this->reports->topServices($filters);
+        $serviceTrend = $this->reports->serviceTrend($filters);
+        $serviceTypeDist = $this->reports->serviceTypeDistribution($filters);
         $avgCompletionMins = $this->reports->avgCompletionMinutes($filters);
-        $weekdayDemand     = $this->reports->serviceDemandByWeekday($filters);
-        $seasonalDemand    = $this->reports->seasonalDemand($filters);
-        $avgWaitingMins    = $this->reports->averageWaitingTimeBeforeStart($filters);
+        $weekdayDemand = $this->reports->serviceDemandByWeekday($filters);
+        $seasonalDemand = $this->reports->seasonalDemand($filters);
+        $avgWaitingMins = $this->reports->averageWaitingTimeBeforeStart($filters);
         $turnaroundByBranch = $this->reports->turnaroundTimeByBranch($filters);
         $repeatCustomerFrequency = $this->reports->repeatCustomerFrequency($filters);
-        $mostRebookedServices    = $this->reports->mostRebookedServices($filters);
+        $mostRebookedServices = $this->reports->mostRebookedServices($filters);
 
-        $revenueTrend   = $this->reports->revenueTrend($filters);
-        $costTrend      = $this->reports->costTrend($filters);
-        $profitTrend    = $this->reports->profitTrend($filters);
+        $revenueTrend = $this->reports->revenueTrend($filters);
+        $costTrend = $this->reports->costTrend($filters);
+        $profitTrend = $this->reports->profitTrend($filters);
         $revenueByBranch = $this->reports->revenueByBranch($filters);
         $revenueByServiceType = $this->reports->revenueByServiceType($filters);
         $avgInvoice = $this->reports->avgInvoiceValue($filters);
@@ -55,13 +55,13 @@ class ReportsController extends Controller
 
         $apptStatus = $this->reports->appointmentStatusCounts($filters);
         $apptByHour = $this->reports->appointmentsByHour($filters);
-        $apptTrend  = $this->reports->appointmentsTrend($filters);
+        $apptTrend = $this->reports->appointmentsTrend($filters);
         $cancellationTrend = $this->reports->cancellationTrend($filters);
 
         $branchCompleted = $this->reports->branchCompletedServices($filters);
-        $branchRating    = $this->reports->branchAvgRating($filters);
+        $branchRating = $this->reports->branchAvgRating($filters);
         $branchCapacityUtilization = $this->reports->branchCapacityUtilization($filters);
-        $branchStaffingVsWorkload  = $this->reports->branchStaffingVsWorkload($filters);
+        $branchStaffingVsWorkload = $this->reports->branchStaffingVsWorkload($filters);
         $branchServiceCoverageMatrix = $this->reports->branchServiceCoverageMatrix($filters);
         $branchComplaintRate = $this->reports->branchComplaintRate($filters);
         $branchApprovalRejectionRate = $this->reports->branchApprovalRejectionRate($filters);
@@ -76,16 +76,16 @@ class ReportsController extends Controller
         $avgJobsPerDayPerMechanic = $this->reports->avgJobsPerDayPerMechanic($filters);
         $delayedWorkOrdersByMechanic = $this->reports->delayedWorkOrdersByMechanic($filters);
 
-        $ratingDist    = $this->reports->ratingDistribution($filters);
+        $ratingDist = $this->reports->ratingDistribution($filters);
         $feedbackTrend = $this->reports->feedbackTrend($filters);
-        $lowestRated   = $this->reports->lowestRatedServices($filters);
+        $lowestRated = $this->reports->lowestRatedServices($filters);
         $branchRatingTrend = $this->reports->branchRatingTrend($filters);
         $ratingByServiceType = $this->reports->ratingByServiceType($filters);
         $feedbackResponseTurnaround = $this->reports->feedbackResponseTurnaround($filters);
         $mostPraisedServices = $this->reports->mostPraisedServices($filters);
         $repeatNegativeFeedbackCustomers = $this->reports->repeatNegativeFeedbackCustomers($filters);
 
-        $approvalStatus   = $this->reports->approvalStatusCounts($filters);
+        $approvalStatus = $this->reports->approvalStatusCounts($filters);
         $avgApprovalHours = $this->reports->avgApprovalHours($filters);
 
         $complaintTrend = $this->reports->complaintTrend($filters);
@@ -99,89 +99,89 @@ class ReportsController extends Controller
 
         $payload = [
             'service' => [
-                'topServices'            => $topServices,
-                'trend'                  => $serviceTrend,
-                'typeDist'               => $serviceTypeDist,
-                'avgCompletionMins'      => $avgCompletionMins,
-                'weekdayDemand'          => $weekdayDemand,
-                'seasonalDemand'         => $seasonalDemand,
-                'avgWaitingMins'         => $avgWaitingMins,
-                'turnaroundByBranch'     => $turnaroundByBranch,
-                'repeatCustomerFrequency'=> $repeatCustomerFrequency,
-                'mostRebookedServices'   => $mostRebookedServices,
+                'topServices' => $topServices,
+                'trend' => $serviceTrend,
+                'typeDist' => $serviceTypeDist,
+                'avgCompletionMins' => $avgCompletionMins,
+                'weekdayDemand' => $weekdayDemand,
+                'seasonalDemand' => $seasonalDemand,
+                'avgWaitingMins' => $avgWaitingMins,
+                'turnaroundByBranch' => $turnaroundByBranch,
+                'repeatCustomerFrequency' => $repeatCustomerFrequency,
+                'mostRebookedServices' => $mostRebookedServices,
             ],
             'revenue' => [
-                'trend'                  => $revenueTrend,
-                'costTrend'              => $costTrend,
-                'profitTrend'            => $profitTrend,
-                'byBranch'               => $revenueByBranch,
-                'byServiceType'          => $revenueByServiceType,
-                'avgInvoice'             => $avgInvoice,
-                'unpaidInvoiceAging'     => $unpaidInvoiceAging,
+                'trend' => $revenueTrend,
+                'costTrend' => $costTrend,
+                'profitTrend' => $profitTrend,
+                'byBranch' => $revenueByBranch,
+                'byServiceType' => $revenueByServiceType,
+                'avgInvoice' => $avgInvoice,
+                'unpaidInvoiceAging' => $unpaidInvoiceAging,
                 'paymentMethodBreakdown' => $paymentMethodBreakdown,
                 'paymentStatusBreakdown' => $paymentStatusBreakdown,
                 'avgRevenuePerAppointment' => $avgRevenuePerAppointment,
-                'avgRevenuePerCustomer'  => $avgRevenuePerCustomer,
+                'avgRevenuePerCustomer' => $avgRevenuePerCustomer,
                 'branchPaymentCollectionPerformance' => $branchPaymentCollectionPerformance,
             ],
             'appointments' => [
-                'status'            => $apptStatus,
-                'byHour'            => $apptByHour,
-                'trend'             => $apptTrend,
+                'status' => $apptStatus,
+                'byHour' => $apptByHour,
+                'trend' => $apptTrend,
                 'cancellationTrend' => $cancellationTrend,
             ],
             'branches' => [
-                'completed'               => $branchCompleted,
-                'avgRating'               => $branchRating,
-                'capacityUtilization'     => $branchCapacityUtilization,
-                'staffingVsWorkload'      => $branchStaffingVsWorkload,
-                'serviceCoverageMatrix'   => $branchServiceCoverageMatrix,
-                'complaintRate'           => $branchComplaintRate,
-                'approvalRejectionRate'   => $branchApprovalRejectionRate,
-                'qualityScore'            => $branchQualityScore,
+                'completed' => $branchCompleted,
+                'avgRating' => $branchRating,
+                'capacityUtilization' => $branchCapacityUtilization,
+                'staffingVsWorkload' => $branchStaffingVsWorkload,
+                'serviceCoverageMatrix' => $branchServiceCoverageMatrix,
+                'complaintRate' => $branchComplaintRate,
+                'approvalRejectionRate' => $branchApprovalRejectionRate,
+                'qualityScore' => $branchQualityScore,
                 'underperformingBranches' => $underperformingBranches,
             ],
             'staff' => [
-                'jobsPerMechanic'         => $jobsPerMechanic,
-                'submittedByManagers'     => $submittedByManagers,
-                'managerApprovalDecisions'=> $managerApprovalDecisions,
+                'jobsPerMechanic' => $jobsPerMechanic,
+                'submittedByManagers' => $submittedByManagers,
+                'managerApprovalDecisions' => $managerApprovalDecisions,
                 'mechanicQualityOutcomes' => $mechanicQualityOutcomes,
-                'staffComplaintAssociation'=> $staffComplaintAssociation,
-                'avgJobsPerDayPerMechanic'=> $avgJobsPerDayPerMechanic,
+                'staffComplaintAssociation' => $staffComplaintAssociation,
+                'avgJobsPerDayPerMechanic' => $avgJobsPerDayPerMechanic,
                 'delayedWorkOrdersByMechanic' => $delayedWorkOrdersByMechanic,
             ],
             'feedback' => [
-                'ratingDist'                   => $ratingDist,
-                'trend'                        => $feedbackTrend,
-                'lowestRated'                  => $lowestRated,
-                'branchRatingTrend'            => $branchRatingTrend,
-                'ratingByServiceType'          => $ratingByServiceType,
-                'feedbackResponseTurnaround'   => $feedbackResponseTurnaround,
-                'mostPraisedServices'          => $mostPraisedServices,
+                'ratingDist' => $ratingDist,
+                'trend' => $feedbackTrend,
+                'lowestRated' => $lowestRated,
+                'branchRatingTrend' => $branchRatingTrend,
+                'ratingByServiceType' => $ratingByServiceType,
+                'feedbackResponseTurnaround' => $feedbackResponseTurnaround,
+                'mostPraisedServices' => $mostPraisedServices,
                 'repeatNegativeFeedbackCustomers' => $repeatNegativeFeedbackCustomers,
             ],
             'approval' => [
-                'statusCounts'     => $approvalStatus,
+                'statusCounts' => $approvalStatus,
                 'avgApprovalHours' => $avgApprovalHours,
             ],
             'complaints' => [
-                'trend'                  => $complaintTrend,
-                'resolutionTrend'        => $complaintResolutionTrend,
-                'closureRateByBranch'    => $complaintClosureRateByBranch,
-                'priorityAnalysis'       => $complaintPriorityAnalysis,
+                'trend' => $complaintTrend,
+                'resolutionTrend' => $complaintResolutionTrend,
+                'closureRateByBranch' => $complaintClosureRateByBranch,
+                'priorityAnalysis' => $complaintPriorityAnalysis,
                 'mostComplainedServices' => $mostComplainedServices,
                 'mostComplainedBranches' => $mostComplainedBranches,
-                'mostComplainedStaff'    => $mostComplainedStaff,
-                'slaBreachTrend'         => $slaBreachTrend,
+                'mostComplainedStaff' => $mostComplainedStaff,
+                'slaBreachTrend' => $slaBreachTrend,
             ],
         ];
 
         $this->view('admin/admin-viewreports/index', [
-            'pageTitle'      => 'Reports - AutoNexus',
-            'current'        => 'reports',
-            'filters'        => $filters,
-            'branches'       => $branches,
-            'serviceTypes'   => $serviceTypes,
+            'pageTitle' => 'Reports - AutoNexus',
+            'current' => 'reports',
+            'filters' => $filters,
+            'branches' => $branches,
+            'serviceTypes' => $serviceTypes,
             'reportDataJson' => json_encode($payload, JSON_UNESCAPED_UNICODE),
         ]);
     }
@@ -192,10 +192,10 @@ class ReportsController extends Controller
 
         $key = $_GET['key'] ?? '';
         $filters = [
-            'from'      => $_GET['from'] ?? '',
-            'to'        => $_GET['to'] ?? '',
+            'from' => $_GET['from'] ?? '',
+            'to' => $_GET['to'] ?? '',
             'branch_id' => $_GET['branch_id'] ?? '',
-            'group'     => $_GET['group'] ?? 'month',
+            'group' => $_GET['group'] ?? 'month',
         ];
 
         $rows = $this->reports->exportDataset($key, $filters);
@@ -204,7 +204,33 @@ class ReportsController extends Controller
         header('Content-Disposition: attachment; filename="report_' . $key . '_' . date('Ymd_His') . '.csv"');
 
         $out = fopen('php://output', 'w');
-        fputcsv($out, ['label', 'value']);
+
+        // Write filter metadata
+        fputcsv($out, ['Report Information']);
+        fputcsv($out, ['Generated', date('Y-m-d H:i:s')]);
+
+        // Format date range display
+        $from = $filters['from'] ?? '';
+        $to = $filters['to'] ?? '';
+        if (empty($from) && empty($to)) {
+            fputcsv($out, ['Date Range', 'All time']);
+        } else {
+            $dateRange = ($from ?: 'Start') . ' to ' . ($to ?: 'End');
+            fputcsv($out, ['Date Range', $dateRange]);
+        }
+
+        // Format branch display
+        $branchId = $filters['branch_id'] ?? '';
+        $branchDisplay = (empty($branchId) || $branchId === '0') ? 'All Branches' : $branchId;
+        fputcsv($out, ['Branch', $branchDisplay]);
+
+        fputcsv($out, ['Group By', $filters['group'] ?? 'month']);
+        fputcsv($out, []); // Blank line separator
+
+        // Write data headers
+        fputcsv($out, ['Label', 'Value']);
+
+        // Write data rows
         foreach ($rows as $r) {
             fputcsv($out, [$r['label'] ?? '', $r['value'] ?? '']);
         }
@@ -226,10 +252,10 @@ class ReportsController extends Controller
 
         $key = $_GET['key'] ?? '';
         $filters = [
-            'from'      => $_GET['from'] ?? '',
-            'to'        => $_GET['to'] ?? '',
+            'from' => $_GET['from'] ?? '',
+            'to' => $_GET['to'] ?? '',
             'branch_id' => $_GET['branch_id'] ?? '',
-            'group'     => $_GET['group'] ?? 'month',
+            'group' => $_GET['group'] ?? 'month',
         ];
 
         $rows = $this->reports->exportDataset($key, $filters);
@@ -240,12 +266,12 @@ class ReportsController extends Controller
         ob_start();
         $B = rtrim(BASE_URL, '/');
         $data = [
-            'pdfTitle'    => $pdfTitle,
+            'pdfTitle' => $pdfTitle,
             'generatedAt' => $generatedAt,
-            'key'         => $key,
-            'filters'     => $filters,
-            'rows'        => $rows,
-            'baseUrl'     => $B,
+            'key' => $key,
+            'filters' => $filters,
+            'rows' => $rows,
+            'baseUrl' => $B,
         ];
         extract($data);
         require APP_ROOT . '/views/admin/admin-viewreports/pdf.php';
@@ -261,6 +287,219 @@ class ReportsController extends Controller
         $filename = "report_{$key}_" . date('Ymd_His') . ".pdf";
         $dompdf->stream($filename, ['Attachment' => true]);
         exit;
+    }
+
+    public function exportAll(): void
+    {
+        $this->requireAdmin();
+
+        $format = $_GET['format'] ?? 'csv';
+        $filters = [
+            'from' => $_GET['from'] ?? '',
+            'to' => $_GET['to'] ?? '',
+            'branch_id' => $_GET['branch_id'] ?? '',
+            'group' => $_GET['group'] ?? 'month',
+        ];
+
+        if ($format === 'pdf') {
+            $this->exportAllPdf($filters);
+        } else {
+            $this->exportAllCsv($filters);
+        }
+    }
+
+    private function exportAllCsv(array $filters): void
+    {
+        $reportKeys = [
+            'topServices',
+            'serviceTrend',
+            'serviceTypeDistribution',
+            'avgCompletionMins',
+            'weekdayDemand',
+            'seasonalDemand',
+            'turnaroundByBranch',
+            'repeatCustomerFrequency',
+            'mostRebookedServices',
+            'revenueTrend',
+            'costTrend',
+            'profitTrend',
+            'revenueByBranch',
+            'revenueByServiceType',
+            'unpaidInvoiceAging',
+            'paymentMethodBreakdown',
+            'paymentStatusBreakdown',
+            'branchPaymentCollection',
+            'apptStatus',
+            'apptByHour',
+            'apptTrend',
+            'cancellationTrend',
+            'branchCompleted',
+            'branchRating',
+            'branchCapacityUtilization',
+            'branchStaffingVsWorkload',
+            'branchServiceCoverage',
+            'branchComplaintRate',
+            'branchApprovalRejectionRate',
+            'branchQualityScore',
+            'underperformingBranches',
+            'jobsPerMechanic',
+            'submittedByManagers',
+            'managerApprovalDecisions',
+            'mechanicQualityOutcomes',
+            'staffComplaintAssociation',
+            'avgJobsPerDayPerMechanic',
+            'delayedWorkOrdersByMechanic',
+            'ratingDist',
+            'feedbackTrend'
+        ];
+
+        header('Content-Type: text/csv; charset=utf-8');
+        header('Content-Disposition: attachment; filename="all_reports_' . date('Ymd_His') . '.csv"');
+
+        $out = fopen('php://output', 'w');
+        fputcsv($out, ['Report', 'Label', 'Value']);
+
+        foreach ($reportKeys as $key) {
+            $rows = $this->reports->exportDataset($key, $filters);
+            foreach ($rows as $row) {
+                fputcsv($out, [
+                    ucwords(str_replace(['By', 'Per'], ' ', $key)),
+                    $row['label'] ?? '',
+                    $row['value'] ?? ''
+                ]);
+            }
+        }
+        fclose($out);
+        exit;
+    }
+
+    private function exportAllPdf(array $filters): void
+    {
+        $autoload = BASE_PATH . '/vendor/autoload.php';
+        if (!is_file($autoload)) {
+            http_response_code(500);
+            echo "<pre>Missing vendor/autoload.php. Run: composer install</pre>";
+            exit;
+        }
+        require_once $autoload;
+
+        $reportKeys = [
+            'topServices',
+            'serviceTrend',
+            'serviceTypeDistribution',
+            'avgCompletionMins',
+            'weekdayDemand',
+            'seasonalDemand',
+            'turnaroundByBranch',
+            'repeatCustomerFrequency',
+            'mostRebookedServices',
+            'revenueTrend',
+            'costTrend',
+            'profitTrend',
+            'revenueByBranch',
+            'revenueByServiceType',
+            'unpaidInvoiceAging',
+            'paymentMethodBreakdown',
+            'paymentStatusBreakdown',
+            'branchPaymentCollection',
+            'apptStatus',
+            'apptByHour',
+            'apptTrend',
+            'cancellationTrend',
+            'branchCompleted',
+            'branchRating',
+            'branchCapacityUtilization',
+            'branchStaffingVsWorkload',
+            'branchServiceCoverage',
+            'branchComplaintRate',
+            'branchApprovalRejectionRate',
+            'branchQualityScore',
+            'underperformingBranches',
+            'jobsPerMechanic',
+            'submittedByManagers',
+            'managerApprovalDecisions',
+            'mechanicQualityOutcomes',
+            'staffComplaintAssociation',
+            'avgJobsPerDayPerMechanic',
+            'delayedWorkOrdersByMechanic',
+            'ratingDist',
+            'feedbackTrend'
+        ];
+
+        $allReports = [];
+        foreach ($reportKeys as $key) {
+            $rows = $this->reports->exportDataset($key, $filters);
+            $allReports[$key] = $rows;
+        }
+
+        $pdfTitle = 'AutoNexus All Reports';
+        $generatedAt = date('Y-m-d H:i:s');
+        $B = rtrim(BASE_URL, '/');
+
+        ob_start();
+        ?>
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <meta charset="UTF-8">
+                    <style>
+                        body { font-family: Arial, sans-serif; font-size: 11px; margin: 20px; }
+                        h1 { color: #111827; border-bottom: 2px solid #111827; padding-bottom: 10px; page-break-after: avoid; }
+                        h2 { color: #374151; font-size: 14px; margin-top: 20px; margin-bottom: 10px; page-break-after: avoid; }
+                        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+                        th { background: #f3f4f6; color: #111827; padding: 8px; text-align: left; border: 1px solid #d1d5db; }
+                        td { padding: 6px; border: 1px solid #e5e7eb; }
+                        .header { text-align: center; margin-bottom: 30px; }
+                        .footer { text-align: center; font-size: 10px; color: #6b7280; margin-top: 20px; page-break-before: avoid; }
+                        .report-section { page-break-inside: avoid; margin-bottom: 30px; }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <h1><?= htmlspecialchars($pdfTitle) ?></h1>
+                        <p>Generated on <?= htmlspecialchars($generatedAt) ?></p>
+                    </div>
+
+                    <?php foreach ($reportKeys as $key): ?>
+                            <?php if (!empty($allReports[$key])): ?>
+                                <div class="report-section">
+                                    <h2><?= htmlspecialchars(ucwords(str_replace(['By', 'Per'], ' ', $key))) ?></h2>
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th>Label</th>
+                                                <th>Value</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php foreach ($allReports[$key] as $row): ?>
+                                                <tr>
+                                                    <td><?= htmlspecialchars($row['label'] ?? '') ?></td>
+                                                    <td><?= htmlspecialchars($row['value'] ?? '') ?></td>
+                                                </tr>
+                                            <?php endforeach; ?>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            <?php endif; ?>
+                    <?php endforeach; ?>
+
+                    <div class="footer">
+                        <p>This report was automatically generated by AutoNexus</p>
+                    </div>
+                </body>
+                </html>
+                <?php
+                $html = ob_get_clean();
+
+                $dompdf = new \Dompdf\Dompdf(['isRemoteEnabled' => true]);
+                $dompdf->loadHtml($html);
+                $dompdf->setPaper('A4', 'portrait');
+                $dompdf->render();
+
+                $filename = "all_reports_" . date('Ymd_His') . ".pdf";
+                $dompdf->stream($filename, ['Attachment' => true]);
+                exit;
     }
 
     private function requireAdmin(): void

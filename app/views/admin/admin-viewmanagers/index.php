@@ -47,7 +47,8 @@ $B = rtrim(BASE_URL, '/');
           <form method="get" action="<?= htmlspecialchars($B . '/admin/service-managers', ENT_QUOTES, 'UTF-8') ?>"
             class="tools">
 
-            <input type="text" class="search-input" name="q" placeholder="Search by ID, name, username, email, code…"
+            <input type="text" class="search-input" name="q"
+              placeholder="Search by manager code, name, username, email, branch…"
               value="<?= htmlspecialchars($q, ENT_QUOTES, 'UTF-8') ?>" />
 
             <select class="status-filter" name="status">
@@ -77,13 +78,13 @@ $B = rtrim(BASE_URL, '/');
         <table id="tbl">
           <thead>
             <tr>
-              <th>Manager ID</th>
+              <th>Manager Code</th>
               <th>Name</th>
               <th>Username</th>
               <th>Email</th>
               <th>Phone</th>
+              <th>Branch</th>
               <th>Status</th>
-              <th>Created</th>
               <th class="th-actions">Actions</th>
             </tr>
           </thead>
@@ -94,19 +95,28 @@ $B = rtrim(BASE_URL, '/');
                 $statusClass = ($rawStatus === 'inactive') ? 'status--inactive' : 'status--active';
                 ?>
                 <tr>
-                  <td><?= htmlspecialchars($r['manager_id'] ?? '', ENT_QUOTES, 'UTF-8') ?></td>
+                  <td><?= htmlspecialchars($r['manager_code'] ?? '', ENT_QUOTES, 'UTF-8') ?></td>
                   <td><?= htmlspecialchars(($r['first_name'] ?? '') . ' ' . ($r['last_name'] ?? ''), ENT_QUOTES, 'UTF-8') ?>
                   </td>
                   <td><?= htmlspecialchars($r['username'] ?? '', ENT_QUOTES, 'UTF-8') ?></td>
                   <td><?= htmlspecialchars($r['email'] ?? '', ENT_QUOTES, 'UTF-8') ?></td>
                   <td><?= htmlspecialchars($r['phone'] ?? '', ENT_QUOTES, 'UTF-8') ?></td>
                   <td>
+                    <?php
+                    $branchCode = trim((string) ($r['branch_code'] ?? ''));
+                    $branchName = trim((string) ($r['branch_name'] ?? ''));
+                    $branchText = ($branchCode !== '' || $branchName !== '')
+                      ? trim($branchCode . ' ' . ($branchName !== '' ? '(' . $branchName . ')' : ''))
+                      : 'Not assigned';
+                    ?>
+                    <?= htmlspecialchars($branchText, ENT_QUOTES, 'UTF-8') ?>
+                  </td>
+                  <td>
                     <span class="status-pill <?= $statusClass ?>">
                       <span class="dot"></span>
                       <?= htmlspecialchars(ucfirst($rawStatus), ENT_QUOTES, 'UTF-8') ?>
                     </span>
                   </td>
-                  <td><?= htmlspecialchars($r['created_at'] ?? '', ENT_QUOTES, 'UTF-8') ?></td>
                   <td class="table-actions">
                     <a class="chip-btn chip-btn--light" title="View"
                       href="<?= htmlspecialchars($B . '/admin/service-managers/' . urlencode((string) $r['manager_id']), ENT_QUOTES, 'UTF-8') ?>">

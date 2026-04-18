@@ -2,6 +2,8 @@
 /** @var array $row */
 /** @var array $managers */
 /** @var string $base */
+$errors = $errors ?? [];
+$old = $old ?? [];
 $base = rtrim($base ?? BASE_URL, '/');
 $current = 'branches';
 $curManagerId = (int) ($row['manager_id'] ?? 0);
@@ -21,6 +23,7 @@ function e($value): string
 
   <link rel="stylesheet" href="<?= $base ?>/app/views/layouts/admin-sidebar/styles.css">
   <link rel="stylesheet" href="<?= $base ?>/app/views/admin/admin-viewbranches/branches.css">
+  <link rel="stylesheet" href="<?= $base ?>/public/assets/css/admin/branches/create.css">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 </head>
 
@@ -33,6 +36,14 @@ function e($value): string
       <p>Update the details for branch <?= e($row['branch_code'] ?? '') ?></p>
     </header>
 
+    <?php if (!empty($errors)): ?>
+      <div class="alert alert-danger">
+        <?php foreach ($errors as $error): ?>
+          <div><?= e($error) ?></div>
+        <?php endforeach; ?>
+      </div>
+    <?php endif; ?>
+
     <form method="post" action="<?= e($base . '/admin/branches/' . rawurlencode((string) $row['branch_code'])) ?>"
       class="form-card">
       <div class="form-card-header">
@@ -43,12 +54,13 @@ function e($value): string
         <div class="form-grid">
           <div class="field">
             <label class="label">Branch Code</label>
-            <input class="input" name="code" value="<?= e($row['branch_code'] ?? '') ?>" readonly>
+            <input class="input" name="code" value="<?= e($old['branch_code'] ?? $row['branch_code'] ?? '') ?>"
+              readonly>
           </div>
 
           <div class="field">
             <label class="label">Status</label>
-            <?php $st = $row['status'] ?? 'active'; ?>
+            <?php $st = $old['status'] ?? ($row['status'] ?? 'active'); ?>
             <select name="status" class="input">
               <option value="active" <?= $st === 'active' ? 'selected' : '' ?>>Active</option>
               <option value="inactive" <?= $st === 'inactive' ? 'selected' : '' ?>>Inactive</option>
@@ -57,18 +69,18 @@ function e($value): string
 
           <div class="field">
             <label class="label">Branch Name</label>
-            <input class="input" name="name" value="<?= e($row['name'] ?? '') ?>" required>
+            <input class="input" name="name" value="<?= e($old['name'] ?? $row['name'] ?? '') ?>" required>
           </div>
 
           <div class="field">
             <label class="label">City</label>
-            <input class="input" name="city" value="<?= e($row['city'] ?? '') ?>" required>
+            <input class="input" name="city" value="<?= e($old['city'] ?? $row['city'] ?? '') ?>" required>
           </div>
 
           <div class="field">
             <label class="label">Manager</label>
-            <select class="input" name="manager">
-              <option value="">— None —</option>
+            <select class="input" name="manager" required>
+              <option value="">Select a manager</option>
               <?php foreach (($managers ?? []) as $m): ?>
                 <?php
                 $id = (int) ($m['manager_id'] ?? 0);
@@ -76,7 +88,7 @@ function e($value): string
                 $name = trim(($m['first_name'] ?? '') . ' ' . ($m['last_name'] ?? ''));
                 $label = $code ? "$code — $name" : $name;
                 ?>
-                <option value="<?= e((string) $id) ?>" <?= $id === $curManagerId ? 'selected' : '' ?>>
+                <option value="<?= e((string) $id) ?>" <?= ((string) ($old['manager_id'] ?? $curManagerId) === (string) $id) ? 'selected' : '' ?>>
                   <?= e($label) ?>
                 </option>
               <?php endforeach; ?>
@@ -85,41 +97,42 @@ function e($value): string
 
           <div class="field">
             <label class="label">Phone</label>
-            <input class="input" name="phone" value="<?= e($row['phone'] ?? '') ?>">
+            <input class="input" type="tel" inputmode="numeric" name="phone" pattern="^0[0-9]{9}$" maxlength="10"
+              autocomplete="tel" value="<?= e($old['phone'] ?? $row['phone'] ?? '') ?>" placeholder="0712345678">
           </div>
 
           <div class="field">
             <label class="label">Email</label>
-            <input class="input" type="email" name="email" value="<?= e($row['email'] ?? '') ?>">
+            <input class="input" type="email" name="email" value="<?= e($old['email'] ?? $row['email'] ?? '') ?>">
           </div>
 
           <div class="field">
             <label class="label">Created At</label>
             <input class="input" type="date" name="created_at"
-              value="<?= e(substr((string) ($row['created_at'] ?? ''), 0, 10)) ?>">
+              value="<?= e(substr((string) ($old['created_at'] ?? $row['created_at'] ?? ''), 0, 10)) ?>">
           </div>
 
           <div class="field">
             <label class="label">Capacity</label>
-            <input class="input" type="number" name="capacity" value="<?= e((string) ($row['capacity'] ?? 0)) ?>"
-              min="0">
+            <input class="input" type="number" name="capacity"
+              value="<?= e((string) ($old['capacity'] ?? $row['capacity'] ?? 0)) ?>" min="0">
           </div>
 
           <div class="field">
             <label class="label">Staff Count</label>
-            <input class="input" type="number" name="staff" value="<?= e((string) ($row['staff_count'] ?? 0)) ?>"
-              min="0">
+            <input class="input" type="number" name="staff"
+              value="<?= e((string) ($old['staff_count'] ?? $row['staff_count'] ?? 0)) ?>" min="0">
           </div>
 
           <div class="field full">
-            <label class="label">Address / Working Hours</label>
-            <input class="input" name="address_line" value="<?= e($row['address_line'] ?? '') ?>"
-              placeholder="e.g. Mon–Fri 08:00–17:00 or address">
+            <label class="label">Address</label>
+            <input class="input" name="address_line"
+              value="<?= e($old['address_line'] ?? $row['address_line'] ?? '') ?>" placeholder="Branch address">
           </div>
 
           <div class="field full">
             <label class="label">Notes</label>
-            <textarea class="input" name="notes" rows="4"><?= e($row['notes'] ?? '') ?></textarea>
+            <textarea class="input" name="notes" rows="4"><?= e($old['notes'] ?? $row['notes'] ?? '') ?></textarea>
           </div>
         </div>
 

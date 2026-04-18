@@ -14,26 +14,31 @@ class ServiceManagersController extends Controller
     {
         parent::__construct($config);
         $this->Manager = new Manager();
-        $this->User    = new User();
+        $this->User = new User();
     }
 
     public function index()
     {
-        $rows   = $this->Manager->all();
-        $q      = isset($_GET['q']) ? trim((string)$_GET['q']) : '';
-        $status = isset($_GET['status']) ? trim((string)$_GET['status']) : 'all';
+        $q = isset($_GET['q']) ? trim((string) $_GET['q']) : '';
+        $status = isset($_GET['status']) ? trim((string) $_GET['status']) : 'all';
+        $rows = $this->Manager->all($q, $status);
 
         $this->view('admin/admin-viewmanagers/index', [
-            'rows'   => $rows,
-            'q'      => $q,
+            'rows' => $rows,
+            'q' => $q,
             'status' => $status,
-            'base'   => BASE_URL,
+            'base' => BASE_URL,
         ]);
     }
 
     public function create()
     {
-        $this->view('admin/admin-viewmanagers/create');
+        $this->view('admin/admin-viewmanagers/create', [
+            'base' => BASE_URL,
+            'nextCode' => $this->Manager->nextCode(),
+            'errors' => [],
+            'old' => ['status' => 'active', 'password' => 'Manager@123'],
+        ]);
     }
 
     public function list()
@@ -44,14 +49,22 @@ class ServiceManagersController extends Controller
 
     public function show($id)
     {
-        $id = (int)$id;
-        if ($id <= 0) { http_response_code(404); echo "Not found"; return; }
+        $id = (int) $id;
+        if ($id <= 0) {
+            http_response_code(404);
+            echo "Not found";
+            return;
+        }
 
         $row = $this->Manager->findWithUser($id);
-        if (!$row) { http_response_code(404); echo "Not found"; return; }
+        if (!$row) {
+            http_response_code(404);
+            echo "Not found";
+            return;
+        }
 
         $this->view('admin/admin-viewmanagers/show', [
-            'row'  => $row,
+            'row' => $row,
             'base' => BASE_URL,
         ]);
     }
@@ -59,20 +72,35 @@ class ServiceManagersController extends Controller
     public function store()
     {
         $d = $this->sanitize($_POST);
+        if (($d['password'] ?? '') === '') {
+            $d['password'] = 'Manager@123';
+        }
+
         $errors = $this->validateCreate($d);
-        if ($errors) { http_response_code(422); echo implode("\n", $errors); return; }
+        if ($errors) {
+            http_response_code(422);
+            $this->view('admin/admin-viewmanagers/create', [
+                'base' => BASE_URL,
+                'nextCode' => $this->Manager->nextCode(),
+                'errors' => $errors,
+                'old' => $d,
+            ]);
+            return;
+        }
 
         try {
             $this->Manager->createUserAndManager([
                 'first_name' => $d['first_name'],
-                'last_name'  => $d['last_name'],
-                'username'   => $d['username'],
-                'email'      => $d['email'],
-                'password'   => $d['password'],
-                'phone'      => $d['phone'] ?? null,
+                'last_name' => $d['last_name'],
+                'username' => $d['username'],
+                'email' => $d['email'],
+                'password' => $d['password'],
+                'phone' => $d['phone'] ?? null,
+                'status' => $d['status'] ?? 'active',
             ], $d['manager_code']);
 
-            header('Location: ' . BASE_URL . '/admin/service-managers'); exit;
+            header('Location: ' . BASE_URL . '/admin/service-managers');
+            exit;
         } catch (\Throwable $e) {
             http_response_code(400);
             echo "Error: " . $e->getMessage();
@@ -81,53 +109,79 @@ class ServiceManagersController extends Controller
 
     public function edit($id)
     {
-        $id = (int)$id;
-        if ($id <= 0) { http_response_code(404); echo "Not found"; return; }
+        $id = (int) $id;
+        if ($id <= 0) {
+            http_response_code(404);
+            echo "Not found";
+            return;
+        }
 
         $row = $this->Manager->findWithUser($id);
-        if (!$row) { http_response_code(404); echo "Not found"; return; }
+        if (!$row) {
+            http_response_code(404);
+            echo "Not found";
+            return;
+        }
 
         $this->view('admin/admin-viewmanagers/edit', [
-            'row'  => $row,
+            'row' => $row,
             'base' => BASE_URL,
+            'errors' => [],
+            'old' => [],
         ]);
     }
 
     public function update($id)
     {
+        $id = (int) $id;
         $d = $this->sanitize($_POST);
-        $row = $this->Manager->find((int)$id);
-        if (!$row) { http_response_code(404); echo "Not found"; return; }
-
-        $min = [];
-        foreach (['first_name','last_name','username','email'] as $f) {
-            if (!isset($d[$f]) || $d[$f] === '') $min[] = $f . ' is required';
+        $row = $this->Manager->find($id);
+        if (!$row) {
+            http_response_code(404);
+            echo "Not found";
+            return;
         }
-        if ($min) { http_response_code(422); echo implode("\n", $min); return; }
 
-        $this->User->update((int)$row['user_id'], [
+        $errors = $this->validateUpdate($d, (int) ($row['user_id'] ?? 0));
+        if ($errors) {
+            http_response_code(422);
+            $this->view('admin/admin-viewmanagers/edit', [
+                'row' => array_merge($row, $d),
+                'base' => BASE_URL,
+                'errors' => $errors,
+                'old' => $d,
+            ]);
+            return;
+        }
+
+        $this->User->update((int) $row['user_id'], [
             'first_name' => $d['first_name'],
-            'last_name'  => $d['last_name'],
-            'username'   => $d['username'],
-            'email'      => $d['email'],
-            'phone'      => $d['phone'] ?? null,
-            'status'     => $d['status'] ?? 'active',
-            'password'   => $d['password'] ?? null,
+            'last_name' => $d['last_name'],
+            'username' => $d['username'],
+            'email' => $d['email'],
+            'phone' => $d['phone'] ?? null,
+            'status' => $d['status'] ?? 'active',
+            'password' => $d['password'] ?? null,
         ]);
 
         if (isset($d['manager_code']) && $d['manager_code'] !== ($row['manager_code'] ?? null)) {
-            $this->Manager->update((int)$id, ['manager_code' => $d['manager_code']]);
+            $this->Manager->update($id, ['manager_code' => $d['manager_code']]);
         }
 
-        header('Location: ' . BASE_URL . '/admin/service-managers'); exit;
+        header('Location: ' . BASE_URL . '/admin/service-managers');
+        exit;
     }
 
     public function destroy($id)
     {
-        $row = $this->Manager->find((int)$id);
-        if (!$row) { http_response_code(404); echo "Not found"; return; }
+        $row = $this->Manager->find((int) $id);
+        if (!$row) {
+            http_response_code(404);
+            echo "Not found";
+            return;
+        }
 
-        $this->User->delete((int)$row['user_id']);
+        $this->User->delete((int) $row['user_id']);
         echo "OK";
     }
 
@@ -139,15 +193,51 @@ class ServiceManagersController extends Controller
     private function validateCreate(array $d): array
     {
         $errors = [];
-        foreach (['first_name','last_name','username','email','password'] as $f) {
-            if (empty($d[$f])) $errors[] = "$f is required";
+        foreach (['first_name', 'last_name', 'username', 'email'] as $f) {
+            if (empty($d[$f]))
+                $errors[] = "$f is required";
         }
-        if (!empty($d['email']) && !filter_var($d['email'], FILTER_VALIDATE_EMAIL)) $errors[] = 'email invalid';
-        if (!empty($d['username']) && !preg_match('/^[A-Za-z0-9_]{3,}$/', $d['username'])) $errors[] = 'username invalid';
-        if (!empty($d['password']) && strlen($d['password']) < 6) $errors[] = 'password min 6 chars';
+        if (!empty($d['email']) && !filter_var($d['email'], FILTER_VALIDATE_EMAIL))
+            $errors[] = 'email invalid';
+        if (!empty($d['username']) && !preg_match('/^[A-Za-z0-9_]{3,}$/', $d['username']))
+            $errors[] = 'username invalid';
+        if (!empty($d['phone']) && !preg_match('/^0\d{9}$/', (string) $d['phone']))
+            $errors[] = 'phone must be 10 digits and start with 0';
+        if (!empty($d['password']) && strlen((string) $d['password']) < 8)
+            $errors[] = 'password min 8 chars';
+        if (!empty($d['status']) && !in_array($d['status'], ['active', 'inactive'], true))
+            $errors[] = 'status invalid';
 
         $exists = $this->User->findByEmailOrUsername($d['email'] ?? '', $d['username'] ?? '');
-        if ($exists) $errors[] = 'email/username already exists';
+        if ($exists)
+            $errors[] = 'email/username already exists';
+
+        return $errors;
+    }
+
+    private function validateUpdate(array $d, int $currentUserId): array
+    {
+        $errors = [];
+        foreach (['first_name', 'last_name', 'username', 'email'] as $f) {
+            if (empty($d[$f]))
+                $errors[] = "$f is required";
+        }
+
+        if (!empty($d['email']) && !filter_var($d['email'], FILTER_VALIDATE_EMAIL))
+            $errors[] = 'email invalid';
+        if (!empty($d['username']) && !preg_match('/^[A-Za-z0-9_]{3,}$/', $d['username']))
+            $errors[] = 'username invalid';
+        if (!empty($d['phone']) && !preg_match('/^0\d{9}$/', (string) $d['phone']))
+            $errors[] = 'phone must be 10 digits and start with 0';
+        if (!empty($d['password']) && strlen((string) $d['password']) < 8)
+            $errors[] = 'password min 8 chars';
+        if (!empty($d['status']) && !in_array($d['status'], ['active', 'inactive'], true))
+            $errors[] = 'status invalid';
+
+        $exists = $this->User->findByEmailOrUsername($d['email'] ?? '', $d['username'] ?? '');
+        if ($exists && (int) ($exists['user_id'] ?? 0) !== $currentUserId) {
+            $errors[] = 'email/username already exists';
+        }
 
         return $errors;
     }

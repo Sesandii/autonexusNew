@@ -15,25 +15,53 @@ class Mechanic
     }
 
     /** List with joined user fields */
-    public function all(): array
-{
-    $sql = "SELECT 
-                m.mechanic_id, m.mechanic_code, m.user_id, m.branch_id,
-                m.specialization, m.experience_years, m.status AS mech_status, m.created_at,
-                u.first_name, u.last_name, u.email, u.phone, u.status AS user_status,
-                b.branch_code, b.name AS branch_name
-            FROM mechanics m
-            JOIN users u    ON u.user_id = m.user_id
-            LEFT JOIN branches b ON b.branch_id = m.branch_id
-            ORDER BY m.mechanic_id DESC";
-    return $this->db->query($sql)->fetchAll(PDO::FETCH_ASSOC);
-}
+    public function all(string $q = '', string $status = 'all'): array
+    {
+        $sql = "SELECT 
+                    m.mechanic_id, m.mechanic_code, m.user_id, m.branch_id,
+                    m.specialization, m.experience_years, m.status AS mech_status, m.created_at,
+                    u.first_name, u.last_name, u.email, u.phone, u.status AS user_status,
+                    b.branch_code, b.name AS branch_name
+                FROM mechanics m
+                JOIN users u    ON u.user_id = m.user_id
+                LEFT JOIN branches b ON b.branch_id = m.branch_id
+                WHERE 1 = 1";
+
+        $params = [];
+
+        if ($q !== '') {
+            $like = '%' . $q . '%';
+            $sql .= " AND (
+                        m.mechanic_code LIKE ?
+                     OR u.first_name LIKE ?
+                     OR u.last_name LIKE ?
+                     OR CONCAT(u.first_name, ' ', u.last_name) LIKE ?
+                     OR u.email LIKE ?
+                     OR u.phone LIKE ?
+                     OR b.branch_code LIKE ?
+                     OR b.name LIKE ?
+                     OR m.specialization LIKE ?
+                    )";
+            $params = array_fill(0, 9, $like);
+        }
+
+        if (in_array($status, ['active', 'inactive', 'pending'], true)) {
+            $sql .= " AND u.status = ?";
+            $params[] = $status;
+        }
+
+        $sql .= " ORDER BY CAST(SUBSTRING(m.mechanic_code, 4) AS UNSIGNED) ASC, m.mechanic_code ASC";
+
+        $st = $this->db->prepare($sql);
+        $st->execute($params);
+        return $st->fetchAll(PDO::FETCH_ASSOC);
+    }
 
     /** Single record */
-   public function find(int $mechanic_id): ?array
-{
-    $st = $this->db->prepare(
-        "SELECT 
+    public function find(int $mechanic_id): ?array
+    {
+        $st = $this->db->prepare(
+            "SELECT 
             m.mechanic_id, m.mechanic_code, m.user_id, m.branch_id,
             m.specialization, m.experience_years, m.status AS mech_status, m.created_at,
             u.first_name, u.last_name, u.email, u.phone, u.status AS user_status,
@@ -42,11 +70,11 @@ class Mechanic
          JOIN users u    ON u.user_id = m.user_id
          LEFT JOIN branches b ON b.branch_id = m.branch_id
          WHERE m.mechanic_id = ?"
-    );
-    $st->execute([$mechanic_id]);
-    $row = $st->fetch(PDO::FETCH_ASSOC);
-    return $row ?: null;
-}
+        );
+        $st->execute([$mechanic_id]);
+        $row = $st->fetch(PDO::FETCH_ASSOC);
+        return $row ?: null;
+    }
 
     /** Create: insert user (role=mechanic), then mechanic */
     public function create(array $d): int
@@ -60,19 +88,20 @@ class Mechanic
             $u = $this->db->prepare($userSql);
 
             $first = $d['first_name'] ?? '';
-            $last  = $d['last_name']  ?? '';
+            $last = $d['last_name'] ?? '';
             $username = $this->uniqueUsername($first, $last);
             $u->execute([
-                ':first'    => $first,
-                ':last'     => $last,
+                ':first' => $first,
+                ':last' => $last,
                 ':username' => $username,
-                ':email'    => $d['email'] ?? null,
-                ':hash'     => password_hash($d['password'] ?? 'autonexus', PASSWORD_DEFAULT),
-                ':phone'    => $d['phone'] ?? null,
-                ':status'   => ($d['user_status'] ?? 'active'),
+                ':email' => $d['email'] ?? null,
+                ':hash' => password_hash($d['password'] ?? 'Mechanic@123', PASSWORD_DEFAULT),
+                ':phone' => $d['phone'] ?? null,
+                ':status' => ($d['user_status'] ?? 'active'),
             ]);
-            $userId = (int)$this->db->lastInsertId();
-            if (!$userId) throw new Exception('Failed to create user');
+            $userId = (int) $this->db->lastInsertId();
+            if (!$userId)
+                throw new Exception('Failed to create user');
 
             // 2) mechanics
             $mechSql = "INSERT INTO mechanics
@@ -80,15 +109,15 @@ class Mechanic
                         VALUES (:code, :user_id, :branch_id, :spec, :exp, :status, NOW())";
             $m = $this->db->prepare($mechSql);
             $m->execute([
-                ':code'     => $d['mechanic_code'] ?: $this->nextMechanicCode(),
-                ':user_id'  => $userId,
-                ':branch_id'=> $d['branch_id'] !== '' ? (int)$d['branch_id'] : null,
-                ':spec'     => $d['specialization'] ?? null,
-                ':exp'      => (int)($d['experience_years'] ?? 0),
-                ':status'   => $d['mech_status'] ?? 'active',
+                ':code' => $d['mechanic_code'] ?: $this->nextMechanicCode(),
+                ':user_id' => $userId,
+                ':branch_id' => $d['branch_id'] !== '' ? (int) $d['branch_id'] : null,
+                ':spec' => $d['specialization'] ?? null,
+                ':exp' => (int) ($d['experience_years'] ?? 0),
+                ':status' => $d['mech_status'] ?? 'active',
             ]);
 
-            $mechanicId = (int)$this->db->lastInsertId();
+            $mechanicId = (int) $this->db->lastInsertId();
             $this->db->commit();
             return $mechanicId;
         } catch (\Throwable $e) {
@@ -103,15 +132,16 @@ class Mechanic
         // find user_id
         $st = $this->db->prepare("SELECT user_id FROM mechanics WHERE mechanic_id = ?");
         $st->execute([$mechanic_id]);
-        $userId = (int)($st->fetchColumn() ?: 0);
-        if (!$userId) throw new Exception('Mechanic not found');
+        $userId = (int) ($st->fetchColumn() ?: 0);
+        if (!$userId)
+            throw new Exception('Mechanic not found');
 
         $this->db->beginTransaction();
         try {
             // users: allow first/last/email/phone/status
             $parts = [];
             $params = [':id' => $userId];
-            foreach (['first_name','last_name','email','phone','user_status'] as $f) {
+            foreach (['first_name', 'last_name', 'email', 'phone', 'user_status'] as $f) {
                 if (array_key_exists($f, $d)) {
                     $col = $f === 'user_status' ? 'status' : $f;
                     $parts[] = "$col = :$f";
@@ -139,12 +169,12 @@ class Mechanic
                  WHERE mechanic_id = :mid"
             );
             $m->execute([
-                ':code'      => $d['mechanic_code'] ?? null,
-                ':branch_id' => ($d['branch_id'] !== '' ? (int)$d['branch_id'] : null),
-                ':spec'      => $d['specialization'] ?? null,
-                ':exp'       => (int)($d['experience_years'] ?? 0),
-                ':mstatus'   => $d['mech_status'] ?? 'active',
-                ':mid'       => $mechanic_id,
+                ':code' => $d['mechanic_code'] ?? null,
+                ':branch_id' => ($d['branch_id'] !== '' ? (int) $d['branch_id'] : null),
+                ':spec' => $d['specialization'] ?? null,
+                ':exp' => (int) ($d['experience_years'] ?? 0),
+                ':mstatus' => $d['mech_status'] ?? 'active',
+                ':mid' => $mechanic_id,
             ]);
 
             $this->db->commit();
@@ -154,6 +184,42 @@ class Mechanic
         }
     }
 
+    public function emailExists(string $email, ?int $excludeUserId = null): bool
+    {
+        $email = trim($email);
+        if ($email === '') {
+            return false;
+        }
+
+        if ($excludeUserId !== null) {
+            $st = $this->db->prepare("SELECT 1 FROM users WHERE email = :email AND user_id <> :uid LIMIT 1");
+            $st->execute([':email' => $email, ':uid' => $excludeUserId]);
+            return (bool) $st->fetchColumn();
+        }
+
+        $st = $this->db->prepare("SELECT 1 FROM users WHERE email = :email LIMIT 1");
+        $st->execute([':email' => $email]);
+        return (bool) $st->fetchColumn();
+    }
+
+    public function phoneExists(string $phone, ?int $excludeUserId = null): bool
+    {
+        $phone = trim($phone);
+        if ($phone === '') {
+            return false;
+        }
+
+        if ($excludeUserId !== null) {
+            $st = $this->db->prepare("SELECT 1 FROM users WHERE phone = :phone AND user_id <> :uid LIMIT 1");
+            $st->execute([':phone' => $phone, ':uid' => $excludeUserId]);
+            return (bool) $st->fetchColumn();
+        }
+
+        $st = $this->db->prepare("SELECT 1 FROM users WHERE phone = :phone LIMIT 1");
+        $st->execute([':phone' => $phone]);
+        return (bool) $st->fetchColumn();
+    }
+
     /** Delete both sides */
     public function delete(int $mechanic_id): void
     {
@@ -161,8 +227,11 @@ class Mechanic
         try {
             $st = $this->db->prepare("SELECT user_id FROM mechanics WHERE mechanic_id = ?");
             $st->execute([$mechanic_id]);
-            $userId = (int)($st->fetchColumn() ?: 0);
-            if (!$userId) { $this->db->rollBack(); return; }
+            $userId = (int) ($st->fetchColumn() ?: 0);
+            if (!$userId) {
+                $this->db->rollBack();
+                return;
+            }
 
             $d1 = $this->db->prepare("DELETE FROM mechanics WHERE mechanic_id = ?");
             $d1->execute([$mechanic_id]);
@@ -179,20 +248,22 @@ class Mechanic
     private function nextMechanicCode(): string
     {
         $row = $this->db->query("SELECT mechanic_code FROM mechanics ORDER BY mechanic_id DESC LIMIT 1")
-                        ->fetch(PDO::FETCH_ASSOC);
+            ->fetch(PDO::FETCH_ASSOC);
         $last = $row['mechanic_code'] ?? 'MEC000';
-        $num  = (int)preg_replace('/\D/', '', $last);
+        $num = (int) preg_replace('/\D/', '', $last);
         return sprintf('MEC%03d', $num + 1);
     }
 
     private function uniqueUsername(string $first, string $last): string
     {
         $base = strtolower(preg_replace('/\W+/', '', $first . $last)) ?: 'mechanic';
-        $try  = $base; $i = 1;
+        $try = $base;
+        $i = 1;
         $st = $this->db->prepare("SELECT COUNT(*) FROM users WHERE username = ?");
         while (true) {
             $st->execute([$try]);
-            if ((int)$st->fetchColumn() === 0) return $try;
+            if ((int) $st->fetchColumn() === 0)
+                return $try;
             $try = $base . $i++;
         }
     }

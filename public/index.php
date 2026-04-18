@@ -273,6 +273,7 @@ $router->get('/admin/admin-viewreports', [ReportsController::class, 'index']);
 $router->get('/admin/admin-viewreports', [ReportsController::class, 'index']);
 $router->get('/admin/admin-viewreports/export', [ReportsController::class, 'export']);
 $router->get('/admin/admin-viewreports/export-pdf', [ReportsController::class, 'exportPdf']);
+$router->get('/admin/admin-viewreports/export-all', [ReportsController::class, 'exportAll']);
 
 
 use app\controllers\admin\ComplaintsController;
@@ -568,7 +569,7 @@ $router->post('/receptionist/billing/invoice/{id}', [app\controllers\Receptionis
 $router->get('/receptionist/billing/printInvoice/{id}', [app\controllers\Receptionist\BillingController::class, 'printInvoice']);
 $router->get('/receptionist/billing/downloadInvoice/{id}', [app\controllers\Receptionist\BillingController::class, 'downloadInvoicePdf']);
 $router->get('/receptionist/billing/paid', [app\controllers\Receptionist\BillingController::class, 'paidInvoices']);
-$router->get('/receptionist/billing/mark-paid',[app\controllers\Receptionist\BillingController::class, 'markAsPaid']);
+$router->get('/receptionist/billing/mark-paid', [app\controllers\Receptionist\BillingController::class, 'markAsPaid']);
 
 
 //Receptionist: Profile

@@ -1,6 +1,8 @@
 <?php
 $current = $current ?? 'mechanics';
-$B = rtrim(BASE_URL, '/');
+$B = rtrim($base ?? BASE_URL, '/');
+$q = $q ?? '';
+$status = $status ?? 'all';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -34,13 +36,29 @@ $B = rtrim(BASE_URL, '/');
             <span>Back to Staff Management</span>
           </a>
 
-          <input type="text" class="search-input" id="searchInput" placeholder="Search by name, code, email or phone…"
-            aria-label="Search mechanics">
+          <form method="get" action="<?= $B ?>/admin/mechanics" class="tools">
+            <input type="text" class="search-input" id="searchInput" name="q"
+              placeholder="Search by name, code, email or phone…"
+              value="<?= htmlspecialchars($q, ENT_QUOTES, 'UTF-8') ?>" aria-label="Search mechanics">
 
-          <a class="add-btn" href="<?= $B ?>/admin/mechanics/create">
-            <i class="fa-solid fa-plus"></i>
-            <span>Add Mechanic</span>
-          </a>
+            <select class="status-filter" name="status" aria-label="Filter mechanics by status">
+              <option value="all" <?= $status === 'all' ? 'selected' : '' ?>>All Status</option>
+              <option value="active" <?= $status === 'active' ? 'selected' : '' ?>>Active</option>
+              <option value="inactive" <?= $status === 'inactive' ? 'selected' : '' ?>>Inactive</option>
+              <option value="pending" <?= $status === 'pending' ? 'selected' : '' ?>>Pending</option>
+            </select>
+
+            <button class="add-btn" type="submit" style="border:none; cursor:pointer;">
+              <i class="fa-solid fa-filter"></i>
+              <span>Filter</span>
+            </button>
+
+            <a class="add-btn" href="<?= $B ?>/admin/mechanics/create">
+              <i class="fa-solid fa-plus"></i>
+              <span>Add Mechanic</span>
+            </a>
+          </form>
+
         </div>
       </header>
 
@@ -48,11 +66,9 @@ $B = rtrim(BASE_URL, '/');
         <table id="mechanicsTable">
           <thead>
             <tr>
-              <th>ID</th>
               <th>Code</th>
               <th>Full Name</th>
               <th>Specialization</th>
-              <th>Exp (yrs)</th>
               <th>Phone</th>
               <th>Branch</th>
               <th>Status</th>
@@ -64,11 +80,9 @@ $B = rtrim(BASE_URL, '/');
             <?php if (!empty($mechanics)): ?>
               <?php foreach ($mechanics as $m): ?>
                 <tr>
-                  <td><?= htmlspecialchars($m['mechanic_id']) ?></td>
                   <td><?= htmlspecialchars($m['mechanic_code'] ?? '') ?></td>
                   <td><?= htmlspecialchars(($m['first_name'] ?? '') . ' ' . ($m['last_name'] ?? '')) ?></td>
                   <td><?= htmlspecialchars($m['specialization'] ?? '') ?></td>
-                  <td><?= htmlspecialchars($m['experience_years'] ?? 0) ?></td>
                   <td><?= htmlspecialchars($m['phone'] ?? '') ?></td>
                   <td>
                     <?php
@@ -80,10 +94,10 @@ $B = rtrim(BASE_URL, '/');
                     ?>
                   </td>
                   <td>
-                    <?php $statusClass = ($m['mech_status'] === 'inactive') ? 'status--inactive' : 'status--active'; ?>
+                    <?php $statusClass = (($m['user_status'] ?? 'active') === 'inactive') ? 'status--inactive' : 'status--active'; ?>
                     <span class="status-pill <?= $statusClass ?>">
                       <span class="dot"></span>
-                      <?= htmlspecialchars(ucfirst($m['mech_status'])) ?>
+                      <?= htmlspecialchars(ucfirst($m['user_status'] ?? 'active')) ?>
                     </span>
                   </td>
                   <td><?= htmlspecialchars($m['created_at'] ?? '') ?></td>
@@ -109,7 +123,7 @@ $B = rtrim(BASE_URL, '/');
               <?php endforeach; ?>
             <?php else: ?>
               <tr>
-                <td colspan="10" class="empty-row">
+                <td colspan="9" class="empty-row">
                   <i class="fa-regular fa-circle-question"></i>
                   <span>No mechanics found. Use “Add Mechanic” to create one.</span>
                 </td>
@@ -120,22 +134,6 @@ $B = rtrim(BASE_URL, '/');
       </div>
     </section>
   </main>
-
-  <script>
-    (function () {
-      var q = document.getElementById('searchInput');
-      if (!q) return;
-      var rows = Array.from(document.querySelectorAll('#mechanicsTable tbody tr'));
-
-      q.addEventListener('input', function () {
-        var v = this.value.toLowerCase();
-        rows.forEach(function (tr) {
-          var text = tr.innerText.toLowerCase();
-          tr.style.display = text.includes(v) ? '' : 'none';
-        });
-      });
-    })();
-  </script>
 
 </body>
 

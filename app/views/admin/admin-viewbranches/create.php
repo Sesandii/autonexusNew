@@ -2,6 +2,8 @@
 /** @var string $base */
 /** @var array $managers */
 /** @var string $nextCode */
+$errors = $errors ?? [];
+$old = $old ?? [];
 $base = rtrim($base ?? BASE_URL, '/');
 $current = 'branches';
 $nextCode = $nextCode ?? 'BR001';
@@ -41,6 +43,14 @@ function e($value): string
         </a>
       </header>
 
+      <?php if (!empty($errors)): ?>
+        <div class="alert alert-danger">
+          <?php foreach ($errors as $error): ?>
+            <div><?= e($error) ?></div>
+          <?php endforeach; ?>
+        </div>
+      <?php endif; ?>
+
       <form class="create-form-shell" method="post" action="<?= e($base . '/admin/branches') ?>">
         <section class="create-card">
           <div class="create-card-header">
@@ -52,31 +62,34 @@ function e($value): string
             <div class="form-grid">
               <div class="field">
                 <label class="label">Branch Code</label>
-                <input class="input" name="code" value="<?= e($nextCode) ?>" readonly>
+                <input class="input" name="code" value="<?= e($old['branch_code'] ?? $nextCode) ?>" readonly>
               </div>
 
               <div class="field">
                 <label class="label">Status</label>
                 <select class="input" name="status">
-                  <option value="active" selected>Active</option>
-                  <option value="inactive">Inactive</option>
+                  <option value="active" <?= (($old['status'] ?? 'active') === 'active') ? 'selected' : '' ?>>Active
+                  </option>
+                  <option value="inactive" <?= (($old['status'] ?? 'active') === 'inactive') ? 'selected' : '' ?>>Inactive
+                  </option>
                 </select>
               </div>
 
               <div class="field">
                 <label class="label">Branch Name</label>
-                <input class="input" name="name" placeholder="Branch name" required>
+                <input class="input" name="name" placeholder="Branch name" value="<?= e($old['name'] ?? '') ?>"
+                  required>
               </div>
 
               <div class="field">
                 <label class="label">City / Location</label>
-                <input class="input" name="city" placeholder="City" required>
+                <input class="input" name="city" placeholder="City" value="<?= e($old['city'] ?? '') ?>" required>
               </div>
 
               <div class="field">
                 <label class="label">Manager</label>
-                <select class="input" name="manager">
-                  <option value="">— None —</option>
+                <select class="input" name="manager" required>
+                  <option value="">Select a manager</option>
                   <?php foreach (($managers ?? []) as $m): ?>
                     <?php
                     $id = (int) ($m['manager_id'] ?? 0);
@@ -84,44 +97,53 @@ function e($value): string
                     $name = trim(($m['first_name'] ?? '') . ' ' . ($m['last_name'] ?? ''));
                     $label = $code ? "$code — $name" : $name;
                     ?>
-                    <option value="<?= e((string) $id) ?>"><?= e($label) ?></option>
+                    <option value="<?= e((string) $id) ?>" <?= ((string) ($old['manager_id'] ?? '') === (string) $id) ? 'selected' : '' ?>>
+                      <?= e($label) ?>
+                    </option>
                   <?php endforeach; ?>
                 </select>
               </div>
 
               <div class="field">
                 <label class="label">Phone</label>
-                <input class="input" name="phone" placeholder="e.g. +94 11 234 5678">
+                <input class="input" type="tel" inputmode="numeric" name="phone" pattern="^0[0-9]{9}$" maxlength="10"
+                  autocomplete="tel" placeholder="0712345678" value="<?= e($old['phone'] ?? '') ?>">
               </div>
 
               <div class="field">
                 <label class="label">Email</label>
-                <input class="input" type="email" name="email" placeholder="example@autonexus.com">
+                <input class="input" type="email" name="email" placeholder="example@autonexus.com"
+                  value="<?= e($old['email'] ?? '') ?>">
               </div>
 
               <div class="field">
                 <label class="label">Created At</label>
-                <input class="input" type="date" name="created_at" value="<?= e(date('Y-m-d')) ?>">
+                <input class="input" type="date" name="created_at"
+                  value="<?= e(substr((string) ($old['created_at'] ?? date('Y-m-d')), 0, 10)) ?>">
               </div>
 
               <div class="field">
                 <label class="label">Capacity</label>
-                <input class="input" type="number" name="capacity" min="0" value="0">
+                <input class="input" type="number" name="capacity" min="0"
+                  value="<?= e((string) ($old['capacity'] ?? 0)) ?>">
               </div>
 
               <div class="field">
                 <label class="label">Staff Count</label>
-                <input class="input" type="number" name="staff" min="0" value="0">
+                <input class="input" type="number" name="staff" min="0"
+                  value="<?= e((string) ($old['staff_count'] ?? 0)) ?>">
               </div>
 
               <div class="field full">
-                <label class="label">Working Hours / Address</label>
-                <input class="input" name="working_hours" placeholder="e.g. Mon–Fri 08:00–17:00 or address">
+                <label class="label">Address</label>
+                <input class="input" name="address_line" placeholder="Branch address"
+                  value="<?= e($old['address_line'] ?? '') ?>">
               </div>
 
               <div class="field full">
                 <label class="label">Notes</label>
-                <textarea class="input" name="notes" rows="4" placeholder="Optional notes..."></textarea>
+                <textarea class="input" name="notes" rows="4"
+                  placeholder="Optional notes..."><?= e($old['notes'] ?? '') ?></textarea>
               </div>
             </div>
           </div>
