@@ -100,8 +100,8 @@ body {
 }
 
 /* Top-level links and buttons */
-.menu-item > a,
-.menu-item > .submenu-toggle,
+.menu-item>a,
+.menu-item>.submenu-toggle,
 .submenu-toggle--inner {
   width: 100%;
   display: flex;
@@ -126,8 +126,8 @@ body {
 }
 
 /* Force same text style everywhere */
-.menu-item > a span,
-.menu-item > .submenu-toggle span,
+.menu-item>a span,
+.menu-item>.submenu-toggle span,
 .submenu-toggle--inner span,
 .submenu li a span {
   font: inherit;
@@ -145,8 +145,8 @@ body {
 }
 
 /* Hover */
-.menu-item > a:hover,
-.menu-item > .submenu-toggle:hover,
+.menu-item>a:hover,
+.menu-item>.submenu-toggle:hover,
 .submenu-toggle--inner:hover,
 .submenu li a:hover {
   background: var(--sidebar-hover);
@@ -177,8 +177,8 @@ body {
 }
 
 /* Submenus */
-.has-submenu > .submenu,
-.submenu-group > .submenu {
+.has-submenu>.submenu,
+.submenu-group>.submenu {
   display: none;
   margin: 6px 0 10px 12px;
   padding-left: 12px;
@@ -186,14 +186,14 @@ body {
 }
 
 /* Open state */
-.has-submenu.open > .submenu,
-.submenu-group.open > .submenu {
+.has-submenu.open>.submenu,
+.submenu-group.open>.submenu {
   display: block;
 }
 
-.has-submenu.open > .submenu-toggle .caret,
-.submenu-group.open > .submenu-toggle .caret,
-.submenu-group.open > .submenu-toggle--inner .caret {
+.has-submenu.open>.submenu-toggle .caret,
+.submenu-group.open>.submenu-toggle .caret,
+.submenu-group.open>.submenu-toggle--inner .caret {
   transform: rotate(90deg);
 }
 
