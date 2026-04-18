@@ -62,7 +62,7 @@ $current = $current ?? '';
     </li>
 
     <!-- Users -->
-    <li class="menu-item has-submenu <?= in_array($current, ['staff', 'customers'], true) ? 'open' : '' ?>">
+    <li class="menu-item has-submenu <?= in_array($current, ['staff', 'customers', 'service-managers', 'mechanics', 'supervisors', 'receptionists'], true) ? 'open' : '' ?>">
       <button class="submenu-toggle" type="button">
         <i class="fa-solid fa-users"></i>
         <span>Users</span>
