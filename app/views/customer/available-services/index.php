@@ -7,6 +7,7 @@ if (!empty($branch_name)) {
 } elseif (!empty($branch_code)) {
   $branchTitle = " — " . htmlspecialchars($branch_code);
 }
+$availServicesCssVersion = @filemtime(dirname(APP_ROOT) . '/public/assets/css/customer/available-services.css') ?: time();
 $availServicesJsVersion = @filemtime(dirname(APP_ROOT) . '/public/assets/js/customer/available-services.js') ?: time();
 ?>
 <!DOCTYPE html>
@@ -17,8 +18,7 @@ $availServicesJsVersion = @filemtime(dirname(APP_ROOT) . '/public/assets/js/cust
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <link rel="stylesheet" href="<?= $base ?>/public/assets/css/customer/page-header.css" />
-  <link rel="stylesheet" href="<?= $base ?>/public/assets/css/customer/available-services.css" />
-  <link rel="stylesheet" href="<?= $base ?>/public/assets/css/customer/sidebar.css" />
+  <link rel="stylesheet" href="<?= $base ?>/public/assets/css/customer/available-services.css?v=<?= (int)$availServicesCssVersion ?>" />
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
@@ -31,128 +31,118 @@ $availServicesJsVersion = @filemtime(dirname(APP_ROOT) . '/public/assets/js/cust
   <?php
     $headerIcon = 'fa-solid fa-car-side';
     $headerTitle = 'Available Services' . $branchTitle;
-    $headerSubtitle = 'Explore premium automotive services tailored to your ride.';
+    $headerSubtitle = 'Pick one service and book instantly with clear pricing.';
     include APP_ROOT . '/views/partials/customer-page-header.php';
   ?>
 
-  <main class="content-wrapper">
-    <!-- FILTER TABS -->
-    <div class="filters" role="tablist" aria-label="Service categories">
-      <button class="chip active" data-filter="all" role="tab" aria-selected="true"><i class="fa-solid fa-layer-group"></i> All</button>
-      <button class="chip" data-filter="maintenance" role="tab"><i class="fa-solid fa-screwdriver-wrench"></i> Maintenance</button>
-      <button class="chip" data-filter="tyre" role="tab"><i class="fa-solid fa-circle-notch"></i> Tyre</button>
-      <button class="chip" data-filter="cleaning" role="tab"><i class="fa-solid fa-broom"></i> Cleaning</button>
-      <button class="chip" data-filter="nano" role="tab"><i class="fa-solid fa-spray-can-sparkles"></i> Nano</button>
-      <button class="chip" data-filter="paint" role="tab"><i class="fa-solid fa-paint-roller"></i> Paint</button>
-      <button class="chip" data-filter="electrical" role="tab"><i class="fa-solid fa-bolt"></i> Electrical</button>
-      <button class="chip" data-filter="brakes" role="tab"><i class="fa-solid fa-circle-stop"></i> Brakes</button>
-      <button class="chip" data-filter="ac" role="tab"><i class="fa-regular fa-snowflake"></i> A/C</button>
-      <button class="chip" data-filter="battery" role="tab"><i class="fa-solid fa-car-battery"></i> Battery</button>
-      <button class="chip" data-filter="suspension" role="tab"><i class="fa-solid fa-arrows-up-down-left-right"></i> Suspension</button>
-      <button class="chip" data-filter="glass" role="tab"><i class="fa-regular fa-window-maximize"></i> Glass</button>
-      <button class="chip" data-filter="inspection" role="tab"><i class="fa-solid fa-clipboard-check"></i> Inspection</button>
-      <button class="chip" data-filter="addons" role="tab"><i class="fa-solid fa-gift"></i> Add-ons</button>
+  <main class="content-wrapper available-services-page">
+    <section class="trust-strip" aria-label="Why customers choose AutoNexus">
+      <article class="trust-card"><i class="fa-solid fa-award"></i><span>Certified Technicians</span></article>
+      <article class="trust-card"><i class="fa-solid fa-shield-check"></i><span>Genuine Parts</span></article>
+      <article class="trust-card"><i class="fa-solid fa-receipt"></i><span>Transparent Pricing</span></article>
+      <article class="trust-card"><i class="fa-solid fa-bolt"></i><span>Same-Day Service Available</span></article>
+    </section>
+
+    <div class="service-filters" role="tablist" aria-label="Service categories">
+      <button type="button" class="service-chip active" data-filter="all" role="tab" aria-selected="true"><i class="fa-solid fa-layer-group"></i> All</button>
+      <button type="button" class="service-chip" data-filter="maintenance" role="tab"><i class="fa-solid fa-screwdriver-wrench"></i> Maintenance</button>
+      <button type="button" class="service-chip" data-filter="tyre" role="tab"><i class="fa-solid fa-circle-notch"></i> Tyre</button>
+      <button type="button" class="service-chip" data-filter="cleaning" role="tab"><i class="fa-solid fa-broom"></i> Cleaning</button>
+      <button type="button" class="service-chip" data-filter="nano" role="tab"><i class="fa-solid fa-spray-can-sparkles"></i> Nano</button>
+      <button type="button" class="service-chip" data-filter="paint" role="tab"><i class="fa-solid fa-paint-roller"></i> Paint</button>
+      <button type="button" class="service-chip" data-filter="electrical" role="tab"><i class="fa-solid fa-bolt"></i> Electrical</button>
+      <button type="button" class="service-chip" data-filter="brakes" role="tab"><i class="fa-solid fa-circle-stop"></i> Brakes</button>
+      <button type="button" class="service-chip" data-filter="ac" role="tab"><i class="fa-regular fa-snowflake"></i> A/C</button>
+      <button type="button" class="service-chip" data-filter="battery" role="tab"><i class="fa-solid fa-car-battery"></i> Battery</button>
+      <button type="button" class="service-chip" data-filter="suspension" role="tab"><i class="fa-solid fa-arrows-up-down-left-right"></i> Suspension</button>
+      <button type="button" class="service-chip" data-filter="glass" role="tab"><i class="fa-regular fa-window-maximize"></i> Glass</button>
+      <button type="button" class="service-chip" data-filter="inspection" role="tab"><i class="fa-solid fa-clipboard-check"></i> Inspection</button>
+      <button type="button" class="service-chip" data-filter="addons" role="tab"><i class="fa-solid fa-gift"></i> Add-ons</button>
     </div>
 
-    <div class="grid-layout">
-      <!-- SERVICES COLUMN -->
-      <section class="services" id="servicesRoot">
-        <?php
-        // ===== Dynamic render from DB (cards only) =====
-        $ORDER = ['maintenance','tyre','cleaning','nano','paint','electrical','brakes','ac','battery','suspension','glass','inspection','addons','other'];
+    <section class="services" id="servicesRoot">
+      <?php
+      $ORDER = ['maintenance','tyre','cleaning','nano','paint','electrical','brakes','ac','battery','suspension','glass','inspection','addons','other'];
 
-        function slug_type(?string $t): string {
-          $t = strtolower(trim($t ?? ''));
-          $map = [
-            'maintenance' => 'maintenance',
-            'tyre'        => 'tyre',
-            'tire'        => 'tyre',
-            'cleaning'    => 'cleaning',
-            'nano'        => 'nano',
-            'paint'       => 'paint',
-            'electrical'  => 'electrical',
-            'brakes'      => 'brakes',
-            'brake'       => 'brakes',
-            'a/c'         => 'ac',
-            'ac'          => 'ac',
-            'battery'     => 'battery',
-            'suspension'  => 'suspension',
-            'glass'       => 'glass',
-            'inspection'  => 'inspection',
-            'add-ons'     => 'addons',
-            'addons'      => 'addons',
-          ];
-          return $map[$t] ?? ($t ?: 'other');
-        }
+      function slug_type(?string $t): string {
+        $t = strtolower(trim($t ?? ''));
+        $map = [
+          'maintenance' => 'maintenance',
+          'tyre'        => 'tyre',
+          'tire'        => 'tyre',
+          'cleaning'    => 'cleaning',
+          'nano'        => 'nano',
+          'paint'       => 'paint',
+          'electrical'  => 'electrical',
+          'brakes'      => 'brakes',
+          'brake'       => 'brakes',
+          'a/c'         => 'ac',
+          'ac'          => 'ac',
+          'battery'     => 'battery',
+          'suspension'  => 'suspension',
+          'glass'       => 'glass',
+          'inspection'  => 'inspection',
+          'add-ons'     => 'addons',
+          'addons'      => 'addons',
+        ];
+        return $map[$t] ?? ($t ?: 'other');
+      }
 
-        // Group services by type slug
-        $groups = [];
-        foreach (($services ?? []) as $s) {
-          $cat = slug_type($s['type_name'] ?? '');
-          $groups[$cat][] = $s;
-        }
+      $groups = [];
+      foreach (($services ?? []) as $s) {
+        $cat = slug_type($s['type_name'] ?? '');
+        $groups[$cat][] = $s;
+      }
 
-        // Render categories in fixed order, only if they have services
-        foreach ($ORDER as $cat):
-          if (empty($groups[$cat])) continue;
-          $label = ucfirst($cat === 'ac' ? 'A/C' : $cat);
-        ?>
-          <h2 class="category" data-cat="<?= htmlspecialchars($cat) ?>"><?= htmlspecialchars($label) ?></h2>
-          <div class="service-grid" data-cat="<?= htmlspecialchars($cat) ?>">
-            <?php foreach ($groups[$cat] as $row): ?>
-              <article class="card"
-                       data-name="<?= htmlspecialchars($row['service_name']) ?>"
-                       data-service-id="<?= (int)$row['service_id'] ?>"
-                       data-price="<?= htmlspecialchars(number_format((float)$row['default_price'], 2, '.', '')) ?>"
-                       data-price-cents="<?= (int)round(((float)$row['default_price']) * 100) ?>">
-                <div class="card-head">
-                  <i class="fa-solid fa-screwdriver-wrench icon"></i>
-                  <h3><?= htmlspecialchars($row['service_name']) ?></h3>
-                </div>
-                <p><?= htmlspecialchars($row['description'] ?? 'Professional service for your vehicle.') ?></p>
-                <div class="meta">
-                  <span><i class="fa-regular fa-clock"></i>
-                    <?= htmlspecialchars((string)($row['base_duration_minutes'] ?? 60)) ?> min
-                  </span>
-                  <span class="price">$<?= htmlspecialchars(number_format((float)$row['default_price'], 2)) ?></span>
-                </div>
-                <button class="add"><i class="fa-solid fa-plus"></i> Add</button>
-              </article>
-            <?php endforeach; ?>
-          </div>
-        <?php endforeach; ?>
+      foreach ($ORDER as $cat):
+        if (empty($groups[$cat])) continue;
+        $label = ucfirst($cat === 'ac' ? 'A/C' : $cat);
+      ?>
+        <h2 class="service-category" data-cat="<?= htmlspecialchars($cat) ?>"><?= htmlspecialchars($label) ?></h2>
+        <div class="service-grid" data-cat="<?= htmlspecialchars($cat) ?>">
+          <?php foreach ($groups[$cat] as $row): ?>
+            <?php
+              $serviceId = (int)$row['service_id'];
+              $bookParams = ['service_id' => (string)$serviceId];
+              if (!empty($branch_code)) {
+                $bookParams['branch'] = (string)$branch_code;
+              }
+              $bookUrl = $base . '/customer/book?' . http_build_query($bookParams);
+            ?>
+            <article class="service-card" data-name="<?= htmlspecialchars($row['service_name']) ?>">
+              <div class="service-card-head">
+                <h3><?= htmlspecialchars($row['service_name']) ?></h3>
+                <span class="duration-badge">
+                  <i class="fa-regular fa-clock"></i>
+                  <?= htmlspecialchars((string)($row['base_duration_minutes'] ?? 60)) ?> mins
+                </span>
+              </div>
 
-        <?php if (empty($services)): ?>
-          <p class="muted">No services found for this branch.</p>
-        <?php endif; ?>
-        <!-- ===== /Dynamic render from DB ===== -->
-      </section>
+              <p class="description"><?= htmlspecialchars($row['description'] ?? 'Professional service for your vehicle.') ?></p>
 
-      <!-- CART COLUMN -->
-      <aside class="cart">
-        <div class="cart-box">
-          <h3><i class="fa-solid fa-cart-shopping"></i> Cart Summary</h3>
-          <ul id="cart-items" class="cart-items">
-            <li class="muted">No services added yet.</li>
-          </ul>
+              <div class="price-row">
+                <span class="price-label">Starting at</span>
+                <strong class="price">Rs. <?= htmlspecialchars(number_format((float)$row['default_price'], 2)) ?></strong>
+              </div>
 
-          <div class="totals">
-            <div><span>Subtotal</span> <strong>$<span id="subtotal">0.00</span></strong></div>
-            <div><span>Tax (8%)</span> <strong>$<span id="tax">0.00</span></strong></div>
-            <div class="grand"><span>Total</span> <strong>$<span id="total">0.00</span></strong></div>
-          </div>
-
-          <button id="calculate" class="btn dark"><i class="fa-solid fa-calculator"></i> Calculate</button>
-          <button id="checkout" class="btn accent"><i class="fa-solid fa-calendar-check"></i> Proceed to Booking</button>
+              <a class="book-now" href="<?= htmlspecialchars($bookUrl) ?>">
+                <i class="fa-solid fa-calendar-plus"></i>
+                <span>Book Now</span>
+              </a>
+            </article>
+          <?php endforeach; ?>
         </div>
-      </aside>
-    </div>
+      <?php endforeach; ?>
+
+      <?php if (empty($services)): ?>
+        <p class="muted">No services found for this branch.</p>
+      <?php endif; ?>
+    </section>
   </main>
 
   <footer class="footer">© <?= date('Y') ?> AutoNexus — Drive Smarter.</footer>
   </div>
 
-  <script>const BASE_URL="<?= $base ?>"; const BRANCH_CODE="<?= htmlspecialchars($branch_code ?? '') ?>";</script>
   <script src="<?= $base ?>/public/assets/js/customer/available-services.js?v=<?= (int)$availServicesJsVersion ?>"></script>
 </body>
 </html>
