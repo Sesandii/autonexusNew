@@ -1,0 +1,113 @@
+.details-section {
+  flex: 1;
+  margin-left: 280px;               /* keeps it next to sidebar */
+  padding: 40px 50px;               /* reasonable padding */
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  width: calc(100% - 320px);        /* full width minus sidebar + margin */
+  max-width: 1400px;
+  margin: 40px auto;                /* centers it */
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* Form header */
+.details-section h3 {
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 15px;
+}
+
+/* Labels */
+.details-section label {
+  font-weight: 600;
+  margin-bottom: 4px;
+  display: block;
+}
+
+/* Form inputs */
+.details-section input,
+.details-section select {
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+  width: 100%;
+  background-color: #f5f5f5;
+  box-sizing: border-box;
+}
+
+/* Footer buttons */
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
+.save-button {
+  padding: 6px 16px;
+  border-radius: 5px;
+  border: none;
+  background-color: red;
+  color: #fff;
+  cursor: pointer;
+  font-size: 14px;
+  margin-left: auto; /* pushes Save button to the right */
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+  .details-section {
+    width: calc(100% - 60px);
+    padding: 30px 20px;
+  }
+}
+
+/* ---------------------------------- */
+/* Updated Vehicle Entry Grid Layout  */
+/* ---------------------------------- */
+
+.vehicle-entry {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr) auto; /* 5 wide inputs + small delete button */
+  gap: 10px;
+  margin-bottom: 10px;
+  align-items: center;
+}
+
+.vehicle-entry input {
+  width: 100%;
+  padding: 8px;
+  box-sizing: border-box;
+}
+
+.vehicle-entry .remove-vehicle {
+  background: red;
+  color: white;
+  border: none;
+  padding: 4px 6px;   /* smaller button */
+  cursor: pointer;
+  border-radius: 3px;
+  font-size: 12px;    /* smaller text */
+  width: fit-content;
+  height: fit-content;
+  align-self: center;
+}
+
+/* Add Vehicle Button */
+#add-vehicle {
+  padding: 8px 12px;
+  font-size: 14px;
+  border-radius: 5px;
+  border: none;
+  background-color: grey;
+  color: #fff;
+  cursor: pointer;
+  width: fit-content;
+}
+
+#add-vehicle:hover {
+  background-color: #555;
+}

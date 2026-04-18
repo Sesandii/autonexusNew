@@ -1,0 +1,189 @@
+/* Reset & Base */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+html, body {
+  height: 100%;
+  background-color: #f5f7fa;
+}
+
+
+
+/* Main Content */
+.main-content {
+  flex: 1;
+  padding: 30px;
+  overflow-y: auto;
+}
+
+/* Top Bar */
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  background-color: #fff;
+  padding: 10px 20px;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.page-title {
+  font-weight: 600;
+  font-size: 18px;
+}
+
+.profile-icon {
+  width: 36px;
+  height: 36px;
+  background-color: #ccc;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+/* Feedback Section */
+.feedback-section h2 {
+  margin-bottom: 20px;
+   font-size: 24px;
+  font-weight: 600;
+  color: #333;
+}
+
+/* Filters */
+.filters {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.filters input[type="text"],
+.filters select,
+.filters input[type="date"] {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  flex: 1;
+  min-width: 150px;
+}
+
+/* Cards container */
+.cards-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+/* Card */
+.card {
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 0 8px rgba(0,0,0,0.05);
+  padding: 20px;
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.rating {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.rating-score {
+  font-weight: 700;
+  font-size: 14px;
+  padding: 4px 8px;
+  border-radius: 12px;
+  color: white;
+}
+
+.rating-score.green {
+  background-color: #4caf50;
+}
+
+.rating-score.red {
+  background-color: #ef5350;
+}
+
+.rating-score.yellow {
+  background-color: #fbc02d;
+}
+
+.stars {
+  color: #ef5350;
+  font-size: 16px;
+  letter-spacing: 2px;
+}
+
+/* Feedback Text */
+.feedback-text {
+  margin: 12px 0;
+  font-size: 14px;
+  line-height: 1.4;
+  color: #333;
+  flex-grow: 1;
+}
+
+/* Reply Status */
+.reply-status {
+  font-size: 12px;
+  margin-bottom: 8px;
+}
+
+.reply-status.replied {
+  color: #4caf50;
+  font-weight: 600;
+}
+
+.reply-status.not-replied {
+  color: #999;
+  font-style: italic;
+}
+
+/* Reply Button */
+.reply-btn {
+  background-color: #ef5350;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  align-self: flex-start;
+  transition: background-color 0.3s ease;
+}
+
+.reply-btn:hover {
+  background-color: #d43f3f;
+}
+
+/* Dont forget to put this after u merge the dashboard*/
+.sidebar-frame {
+  width: 260px;
+  border: none;
+  height: 100vh;
+}
+.container {
+  display: flex;
+}

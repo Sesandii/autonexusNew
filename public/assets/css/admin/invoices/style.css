@@ -1,0 +1,213 @@
+/* AutoNexus — Invoices (Admin) */
+:root{
+  --brand-red:#dc2626;
+  --brand-red-2:#ef4444;
+  --brand-dark:#0c0d13;
+  --bg:#f5f6fa;
+  --card:#ffffff;
+  --line:#e5e7eb;
+  --muted:#64748b;
+  --text:#0f172a;
+  --shadow:0 2px 8px rgba(0,0,0,.06);
+
+  --success:#16a34a;
+  --warning:#f59e0b;
+  --danger:#ef4444;
+
+  --radius:14px;
+
+  --sidebar-bg: #0c0c0c;             /* white panel */
+  --sidebar-hover: #F3F4F6;          /* light gray hover */
+  --sidebar-active: #E5E7EB;         /* selected pill */
+  --icon: #EF4444;                   /* red icons */
+  --text: #ffffff;                   /* dark text */
+  --text-strong: #ffffff;            /* strong text on active pill */
+  --divider: rgba(17,24,39,0.08);    /* subtle divider */
+}
+
+/* Reset the old layout bug (the sidebar is fixed) */
+html,body{height:100%;}
+body{
+  margin:0;
+}
+
+/* Main layout (keep in sync with sidebar width 260px) */
+.main-content{
+  margin-left:260px;
+  min-height:100vh;
+  padding:28px 32px 40px;
+}
+
+/* Page container */
+.page{
+  max-width:1100px;
+  margin:0 auto;
+}
+
+/* Title */
+.page h2{
+  margin:0 0 16px;
+  font-size:24px;
+  font-weight:700;
+  color:var(--brand-dark);
+}
+
+/* Summary cards */
+.summary-cards{
+  display:grid;
+  grid-template-columns:repeat(4, minmax(160px,1fr));
+  gap:12px;
+  margin:10px 0 16px;
+}
+@media (max-width:1000px){
+  .summary-cards{ grid-template-columns:repeat(2,minmax(160px,1fr)); }
+}
+@media (max-width:560px){
+  .summary-cards{ grid-template-columns:1fr; }
+}
+.card{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:14px;
+  box-shadow:var(--shadow);
+}
+.card p{
+  margin:0 0 6px;
+  color:var(--muted);
+  font-size:13px;
+}
+.card h3{
+  margin:0;
+  font-size:20px;
+  font-weight:800;
+  letter-spacing:.2px;
+}
+/* color accents */
+.card.total{ border-left:4px solid var(--brand-dark); }
+.card.paid { border-left:4px solid var(--success); }
+.card.pending{ border-left:4px solid var(--warning); }
+.card.overdue{ border-left:4px solid var(--danger); }
+.card.paid h3{ color:var(--success); }
+.card.pending h3{ color:var(--warning); }
+.card.overdue h3{ color:var(--danger); }
+
+/* Filters */
+.filter-bar{
+  display:grid;
+  grid-template-columns: 1.3fr .8fr .8fr;
+  gap:10px;
+  margin:8px 0 16px;
+}
+@media (max-width:720px){
+  .filter-bar{ grid-template-columns:1fr; }
+}
+.filter-bar input[type="text"],
+.filter-bar select,
+.filter-bar input[type="date"]{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:10px;
+  padding:10px 12px;
+  font-size:14px;
+  outline:none;
+  transition:border .15s, box-shadow .15s;
+}
+.filter-bar input:focus,
+.filter-bar select:focus{
+  border-color:var(--brand-red);
+  box-shadow:0 0 0 3px rgba(220,38,38,.12);
+}
+
+/* Table */
+.table-wrap{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:12px;
+  overflow:hidden;
+  box-shadow:var(--shadow);
+}
+table{
+  width:100%;
+  border-collapse:collapse;
+  background:#fff;
+}
+thead th{
+  background:#fafafa;
+  border-bottom:1px solid var(--line);
+  color:#111827;
+  font-weight:600;
+  font-size:14px;
+  padding:12px 14px;
+  text-align:left;
+}
+tbody td{
+  border-top:1px solid var(--line);
+  padding:12px 14px;
+  font-size:14px;
+}
+tbody tr:hover{ background:#fbfbfb; }
+
+/* Status pills */
+.status{
+  display:inline-block;
+  padding:4px 10px;
+  border-radius:999px;
+  font-weight:600;
+  font-size:12px;
+  line-height:1;
+  border:1px solid transparent;
+}
+.status.Paid{
+  color:#065f46;
+  background:#ecfdf5;
+  border-color:#a7f3d0;
+}
+.status.Pending{
+  color:#92400e;
+  background:#fffbeb;
+  border-color:#fde68a;
+}
+.status.Overdue{
+  color:#7f1d1d;
+  background:#fef2f2;
+  border-color:#fecaca;
+}
+
+/* Actions */
+.actions{
+  display:flex;
+  gap:10px;
+  align-items:center;
+  font-size:16px;
+}
+.actions .icon-btn{
+  height:34px; width:34px; border-radius:10px;
+  display:grid; place-items:center;
+  background:#fff; border:1px solid var(--line);
+  cursor:pointer; transition:transform .06s ease, border .15s;
+}
+.actions .icon-btn:hover{ border-color:#cbd5e1; }
+.actions .icon-btn:active{ transform:translateY(1px); }
+
+/* Brand accents where needed */
+a, .accent{ color:var(--brand-red); }
+.btn-primary{
+  background:var(--brand-red);
+  color:#fff; border:none; border-radius:10px;
+  padding:10px 14px; font-weight:700; cursor:pointer;
+}
+.btn-primary:hover{ background:var(--brand-red-2); }
+
+.sidebar a,
+.sidebar a span,
+.sidebar .menu-item,
+.sidebar .nav-link,
+.sidebar li {
+  color: #ffffff;
+}
+
+.sidebar a:hover,
+.sidebar a.active {
+  color: #000000 !important;
+}

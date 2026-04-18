@@ -1,0 +1,167 @@
+/* ==========================
+   Reset & Base
+========================== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
+}
+
+body {
+  background-color: #f4f6f8;
+  color: #333;
+  line-height: 1.5;
+}
+
+.main-content {
+  margin-left: 250px; /* Sidebar width */
+  padding: 30px;
+  min-height: 100vh;
+}
+
+/* ==========================
+   Page Title
+========================== */
+.main-content h3 {
+  font-size: 1.2rem;
+  font-weight: 400;
+  margin-bottom: 20px;
+  color: #1f2937;
+}
+
+/* ==========================
+   Appointment & Complaint Grid
+========================== */
+.appointment-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+}
+
+/* ==========================
+   Card Styles
+========================== */
+.appointment-card,
+.complaint-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.appointment-card:hover,
+.complaint-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+/* Card Headers */
+.appointment-card h4,
+.complaint-card h4 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  font-size: 1.15rem;
+  color: #111827;
+}
+
+.appointment-card p,
+.complaint-card p {
+  margin: 4px 0;
+  font-size: 0.95rem;
+}
+
+/* Nested Lists (Work Orders / Complaints) */
+.appointment-card ul,
+.complaint-card ul {
+  padding-left: 20px;
+  margin: 5px 0 10px 0;
+}
+
+.appointment-card ul li,
+.complaint-card ul li {
+  margin-bottom: 6px;
+  font-size: 0.9rem;
+}
+
+/* Nested headings */
+h5 {
+  margin: 8px 0 4px 0;
+  font-size: 0.95rem;
+  color: #555;
+  font-weight: 500;
+}
+
+/* ==========================
+   Status Badges
+========================== */
+.badge-status {
+  display: inline-block;
+  padding: 5px 12px;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: capitalize;
+  margin-bottom: 10px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* Badge Colors */
+.badge-status.requested   { background-color: lightblue; color: #fff; } /* Blue */
+.badge-status.open        { background-color: #f0f4ff; color: lightskyblue; } /* Light blue */
+.badge-status.in-progress { background-color: #fff4e6; color: #f39c12; }
+.badge-status.completed   { background-color: #e6f9f0; color: #27ae60; }
+.badge-status.cancelled   { background-color: #ffe6e6; color: #e74c3c; }
+
+/* ==========================
+   Links inside Cards
+========================== */
+.appointment-card a,
+.complaint-card a {
+  color: lightskyblue;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.appointment-card a:hover,
+.complaint-card a:hover {
+  text-decoration: underline;
+}
+
+/* ==========================
+   Collapsible Sections
+========================== */
+.collapsible-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease, padding 0.3s ease;
+}
+
+.card.active .collapsible-content {
+  max-height: 500px;
+  padding-top: 10px;
+}
+
+/* ==========================
+   Responsive
+========================== */
+@media (max-width: 1024px) {
+  .main-content {
+    margin-left: 200px;
+    padding: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .main-content {
+    margin-left: 0;
+    padding: 15px;
+  }
+
+  .appointment-grid {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+}

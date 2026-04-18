@@ -1,0 +1,176 @@
+/** {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
+}
+
+
+
+.sidebar .logo img {
+  width: 80%;      
+  max-width: 200px; 
+  height: auto;    
+  display: block;
+  margin: 0 auto;  
+}
+
+.sidebar {
+  position: fixed;
+  top: 0;        /* stick to very top */
+ /* left: 0;
+  width: 280px;
+  background: #000;
+  color: #fff;
+  padding: 0px;
+  min-height: 100vh;
+}
+
+.sidebar .logo {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.sidebar .logo h2 {
+  color: #ffffff;
+  margin: 5px 0 0;
+}
+
+.sidebar .logo p {
+  font-size: 12px;
+  letter-spacing: 1px;
+}
+
+.sidebar .menu {
+  list-style: none;
+  margin-top: 20px;
+}
+
+.sidebar .menu li {
+  padding: 20px 40px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  color: #ccc;
+  border-radius: 0px;
+}
+
+.sidebar .menu li.active,
+.sidebar .menu li:hover {
+  background: #2a2d34;
+}
+
+.sidebar .menu li a {
+  color: inherit;        /* matches li text color */
+ /* text-decoration: none; /* removes underline */
+ /* display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
+
+.main {
+  flex: 1;
+  padding: 30px 30px 30px 30px; /* top, right, bottom, left */
+ /* display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  margin-left: 280px;
+}*/
+
+.header-bar {
+  display: flex;
+  justify-content: space-between; /* pushes h1 left, button right */
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+/* Header title styling (optional) */
+.header-bar h1 {
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0;
+}
+
+/* Create Invoice button styling */
+.create-btn {
+  background-color: red;
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.create-btn:hover {
+  background-color: red;
+}
+
+
+.container {
+  background: #fff;
+  border-radius: 8px;
+  padding: 40px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+  margin: 15px auto;
+  max-width: 1000px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+
+h2 {
+  margin-bottom: 20px;
+}
+
+.info-cards {
+  display: flex;
+  gap: 30px;
+  margin-bottom: 30px;
+}
+
+.card {
+  flex: 1;
+  background-color: #f3f4f7;
+  padding: 20px;
+  border-radius: 8px;
+}
+
+.card h3 {
+  margin-top: 0;
+}
+
+.complaint {
+  background: #fefefe;
+  border-left: 4px solid #ddd;
+  padding: 15px;
+  margin-bottom: 20px;
+}
+
+.tags {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  margin-top: 10px;
+}
+
+select {
+  padding: 5px;
+}
+
+.notes {
+  margin-bottom: 25px;
+}
+
+
+.timestamp {
+  font-size: 0.85em;
+  color: #777;
+}
+
+ 

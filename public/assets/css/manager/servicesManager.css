@@ -1,0 +1,344 @@
+.header {
+  display: flex;
+  justify-content: space-between; /* Heading left, actions right */
+  align-items: center;
+  margin-bottom: 25px;
+  margin-top: 10px;
+}
+
+.header h2 {
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0;
+}
+
+/* Right-side actions (button + search bar) */
+.top-actions {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+/* Button styling */
+.add-btn {
+  background: red;
+  color: #fff;
+  border: none;
+  padding: 9px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 14px;
+  transition: background 0.3s;
+  white-space: nowrap;
+}
+
+.add-btn:hover {
+  background: #c62828;
+}
+
+/* Search bar styling */
+.search-bar {
+  display: flex;
+  align-items: center;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  overflow: hidden;
+  background: #fff;
+}
+
+/* Tabs navigation */
+.tab-nav {
+  background-color: #f1f5f9;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.tab-list {
+  list-style: none;
+  display: flex;
+  margin: 0;
+  padding: 0;
+}
+
+.tab-item {
+  flex: 1;
+  padding: 12px 20px;
+  text-align: center;
+  cursor: pointer;
+  font-weight: 500;
+  color: #374151;
+  transition: background 0.3s, color 0.3s;
+}
+
+.tab-item:hover {
+  background-color: #e2e8f0;
+}
+
+.tab-item.active {
+  background-color: red;
+  color: white;
+}
+
+/* Tab content container */
+.tab-content {
+  display: none;
+  padding: 20px 0;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+/* ========================= */
+/* Services tab (#service)   */
+/* ========================= */
+
+.service-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 24px;
+  margin-top: 20px;
+}
+
+.service-card {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 20px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+}
+
+.service-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px rgba(0,0,0,0.12);
+}
+
+.card-icon {
+  font-size: 28px;
+  color: #8b5cf6;
+  margin-bottom: 10px;
+}
+
+.service-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+.service-tile a {
+    text-decoration: none; /* remove underline */
+    font-size: 16px;
+    color: inherit;
+}
+
+.service-desc {
+  font-size: 14px;
+  color: #6b7280;
+  margin-bottom: 12px;
+}
+
+.service-duration {
+  font-size: 14px;
+  color: #374151;
+}
+
+.service-price {
+  font-size: 18px;
+  font-weight: 600;
+  color: #dc2626; /* red like your UI */
+  margin-top: 8px;
+}
+
+/* =========================
+   SERVICES → CARD STYLE
+   ========================= */
+
+.service-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 28px;
+  margin-top: 24px;
+}
+
+.service-tile {
+  background: #ffffff;
+  padding: 22px 24px;
+  border-radius: 16px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
+  min-height: 170px;
+}
+
+.tile-icon {
+  font-size: 26px;
+  color: #a78bfa;
+  margin-bottom: 12px;
+}
+
+.tile-title {
+  font-size: 17px;
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: #111827;
+}
+
+.tile-desc {
+  font-size: 14px;
+  color: #6b7280;
+  margin-bottom: 10px;
+}
+
+.tile-duration {
+  font-size: 13px;
+  color: #9ca3af;
+}
+
+.tile-price {
+  margin-top: 6px;
+  font-size: 18px;
+  font-weight: 700;
+  color: #dc2626; /* RED like screenshot */
+}
+
+
+
+/* ========================= */
+/* Packages tab (#packages)  */
+/* ========================= */
+#packages .packages-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+#packages .package-card {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  position: relative;
+  transition: transform 0.2s;
+  margin-bottom: 20px;
+}
+
+#packages .package-card:hover {
+  transform: translateY(-2px);
+}
+
+#packages .package-header h2 {
+  font-size: 18px;
+  margin-bottom: 6px;
+  color: #333;
+}
+
+#packages .package-header p {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 20px;
+}
+
+#packages .package-services {
+  margin: 13px 0;
+  padding-left: 20px;
+}
+
+#packages .package-services li {
+  margin-bottom: 6px;
+  font-size: 14px;
+  color: #444;
+  list-style: none;
+}
+.package-card .status {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: capitalize;
+    color: white; /* default text color */
+}
+
+/* Status colors */
+.status.active { color: green; font-weight: 600; }
+.status.inactive { color: red; font-weight: 600; }
+.status.pending { color: orange; font-weight: 600; }
+#packages .package-footer {
+  margin-top: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#packages .price {
+  color: #e31d1a;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+#packages .duration {
+  font-size: 16px;
+  color: #999;
+}
+
+/* Filter container styling */
+.filter-container {
+  display: flex;
+  justify-content: flex-end; /* align filter to the left */
+  margin-bottom: 15px;
+}
+
+/* Make the actions inline */
+.package-actions {
+    display: flex;         /* horizontal alignment */
+    gap: 12px;             /* space between icons */
+    margin-top: 10px;      /* spacing from above content */
+}
+
+.package-actions a {
+    font-size: 18px;
+    text-decoration: none;
+    cursor: pointer;
+}
+.package-actions .edit-icon { color: #1f2937; }   /* dark gray */
+.package-actions .delete-icon { color: red; }
+.package-actions .activate-icon { color: green; }
+
+
+/* Select dropdown styling */
+.filter-container select.servicetype-filter {
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  background-color: white;
+  cursor: pointer;
+  outline: none;
+}
+
+.filter-container select.servicetype-filter:focus {
+  border-color: #007bff;
+}
+
+
+/* Button styling */
+.add-btn {
+  background: #e53935;
+  color: #fff;
+  border: none;
+  padding: 9px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 14px;
+  transition: background 0.3s;
+  white-space: nowrap;
+}
+
+.add-btn:hover {
+  background: #c62828;
+}

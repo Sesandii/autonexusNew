@@ -1,0 +1,118 @@
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background: #f5f6f8;
+  margin: 0;
+}
+
+
+
+.main-content {
+  margin-left: 260px;
+  padding: 30px;
+  min-height: 100vh;
+}
+
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #fff;
+  padding: 15px 20px;
+  border-bottom: 1px solid #ddd;
+}
+.header h2 {
+  
+
+  font-weight: 600;   font-size: 24px;
+  
+  color: #333;
+  margin-bottom: 20px;
+}
+.profile {
+  background: #ddd;
+  border-radius: 50%;
+  width: 35px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+/* Card style */
+.card {
+  background: #fff;
+  border-radius: 8px;
+  padding: 20px;
+  margin-top: 20px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+.card h3 {
+  margin: 0 0 20px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+/* Form */
+.compose-group {
+  margin-bottom: 20px;
+}
+.compose-group label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+.compose-group input[type="text"], 
+.compose-group textarea {
+  width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 10px;
+  font-size: 14px;
+}
+textarea {
+  height: 120px;
+  resize: none;
+}
+
+.radio-group {
+  margin-bottom: 15px;
+}
+.radio-group label {
+  margin-right: 20px;
+  font-size: 14px;
+}
+
+/* Button */
+.send-btn {
+  display: inline-flex;
+  align-items: center;
+  background: #e63946;
+  color: #fff;
+  padding: 10px 18px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: 0.2s ease;
+}
+.send-btn i { margin-right: 8px; }
+.send-btn:hover { background: #d62839; }
+
+/* Recent Notifications table */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.table th, .table td {
+  text-align: left;
+  padding: 12px;
+  border-bottom: 1px solid #eee;
+  font-size: 14px;
+}
+.table th {
+  background: #fafafa;
+  font-weight: 600;
+}

@@ -1,0 +1,211 @@
+/** {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
+}
+
+body {
+  display: flex;
+  background: #f6f7fa;
+  color: #333;
+}
+
+.sidebar .logo img {
+  width: 80%;      
+  max-width: 200px; 
+  height: auto;    
+  display: block;
+  margin: 0 auto;  
+}
+
+.sidebar {
+  position: fixed;
+  top: 0;        
+  left: 0;
+  width: 280px;
+  background: #000;
+  color: #fff;
+  padding: 0px;
+  min-height: 100vh;
+}
+
+.sidebar .logo {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.sidebar .logo h2 {
+  color: #ffffff;
+  margin: 5px 0 0;
+}
+
+.sidebar .logo p {
+  font-size: 12px;
+  letter-spacing: 1px;
+}
+
+.sidebar .menu {
+  list-style: none;
+  margin-top: 20px;
+}
+
+.sidebar .menu li {
+  padding: 20px 40px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  color: #ccc;
+  border-radius: 0px;
+}
+
+.sidebar .menu li.active,
+.sidebar .menu li:hover {
+  background: #2a2d34;
+}
+
+.sidebar .menu li a {
+  color: inherit;        
+  text-decoration: none; 
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
+
+.main {
+  flex: 1;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto; 
+  margin-left: 280px;
+}*/
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.topbar input {
+  width: 300px;
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  background: #575b66;
+  color: #fff;
+}
+
+.topbar input::placeholder {
+  color: #ddd;
+}
+
+.user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cards {
+  display: flex;
+  gap: 20px;
+  margin: 20px 0;
+}
+
+.card {
+  flex: 1;
+  background: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.card .icon {
+  font-size: 30px;
+  color: #e31d1a;
+}
+
+.card h2 {
+  margin: 10px 0;
+}
+
+.green {
+  color: green;
+  font-size: 12px;
+}
+
+.content {
+  display: flex;
+  gap: 20px;
+}
+
+.activities, .quick-links {
+  flex: 1;
+  background: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.activities table {
+  width: 100%;
+  margin-top: 15px;
+  border-collapse: collapse;
+}
+
+.activities th, .activities td {
+  text-align: left;
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.pending {
+  color: red;
+}
+
+.progress {
+  color: blue;
+}
+
+.completed {
+  color: green;
+}
+
+.quick-links .links {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* keeps 2 columns */
+  gap: 30px; /* ⬅ increased gap between blocks */
+  margin-top: 20px; /* optional: slightly more top space */
+}
+
+.quick-links .link {
+  background: #fff;
+  border: 1px solid #eee;
+  text-align: center;
+  padding: 40px; /* ⬅ increased padding to make block taller/wider */
+  border-radius: 12px;
+  font-size: 14px;
+  color: #e31d1a; 
+  font-weight: 500;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  width: 100%; /* ensures the block fills its grid cell */
+  box-sizing: border-box; /* include padding in width */
+}
+
+
+.link-block {
+  text-decoration: none;   /* removes underline */
+  color: #e31d1a;        /* keeps text color same as parent */
+  display: inline-block;   /* or block if you want full width */
+}
+
+.link-block .link {
+  text-decoration: none;   /* extra safety */
+  color: inherit;
+  cursor: pointer;         /* shows it’s clickable */
+}
+

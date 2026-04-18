@@ -1,0 +1,307 @@
+/*
+.main {
+  flex: 1;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto; 
+  margin-left: 280px;
+}*/
+
+.header {
+  display: flex;
+  justify-content: space-between; /* Heading left, actions right */
+  align-items: center;
+  margin-bottom: 25px;
+  margin-top: 10px;
+}
+
+.header h2 {
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0;
+}
+
+/* Right-side actions (button + search bar) */
+.top-actions {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+/* Button styling */
+.update-btn {
+  background: #e53935;
+  color: #fff;
+  border: none;
+  padding: 9px 45px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 14px;
+  transition: background 0.3s;
+  white-space: nowrap;
+}
+
+.update-btn:hover {
+  background: #c62828;
+}
+
+/* Profile card layout improvement */
+.profile-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;           /* Vertically centers ALL content */
+  background: #fff;
+  padding: 20px 25px;
+  border-radius: 12px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+/* Avatar + Name Section */
+.avatar-name {
+  display: flex;
+  align-items: center;           /* vertically align avatar + text */
+  gap: 18px;
+}
+
+.avatar {
+  width: 65px;
+  height: 65px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #ddd;
+}
+
+/* Name block */
+.name-block h3 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.id-line {
+  margin-top: 4px;
+  font-size: 14px;
+  color: #555;
+}
+
+/* Right side status + since date */
+.profile-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;       /* vertical centering */
+  gap: 6px;
+}
+
+.profile-meta .since {
+  font-size: 14px;
+  color: #444;
+}
+
+/* Status badge keeps your existing colors */
+.badge {
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 500;
+  color: white;
+}
+
+/* Active = Green */
+.badge.active {
+  background-color: #22c55e;   /* green */
+}
+
+/* Inactive = Red */
+.badge.inactive {
+  background-color: #ef4444;   /* red */
+}
+
+
+.tab-nav {
+  background-color: #f1f5f9;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.tab-list {
+  list-style: none;
+  display: flex;
+  margin: 0;
+  padding: 0;
+}
+
+.tab-item {
+  flex: 1;
+  padding: 12px 20px;
+  text-align: center;
+  cursor: pointer;
+  font-weight: 500;
+  color: #374151;
+  transition: background 0.3s, color 0.3s;
+}
+
+.tab-item:hover {
+  background-color: #e2e8f0;
+}
+
+.tab-item.active {
+  background-color: red;
+  color: white;
+}
+
+.tab-content {
+  display: none;
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  margin-bottom: 20px;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+/* Service History Table */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  font-family: 'Inter', sans-serif;
+}
+
+thead {
+  background: #f4f4f6;
+}
+
+th {
+  text-align: left;
+  padding: 12px;
+  font-size: 13px;
+  color: #666;
+  font-weight: 600;
+}
+
+td {
+  padding: 12px;
+  border-bottom: 1px solid #eee;
+  font-size: 14px;
+  color: #333;
+}
+
+tbody tr:hover {
+  background: #fafafa; /* subtle hover effect */
+}
+
+.total {
+  margin-top: 12px;
+  font-weight: bold;
+  text-align: right;
+  color: #111;
+}
+
+/* Vehicle Section */
+/* ================================
+   Vehicle Section (Updated UI)
+   ================================ */
+ /* 2 vehicles per row */
+.vehicle-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* two cards per row */
+  gap: 25px; /* space between cards */
+}
+
+/* Make sure each card fits nicely */
+.vehicle-card {
+  width: 100%;
+}
+ 
+#vehicle h3 {
+  margin-bottom: 16px;
+  font-size: 20px;
+  font-weight: 600;
+  color: #111827;
+}
+
+/* Vehicle container cards (same style as overview cards) */
+.vehicle-card {
+  background: #f3f4f7;
+  padding: 25px;
+  border-radius: 18px;
+  margin-bottom: 25px;
+  font-family: 'Inter', sans-serif;
+}
+
+/* Title inside vehicle card */
+.vehicle-card p {
+  margin: 6px 0;
+  font-size: 16px;
+  color: #333;
+  font-weight: 500;
+}
+
+/* Vehicle detail list */
+.vehicle-details {
+  list-style: none;
+  padding: 0;
+  margin-top: 15px;
+}
+
+.vehicle-details li {
+  padding: 10px 0;
+  font-size: 15px;
+  color: #333;
+  border-bottom: 1px solid #d1d5db;
+  line-height: 1.6;
+}
+
+.vehicle-details li:last-child {
+  border-bottom: none;
+}
+
+
+/* ================================
+   Customer Overview Redesign
+   ================================ */
+
+.overview-grid {
+  display: flex;
+  flex-direction: column; /* stack vertically */
+  gap: 25px;              /* space between cards */
+  margin-top: 10px;
+}
+
+
+.overview-card {
+  background: #f3f4f7;
+  padding: 25px;
+  border-radius: 18px;
+  font-family: 'Inter', sans-serif;
+}
+
+.overview-card h3 {
+  margin-bottom: 18px;
+  font-size: 22px;
+  font-weight: 600;
+  color: black;
+}
+
+.overview-card p {
+  font-size: 16px;
+  margin: 8px 0;
+  color: black;
+}
+
+.overview-card b {
+  font-weight: 400;
+}
+
+

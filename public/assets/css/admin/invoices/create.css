@@ -1,0 +1,250 @@
+/* ===== Invoice Create (Admin) ===== */
+
+.invoices-main {
+  margin-left: 260px;
+  padding: 30px;
+  background: #f3f4f6;
+  min-height: 100vh;
+}
+
+/* Subtitle helper */
+.invoices-subtitle {
+  margin-top: 4px;
+  font-size: 0.9rem;
+  color: #6b7280;
+}
+
+/* Panel */
+.invoice-panel {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06);
+  overflow: hidden;
+}
+
+.panel-head {
+  padding: 16px 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 14px;
+  flex-wrap: wrap;
+  border-bottom: 1px solid #f3f4f6;
+  background: #fff;
+}
+
+.panel-title h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.panel-title p {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+/* Search input with icon */
+.filter-input-icon {
+  position: relative;
+  min-width: 260px;
+}
+
+.filter-input-icon i {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #9ca3af;
+  font-size: 14px;
+  pointer-events: none;
+}
+
+.filter-input-icon input {
+  width: 100%;
+  padding: 10px 12px 10px 34px;
+  border-radius: 999px;
+  border: 1px solid #d1d5db;
+  background: #fff;
+  color: #111827;
+  font-size: 14px;
+}
+
+.filter-input-icon input:focus {
+  outline: none;
+  border-color: #cf3202;
+  box-shadow: 0 0 0 3px rgba(207, 50, 2, 0.12);
+}
+
+/* Table wrap: reuse your management style but keep it neat */
+.table-wrap {
+  overflow: auto;
+}
+
+.th-right,
+.td-right {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.th-actions {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.td-actions {
+  text-align: right;
+}
+
+/* Customer name emphasis */
+.cell-strong {
+  font-weight: 700;
+  color: #111827;
+}
+
+/* Empty row */
+.empty-row {
+  text-align: center;
+  padding: 18px 12px;
+  color: #6b7280;
+  font-size: 0.9rem;
+}
+
+/* Form overlay section */
+.invoice-form-wrap {
+  margin-top: 18px;
+}
+
+/* Form card */
+.invoice-form-card {
+  max-width: 820px;
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.10);
+  padding: 18px 18px 16px;
+}
+
+/* Form header */
+.invoice-form-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.invoice-form-head h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 800;
+  color: #111827;
+}
+
+.invoice-form-head p {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.icon-close {
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  cursor: pointer;
+  color: #111827;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background .15s ease, transform .06s ease;
+}
+
+.icon-close:hover {
+  background: #f3f4f6;
+}
+
+.icon-close:active {
+  transform: scale(0.98);
+}
+
+/* Grid fields */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.form-field label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #374151;
+  margin-bottom: 6px;
+}
+
+.form-field small {
+  display: block;
+  margin-top: 6px;
+  font-size: 0.78rem;
+  color: #9ca3af;
+}
+
+.form-field input {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid #d1d5db;
+  background: #fff;
+  color: #111827;
+  font-size: 14px;
+}
+
+.form-field input:focus {
+  outline: none;
+  border-color: #cf3202;
+  box-shadow: 0 0 0 3px rgba(207, 50, 2, 0.12);
+}
+
+.form-field--span2 {
+  grid-column: 1 / -1;
+}
+
+/* Actions */
+.form-actions {
+  margin-top: 14px;
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+/* Visibility helper */
+.hidden {
+  display: none !important;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .invoices-main {
+    margin-left: 0;
+    padding: 18px;
+  }
+
+  .filter-input-icon {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .form-field--span2 {
+    grid-column: auto;
+  }
+}

@@ -1,0 +1,223 @@
+/* Reset & Base */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+html, body {
+  height: 100%;
+  background-color: #f5f7fa;
+}
+
+.container {
+  display: flex;
+  height: 100%;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 260px;
+  background-color: #0d0d0d;
+  color: white;
+  padding: 20px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.logo {
+  font-size: 24px;
+  margin-bottom: 30px;
+}
+
+.menu {
+  width: 100%;
+}
+
+.menu a {
+  display: block;
+  padding: 12px 24px;
+  color: #f88;
+  text-decoration: none;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.menu a.active,
+.menu a:hover {
+  background-color: #222;
+  color: white;
+}
+
+/* Main Content */
+.main-content {
+  flex: 1;
+  padding: 30px;
+  overflow-y: auto;
+}
+
+/* Top Bar */
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.page-title {
+  font-weight: 600;
+  font-size: 18px;
+}
+
+.profile-icon {
+  width: 36px;
+  height: 36px;
+  background-color: #ccc;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+/* Service Progress Section */
+.service-progress-section h2 {
+  margin-bottom: 20px;
+  font-weight: 700;
+}
+
+/* Filters */
+.filters {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.filters input,
+.filters select {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  flex: 1;
+}
+
+/* Cards container */
+.cards-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+/* Card */
+.card {
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 0 8px rgba(0,0,0,0.05);
+  padding: 20px;
+  width: 300px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.badge {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.in-service {
+  background-color: #fff9c4;
+  color: #fbc02d;
+}
+
+.received {
+  background-color: #e3f2fd;
+  color: #1e88e5;
+}
+
+.completed {
+  background-color: #c8e6c9;
+  color: #43a047;
+}
+
+/* Progress Bar */
+.progress-bar-wrapper {
+  margin-top: 10px;
+}
+
+.progress-label {
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 6px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.progress-bar {
+  background-color: #eee;
+  border-radius: 6px;
+  height: 8px;
+  position: relative;
+  overflow: hidden;
+}
+
+.progress-fill {
+  background-color: #ef5350;
+  height: 100%;
+  border-radius: 6px 0 0 6px;
+  transition: width 0.3s ease;
+}
+
+/* Steps Indicator */
+.progress-steps {
+  margin-top: 10px;
+  font-size: 12px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.step {
+  color: #ccc;
+  position: relative;
+  padding-left: 10px;
+}
+
+.step.active {
+  color: #ef5350;
+  font-weight: 600;
+}
+
+.step:not(:last-child)::after {
+  content: '';
+  width: 30px;
+  height: 2px;
+  background-color: #ccc;
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: -1;
+}
+
+.step.active:not(:last-child)::after {
+  background-color: #ef5350;
+}
+
+/* Dont forget to put this after u merge the dashboard*/
+.sidebar-frame {
+  width: 260px;
+  border: none;
+  height: 100vh;
+}
+.container {
+  display: flex;
+}

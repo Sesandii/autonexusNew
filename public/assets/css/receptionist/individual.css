@@ -1,0 +1,275 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
+}
+
+body {
+  display: flex;
+  background: #f6f7fa;
+  color: #333;
+}
+
+.sidebar .logo img {
+  width: 80%;      
+  max-width: 200px; 
+  height: auto;    
+  display: block;
+  margin: 0 auto;  
+}
+
+.sidebar {
+  position: fixed;
+  top: 0;        /* stick to very top */
+  left: 0;
+  width: 280px;
+  background: #000;
+  color: #fff;
+  padding: 0px;
+  min-height: 100vh;
+}
+
+.sidebar .logo {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.sidebar .logo h2 {
+  color: #ffffff;
+  margin: 5px 0 0;
+}
+
+.sidebar .logo p {
+  font-size: 12px;
+  letter-spacing: 1px;
+}
+
+.sidebar .menu {
+  list-style: none;
+  margin-top: 20px;
+}
+
+.sidebar .menu li {
+  padding: 20px 40px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  color: #ccc;
+  border-radius: 0px;
+}
+
+.sidebar .menu li.active,
+.sidebar .menu li:hover {
+  background: #2a2d34;
+}
+
+.sidebar .menu li a {
+  color: inherit;        /* matches li text color */
+  text-decoration: none; /* removes underline */
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
+
+/* ========== CUSTOMER PROFILE UI ========== */
+
+.main {
+  flex: 1;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  margin-left: 280px; /* keep space for sidebar */
+}
+
+
+/* Profile container adjusted */
+.profile-container {
+  width: 120%;
+  max-width: 1000px;  /* wider for more breathing room */
+  margin: 20px 10px 10px;
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+/* Header */
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 15px;
+}
+
+.profile-header h2 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.back-btn {
+  border: none;
+  background: transparent;
+  font-size: 22px;
+  cursor: pointer;
+  padding: 4px;
+}
+
+/* Profile card */
+.profile-card {
+  display: flex;
+  justify-content: space-between;
+  padding: 20px;
+  background: #f9fafc;
+  border-radius: 10px;
+  margin: 20px 0;
+}
+
+.profile-info {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.avatar {
+  width: 70px;
+  height: 70px;
+  background: #ddd;
+  border-radius: 50%;
+}
+
+.profile-info h3 {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.customer-id {
+  font-size: 14px;
+  color: #666;
+}
+
+.profile-stats {
+  text-align: right;
+  font-size: 14px;
+}
+
+.status {
+  padding: 4px 10px;
+  border-radius: 14px;
+  font-size: 13px;
+  margin-bottom: 10px;
+  display: inline-block;
+}
+
+.status.active {
+  background: #d1f2d4;
+  color: #2b7a34;
+  font-weight: 500;
+}
+
+/* Tabs */
+.tabs {
+  display: flex;
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 20px;
+}
+
+.tab-btn {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 15px;
+  color: #555;
+}
+
+.tab-btn.active {
+  border-bottom: 3px solid red;
+  color: red;
+}
+
+/* Tab content */
+.tab-content {
+  display: none;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+.section {
+  margin-bottom: 20px;
+}
+
+.section h4 {
+  font-size: 16px;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.service-card {
+  background: #f1f3f5;
+  padding: 12px 15px;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.service-card .price {
+  font-weight: bold;
+  color: #007bff;
+  margin-top: 5px;
+}
+
+/* Table */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 15px 0;
+  font-size: 14px;
+}
+
+th, td {
+  padding: 12px;
+  border-bottom: 1px solid #e2e2e2;
+  text-align: left;
+}
+
+th {
+  background: #fafafa;
+  font-weight: 600;
+  color: #555;
+}
+
+.total {
+  font-weight: bold;
+  text-align: right;
+  margin-top: 10px;
+}
+
+/* Vehicle */
+.vehicle-card {
+  background: #f1f3f5;
+  padding: 18px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  font-size: 15px;
+}
+
+.vehicle-details {
+  list-style: none;
+  padding: 0;
+  font-size: 14px;
+}
+
+.vehicle-details li {
+  margin: 6px 0;
+}

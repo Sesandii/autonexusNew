@@ -1,0 +1,96 @@
+<?php $base = rtrim(BASE_URL, '/'); ?>
+<link rel="stylesheet" href="<?= $base ?>/public/assets/css/supervisor/sidebar.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<?php
+function isActive($route) {
+    $current = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+
+    $current = rtrim($current, '/');
+    $route   = rtrim($route, '/');
+
+    return str_starts_with($current, $route) ? 'active' : '';
+}
+?>
+
+<div class="sidebar">
+<h2 class="brand-text">AutoNexus</h2>
+
+    <div class="nav-links">
+      <a href="<?= $base ?>/supervisor/dashboard" class="<?= isActive('/supervisor/dashboard') ?>">
+      <i class="fa-solid fa-gauge-high"></i> <span class="link-text">Dashboard</span>
+      </a>
+
+      <a href="<?= $base ?>/supervisor/workorders" class="<?= isActive('/supervisor/workorders') ?>">
+      <i class="fa-solid fa-file-invoice"></i> <span class="link-text">Work Orders</span>
+      </a>
+
+      <a href="<?= $base ?>/supervisor/assignedjobs" class="<?= isActive('/supervisor/assignedjobs') ?>">
+      <i class="fa-solid fa-screwdriver-wrench"></i> <span class="link-text">Assigned</span>
+      </a>
+
+      <a href="<?= $base ?>/supervisor/coordination" class="<?= isActive('/supervisor/coordination') ?>">
+      <i class="fa-solid fa-people-arrows"></i> <span class="link-text">Coordinate</span>
+      </a>
+
+      <a href="<?= $base ?>/supervisor/history" class="<?= isActive('/supervisor/history') ?>">
+      <i class="fa-solid fa-clock-rotate-left"></i> <span class="link-text">Vehicle History</span>
+      </a>
+
+      <a href="<?= $base ?>/supervisor/complaints_feedbacks" class="<?= isActive('/supervisor/complaints_feedbacks') ?>">
+      <i class="fa-solid fa-comments"></i> <span class="link-text">Feedback</span>
+      </a>
+
+      <a href="<?= $base ?>/supervisor/reports" class="<?= isActive('/supervisor/reports') ?>">
+      <i class="fa-solid fa-chart-line"></i> <span class="link-text">Report</span>
+      </a>
+
+      <a href="<?= $base ?>/supervisor/profile/edit" class="<?= isActive('/supervisor/profile/edit')?>">
+      <i class="fa-solid fa-user-gear"></i> <span class="link-text">Profile</span>
+      </a>
+
+      <a href="<?= $base ?>/logout" id="logout-link">
+      <i class="fa-solid fa-right-from-bracket"></i> <span class="link-text">Sign Out</span>
+      </a>
+    </div>
+  </div>
+
+ <div id="logout-modal" class="modal hidden">
+  <div class="modal-content">
+    <h3>Confirm Logout</h3>
+    <p>Are you sure you want to log out?</p>
+    <div class="modal-buttons">
+      <button id="cancel-logout" class="btn btn-cancel">Cancel</button>
+      <button id="confirm-logout" class="btn btn-confirm">Log Out</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const logoutLink = document.getElementById('logout-link');
+  const modal = document.getElementById('logout-modal');
+  const cancelBtn = document.getElementById('cancel-logout');
+  const confirmBtn = document.getElementById('confirm-logout');
+
+  logoutLink.addEventListener('click', function(e) {
+    e.preventDefault();
+    modal.classList.remove('hidden');
+  });
+
+  cancelBtn.addEventListener('click', function() {
+    modal.classList.add('hidden');
+  });
+
+  confirmBtn.addEventListener('click', function() {
+    window.location.href = logoutLink.href;
+  });
+
+  modal.addEventListener('click', function(e) {
+    if (e.target === modal) {
+      modal.classList.add('hidden');
+    }
+  });
+});
+</script>

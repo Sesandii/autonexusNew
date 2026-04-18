@@ -1,0 +1,145 @@
+/* AutoNexus – Sidebar (Light Version) */
+:root{
+  --sidebar-bg: #0c0c0c;             /* white panel */
+  --sidebar-hover: #F3F4F6;          /* light gray hover */
+  --sidebar-active: #E5E7EB;         /* selected pill */
+  --icon: #EF4444;                   /* red icons */
+  --text: #ffffff;                   /* dark text */
+  --text-strong: #ffffff;            /* strong text on active pill */
+  --divider: rgba(17,24,39,0.08);    /* subtle divider */
+  --radius: 12px;
+}
+
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; padding: 0; }
+body {
+  font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  background: #e7e8ea; /* just to show page background */
+}
+
+/* Sidebar Container */
+.sidebar {
+  width: 260px;
+  min-height: 100vh;
+  background: var(--sidebar-bg);
+  color: var(--text);
+  padding: 18px 12px;
+  border-right: 1px solid var(--divider);
+}
+ /* Sidebar (fixed) */
+.sidebar{
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;          /* fills height */
+  width: 260px;
+  min-height: 100vh;  /* safe guard */
+  overflow-y: auto;   /* scroll if menu is long */
+  z-index: 1000;
+  background: var(--sidebar-bg);
+   color: var(--text);
+}
+
+/* Main content offset */
+.main-content{
+  margin-left: 260px; /* must match sidebar width */
+  min-height: 100vh;
+  padding: 24px 28px 40px;
+}
+
+/* Logo */
+.logo {
+  margin: 0 8px 18px 8px;
+  color: var(--text-strong);
+  font-weight: 700;
+  font-size: 20px;
+}
+
+/* Menu */
+.menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 6px;
+}
+
+/* Menu Items */
+.menu-item > a,
+.menu-item > button.submenu-toggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  color: var(--text);
+  text-decoration: none;
+  border-radius: var(--radius);
+  border: 1px solid transparent;
+  background: transparent;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+/* Icons */
+.menu-item i:not(.caret) {
+  width: 22px;
+  text-align: center;
+  color: var(--icon);
+  font-size: 18px;
+}
+
+/* Active Item */
+.menu-item.active > a {
+  background: var(--sidebar-active);
+  color: var(--sidebar-bg);
+}
+
+/* Hover State */
+.menu-item:hover > a,
+.menu-item > button.submenu-toggle:hover {
+  background: var(--sidebar-hover);
+  color: var(--sidebar-bg);
+}
+
+/* Submenu */
+.has-submenu { position: relative; }
+.submenu-toggle {
+  border: none;
+  font: inherit;
+  background: transparent;
+  padding: 0;
+}
+.caret {
+  margin-left: auto;
+  color: #6B7280;
+  transition: transform .2s ease;
+}
+
+/* collapsed by default */
+.submenu {
+  display: none;
+  list-style: none;
+  padding: 6px 0 6px 42px; /* indent to align with labels */
+  margin: 0;
+  border-left: 1px solid var(--divider);
+}
+.submenu a {
+  display: block;
+  padding: 8px 10px;
+  border-radius: 8px;
+  color: var(--text);
+  text-decoration: none;
+  font-size: 13px;
+}
+.submenu a:hover { background: var(--sidebar-hover); color: var(--sidebar-bg); }
+
+/* Hover-expand by default */
+.has-submenu:hover .submenu { display: block; }
+.has-submenu:hover .caret { transform: rotate(90deg); }
+
+/* Optional: click-to-open (if you toggle .open with JS) */
+.has-submenu.open .submenu { display: block; }
+.has-submenu.open .caret { transform: rotate(90deg); }
+

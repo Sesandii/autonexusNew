@@ -1,0 +1,144 @@
+.sidebar {
+  background-color: #000;
+  color: white;
+  width: 260px; 
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 20px 0;
+  position: sticky;
+  top: 0;
+  overflow-x: hidden;
+  font-family: 'Inter', sans-serif;
+}
+
+.brand-text {
+  margin: 0 8px 18px 8px;
+  margin-left: 20px;
+  color: var(--text-strong);
+  color: #fff;
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 24px;
+}
+
+.nav-links a {
+  display: flex;
+  align-items: center;
+  padding: 12px 20px;
+  text-decoration: none;
+  color: rgb(255, 255, 255);
+  transition: all 0.2s ease;
+  margin: 10px 5px; 
+  border-radius: 15px; 
+  width: auto; 
+  margin-top: 0.5px;
+}
+
+.nav-links a i {
+  color: #ef4444;
+  font-size: 18px; 
+  width: 28px; 
+  text-align: center;
+  margin-right: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.link-text {
+  font-weight: 500;
+  white-space: nowrap;
+  font-size:15px;
+  margin-left: 0.1px;
+}
+
+.nav-links a:hover
+{
+  background-color: #2a2a2a !important; 
+  color: #fff !important;
+  transform: none; 
+  border-left: none !important; 
+}
+
+.nav-links a.active {
+  background-color: #ffffff !important; 
+  color: #000000 !important;
+  transform: none; 
+  border-left: none !important; 
+}
+
+.nav-links a.active .link-text {
+  font-weight: 700;
+}
+
+.modal {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  background-color: rgba(0, 0, 0, 0.8) !important;
+  backdrop-filter: blur(10px) !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  z-index: 2147483647 !important; 
+}
+
+.modal.hidden {
+  display: none !important;
+}
+
+.modal-content {
+  background-color: #1a1a1a;
+  color: #fff;
+  padding: 40px;
+  border-radius: 24px;
+  text-align: center;
+  width: 90%;
+  max-width: 400px;
+  border: 1px solid #333;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+}
+
+.modal-buttons {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  margin-top: 25px;
+}
+
+.modal-buttons .btn {
+  padding: 12px 30px;
+  border-radius: 50px;
+  cursor: pointer;
+  border: none;
+  font-weight: 600;
+  width: 130px;
+}
+
+.btn-cancel { background-color: #333; color: #fff; }
+.btn-confirm { background-color: #ff4d4d; color: #fff; }
+
+.breadcrumb-text {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  font-size: 0.8rem;
+  color: #718096; 
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 500;
+}
+
+.breadcrumb-text .sep {
+  color: #cbd5e0; 
+  font-weight: 400;
+}
+
+.breadcrumb-text .active-page {
+  color: #f05a5a; 
+  font-weight: 600;
+}
+

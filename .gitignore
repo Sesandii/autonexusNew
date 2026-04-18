@@ -1,0 +1,45 @@
+/config/config.php
+
+# Debug logs
+debug.log
+*.log
+# Vendor directory
+/vendor/
+
+# Environment files
+.env
+.env.local
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Cache
+*.cache
+/cache/
+
+# Compiled files
+*.compiled
+
+# Testing
+/tests/
+test_results.txt
+/tests_artifacts/
+.pytest_cache/
+__pycache__/
+*.pyc
+report.html
+
+# Test documentation (local testing only)
+TESTING_REPORT.md
+TEST_SUITE_SUMMARY.md
+QUICK_START_TESTS.md
+TEST_EXECUTION_SUMMARY.md
+
