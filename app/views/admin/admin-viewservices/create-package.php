@@ -19,153 +19,157 @@ $base = rtrim(BASE_URL, '/'); ?>
 
     <main class="main-content services-form-page services-create-page">
         <div class="services-form-shell">
-        <header class="page-head">
-            <div>
-                <h1>Create Package</h1>
-                <p class="muted">Build a new package by selecting services and setting up pricing.</p>
-            </div>
-            <a class="btn btn-secondary" href="<?= $base ?>/admin/admin-viewservices">
-                <i class="fa-solid fa-arrow-left"></i>
-                <span>Back to Services</span>
-            </a>
-        </header>
-
-        <form method="post" action="<?= $base ?>/admin/packages">
-            <div class="card">
-                <div class="services-card-header">
-                    <i class="fa-solid fa-box"></i>
-                    <h2>Package Information</h2>
+            <header class="page-head">
+                <div>
+                    <h1>Create Package</h1>
+                    <p class="muted">Build a new package by selecting services and setting up pricing.</p>
                 </div>
-                <div class="grid">
-                    <div class="field">
-                        <label>Package Code</label>
-                        <input type="text" value="<?= htmlspecialchars($nextCode ?? '') ?>" readonly>
-                        <span class="muted">Generated automatically.</span>
+                <a class="btn btn-secondary" href="<?= $base ?>/admin/admin-viewservices">
+                    <i class="fa-solid fa-arrow-left"></i>
+                    <span>Back to Services</span>
+                </a>
+            </header>
+
+            <form method="post" action="<?= $base ?>/admin/packages">
+                <div class="card">
+                    <div class="services-card-header">
+                        <i class="fa-solid fa-box"></i>
+                        <h2>Package Information</h2>
+                    </div>
+                    <div class="grid">
+                        <div class="field">
+                            <label>Package Code</label>
+                            <input type="text" value="<?= htmlspecialchars($nextCode ?? '') ?>" readonly>
+                            <span class="muted">Generated automatically.</span>
+                        </div>
+
+                        <div class="field">
+                            <label for="name">Name</label>
+                            <input type="text" id="name" name="name" required>
+                        </div>
+
+                        <div class="field">
+                            <label for="status">Status</label>
+                            <select id="status" name="status">
+                                <option value="active" selected>Active</option>
+                                <option value="inactive">Inactive</option>
+                            </select>
+                        </div>
+
+                        <div class="field">
+                            <label for="default_price">Price</label>
+                            <input type="number" id="default_price" name="default_price" min="0" step="0.01"
+                                value="0.00">
+                            <span class="muted">Auto-calculated from items unless manual pricing is chosen.</span>
+                        </div>
                     </div>
 
-                    <div class="field">
-                        <label for="name">Name</label>
-                        <input type="text" id="name" name="name" required>
-                    </div>
-
-                    <div class="field">
-                        <label for="status">Status</label>
-                        <select id="status" name="status">
-                            <option value="active" selected>Active</option>
-                            <option value="inactive">Inactive</option>
-                        </select>
-                    </div>
-
-                    <div class="field">
-                        <label for="default_price">Price</label>
-                        <input type="number" id="default_price" name="default_price" min="0" step="0.01" value="0.00">
-                        <span class="muted">Auto-calculated from items unless manual pricing is chosen.</span>
-                    </div>
-                </div>
-
-                <div class="field form-textarea">
-                    <label for="description">Description</label>
-                    <textarea id="description" name="description" rows="4"></textarea>
-                </div>
-            </div>
-
-            <div class="card">
-                <div class="services-card-header">
-                    <i class="fa-solid fa-box-open"></i>
-                    <h2>Package Items</h2>
-                </div>
-                <p class="muted">Add the services that will be included in this package.</p>
-
-                <div id="packageItemsWrap"></div>
-
-                <button type="button" class="btn btn-secondary" id="addPackageItemBtn">
-                    <i class="fa-solid fa-plus"></i> Add service
-                </button>
-
-                <div class="summary">
-                    <div class="metric">
-                        <div class="label">Items base total</div>
-                        <div class="value" id="baseTotalLabel">Rs. 0.00</div>
-                    </div>
-                    <div class="metric">
-                        <div class="label">Calculated duration</div>
-                        <div class="value" id="durationLabel">0 min</div>
-                    </div>
-                    <div class="metric">
-                        <div class="label">Final package price</div>
-                        <div class="value" id="finalPriceLabel">Rs. 0.00</div>
-                    </div>
-                    <div class="metric">
-                        <div class="label">Package items</div>
-                        <div class="value" id="itemCountLabel">0</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card">
-                <div class="services-card-header">
-                    <i class="fa-solid fa-tags"></i>
-                    <h2>Pricing</h2>
-                </div>
-                <div class="grid">
-                    <div class="field">
-                        <label for="pricing_mode">Pricing Mode</label>
-                        <select id="pricing_mode" name="pricing_mode">
-                            <option value="auto">Auto from items</option>
-                            <option value="manual">Manual final price</option>
-                        </select>
-                    </div>
-
-                    <div class="field">
-                        <label for="discount_type">Discount Type</label>
-                        <select id="discount_type" name="discount_type">
-                            <option value="none">None</option>
-                            <option value="fixed">Fixed amount</option>
-                            <option value="percent">Percentage</option>
-                        </select>
-                    </div>
-
-                    <div class="field">
-                        <label for="discount_value">Discount Value</label>
-                        <input type="number" id="discount_value" name="discount_value" min="0" step="0.01" value="0">
-                    </div>
-
-                    <div class="field">
-                        <label for="manual_price">Manual Final Price</label>
-                        <input type="number" id="manual_price" name="manual_price" min="0" step="0.01" value="">
-                    </div>
-                </div>
-            </div>
-
-            <div class="card">
-                <div class="services-card-header">
-                    <i class="fa-solid fa-code-branch"></i>
-                    <h2>Branch Availability</h2>
-                </div>
-
-                <div class="field form-field-stack">
-                    <div class="field-choices">
-                        <label><input type="radio" name="apply_scope" value="all" checked> Apply to all active
-                            branches</label>
-                        <label><input type="radio" name="apply_scope" value="specific"> Apply to specific branches</label>
+                    <div class="field form-textarea">
+                        <label for="description">Description</label>
+                        <textarea id="description" name="description" rows="4"></textarea>
                     </div>
                 </div>
 
-                <div id="branchPicker" class="branch-box is-hidden">
-                    <?php foreach (($branches ?? []) as $b): ?>
-                        <label class="field-check">
-                            <input type="checkbox" name="branches[]" value="<?= (int) $b['branch_id'] ?>">
-                            <span><?= htmlspecialchars($b['name']) ?> (<?= htmlspecialchars($b['branch_code']) ?>)</span>
-                        </label>
-                    <?php endforeach; ?>
-                </div>
-            </div>
+                <div class="card">
+                    <div class="services-card-header">
+                        <i class="fa-solid fa-box-open"></i>
+                        <h2>Package Items</h2>
+                    </div>
+                    <p class="muted">Add the services that will be included in this package.</p>
 
-            <div class="form-actions">
-                <a class="btn btn-secondary" href="<?= $base ?>/admin/admin-viewservices">Cancel</a>
-                <button type="submit" class="btn btn-primary">Create Package</button>
-            </div>
-        </form>
+                    <div id="packageItemsWrap"></div>
+
+                    <button type="button" class="btn btn-secondary" id="addPackageItemBtn">
+                        <i class="fa-solid fa-plus"></i> Add service
+                    </button>
+
+                    <div class="summary">
+                        <div class="metric">
+                            <div class="label">Items base total</div>
+                            <div class="value" id="baseTotalLabel">Rs. 0.00</div>
+                        </div>
+                        <div class="metric">
+                            <div class="label">Calculated duration</div>
+                            <div class="value" id="durationLabel">0 min</div>
+                        </div>
+                        <div class="metric">
+                            <div class="label">Final package price</div>
+                            <div class="value" id="finalPriceLabel">Rs. 0.00</div>
+                        </div>
+                        <div class="metric">
+                            <div class="label">Package items</div>
+                            <div class="value" id="itemCountLabel">0</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="services-card-header">
+                        <i class="fa-solid fa-tags"></i>
+                        <h2>Pricing</h2>
+                    </div>
+                    <div class="grid">
+                        <div class="field">
+                            <label for="pricing_mode">Pricing Mode</label>
+                            <select id="pricing_mode" name="pricing_mode">
+                                <option value="auto">Auto from items</option>
+                                <option value="manual">Manual final price</option>
+                            </select>
+                        </div>
+
+                        <div class="field">
+                            <label for="discount_type">Discount Type</label>
+                            <select id="discount_type" name="discount_type">
+                                <option value="none">None</option>
+                                <option value="fixed">Fixed amount</option>
+                                <option value="percent">Percentage</option>
+                            </select>
+                        </div>
+
+                        <div class="field">
+                            <label for="discount_value">Discount Value</label>
+                            <input type="number" id="discount_value" name="discount_value" min="0" step="0.01"
+                                value="0">
+                        </div>
+
+                        <div class="field">
+                            <label for="manual_price">Manual Final Price</label>
+                            <input type="number" id="manual_price" name="manual_price" min="0" step="0.01" value="">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="services-card-header">
+                        <i class="fa-solid fa-code-branch"></i>
+                        <h2>Branch Availability</h2>
+                    </div>
+
+                    <div class="field form-field-stack">
+                        <div class="field-choices">
+                            <label><input type="radio" name="apply_scope" value="all" checked> Apply to all active
+                                branches</label>
+                            <label><input type="radio" name="apply_scope" value="specific"> Apply to specific
+                                branches</label>
+                        </div>
+                    </div>
+
+                    <div id="branchPicker" class="branch-box is-hidden">
+                        <?php foreach (($branches ?? []) as $b): ?>
+                            <label class="field-check">
+                                <input type="checkbox" name="branches[]" value="<?= (int) $b['branch_id'] ?>">
+                                <span><?= htmlspecialchars($b['name']) ?>
+                                    (<?= htmlspecialchars($b['branch_code']) ?>)</span>
+                            </label>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <a class="btn btn-secondary" href="<?= $base ?>/admin/admin-viewservices">Cancel</a>
+                    <button type="submit" class="btn btn-primary">Create Package</button>
+                </div>
+            </form>
         </div>
     </main>
 

@@ -1,6 +1,8 @@
-<?php $current = 'services'; $base = rtrim(BASE_URL, '/'); ?>
+<?php $current = 'services';
+$base = rtrim(BASE_URL, '/'); ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,220 +13,221 @@
   <link rel="stylesheet" href="<?= $base ?>/public/assets/css/admin/services/style.css">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 </head>
+
 <body>
-<?php include APP_ROOT . '/views/layouts/admin-sidebar/sidebar.php'; ?>
+  <?php include APP_ROOT . '/views/layouts/admin-sidebar/sidebar.php'; ?>
 
-<main class="main-content services-form-page services-create-page">
-  <div class="services-form-shell">
-  <header class="page-head">
-    <div>
-      <h1>Create Service / Package</h1>
-      <p class="muted">Choose a normal service type or select the package type to build a package.</p>
-    </div>
-    <a class="btn btn-secondary" href="<?= $base ?>/admin/admin-viewservices">
-      <i class="fa-solid fa-arrow-left"></i>
-      <span>Back to Services</span>
-    </a>
-  </header>
+  <main class="main-content services-form-page services-create-page">
+    <div class="services-form-shell">
+      <header class="page-head">
+        <div>
+          <h1>Create Service / Package</h1>
+          <p class="muted">Choose a normal service type or select the package type to build a package.</p>
+        </div>
+        <a class="btn btn-secondary" href="<?= $base ?>/admin/admin-viewservices">
+          <i class="fa-solid fa-arrow-left"></i>
+          <span>Back to Services</span>
+        </a>
+      </header>
 
-  <form method="post" action="<?= $base ?>/admin/services">
-    <div class="card">
-      <div class="services-card-header">
-        <i class="fa-solid fa-screwdriver-wrench"></i>
-        <h2>Service Information</h2>
-      </div>
-      <div class="grid">
-        <div class="field">
-          <label>Service Code</label>
-          <input type="text" value="<?= htmlspecialchars($nextCode ?? '') ?>" readonly>
-          <span class="muted">Generated automatically.</span>
+      <form method="post" action="<?= $base ?>/admin/services">
+        <div class="card">
+          <div class="services-card-header">
+            <i class="fa-solid fa-screwdriver-wrench"></i>
+            <h2>Service Information</h2>
+          </div>
+          <div class="grid">
+            <div class="field">
+              <label>Service Code</label>
+              <input type="text" value="<?= htmlspecialchars($nextCode ?? '') ?>" readonly>
+              <span class="muted">Generated automatically.</span>
+            </div>
+
+            <div class="field">
+              <label for="name">Name</label>
+              <input type="text" id="name" name="name" required>
+            </div>
+
+            <div class="field">
+              <label for="type_id">Category</label>
+              <select id="type_id" name="type_id" required>
+                <option value="">-- Select Type --</option>
+                <?php foreach (($types ?? []) as $t): ?>
+                  <option value="<?= (int) $t['type_id'] ?>">
+                    <?= htmlspecialchars($t['type_name']) ?>
+                  </option>
+                <?php endforeach; ?>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="status">Status</label>
+              <select id="status" name="status">
+                <option value="active" selected>Active</option>
+                <option value="inactive">Inactive</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="base_duration_minutes">Duration (minutes)</label>
+              <input type="number" id="base_duration_minutes" name="base_duration_minutes" min="0" value="0">
+              <span class="muted">For packages, this is auto-calculated.</span>
+            </div>
+
+            <div class="field">
+              <label for="default_price">Price</label>
+              <input type="number" id="default_price" name="default_price" min="0" step="0.01" value="0.00">
+              <span class="muted">For packages, this is auto-calculated unless manual pricing is chosen.</span>
+            </div>
+          </div>
+
+          <div class="field form-textarea">
+            <label for="description">Description</label>
+            <textarea id="description" name="description" rows="4"></textarea>
+          </div>
         </div>
 
-        <div class="field">
-          <label for="name">Name</label>
-          <input type="text" id="name" name="name" required>
+        <div class="card is-hidden" id="packageBuilder">
+          <div class="services-card-header">
+            <i class="fa-solid fa-box-open"></i>
+            <h2>Package Builder</h2>
+          </div>
+          <p class="muted">Add service items, set quantities, and apply a pricing rule.</p>
+
+          <div id="packageItemsWrap"></div>
+
+          <button type="button" class="btn btn-secondary" id="addPackageItemBtn">
+            <i class="fa-solid fa-plus"></i> Add package item
+          </button>
+
+          <div class="grid">
+            <div class="field">
+              <label for="pricing_mode">Pricing Mode</label>
+              <select id="pricing_mode" name="pricing_mode">
+                <option value="auto">Auto from items</option>
+                <option value="manual">Manual final price</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="discount_type">Discount Type</label>
+              <select id="discount_type" name="discount_type">
+                <option value="none">None</option>
+                <option value="fixed">Fixed amount</option>
+                <option value="percent">Percentage</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="discount_value">Discount Value</label>
+              <input type="number" id="discount_value" name="discount_value" min="0" step="0.01" value="0">
+            </div>
+
+            <div class="field">
+              <label for="manual_price">Manual Final Price</label>
+              <input type="number" id="manual_price" name="manual_price" min="0" step="0.01" value="">
+            </div>
+          </div>
+
+          <div class="summary">
+            <div class="metric">
+              <div class="label">Items base total</div>
+              <div class="value" id="baseTotalLabel">Rs. 0.00</div>
+            </div>
+            <div class="metric">
+              <div class="label">Calculated duration</div>
+              <div class="value" id="durationLabel">0 min</div>
+            </div>
+            <div class="metric">
+              <div class="label">Final package price</div>
+              <div class="value" id="finalPriceLabel">Rs. 0.00</div>
+            </div>
+            <div class="metric">
+              <div class="label">Package items</div>
+              <div class="value" id="itemCountLabel">0</div>
+            </div>
+          </div>
         </div>
 
-        <div class="field">
-          <label for="type_id">Category</label>
-          <select id="type_id" name="type_id" required>
-            <option value="">-- Select Type --</option>
-            <?php foreach (($types ?? []) as $t): ?>
-              <option value="<?= (int)$t['type_id'] ?>">
-                <?= htmlspecialchars($t['type_name']) ?>
-              </option>
+        <div class="card">
+          <div class="services-card-header">
+            <i class="fa-solid fa-code-branch"></i>
+            <h2>Branch Availability</h2>
+          </div>
+
+          <div class="field form-field-stack">
+            <div class="field-choices">
+              <label><input type="radio" name="apply_scope" value="all" checked> Apply to all active branches</label>
+              <label><input type="radio" name="apply_scope" value="specific"> Apply to specific branches</label>
+            </div>
+          </div>
+
+          <div id="branchPicker" class="branch-box is-hidden">
+            <?php foreach (($branches ?? []) as $b): ?>
+              <label class="field-check">
+                <input type="checkbox" name="branches[]" value="<?= (int) $b['branch_id'] ?>">
+                <span><?= htmlspecialchars($b['name']) ?> (<?= htmlspecialchars($b['branch_code']) ?>)</span>
+              </label>
             <?php endforeach; ?>
-          </select>
+          </div>
         </div>
 
-        <div class="field">
-          <label for="status">Status</label>
-          <select id="status" name="status">
-            <option value="active" selected>Active</option>
-            <option value="inactive">Inactive</option>
-          </select>
+        <div class="form-actions">
+          <a class="btn btn-secondary" href="<?= $base ?>/admin/admin-viewservices">Cancel</a>
+          <button type="submit" class="btn btn-primary">Create</button>
         </div>
-
-        <div class="field">
-          <label for="base_duration_minutes">Duration (minutes)</label>
-          <input type="number" id="base_duration_minutes" name="base_duration_minutes" min="0" value="0">
-          <span class="muted">For packages, this is auto-calculated.</span>
-        </div>
-
-        <div class="field">
-          <label for="default_price">Price</label>
-          <input type="number" id="default_price" name="default_price" min="0" step="0.01" value="0.00">
-          <span class="muted">For packages, this is auto-calculated unless manual pricing is chosen.</span>
-        </div>
-      </div>
-
-      <div class="field form-textarea">
-        <label for="description">Description</label>
-        <textarea id="description" name="description" rows="4"></textarea>
-      </div>
+      </form>
     </div>
+  </main>
 
-    <div class="card is-hidden" id="packageBuilder">
-      <div class="services-card-header">
-        <i class="fa-solid fa-box-open"></i>
-        <h2>Package Builder</h2>
-      </div>
-      <p class="muted">Add service items, set quantities, and apply a pricing rule.</p>
+  <script>
+    const packageTypeId = <?= isset($packageTypeId) && $packageTypeId ? (int) $packageTypeId : 'null' ?>;
+    const serviceOptions = <?= json_encode(array_values($servicesForPackage ?? []), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>;
 
-      <div id="packageItemsWrap"></div>
+    const typeSelect = document.getElementById('type_id');
+    const packageBuilder = document.getElementById('packageBuilder');
+    const itemsWrap = document.getElementById('packageItemsWrap');
+    const addItemBtn = document.getElementById('addPackageItemBtn');
+    const pricingMode = document.getElementById('pricing_mode');
+    const discountType = document.getElementById('discount_type');
+    const discountValue = document.getElementById('discount_value');
+    const manualPrice = document.getElementById('manual_price');
+    const durationInput = document.getElementById('base_duration_minutes');
+    const priceInput = document.getElementById('default_price');
+    const baseTotalLabel = document.getElementById('baseTotalLabel');
+    const durationLabel = document.getElementById('durationLabel');
+    const finalPriceLabel = document.getElementById('finalPriceLabel');
+    const itemCountLabel = document.getElementById('itemCountLabel');
 
-      <button type="button" class="btn btn-secondary" id="addPackageItemBtn">
-        <i class="fa-solid fa-plus"></i> Add package item
-      </button>
+    const radios = document.querySelectorAll('input[name="apply_scope"]');
+    const branchPicker = document.getElementById('branchPicker');
 
-      <div class="grid">
-        <div class="field">
-          <label for="pricing_mode">Pricing Mode</label>
-          <select id="pricing_mode" name="pricing_mode">
-            <option value="auto">Auto from items</option>
-            <option value="manual">Manual final price</option>
-          </select>
-        </div>
-
-        <div class="field">
-          <label for="discount_type">Discount Type</label>
-          <select id="discount_type" name="discount_type">
-            <option value="none">None</option>
-            <option value="fixed">Fixed amount</option>
-            <option value="percent">Percentage</option>
-          </select>
-        </div>
-
-        <div class="field">
-          <label for="discount_value">Discount Value</label>
-          <input type="number" id="discount_value" name="discount_value" min="0" step="0.01" value="0">
-        </div>
-
-        <div class="field">
-          <label for="manual_price">Manual Final Price</label>
-          <input type="number" id="manual_price" name="manual_price" min="0" step="0.01" value="">
-        </div>
-      </div>
-
-      <div class="summary">
-        <div class="metric">
-          <div class="label">Items base total</div>
-          <div class="value" id="baseTotalLabel">Rs. 0.00</div>
-        </div>
-        <div class="metric">
-          <div class="label">Calculated duration</div>
-          <div class="value" id="durationLabel">0 min</div>
-        </div>
-        <div class="metric">
-          <div class="label">Final package price</div>
-          <div class="value" id="finalPriceLabel">Rs. 0.00</div>
-        </div>
-        <div class="metric">
-          <div class="label">Package items</div>
-          <div class="value" id="itemCountLabel">0</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="services-card-header">
-        <i class="fa-solid fa-code-branch"></i>
-        <h2>Branch Availability</h2>
-      </div>
-
-      <div class="field form-field-stack">
-        <div class="field-choices">
-          <label><input type="radio" name="apply_scope" value="all" checked> Apply to all active branches</label>
-          <label><input type="radio" name="apply_scope" value="specific"> Apply to specific branches</label>
-        </div>
-      </div>
-
-      <div id="branchPicker" class="branch-box is-hidden">
-        <?php foreach (($branches ?? []) as $b): ?>
-          <label class="field-check">
-            <input type="checkbox" name="branches[]" value="<?= (int)$b['branch_id'] ?>">
-            <span><?= htmlspecialchars($b['name']) ?> (<?= htmlspecialchars($b['branch_code']) ?>)</span>
-          </label>
-        <?php endforeach; ?>
-      </div>
-    </div>
-
-    <div class="form-actions">
-      <a class="btn btn-secondary" href="<?= $base ?>/admin/admin-viewservices">Cancel</a>
-      <button type="submit" class="btn btn-primary">Create</button>
-    </div>
-  </form>
-  </div>
-</main>
-
-<script>
-  const packageTypeId = <?= isset($packageTypeId) && $packageTypeId ? (int)$packageTypeId : 'null' ?>;
-  const serviceOptions = <?= json_encode(array_values($servicesForPackage ?? []), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>;
-
-  const typeSelect       = document.getElementById('type_id');
-  const packageBuilder   = document.getElementById('packageBuilder');
-  const itemsWrap        = document.getElementById('packageItemsWrap');
-  const addItemBtn       = document.getElementById('addPackageItemBtn');
-  const pricingMode      = document.getElementById('pricing_mode');
-  const discountType     = document.getElementById('discount_type');
-  const discountValue    = document.getElementById('discount_value');
-  const manualPrice      = document.getElementById('manual_price');
-  const durationInput    = document.getElementById('base_duration_minutes');
-  const priceInput       = document.getElementById('default_price');
-  const baseTotalLabel   = document.getElementById('baseTotalLabel');
-  const durationLabel    = document.getElementById('durationLabel');
-  const finalPriceLabel  = document.getElementById('finalPriceLabel');
-  const itemCountLabel   = document.getElementById('itemCountLabel');
-
-  const radios = document.querySelectorAll('input[name="apply_scope"]');
-  const branchPicker = document.getElementById('branchPicker');
-
-  function toggleBranches() {
-    const selected = [...radios].find(r => r.checked)?.value;
-    branchPicker.style.display = selected === 'specific' ? 'block' : 'none';
-  }
-  radios.forEach(r => r.addEventListener('change', toggleBranches));
-  toggleBranches();
-
-  function isPackageSelected() {
-    return packageTypeId !== null && parseInt(typeSelect.value || '0', 10) === packageTypeId;
-  }
-
-  function optionHtml(selectedId = '') {
-    let html = '<option value="">-- Select service --</option>';
-    for (const svc of serviceOptions) {
-      const selected = String(selectedId) === String(svc.service_id) ? 'selected' : '';
-      html += `<option value="${svc.service_id}" data-price="${svc.default_price}" data-duration="${svc.base_duration_minutes}" ${selected}>${svc.service_code} - ${svc.name}</option>`;
+    function toggleBranches() {
+      const selected = [...radios].find(r => r.checked)?.value;
+      branchPicker.style.display = selected === 'specific' ? 'block' : 'none';
     }
-    return html;
-  }
+    radios.forEach(r => r.addEventListener('change', toggleBranches));
+    toggleBranches();
 
-  function addPackageRow(selectedId = '', qty = 1) {
-    const index = itemsWrap.querySelectorAll('.pkg-row').length;
+    function isPackageSelected() {
+      return packageTypeId !== null && parseInt(typeSelect.value || '0', 10) === packageTypeId;
+    }
 
-    const row = document.createElement('div');
-    row.className = 'pkg-row';
-    row.innerHTML = `
+    function optionHtml(selectedId = '') {
+      let html = '<option value="">-- Select service --</option>';
+      for (const svc of serviceOptions) {
+        const selected = String(selectedId) === String(svc.service_id) ? 'selected' : '';
+        html += `<option value="${svc.service_id}" data-price="${svc.default_price}" data-duration="${svc.base_duration_minutes}" ${selected}>${svc.service_code} - ${svc.name}</option>`;
+      }
+      return html;
+    }
+
+    function addPackageRow(selectedId = '', qty = 1) {
+      const index = itemsWrap.querySelectorAll('.pkg-row').length;
+
+      const row = document.createElement('div');
+      row.className = 'pkg-row';
+      row.innerHTML = `
       <select name="package_items[${index}][service_id]" class="pkg-service">
         ${optionHtml(selectedId)}
       </select>
@@ -232,78 +235,79 @@
       <button type="button" class="btn btn-secondary remove-row">Remove</button>
     `;
 
-    row.querySelector('.remove-row').addEventListener('click', () => {
-      row.remove();
+      row.querySelector('.remove-row').addEventListener('click', () => {
+        row.remove();
+        refreshPackageSummary();
+      });
+
+      row.querySelector('.pkg-service').addEventListener('change', refreshPackageSummary);
+      row.querySelector('.pkg-qty').addEventListener('input', refreshPackageSummary);
+
+      itemsWrap.appendChild(row);
       refreshPackageSummary();
-    });
+    }
 
-    row.querySelector('.pkg-service').addEventListener('change', refreshPackageSummary);
-    row.querySelector('.pkg-qty').addEventListener('input', refreshPackageSummary);
+    function refreshPackageSummary() {
+      const rows = itemsWrap.querySelectorAll('.pkg-row');
+      let duration = 0;
+      let total = 0;
+      let count = 0;
 
-    itemsWrap.appendChild(row);
-    refreshPackageSummary();
-  }
+      rows.forEach(row => {
+        const select = row.querySelector('.pkg-service');
+        const qtyEl = row.querySelector('.pkg-qty');
 
-  function refreshPackageSummary() {
-    const rows = itemsWrap.querySelectorAll('.pkg-row');
-    let duration = 0;
-    let total = 0;
-    let count = 0;
+        const opt = select.options[select.selectedIndex];
+        const qty = Math.max(1, parseInt(qtyEl.value || '1', 10));
 
-    rows.forEach(row => {
-      const select = row.querySelector('.pkg-service');
-      const qtyEl = row.querySelector('.pkg-qty');
+        if (opt && opt.value) {
+          const price = parseFloat(opt.dataset.price || '0');
+          const mins = parseInt(opt.dataset.duration || '0', 10);
 
-      const opt = select.options[select.selectedIndex];
-      const qty = Math.max(1, parseInt(qtyEl.value || '1', 10));
+          total += price * qty;
+          duration += mins * qty;
+          count++;
+        }
+      });
 
-      if (opt && opt.value) {
-        const price = parseFloat(opt.dataset.price || '0');
-        const mins  = parseInt(opt.dataset.duration || '0', 10);
+      let finalPrice = total;
+      const discountVal = parseFloat(discountValue.value || '0');
 
-        total += price * qty;
-        duration += mins * qty;
-        count++;
+      if (pricingMode.value === 'manual' && manualPrice.value !== '') {
+        finalPrice = Math.max(0, parseFloat(manualPrice.value || '0'));
+      } else {
+        if (discountType.value === 'fixed') {
+          finalPrice = Math.max(0, total - discountVal);
+        } else if (discountType.value === 'percent') {
+          finalPrice = Math.max(0, total - (total * discountVal / 100));
+        }
       }
-    });
 
-    let finalPrice = total;
-    const discountVal = parseFloat(discountValue.value || '0');
+      durationInput.value = duration;
+      priceInput.value = finalPrice.toFixed(2);
 
-    if (pricingMode.value === 'manual' && manualPrice.value !== '') {
-      finalPrice = Math.max(0, parseFloat(manualPrice.value || '0'));
-    } else {
-      if (discountType.value === 'fixed') {
-        finalPrice = Math.max(0, total - discountVal);
-      } else if (discountType.value === 'percent') {
-        finalPrice = Math.max(0, total - (total * discountVal / 100));
+      baseTotalLabel.textContent = 'Rs. ' + total.toFixed(2);
+      durationLabel.textContent = duration + ' min';
+      finalPriceLabel.textContent = 'Rs. ' + finalPrice.toFixed(2);
+      itemCountLabel.textContent = count;
+    }
+
+    function togglePackageBuilder() {
+      packageBuilder.style.display = isPackageSelected() ? 'block' : 'none';
+      if (isPackageSelected() && itemsWrap.children.length === 0) {
+        addPackageRow();
       }
     }
 
-    durationInput.value = duration;
-    priceInput.value = finalPrice.toFixed(2);
+    addItemBtn.addEventListener('click', () => addPackageRow());
+    pricingMode.addEventListener('change', refreshPackageSummary);
+    discountType.addEventListener('change', refreshPackageSummary);
+    discountValue.addEventListener('input', refreshPackageSummary);
+    manualPrice.addEventListener('input', refreshPackageSummary);
+    typeSelect.addEventListener('change', togglePackageBuilder);
 
-    baseTotalLabel.textContent = 'Rs. ' + total.toFixed(2);
-    durationLabel.textContent = duration + ' min';
-    finalPriceLabel.textContent = 'Rs. ' + finalPrice.toFixed(2);
-    itemCountLabel.textContent = count;
-  }
-
-  function togglePackageBuilder() {
-    packageBuilder.style.display = isPackageSelected() ? 'block' : 'none';
-    if (isPackageSelected() && itemsWrap.children.length === 0) {
-      addPackageRow();
-    }
-  }
-
-  addItemBtn.addEventListener('click', () => addPackageRow());
-  pricingMode.addEventListener('change', refreshPackageSummary);
-  discountType.addEventListener('change', refreshPackageSummary);
-  discountValue.addEventListener('input', refreshPackageSummary);
-  manualPrice.addEventListener('input', refreshPackageSummary);
-  typeSelect.addEventListener('change', togglePackageBuilder);
-
-  togglePackageBuilder();
-</script>
+    togglePackageBuilder();
+  </script>
 </body>
+
 </html>

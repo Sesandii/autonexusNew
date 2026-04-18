@@ -450,56 +450,57 @@ textarea:focus,
 }
 
 /* Consistent vertical rhythm across admin pages */
-.main-content > .table-wrap,
-.main-content > .table-card,
-.main-content > .panel,
-.main-content > .filters-card,
-.main-content > .filter-section,
-.main-content > .summary-grid,
-.main-content > .stat-grid,
-.main-content > .kpi-grid,
-.main-content > .chip-group,
-.main-content > .filters-row,
-.main-content > .form-card,
-.main-content > .detail-card {
+.main-content>.table-wrap,
+.main-content>.table-card,
+.main-content>.panel,
+.main-content>.filters-card,
+.main-content>.filter-section,
+.main-content>.summary-grid,
+.main-content>.stat-grid,
+.main-content>.kpi-grid,
+.main-content>.chip-group,
+.main-content>.filters-row,
+.main-content>.form-card,
+.main-content>.detail-card {
   margin-bottom: 18px;
 }
 
-.main-content .management > .table-wrap,
-.main-content .management > .table-card,
-.main-content .management > .panel,
-.main-content .management > .filters-card,
-.main-content .management > .filter-section,
-.main-content .management > .summary-grid,
-.main-content .management > .stat-grid,
-.main-content .management > .kpi-grid,
-.main-content .management > .chip-group,
-.main-content .management > .filters-row,
-.main-content .management > .form-card,
-.main-content .management > .detail-card,
-.main-content .management > .empty-state,
-.main-content .dash-wrap > .table-wrap,
-.main-content .dash-wrap > .table-card,
-.main-content .dash-wrap > .panel,
-.main-content .dash-wrap > .filters-card,
-.main-content .dash-wrap > .filter-section,
-.main-content .dash-wrap > .summary-grid,
-.main-content .dash-wrap > .stat-grid,
-.main-content .dash-wrap > .kpi-grid,
-.main-content .dash-wrap > .chip-group,
-.main-content .dash-wrap > .filters-row,
-.main-content .dash-wrap > .form-card,
-.main-content .dash-wrap > .detail-card,
-.main-content .dash-wrap > .empty-state {
+.main-content .management>.table-wrap,
+.main-content .management>.table-card,
+.main-content .management>.panel,
+.main-content .management>.filters-card,
+.main-content .management>.filter-section,
+.main-content .management>.summary-grid,
+.main-content .management>.stat-grid,
+.main-content .management>.kpi-grid,
+.main-content .management>.chip-group,
+.main-content .management>.filters-row,
+.main-content .management>.form-card,
+.main-content .management>.detail-card,
+.main-content .management>.empty-state,
+.main-content .dash-wrap>.table-wrap,
+.main-content .dash-wrap>.table-card,
+.main-content .dash-wrap>.panel,
+.main-content .dash-wrap>.filters-card,
+.main-content .dash-wrap>.filter-section,
+.main-content .dash-wrap>.summary-grid,
+.main-content .dash-wrap>.stat-grid,
+.main-content .dash-wrap>.kpi-grid,
+.main-content .dash-wrap>.chip-group,
+.main-content .dash-wrap>.filters-row,
+.main-content .dash-wrap>.form-card,
+.main-content .dash-wrap>.detail-card,
+.main-content .dash-wrap>.empty-state {
   margin-bottom: 18px;
 }
 
-.main-content .management > :last-child,
-.main-content .dash-wrap > :last-child {
+.main-content .management> :last-child,
+.main-content .dash-wrap> :last-child {
   margin-bottom: 0;
 }
 
 @media (max-width: 768px) {
+
   .topbar .page-title,
   .page-header .page-title,
   .page-header h1,

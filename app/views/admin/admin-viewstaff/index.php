@@ -322,8 +322,7 @@
                     <input type="hidden" name="staff_id" value="<?= (int) $row['staff_id'] ?>">
                     <select name="branch_id" required>
                       <?php foreach ($branches as $branch): ?>
-                        <option value="<?= (int) $branch['branch_id'] ?>"
-                          <?= ((int) $row['branch_id'] === (int) $branch['branch_id']) ? 'selected' : '' ?>>
+                        <option value="<?= (int) $branch['branch_id'] ?>" <?= ((int) $row['branch_id'] === (int) $branch['branch_id']) ? 'selected' : '' ?>>
                           <?= htmlspecialchars($branch['name']) ?>
                         </option>
                       <?php endforeach; ?>

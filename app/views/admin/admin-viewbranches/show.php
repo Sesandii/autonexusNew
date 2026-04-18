@@ -9,20 +9,20 @@ function e($value): string
   return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
 }
 
-$status = strtolower((string)($row['status'] ?? 'active'));
+$status = strtolower((string) ($row['status'] ?? 'active'));
 $statusClass = $status === 'inactive' ? 'inactive' : 'active';
 $statusLabel = ucfirst($status);
-$branchCode = (string)($row['branch_code'] ?? '—');
-$branchName = (string)($row['name'] ?? '—');
-$city = (string)($row['city'] ?? '—');
-$phone = trim((string)($row['phone'] ?? '')) ?: '—';
-$email = trim((string)($row['email'] ?? '')) ?: '—';
-$createdAt = trim((string)($row['created_at'] ?? '')) ?: '—';
-$capacity = trim((string)($row['capacity'] ?? '')) ?: '0';
-$staffCount = trim((string)($row['staff_count'] ?? '')) ?: '0';
-$managerId = trim((string)($row['manager_id'] ?? '')) ?: 'Not assigned';
-$address = trim((string)($row['address_line'] ?? '')) ?: '—';
-$notes = trim((string)($row['notes'] ?? ''));
+$branchCode = (string) ($row['branch_code'] ?? '—');
+$branchName = (string) ($row['name'] ?? '—');
+$city = (string) ($row['city'] ?? '—');
+$phone = trim((string) ($row['phone'] ?? '')) ?: '—';
+$email = trim((string) ($row['email'] ?? '')) ?: '—';
+$createdAt = trim((string) ($row['created_at'] ?? '')) ?: '—';
+$capacity = trim((string) ($row['capacity'] ?? '')) ?: '0';
+$staffCount = trim((string) ($row['staff_count'] ?? '')) ?: '0';
+$managerId = trim((string) ($row['manager_id'] ?? '')) ?: 'Not assigned';
+$address = trim((string) ($row['address_line'] ?? '')) ?: '—';
+$notes = trim((string) ($row['notes'] ?? ''));
 
 function fieldRow(string $icon, string $label, string $value): string
 {

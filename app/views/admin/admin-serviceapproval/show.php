@@ -32,7 +32,8 @@ $approvedName = trim(($service['approved_first'] ?? '') . ' ' . ($service['appro
       <div>
         <h1 class="page-title">Service Details</h1>
         <p class="subtitle"><?= htmlspecialchars($service['name']) ?> • Code:
-          <?= htmlspecialchars($service['service_code']) ?></p>
+          <?= htmlspecialchars($service['service_code']) ?>
+        </p>
       </div>
 
       <div class="page-actions">
