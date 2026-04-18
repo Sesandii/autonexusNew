@@ -204,10 +204,7 @@ $router->post('/admin/packages/{id}', [PackagesController::class, 'update']);
 $router->post('/admin/packages/{id}/delete', [PackagesController::class, 'destroy']);
 
 
-use app\controllers\admin\PricingController;
 
-$router->get('/admin/admin-updateserviceprice', [PricingController::class, 'index']);
-$router->post('/admin/admin-updateserviceprice', [PricingController::class, 'index']);
 
 
 
@@ -290,12 +287,6 @@ $router->get('/admin/complaints', [ComplaintsController::class, 'index']);
 $router->get('/admin/complaints/show', [ComplaintsController::class, 'show']);
 $router->post('/admin/complaints/update', [ComplaintsController::class, 'update']);
 
-
-use app\controllers\admin\QualityControlController;
-
-$router->get('/admin/quality/inspection-reports', [QualityControlController::class, 'inspectionReports']);
-$router->get('/admin/quality/final-approvals', [QualityControlController::class, 'finalApprovals']);
-$router->get('/admin/quality/dashboard', [QualityControlController::class, 'dashboard']);
 
 
 use app\controllers\admin\StaffController;
