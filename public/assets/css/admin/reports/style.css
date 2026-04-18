@@ -1,6 +1,6 @@
 body {
   margin: 0;
-  font-family: 'Segoe UI', sans-serif;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background: #f5f6fa;
   display: flex;
 }
@@ -84,7 +84,8 @@ table {
   margin-top: 10px;
 }
 
-th, td {
+th,
+td {
   border: 1px solid #ddd;
   padding: 12px;
   text-align: left;
@@ -94,8 +95,13 @@ th {
   background: #f3f3f3;
 }
 
-.green { color: green; }
-.red { color: red; }
+.green {
+  color: green;
+}
+
+.red {
+  color: red;
+}
 
 /* Summary cards */
 .summary-cards {
