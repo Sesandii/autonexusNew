@@ -160,7 +160,7 @@ public function getServices(): void
     exit;
 }
 
- public function save(): void
+public function save(): void
 {
     header('Content-Type: application/json');
 
@@ -170,6 +170,9 @@ public function getServices(): void
         }
 
         $appointmentModel = new \app\model\Receptionist\AppointmentModel(db());
+
+        // Debug - see what's actually being received
+        error_log("POST data: " . print_r($_POST, true));
 
         // Safely fetch POST data
         $data = [
@@ -184,10 +187,15 @@ public function getServices(): void
         ];
 
         // Validate required fields
+        $missing = [];
         foreach (['customer_id','vehicle_id','branch_id','service_id','appointment_date','appointment_time'] as $key) {
             if (empty($data[$key])) {
-                throw new \Exception("Missing or invalid field: $key");
+                $missing[] = $key;
             }
+        }
+        
+        if (!empty($missing)) {
+            throw new \Exception("Missing fields: " . implode(', ', $missing));
         }
 
         // Save appointment
@@ -197,14 +205,12 @@ public function getServices(): void
             throw new \Exception('Failed to save appointment due to database error.');
         }
 
-        // Always return JSON
         echo json_encode([
             'success' => true,
             'message' => 'Appointment saved successfully'
         ]);
 
     } catch (\Throwable $e) {
-        // Return JSON even on error
         echo json_encode([
             'success' => false,
             'message' => $e->getMessage()
@@ -278,76 +284,117 @@ public function assignSupervisor(): void
     }
 }
 
-public function edit($id)
+    // ✅ FIXED: Complete edit method with proper signature
+    public function edit($id = null)
 {
+    if (!$id) {
+        header('Location: ' . BASE_URL . '/receptionist/appointments');
+        exit;
+    }
+
     $appointmentModel = new AppointmentModel(db());
-
     $appointment = $appointmentModel->getAppointmentById($id);
-    $services = $appointmentModel->getAllServices();
-
-    $stmt = db()->prepare("SELECT branch_id, name FROM branches WHERE status='active' ORDER BY name ASC");
+    
+    // Verify the appointment belongs to receptionist's branch
+    $branchId = $_SESSION['user']['branch_id'] ?? null;
+    if ($appointment['branch_id'] != $branchId) {
+        header('Location: ' . BASE_URL . '/receptionist/appointments');
+        exit;
+    }
+    
+    // Get all active branches for dropdown
+    $stmt = db()->prepare("SELECT branch_id, name, city FROM branches WHERE status='active' ORDER BY name ASC");
     $stmt->execute();
     $branches = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-    // 👇 Use your existing method
+    
+    // Get all active services for dropdown
+    $services = $appointmentModel->getAllServices();
+    
+    // Get supervisors for the current branch
     $supervisors = $appointmentModel->getSupervisorsByBranch($appointment['branch_id']);
 
     $this->view('receptionist/Appointments/updateApp', [
         'appointment' => $appointment,
-        'services' => $services,
         'branches' => $branches,
+        'services' => $services,
         'supervisors' => $supervisors
     ]);
 }
 
-public function update(): void
+
+ public function update(): void
 {
     header('Content-Type: application/json');
-
+    
     try {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            throw new \Exception("Invalid request method");
+            throw new \Exception('Invalid request method');
         }
-
+        
+        $appointmentId = $_POST['appointment_id'] ?? null;
+        $serviceId = $_POST['service_id'] ?? null;
+        $branchId = $_POST['branch_id'] ?? null;
+        $appointmentDate = $_POST['appointment_date'] ?? null;
+        $appointmentTime = $_POST['appointment_time'] ?? null;
+        $notes = $_POST['notes'] ?? null;
+        
+        if (!$appointmentId || !$serviceId || !$branchId || !$appointmentDate || !$appointmentTime) {
+            throw new \Exception('All required fields must be filled');
+        }
+        
         $appointmentModel = new AppointmentModel(db());
-
-        $data = [
-            'appointment_id'   => $_POST['appointment_id'] ?? null,
-            'service_id'       => $_POST['service_id'] ?? null,
-            'branch_id'        => $_POST['branch_id'] ?? null,
-            'appointment_date' => $_POST['appointment_date'] ?? null,
-            'appointment_time' => $_POST['appointment_time'] ?? null,
-            'status'           => $_POST['status'] ?? null,
-            'notes'            => $_POST['notes'] ?? null,
-            'assigned_to'      => $_POST['assigned_to'] ?? null
+        
+        // Get original appointment to check if branch changed
+        $originalAppointment = $appointmentModel->getAppointmentById($appointmentId);
+        
+        // Verify the appointment belongs to receptionist's branch
+        $receptionistBranchId = $_SESSION['user']['branch_id'] ?? null;
+        if ($originalAppointment['branch_id'] != $receptionistBranchId) {
+            throw new \Exception('You can only update appointments from your branch');
+        }
+        
+        // Check if branch has changed
+        $branchChanged = ($originalAppointment['branch_id'] != $branchId);
+        
+        // Prepare update data
+        $updateData = [
+            'appointment_id' => $appointmentId,
+            'service_id' => $serviceId,
+            'branch_id' => $branchId,
+            'appointment_date' => $appointmentDate,
+            'appointment_time' => $appointmentTime,
+            'notes' => $notes
         ];
-
-        foreach (['appointment_id','service_id','branch_id','appointment_date','appointment_time','status'] as $field) {
-            if (empty($data[$field])) {
-                throw new \Exception("Missing field: $field");
-            }
+        
+        // If branch changed, reset assigned_to and set status to 'Requested'
+        if ($branchChanged) {
+            $updateData['assigned_to'] = null;
+            $updateData['status'] = 'Requested';
+        } else {
+            // Keep existing assigned_to if branch didn't change
+            $updateData['assigned_to'] = $originalAppointment['assigned_to'];
+            $updateData['status'] = $originalAppointment['status'];
         }
-
-        $success = $appointmentModel->updateAppointment($data);
-
+        
+        $success = $appointmentModel->updateAppointment($updateData);
+        
         if (!$success) {
-            throw new \Exception("Failed to update appointment.");
+            throw new \Exception('Failed to update appointment');
         }
-
+        
         echo json_encode([
             'success' => true,
-            'message' => 'Appointment updated successfully'
+            'message' => 'Appointment updated successfully' . ($branchChanged ? ' (Branch changed - supervisor assignment reset)' : '')
         ]);
-
+        
     } catch (\Throwable $e) {
         echo json_encode([
             'success' => false,
             'message' => $e->getMessage()
         ]);
     }
-
+    
     exit;
 }
-
 }
 ?>

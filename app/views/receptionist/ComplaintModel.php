@@ -122,6 +122,40 @@ class ComplaintModel extends Model {
     return $stmt->execute([':id' => $id]);
 }
 
+// In ComplaintModel.php
+public function getRecentAppointmentsByCustomer(int $customer_id, int $days = 30): array {
+    $stmt = $this->pdo->prepare("
+        SELECT 
+            a.appointment_id,
+            a.appointment_date,
+            a.appointment_time,
+            a.service_type,
+            a.status,
+            v.make,
+            v.model,
+            v.license_plate,
+            CONCAT(
+                DATE_FORMAT(a.appointment_date, '%Y-%m-%d'), ' ',
+                TIME_FORMAT(a.appointment_time, '%H:%i'), ' - ',
+                a.service_type, ' (',
+                v.make, ' ', v.model, ' - ',
+                v.license_plate, ')'
+            ) as display_text
+        FROM appointments a
+        LEFT JOIN vehicles v ON a.vehicle_id = v.vehicle_id
+        WHERE a.customer_id = :customer_id
+        AND a.appointment_date >= DATE_SUB(CURDATE(), INTERVAL :days DAY)  -- Past 30 days only
+        AND a.appointment_date <= CURDATE()  -- Up to today only
+        ORDER BY a.appointment_date DESC, a.appointment_time DESC
+    ");
+    
+    $stmt->execute([
+        ':customer_id' => $customer_id,
+        ':days' => $days
+    ]);
+    
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
 
 
 }

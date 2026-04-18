@@ -46,18 +46,19 @@ class ComplaintController extends Controller {
     }
 
     // 1️⃣ List all complaints (with optional filters)
-    public function index(): void {
-        $search   = $_GET['search'] ?? '';
-        $status   = $_GET['status'] ?? '';
-        $priority = $_GET['priority'] ?? '';
+public function index(): void {
 
-        $complaints = $this->model->filter($search, $status, $priority);
+    $search   = $_GET['search'] ?? '';
+    $status   = $_GET['status'] ?? '';
+    $priority = $_GET['priority'] ?? '';
 
-        $this->view('receptionist/Complaints/complaintsReceptionist', [
-            'complaints' => $complaints,
-            'activePage' => 'complaints'
-        ]);
-    }
+    $complaints = $this->model->filter($search, $status, $priority);
+
+    $this->view('receptionist/Complaints/complaintsReceptionist', [
+        'complaints' => $complaints,
+        'activePage' => 'complaints'
+    ]);
+}
 
     // 2️⃣ Show create form
     public function create(): void {
@@ -94,28 +95,6 @@ protected function json(array $data): void {
     header('Content-Type: application/json');
     echo json_encode($data);
     exit;
-}
-
-
-
-   // 3️⃣ Store new complaint
-   public function store(): void {
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $data = [
-            'customer_id'    => $_POST['customer_id'], // already autofilled
-            'vehicle_id'     => $_POST['vehicle_id'],  // already autofilled
-            'complaint_date' => $_POST['complaint_date'] ?? null,
-            'complaint_time' => $_POST['complaint_time'] ?? null,
-            'description'    => $_POST['description'] ?? '',
-            'priority'       => $_POST['priority'] ?? 'Medium',
-            'status'         => $_POST['status'] ?? 'Open',
-            'assigned_to'    => $_POST['assigned_to'] ?? null
-        ];
-
-        $this->model->create($data);
-
-        $this->redirect(BASE_URL . '/receptionist/complaints');
-    }
 }
 
 /*public function store(): void {
@@ -178,57 +157,49 @@ public function show(int $complaintId): void {
     // 5️⃣ Show edit form
     public function edit(int $id): void {
     $complaint = $this->model->find($id);
+
     if (!$complaint) {
         http_response_code(404);
         echo "Complaint not found";
         return;
     }
 
-    // 🔹 Fetch vehicles for this customer
     $vehicles = $this->model->getVehiclesByCustomer($complaint['customer_id']);
 
+    // ✅ ADD THIS
+    $appointments = $this->model->getRecentAppointmentsByCustomer($complaint['customer_id']);
+
     $this->view('receptionist/Complaints/editComplaint', [
-        'complaint' => $complaint,
-        'vehicles'  => $vehicles   // pass this to the view
+        'complaint'   => $complaint,
+        'vehicles'    => $vehicles,
+        'appointments'=> $appointments
     ]);
 }
 
 
-    public function update(int $id): void {
+// Update the update method
+public function update(int $id): void {
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $customer_id = $_POST['customer_id'] ?? null;
         $vehicle_id  = $_POST['vehicle_id'] ?? null;
 
         if (!$customer_id) {
-            // Customer ID is required
             $this->redirect(BASE_URL . "/receptionist/complaints/$id?error=missing_customer");
-            return;
-        }
-
-        // Get user_id automatically from customer_id
-        $user_id = $this->model->getUserIdByCustomer((int)$customer_id);
-        if (!$user_id) {
-            // No linked user found → cannot update
-            $this->redirect(BASE_URL . "/receptionist/complaints/$id?error=missing_user");
             return;
         }
 
         $data = [
             'customer_id'    => (int)$customer_id,
-            'user_id'        => (int)$user_id,
             'vehicle_id'     => $vehicle_id ? (int)$vehicle_id : null,
-            'complaint_date' => $_POST['complaint_date'] ?? null,
-            'complaint_time' => $_POST['complaint_time'] ?? null,
+            'appointment_id' => $_POST['appointment_id'] ?? null,  // Add this
+            'subject'        => $_POST['subject'] ?? 'General Complaint',
             'description'    => $_POST['description'] ?? '',
             'priority'       => $_POST['priority'] ?? 'Medium',
             'status'         => $_POST['status'] ?? 'Open',
             'assigned_to'    => $_POST['assigned_to'] ?? null
         ];
 
-        // Call model update
         $this->model->update($id, $data);
-
-        // Redirect to complaint details page
         $this->redirect(BASE_URL . "/receptionist/complaints/$id");
     }
 }
@@ -247,5 +218,43 @@ public function show(int $complaintId): void {
     // Redirect to complaints list after deletion
     $this->redirect(BASE_URL . '/receptionist/complaints');
 }
+
+
+// Add this new method to fetch appointments for a customer
+public function fetchAppointments(): void {
+    $customer_id = $_GET['customer_id'] ?? '';
+    
+    if (!$customer_id) {
+        $this->json(['success' => false, 'message' => 'Customer ID required']);
+        return;
+    }
+    
+    $appointments = $this->model->getRecentAppointmentsByCustomer((int)$customer_id);
+    
+    $this->json([
+        'success' => true,
+        'data' => $appointments
+    ]);
+}
+
+// Update the store method
+public function store(): void {
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $data = [
+            'customer_id'    => $_POST['customer_id'],
+            'vehicle_id'     => $_POST['vehicle_id'],
+            'appointment_id' => $_POST['appointment_id'] ?? null,  // Add this
+            'subject'        => $_POST['subject'] ?? 'General Complaint',
+            'description'    => $_POST['description'] ?? '',
+            'priority'       => $_POST['priority'] ?? 'Medium',
+            'status'         => $_POST['status'] ?? 'Open',
+            'assigned_to'    => $_POST['assigned_to'] ?? null
+        ];
+
+        $this->model->create($data);
+        $this->redirect(BASE_URL . '/receptionist/complaints');
+    }
+}
+
 
 }

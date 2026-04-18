@@ -79,15 +79,15 @@
                 </div>
             </div>
 
-            <!-- Actions -->
-            <div class="invoice-actions">
-                <!-- Generate Invoice button -->
-                <a href="<?= BASE_URL ?>/receptionist/billing/downloadInvoice/<?= $order['work_order_id'] ?>"
-                   class="btn btn-primary"
-                   target="_blank">
-                    Generate Invoice
-                </a>
+     <form method="POST"
+      action="<?= BASE_URL ?>/receptionist/billing/invoice/<?= $order['work_order_id'] ?>"
+      target="_blank">
 
+    <button type="submit" class="btn btn-primary">
+        Generate Invoice
+    </button>
+
+</form>
                 <!-- Back button -->
                 <a href="<?= BASE_URL ?>/receptionist/billing/create" class="btn btn-secondary">
                     ← Back
@@ -97,6 +97,14 @@
         </div>
     </div>
 </div>
+
+<?php if (!empty($autoPrint)): ?>
+<script>
+    window.onload = function () {
+        window.print();
+    };
+</script>
+<?php endif; ?>
 
 </body>
 </html>

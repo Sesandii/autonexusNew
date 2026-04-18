@@ -1,66 +1,87 @@
 <?php
 if (!defined('BASE_URL')) {
-    define('BASE_URL', '/autonexus'); // adjust if needed
+    define('BASE_URL', '/autonexus');
 }
 
-// Get the current path after BASE_URL
 $currentPath = $_SERVER['REQUEST_URI'] ?? '/';
 $baseUrl = rtrim(BASE_URL, '/');
 
-// Remove the BASE_URL from the path
 if (strpos($currentPath, $baseUrl) === 0) {
     $currentPath = substr($currentPath, strlen($baseUrl));
 }
 
-// Remove query string
 $currentPath = strtok($currentPath, '?');
-
-// Explode path into segments
-$segments = explode('/', trim($currentPath, '/')); // e.g. ['receptionist','appointments','edit','1']
-
-// Get main section (after 'receptionist')
+$segments = explode('/', trim($currentPath, '/'));
 $section = $segments[1] ?? '';
-
-// Define sidebar sections
-$sections = ['dashboard','appointments','services','complaints','billing','profiles'];
-
-// Determine active page
+$sections = ['dashboard','appointments','schedule','work-orders','services','complaints','billing','customers','performance','reports'];
 $activePage = in_array($section, $sections) ? $section : '';
 ?>
 
 <div class="sidebar">
     <div class="logo">
-        <img src="<?= BASE_URL ?>/public/assets/img/logo.png" alt="AutoNexus Logo" width="240">
         <h2>AUTONEXUS</h2>
     </div>
 
     <ul class="menu">
-        <li class="<?= ($current_page == 'dashboard') ? 'active' : '' ?>">
-            <a href="<?= BASE_URL ?>/manager/dashboard">Dashboard</a>
+        <li class="<?= $activePage == 'dashboard' ? 'active' : '' ?>">
+            <a href="<?= BASE_URL ?>/manager/dashboard">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </a>
         </li>
-        <li class="<?= ($current_page == 'appointments') ? 'active' : '' ?>">
-            <a href="<?= BASE_URL ?>/manager/appointments">Appointments</a>
+        <li class="<?= $activePage == 'appointments' ? 'active' : '' ?>">
+            <a href="<?= BASE_URL ?>/manager/appointments">
+                <i class="fas fa-calendar"></i>
+                <span>Appointments</span>
+            </a>
         </li>
-        <li class="<?= $activePage === 'teamSchedule' ? 'active' : '' ?>">
-            <a href="<?= BASE_URL ?>/manager/schedule">Team Schedule</a>
+        <li class="<?= $activePage == 'schedule' ? 'active' : '' ?>">
+            <a href="<?= BASE_URL ?>/manager/schedule">
+                <i class="fas fa-users"></i>
+                <span>Staff Management</span>
+            </a>
         </li>
-        <li class="<?= ($current_page == 'service') ? 'active' : '' ?>">
-            <a href="<?= BASE_URL ?>/manager/services">Service & Packages</a>
+        <li class="<?= $activePage == 'work-orders' ? 'active' : '' ?>">
+            <a href="<?= BASE_URL ?>/manager/work-orders">
+                <i class="fas fa-clipboard-list"></i>
+                <span>Work Orders</span>
+            </a>
         </li>
-        <li class="<?= $activePage === 'complaints' ? 'active' : '' ?>">
-            <a href="<?= BASE_URL ?>/manager/complaints">Complaints</a>
+        <li class="<?= $activePage == 'services' ? 'active' : '' ?>">
+            <a href="<?= BASE_URL ?>/manager/services">
+                <i class="fas fa-wrench"></i>
+                <span>Services & Packages</span>
+            </a>
         </li>
-        <li class="<?= $activePage === 'billing' ? 'active' : '' ?>">
-            <a href="<?= BASE_URL ?>/manager/billing">Billing & Payments</a>
+        <li class="<?= $activePage == 'complaints' ? 'active' : '' ?>">
+            <a href="<?= BASE_URL ?>/manager/complaints">
+                <i class="fas fa-exclamation-triangle"></i>
+                <span>Complaints</span>
+            </a>
         </li>
-        <li class="<?= $activePage === 'profiles' ? 'active' : '' ?>">
-            <a href="<?= BASE_URL ?>/manager/customers">Customer Profiles</a>
+        <li class="<?= $activePage == 'billing' ? 'active' : '' ?>">
+            <a href="<?= BASE_URL ?>/manager/billing">
+                <i class="fas fa-credit-card"></i>
+                <span>Billing & Payments</span>
+            </a>
         </li>
-        <li class="<?= $activePage === 'performance' ? 'active' : '' ?>">
-            <a href="<?= BASE_URL ?>/manager/performance">Team Performance</a>
+        <li class="<?= $activePage == 'customers' ? 'active' : '' ?>">
+            <a href="<?= BASE_URL ?>/manager/customers">
+                <i class="fas fa-user"></i>
+                <span>Customer Profiles</span>
+            </a>
         </li>
-        <li class="<?= $activePage === 'reports' ? 'active' : '' ?>">
-            <a href="<?= BASE_URL ?>/manager/reports">Reports</a>
+        <li class="<?= $activePage == 'performance' ? 'active' : '' ?>">
+            <a href="<?= BASE_URL ?>/manager/performance">
+                <i class="fas fa-chart-line"></i>
+                <span>Team Performance</span>
+            </a>
+        </li>
+        <li class="<?= $activePage == 'reports' ? 'active' : '' ?>">
+            <a href="<?= BASE_URL ?>/manager/reports">
+                <i class="fas fa-file-alt"></i>
+                <span>Reports</span>
+            </a>
         </li>
     </ul>
 </div>
