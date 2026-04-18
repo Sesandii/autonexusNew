@@ -6,6 +6,7 @@
   <title>Complaints Management</title>  
   <link rel="stylesheet" href="<?= BASE_URL ?>/public/assets/css/receptionist/sidebar.css">
   <link rel="stylesheet" href="<?= BASE_URL ?>/public/assets/css/receptionist/complaintsReceptionist.css">
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 
 <body>
@@ -20,14 +21,34 @@
         <button class="add-btn" id="openModal" onclick="window.location.href='<?= BASE_URL ?>/receptionist/complaints/new'">
           + New Complaint
         </button>
-        <input type="text" placeholder="Search complaints...">
-        <select>
-          <option>All Statuses</option>
-          <option>Open</option>
-          <option>In Progress</option>
-          <option>Resolved</option>
-          <option>Canceled</option>
-        </select>
+      <form method="GET" action="<?= BASE_URL ?>/receptionist/complaints">
+
+  <select name="status" onchange="this.form.submit()">
+    <option value="">All Statuses</option>
+
+    <option value="open" 
+      <?= (($_GET['status'] ?? '') == 'open') ? 'selected' : '' ?>>
+      Open
+    </option>
+
+    <option value="in_progress" 
+      <?= (($_GET['status'] ?? '') == 'in_progress') ? 'selected' : '' ?>>
+      In Progress
+    </option>
+
+    <option value="resolved" 
+      <?= (($_GET['status'] ?? '') == 'resolved') ? 'selected' : '' ?>>
+      Resolved
+    </option>
+
+    <option value="closed" 
+      <?= (($_GET['status'] ?? '') == 'closed') ? 'selected' : '' ?>>
+      Canceled
+    </option>
+
+  </select>
+
+</form>
       </div>
     </header>
 
@@ -86,7 +107,9 @@
       <?php endif; ?>
     </div>
   </div>
-
+<script>
+  const BASE_URL = "<?= BASE_URL ?>";
+</script>
   <script src="<?= BASE_URL ?>/public/assets/js/receptionist/complaintsReceptionist.js"></script>
 </body>
 </html>

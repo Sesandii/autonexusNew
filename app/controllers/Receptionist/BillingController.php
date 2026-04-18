@@ -5,6 +5,10 @@ use app\core\Controller;
 use app\model\Receptionist\BillingModel;
 use FPDF\FPDF;
 
+use Dompdf\Dompdf;
+use Dompdf\Options;
+
+
 class BillingController extends Controller
 {
     
@@ -46,26 +50,29 @@ class BillingController extends Controller
         $this->billing = new BillingModel();
     }
 
-    public function invoices(): void
+  public function invoices(): void
 {
-    $invoices = $this->billing->getInvoices();
+    $status = $_GET['status'] ?? null;
+
+    $invoices = $this->billing->getInvoices($status);
     $paidInvoices = $this->billing->getPaidInvoices();
 
     $this->view('Receptionist/Billing/billing', [
-        'invoices'     => $invoices,
-        'paidInvoices' => $paidInvoices
+        'invoices' => $invoices,
+        'paidInvoices' => $paidInvoices,
+        'status' => $status
     ]);
 }
 
     /** Show completed work orders */
     public function create(): void
-    {
-        $orders = $this->billing->getCompletedWorkOrders();
+{
+    $orders = $this->billing->getCompletedWorkOrders();
 
-        $this->view('Receptionist/Billing/createInvoice', [
-            'orders' => $orders
-        ]);
-    }
+    $this->view('Receptionist/Billing/createInvoice', [
+        'orders' => $orders
+    ]);
+}
 
     /** Invoice preview */
     public function preview(int $id): void
@@ -82,27 +89,93 @@ class BillingController extends Controller
     }
 
     /** Generate invoice + lock work order */
-    public function store(int $id): void
-    {
-        $this->billing->createInvoice($id);
-
-        $this->redirect($this->baseUrl() . '/receptionist/billing');
+public function store($id = null): void
+{
+    if (!$id && isset($_GET['id'])) {
+        $id = $_GET['id'];
     }
 
-public function downloadInvoice(int $id): void
+    if (!$id) {
+        http_response_code(404);
+        exit("Missing ID");
+    }
+
+    try {
+        // 1. Create invoice (DB insert)
+        $this->billing->createInvoice($id);
+
+        // 2. IMPORTANT: open PRINT PAGE directly in new tab
+        header("Location: " . BASE_URL . "/receptionist/billing/printInvoice?id=$id");
+        exit;
+
+    } catch (\Throwable $e) {
+        http_response_code(500);
+        exit($e->getMessage());
+    }
+}
+
+public function downloadInvoicePdf(): void
 {
+    $id = $_GET['id'] ?? null;
+
+    if (!$id) {
+        http_response_code(404);
+        exit("Missing invoice ID");
+    }
+
     $order = $this->billing->getWorkOrderForInvoice($id);
 
     if (!$order) {
         http_response_code(404);
-        exit('Invalid invoice');
+        exit("Invoice not found");
+    }
+
+    // 🔧 DomPDF setup
+    $options = new Options();
+    $options->set('isRemoteEnabled', true); // allows CSS/images
+
+    $dompdf = new Dompdf($options);
+
+    // 📄 Capture HTML from your existing view
+    ob_start();
+    $this->view('Receptionist/Billing/invoicePrint', [
+        'order' => $order
+    ]);
+    $html = ob_get_clean();
+
+    $dompdf->loadHtml($html);
+
+    // (optional) paper setup
+    $dompdf->setPaper('A4', 'portrait');
+
+    $dompdf->render();
+
+    // 📥 force download
+    $dompdf->stream("invoice_{$id}.pdf", [
+        "Attachment" => true
+    ]);
+
+    exit;
+}
+
+public function printInvoice($id): void
+{
+    if (!$id) {
+        http_response_code(404);
+        exit("Missing ID");
+    }
+
+    $order = $this->billing->getWorkOrderForInvoice($id);
+
+    if (!$order) {
+        http_response_code(404);
+        exit("Invoice not found");
     }
 
     $this->view('Receptionist/Billing/invoicePrint', [
         'order' => $order
     ]);
 }
-
 /**
  * Show only PAID invoices
  */
@@ -113,6 +186,22 @@ public function paidInvoices(): void
     $this->view('Receptionist/Billing/paidInvoices', [
         'invoices' => $invoices
     ]);
+}
+
+/** Mark invoice as paid */
+public function markAsPaid(): void
+{
+    $id = $_GET['id'] ?? null;
+
+    if (!$id) {
+        http_response_code(400);
+        exit("Missing invoice ID");
+    }
+
+    $this->billing->updateInvoiceStatus((int)$id, 'paid');
+
+    header("Location: " . BASE_URL . "/receptionist/billing");
+    exit;
 }
 
 

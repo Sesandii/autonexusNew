@@ -4,12 +4,7 @@ $current = $current ?? '';
 ?>
 
 <aside class="sidebar">
-  <div class="logo-wrap">
-  <a href="<?= $B ?>/admin-dashboard" class="logo-link">
-    <img src="<?= $B ?>/public/assets/img/logo.jpg" alt="AutoNexus Logo" class="logo-img">
-    <span class="logo-text">AutoNexus</span>
-  </a>
-</div>
+  <h2 class="logo">AutoNexus</h2>
 
   <ul class="menu">
     <!-- Dashboard -->
@@ -44,48 +39,61 @@ $current = $current ?? '';
       </ul>
     </li>
 
-    <!-- Branches -->
-    <li class="menu-item <?= $current === 'branches' ? 'active' : '' ?>">
-      <a href="<?= $B ?>/admin/branches">
-        <i class="fa-solid fa-building"></i>
-        <span>Branches</span>
-      </a>
-    </li>
-
-    <!-- Services -->
-    <li class="menu-item <?= $current === 'services' ? 'active' : '' ?>">
-      <a href="<?= $B ?>/admin/admin-viewservices">
-        <i class="fa-solid fa-screwdriver-wrench"></i>
-        <span>Services</span>
-      </a>
-    </li>
-
-    <!-- Users -->
-    <li class="menu-item has-submenu <?= in_array($current, ['staff', 'customers', 'mechanics', 'supervisors', 'service-managers', 'receptionists'], true) ? 'open' : '' ?>">
+    <!-- Management -->
+    <li class="menu-item has-submenu <?= in_array($current, ['branches', 'services', 'pricing', 'customers', 'service-managers', 'staff', 'supervisors', 'mechanics', 'receptionists'], true) ? 'open' : '' ?>">
       <button class="submenu-toggle" type="button">
-        <i class="fa-solid fa-users"></i>
-        <span>Users</span>
+        <i class="fa-solid fa-layer-group"></i>
+        <span>Management</span>
         <i class="fa-solid fa-chevron-right caret"></i>
       </button>
 
       <ul class="submenu">
-        <li class="<?= $current === 'staff' ? 'active' : '' ?>">
-          <a href="<?= $B ?>/admin/admin-viewstaff">Staff Management</a>
+        <li class="<?= $current === 'branches' ? 'active' : '' ?>">
+          <a href="<?= $B ?>/admin/branches">Branches</a>
         </li>
-        <li class="<?= $current === 'customers' ? 'active' : '' ?>">
-          <a href="<?= $B ?>/admin/customers">Customers</a>
+
+        <!-- Services -->
+        <li class="submenu-group <?= in_array($current, ['services', 'pricing'], true) ? 'open' : '' ?>">
+          <button class="submenu-toggle submenu-toggle--inner" type="button">
+            <span>Services</span>
+            <i class="fa-solid fa-chevron-right caret"></i>
+          </button>
+          <ul class="submenu submenu--inner">
+            <li class="<?= $current === 'services' ? 'active' : '' ?>">
+              <a href="<?= $B ?>/admin/admin-viewservices">View Services</a>
+            </li>
+            <li class="<?= $current === 'pricing' ? 'active' : '' ?>">
+              <a href="<?= $B ?>/admin/admin-updateserviceprice">Pricing Management</a>
+            </li>
+          </ul>
         </li>
-        <li class="<?= $current === 'mechanics' ? 'active' : '' ?>">
-          <a href="<?= $B ?>/admin/mechanics">Mechanics</a>
-        </li>
-        <li class="<?= $current === 'supervisors' ? 'active' : '' ?>">
-          <a href="<?= $B ?>/admin/supervisors">Workshop Supervisors</a>
-        </li>
-        <li class="<?= $current === 'service-managers' ? 'active' : '' ?>">
-          <a href="<?= $B ?>/admin/service-managers">Service Managers</a>
-        </li>
-        <li class="<?= $current === 'receptionists' ? 'active' : '' ?>">
-          <a href="<?= $B ?>/admin/viewreceptionist">Receptionists</a>
+
+        <!-- Manage Users -->
+        <li class="submenu-group <?= in_array($current, ['customers', 'service-managers', 'staff', 'supervisors', 'mechanics', 'receptionists'], true) ? 'open' : '' ?>">
+          <button class="submenu-toggle submenu-toggle--inner" type="button">
+            <span>Manage Users</span>
+            <i class="fa-solid fa-chevron-right caret"></i>
+          </button>
+          <ul class="submenu submenu--inner">
+            <li class="<?= $current === 'staff' ? 'active' : '' ?>">
+              <a href="<?= $B ?>/admin/admin-viewstaff">Staff Management</a>
+            </li>
+            <li class="<?= $current === 'customers' ? 'active' : '' ?>">
+              <a href="<?= $B ?>/admin/customers">Customers</a>
+            </li>
+            <li class="<?= $current === 'service-managers' ? 'active' : '' ?>">
+              <a href="<?= $B ?>/admin/service-managers">Service Managers</a>
+            </li>
+            <li class="<?= $current === 'supervisors' ? 'active' : '' ?>">
+              <a href="<?= $B ?>/admin/supervisors">Workshop Supervisors</a>
+            </li>
+            <li class="<?= $current === 'mechanics' ? 'active' : '' ?>">
+              <a href="<?= $B ?>/admin/mechanics">Mechanics</a>
+            </li>
+            <li class="<?= $current === 'receptionists' ? 'active' : '' ?>">
+              <a href="<?= $B ?>/admin/viewreceptionist">Receptionists</a>
+            </li>
+          </ul>
         </li>
       </ul>
     </li>
@@ -107,6 +115,27 @@ $current = $current ?? '';
         </li>
         <li class="<?= $current === 'complaints' ? 'active' : '' ?>">
           <a href="<?= $B ?>/admin/admin-viewcomplaints">Complaints</a>
+        </li>
+      </ul>
+    </li>
+
+    <!-- Quality Control -->
+    <li class="menu-item has-submenu <?= in_array($current, ['qc-reports', 'qc-approvals', 'qc-dashboard'], true) ? 'open' : '' ?>">
+      <button class="submenu-toggle" type="button">
+        <i class="fa-solid fa-shield-heart"></i>
+        <span>Quality Control</span>
+        <i class="fa-solid fa-chevron-right caret"></i>
+      </button>
+
+      <ul class="submenu">
+        <li class="<?= $current === 'qc-reports' ? 'active' : '' ?>">
+          <a href="<?= $B ?>/admin/quality/inspection-reports">Inspection Reports</a>
+        </li>
+        <li class="<?= $current === 'qc-approvals' ? 'active' : '' ?>">
+          <a href="<?= $B ?>/admin/quality/final-approvals">Final Approvals</a>
+        </li>
+        <li class="<?= $current === 'qc-dashboard' ? 'active' : '' ?>">
+          <a href="<?= $B ?>/admin/quality/dashboard">Quality Dashboard</a>
         </li>
       </ul>
     </li>

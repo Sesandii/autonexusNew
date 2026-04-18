@@ -6,6 +6,7 @@
   <title>Customer Profile</title>
   <link rel="stylesheet" href="<?= BASE_URL ?>/public/assets/css/receptionist/sidebar.css">
   <link rel="stylesheet" href="<?= BASE_URL ?>/public/assets/css/receptionist/individualDetails.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
 
@@ -140,54 +141,91 @@
 
  <!-- Service History Tab -->
   <div id="history" class="tab-content">
-    <h3>Service History</h3>
-    <?php if (!empty($customer['appointments'])): ?>
-        <div class="appointment-grid">
-        <?php foreach ($customer['appointments'] as $appt): ?>
-            <div class="appointment-card">
-                <h4>Appointment #<?= htmlspecialchars($appt['appointment_id']) ?> 
-                    - <?= date('F j, Y', strtotime($appt['appointment_date'])) ?>
-                </h4>
-                <span class="badge-status <?= htmlspecialchars(strtolower($appt['status'])) ?>">
-                    <?= htmlspecialchars($appt['status']) ?>
-                </span>
+  <h3>Service History</h3>
 
-                <p><b>Vehicle:</b> <?= htmlspecialchars($appt['year'] . ' ' . $appt['make'] . ' ' . $appt['model']) ?></p>
-                <p><b>Service:</b> <?= htmlspecialchars($appt['service_name']) ?></p>
+  <?php if (!empty($customer['appointments'])): ?>
+    <div class="appointment-grid">
 
-                <?php if (!empty($appt['work_orders'])): ?>
-                    <h5>Work Orders:</h5>
-                    <ul>
-                        <?php foreach ($appt['work_orders'] as $wo): ?>
-                            <li>
-                                Mechanic: <?= htmlspecialchars($wo['mechanic_first'] . ' ' . $wo['mechanic_last']) ?>,
-                                Supervisor: <?= htmlspecialchars($wo['supervisor_first'] . ' ' . $wo['supervisor_last']) ?>,
-                                Summary: <?= htmlspecialchars($wo['service_summary'] ?? 'N/A') ?>,
-                                Cost: $<?= htmlspecialchars($wo['total_cost']) ?>,
-                                Status: <?= htmlspecialchars($wo['status']) ?>
-                            </li>
-                        <?php endforeach; ?>
-                    </ul>
-                <?php endif; ?>
+      <?php foreach ($customer['appointments'] as $appt): ?>
+        <div class="appointment-card">
 
-                <?php if (!empty($appt['complaints'])): ?>
-                    <h5>Complaints:</h5>
-                    <ul>
-                        <?php foreach ($appt['complaints'] as $c): ?>
-                            <li>
-                                Subject: <?= htmlspecialchars($c['subject']) ?>,
-                                Status: <?= htmlspecialchars($c['status']) ?>,
-                                Priority: <?= htmlspecialchars($c['priority']) ?>
-                            </li>
-                        <?php endforeach; ?>
-                    </ul>
-                <?php endif; ?>
-            </div>
-        <?php endforeach; ?>
+          <!-- APPOINTMENT HEADER -->
+          <h4>
+            Appointment #<?= htmlspecialchars($appt['appointment_id']) ?> 
+            - <?= date('F j, Y', strtotime($appt['appointment_date'])) ?>
+          </h4>
+
+          <span class="badge-status <?= htmlspecialchars(strtolower($appt['status'])) ?>">
+            <?= htmlspecialchars($appt['status']) ?>
+          </span>
+
+          <p>
+            <b>Time:</b> <?= htmlspecialchars($appt['appointment_time']) ?>
+          </p>
+
+          <p>
+            <b>Service ID:</b> <?= htmlspecialchars($appt['service_id']) ?>
+          </p>
+
+          <hr>
+
+          <!-- WORK ORDERS -->
+          <h5>Work Orders</h5>
+
+          <?php if (!empty($appt['work_orders'])): ?>
+            <ul class="nested-list">
+              <?php foreach ($appt['work_orders'] as $wo): ?>
+                <li>
+                  <b>Mechanic:</b>
+                  <?= htmlspecialchars($wo['mechanic_first'] . ' ' . $wo['mechanic_last']) ?> <br>
+
+                  <b>Supervisor:</b>
+                  <?= htmlspecialchars($wo['supervisor_first'] . ' ' . $wo['supervisor_last']) ?> <br>
+
+                  <b>Summary:</b>
+                  <?= htmlspecialchars($wo['service_summary'] ?? 'N/A') ?> <br>
+
+                  <b>Cost:</b> $<?= htmlspecialchars($wo['total_cost']) ?> <br>
+
+                  <b>Status:</b> <?= htmlspecialchars($wo['status']) ?>
+                </li>
+              <?php endforeach; ?>
+            </ul>
+          <?php else: ?>
+            <p>No work orders.</p>
+          <?php endif; ?>
+
+          <hr>
+
+          <!-- COMPLAINTS -->
+          <h5>Complaints</h5>
+
+          <?php if (!empty($appt['complaints'])): ?>
+            <ul class="nested-list">
+              <?php foreach ($appt['complaints'] as $c): ?>
+                <li>
+                  <b>Subject:</b> <?= htmlspecialchars($c['subject']) ?> <br>
+
+                  <b>Description:</b> <?= htmlspecialchars($c['description']) ?> <br>
+
+                  <b>Priority:</b> <?= htmlspecialchars($c['priority']) ?> <br>
+
+                  <b>Status:</b> <?= htmlspecialchars($c['status']) ?>
+                </li>
+              <?php endforeach; ?>
+            </ul>
+          <?php else: ?>
+            <p>No complaints.</p>
+          <?php endif; ?>
+
         </div>
-    <?php else: ?>
-        <p>No service history available.</p>
-    <?php endif; ?>
+      <?php endforeach; ?>
+
+    </div>
+
+  <?php else: ?>
+    <p>No service history available.</p>
+  <?php endif; ?>
 </div>
 
 </div>
