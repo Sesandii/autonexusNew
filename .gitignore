@@ -1,14 +1,23 @@
-/config/config.php
-
-# Debug logs
-debug.log
-*.log
 # Vendor directory
 /vendor/
+
+# Config (sensitive)
+config/config.php
 
 # Environment files
 .env
 .env.local
+
+# Logs
+*.log
+debug.log
+
+# Cache
+*.cache
+/cache/
+
+# Compiled files
+*.compiled
 
 # IDE files
 .vscode/
@@ -21,13 +30,6 @@ debug.log
 .DS_Store
 Thumbs.db
 
-# Cache
-*.cache
-/cache/
-
-# Compiled files
-*.compiled
-
 # Testing
 /tests/
 test_results.txt
@@ -37,9 +39,8 @@ __pycache__/
 *.pyc
 report.html
 
-# Test documentation (local testing only)
+# Test documentation
 TESTING_REPORT.md
 TEST_SUITE_SUMMARY.md
 QUICK_START_TESTS.md
 TEST_EXECUTION_SUMMARY.md
-

@@ -27,15 +27,23 @@ $base = rtrim(BASE_URL, '/');
         $headerTitle = 'Rate Your Service';
         $headerSubtitle = 'Tell us how we did so we can keep improving every visit.';
         include APP_ROOT . '/views/partials/customer-page-header.php';
+
+        $flashMessage = isset($_SESSION['flash']) ? trim((string)$_SESSION['flash']) : null;
+        if ($flashMessage !== null) {
+          unset($_SESSION['flash']);
+        }
+        $isBookingSuccess = $flashMessage !== null && (
+          strcasecmp($flashMessage, 'Booking created successfully.') === 0 ||
+          strcasecmp($flashMessage, 'Booking created successfully') === 0
+        );
       ?>
 
       <!-- Flash Messages -->
-      <?php if (isset($_SESSION['flash'])): ?>
+      <?php if ($flashMessage !== null && !$isBookingSuccess): ?>
         <div class="flash-message">
           <i class="fa-solid fa-circle-check"></i>
-          <?= htmlspecialchars($_SESSION['flash']) ?>
+          <?= htmlspecialchars($flashMessage) ?>
         </div>
-        <?php unset($_SESSION['flash']); ?>
       <?php endif; ?>
       <?php if (empty($appointments)): ?>
         <div class="empty-appointments">
