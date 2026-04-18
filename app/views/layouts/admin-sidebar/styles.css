@@ -24,7 +24,7 @@ body {
   background: #e7e8ea;
 }
 
-/* Sidebar Container */
+/* Sidebar */
 .sidebar {
   width: 260px;
   min-height: 100vh;
@@ -190,11 +190,6 @@ body {
   background: transparent;
   color: #fff;
   text-decoration: none;
-  padding: 14px 16px;
-  border-radius: 18px;
-  font-size: 15px;
-  font-weight: 500;
-  cursor: pointer;
   text-align: left;
   cursor: pointer;
   border-radius: var(--radius);
@@ -252,16 +247,14 @@ body {
   color: var(--icon);
 }
 
-/* Caret */
-.caret {
-  margin-left: auto;
-  transition: transform 0.2s ease;
-  color: #94a3b8;
+.has-submenu.open > .submenu-toggle .caret,
+.submenu-group.open > .submenu-toggle .caret {
+  transform: rotate(90deg);
 }
 
 /* Submenus */
-.has-submenu > .submenu,
-.submenu-group > .submenu {
+.has-submenu>.submenu,
+.submenu-group>.submenu {
   display: none;
   margin: 6px 0 10px 12px;
   padding-left: 12px;
@@ -269,14 +262,14 @@ body {
 }
 
 /* Open state */
-.has-submenu.open > .submenu,
-.submenu-group.open > .submenu {
+.has-submenu.open>.submenu,
+.submenu-group.open>.submenu {
   display: block;
 }
 
-.has-submenu.open > .submenu-toggle .caret,
-.submenu-group.open > .submenu-toggle .caret,
-.submenu-group.open > .submenu-toggle--inner .caret {
+.has-submenu.open>.submenu-toggle .caret,
+.submenu-group.open>.submenu-toggle .caret,
+.submenu-group.open>.submenu-toggle--inner .caret {
   transform: rotate(90deg);
 }
 
