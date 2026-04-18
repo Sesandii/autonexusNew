@@ -1,4 +1,9 @@
-<?php $current = 'supervisors'; ?>
+<?php
+$current = 'supervisors';
+$base = rtrim($base ?? BASE_URL, '/');
+$old = $old ?? [];
+$errors = $errors ?? [];
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -6,9 +11,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
   <title>Create Supervisor</title>
-  <link rel="stylesheet" href="../../app/views/layouts/admin-shared/management.css">
-  <link rel="stylesheet" href="../../app/views/layouts/admin-sidebar/styles.css">
-  <link rel="stylesheet" href="../../app/views/admin/admin-viewsupervisor/supervisors.css">
+  <link rel="stylesheet" href="<?= $base ?>/app/views/layouts/admin-shared/management.css">
+  <link rel="stylesheet" href="<?= $base ?>/app/views/layouts/admin-sidebar/styles.css">
+  <link rel="stylesheet" href="<?= $base ?>/app/views/admin/admin-viewsupervisor/supervisors.css">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 </head>
 
@@ -23,91 +28,108 @@
       </div>
     <?php endif; ?>
 
-    <form class="form" method="post" action="<?= rtrim(BASE_URL, '/') ?>/admin/supervisors">
-      <!-- not /admin/supervisor -->
-
+    <form class="form" method="post" action="<?= $base ?>/admin/supervisors">
       <div class="row">
-        <div><label>First Name</label>
+        <div>
+          <label>First Name</label>
           <input name="first_name" required value="<?= htmlspecialchars($old['first_name'] ?? '') ?>">
         </div>
-        <div><label>Last Name</label>
+        <div>
+          <label>Last Name</label>
           <input name="last_name" required value="<?= htmlspecialchars($old['last_name'] ?? '') ?>">
         </div>
       </div>
 
       <div class="row">
-        <div><label>Email</label>
-          <input type="email" name="email" value="<?= htmlspecialchars($old['email'] ?? '') ?>">
+        <div>
+          <label>Email</label>
+          <input type="email" name="email" required value="<?= htmlspecialchars($old['email'] ?? '') ?>">
         </div>
-        <div><label>Phone</label>
-          <input name="phone" value="<?= htmlspecialchars($old['phone'] ?? '') ?>">
+        <div>
+          <label>Phone</label>
+          <input name="phone" type="tel" inputmode="numeric" pattern="^0[0-9]{9}$" maxlength="10"
+            placeholder="0712345678" value="<?= htmlspecialchars($old['phone'] ?? '') ?>">
         </div>
       </div>
 
       <div class="row">
-        <div><label>Status</label>
+        <div>
+          <label>Status</label>
           <select name="status">
             <?php $s = $old['status'] ?? 'active'; ?>
             <option value="active" <?= $s === 'active' ? 'selected' : '' ?>>Active</option>
             <option value="inactive" <?= $s === 'inactive' ? 'selected' : '' ?>>Inactive</option>
           </select>
         </div>
-        <div><label>Supervisor Code (optional)</label>
+        <div>
+          <label>Supervisor Code (optional)</label>
           <input name="supervisor_code" placeholder="Auto if empty"
             value="<?= htmlspecialchars($old['supervisor_code'] ?? '') ?>">
         </div>
       </div>
 
       <div class="row">
-        <div><label>Initial Password (optional)</label>
-          <input name="password" type="password" placeholder="Defaults to 'autonexus' if blank">
+        <div>
+          <label>Initial Password</label>
+          <input name="password" type="text" value="<?= htmlspecialchars($old['password'] ?? 'Supervisor@123') ?>">
         </div>
-        <div class="row">
-          <div>
-            <label>Branch</label>
-            <select id="branch_id" name="branch_id" required>
-              <option value="">-- Select a branch --</option>
-              <?php foreach (($branches ?? []) as $b):
-                $managerName = trim(($b['m_first'] ?? '') . ' ' . ($b['m_last'] ?? ''));
-                ?>
-                <option value="<?= (int) $b['branch_id'] ?>"
-                  data-manager-id="<?= htmlspecialchars($b['manager_id'] ?? '', ENT_QUOTES) ?>"
-                  data-manager-name="<?= htmlspecialchars($managerName, ENT_QUOTES) ?>"
-                  data-branch-name="<?= htmlspecialchars($b['name'] ?? '', ENT_QUOTES) ?>" <?= (isset($old['branch_id']) && (int) $old['branch_id'] === (int) $b['branch_id']) ? 'selected' : '' ?>>
-                  <?= htmlspecialchars(($b['branch_code'] ? $b['branch_code'] . ' • ' : '') . ($b['name'] ?? 'Branch')) ?>
-                </option>
-              <?php endforeach; ?>
-            </select>
-          </div>
-
-          <div>
-            <label>Branch Manager</label>
-            <input id="manager_name" class="input" type="text" readonly placeholder="Auto-filled">
-            <input id="manager_id" name="manager_id" type="hidden">
-          </div>
+        <div>
+          <label>Branch</label>
+          <select id="branch_id" name="branch_id" required>
+            <option value="">-- Select a branch --</option>
+            <?php foreach (($branches ?? []) as $b):
+              $managerName = trim(($b['m_first'] ?? '') . ' ' . ($b['m_last'] ?? ''));
+              $managerCode = trim((string) ($b['m_code'] ?? ''));
+              ?>
+              <option value="<?= (int) $b['branch_id'] ?>"
+                data-manager-id="<?= htmlspecialchars($b['manager_id'] ?? '', ENT_QUOTES) ?>"
+                data-manager-name="<?= htmlspecialchars($managerName, ENT_QUOTES) ?>"
+                data-manager-code="<?= htmlspecialchars($managerCode, ENT_QUOTES) ?>" <?= (isset($old['branch_id']) && (int) $old['branch_id'] === (int) $b['branch_id']) ? 'selected' : '' ?>>
+                <?= htmlspecialchars(($b['branch_code'] ? $b['branch_code'] . ' • ' : '') . ($b['name'] ?? 'Branch')) ?>
+              </option>
+            <?php endforeach; ?>
+          </select>
         </div>
+      </div>
 
-        <p style="margin-top:18px">
-          <button class="add-btn" type="submit">Create</button>
-          <a class="btn-secondary" href="<?= rtrim(BASE_URL, '/') ?>/admin/supervisors"
-            style="margin-left:8px">Cancel</a>
-        </p>
+      <div class="row">
+        <div>
+          <label>Manager Code</label>
+          <input id="manager_code" class="input" type="text" readonly placeholder="Auto-filled">
+        </div>
+        <div>
+          <label>Branch Manager</label>
+          <input id="manager_name" class="input" type="text" readonly placeholder="Auto-filled">
+          <input id="manager_id" name="manager_id" type="hidden"
+            value="<?= htmlspecialchars($old['manager_id'] ?? '') ?>">
+        </div>
+      </div>
+
+      <p style="margin-top:18px">
+        <button class="add-btn" type="submit">Create</button>
+        <a class="btn-secondary" href="<?= $base ?>/admin/supervisors" style="margin-left:8px">Cancel</a>
+      </p>
     </form>
 
     <script>
       (function () {
         var sel = document.getElementById('branch_id');
         var mgrName = document.getElementById('manager_name');
+        var mgrCode = document.getElementById('manager_code');
         var mgrId = document.getElementById('manager_id');
 
         function syncManager() {
           var opt = sel.options[sel.selectedIndex];
-          if (!opt) return;
-          mgrName.value = opt.dataset.managerName || '';
+          if (!opt) {
+            return;
+          }
+          mgrName.value = opt.dataset.managerName || 'Not assigned';
+          mgrCode.value = opt.dataset.managerCode || 'Not assigned';
           mgrId.value = opt.dataset.managerId || '';
         }
+
         sel.addEventListener('change', syncManager);
-        syncManager(); // initial (covers repopulate after validation error)
+        syncManager();
       })();
     </script>
   </main>

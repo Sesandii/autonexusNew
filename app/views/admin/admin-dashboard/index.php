@@ -18,6 +18,7 @@ $routes = [
     'appointments'       => $B . '/admin/appointments',
     'ongoing_services'   => $B . '/admin/admin-ongoingservices',
     'service_history'    => $B . '/admin/admin-servicehistory',
+    'payments'            => $B . '/admin/admin-viewpayments',
     'reports'            => $B . '/admin/admin-viewreports',
     'feedback'           => $B . '/admin/admin-viewfeedback',
     'complaints'         => $B . '/admin/admin-viewcomplaints',
@@ -384,7 +385,7 @@ function firstWords(?string $text, int $max = 10): string
           </article>
         </a>
 
-        <a class="kpi-card-link" href="<?= $routes['reports'] ?>">
+        <a class="kpi-card-link" href="<?= $routes['payments'] ?>">
           <article class="kpi-card">
             <div class="kpi-icon"><i class="fa-solid fa-sack-dollar"></i></div>
             <div class="kpi-meta">

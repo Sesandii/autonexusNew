@@ -28,53 +28,93 @@ class Manager
      * (scans highest numeric suffix; safe even if rows were deleted)
      */
     /**
- * Generate next code like MAN001, MAN002, ...
- * Reads the highest numeric suffix and increments it.
- */
-public function nextCode(): string
-{
-    if (!$this->hasCol('manager_code')) {
-        return 'MAN001';
+     * Generate next code like MAN001, MAN002, ...
+     * Reads the highest numeric suffix and increments it.
+     */
+    public function nextCode(): string
+    {
+        if (!$this->hasCol('manager_code')) {
+            return 'MAN001';
+        }
+
+        // Get the largest numeric part after the 'MAN' prefix (3 chars)
+        $sql = "SELECT MAX(CAST(SUBSTRING(manager_code, 4) AS UNSIGNED)) AS max_n
+              FROM managers";
+        $max = $this->db->query($sql)->fetchColumn();
+
+        $next = ((int) $max) + 1;              // start from 1 if table empty/null
+        return 'MAN' . str_pad((string) $next, 3, '0', STR_PAD_LEFT);
     }
 
-    // Get the largest numeric part after the 'MAN' prefix (3 chars)
-    $sql = "SELECT MAX(CAST(SUBSTRING(manager_code, 4) AS UNSIGNED)) AS max_n
-              FROM managers";
-    $max = $this->db->query($sql)->fetchColumn();
-
-    $next = ((int)$max) + 1;              // start from 1 if table empty/null
-    return 'MAN' . str_pad((string)$next, 3, '0', STR_PAD_LEFT);
-}
-
-/**
- * Alternative generator with zero race conditions:
- * Use after insert, based on the auto-increment manager_id.
- * This will produce MAN001, MAN002 ... in lockstep with manager_id.
- */
-public function codeFromId(int $managerId): string
-{
-    return 'MAN' . str_pad((string)$managerId, 3, '0', STR_PAD_LEFT);
-}
+    /**
+     * Alternative generator with zero race conditions:
+     * Use after insert, based on the auto-increment manager_id.
+     * This will produce MAN001, MAN002 ... in lockstep with manager_id.
+     */
+    public function codeFromId(int $managerId): string
+    {
+        return 'MAN' . str_pad((string) $managerId, 3, '0', STR_PAD_LEFT);
+    }
 
 
     /* ---------- Queries ---------- */
 
-    public function all(): array
+    public function all(string $q = '', string $status = 'all'): array
     {
         $sql = "SELECT m.manager_id, m.manager_code, m.user_id,
-                       u.first_name, u.last_name, u.email, u.phone, u.username, u.status, u.created_at
+                       u.first_name, u.last_name, u.email, u.phone, u.username, u.status, u.created_at,
+                       b.branch_id, b.branch_code, b.name AS branch_name
                   FROM managers m
                   JOIN users u ON u.user_id = m.user_id
-              ORDER BY m.manager_id ASC"; // oldest -> newest
-        return $this->db->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+             LEFT JOIN branches b ON b.manager_id = m.manager_id
+                 WHERE 1 = 1";
+
+        $params = [];
+
+        if ($q !== '') {
+            $like = '%' . $q . '%';
+            $sql .= " AND (
+                        m.manager_code LIKE ?
+                     OR u.first_name LIKE ?
+                     OR u.last_name LIKE ?
+                     OR CONCAT(u.first_name, ' ', u.last_name) LIKE ?
+                     OR u.username LIKE ?
+                     OR u.email LIKE ?
+                     OR u.phone LIKE ?
+                     OR b.branch_code LIKE ?
+                     OR b.name LIKE ?
+                    )";
+            $params[] = $like;
+            $params[] = $like;
+            $params[] = $like;
+            $params[] = $like;
+            $params[] = $like;
+            $params[] = $like;
+            $params[] = $like;
+            $params[] = $like;
+            $params[] = $like;
+        }
+
+        if (in_array($status, ['active', 'inactive'], true)) {
+            $sql .= " AND u.status = ?";
+            $params[] = $status;
+        }
+
+        $sql .= " ORDER BY m.manager_id ASC";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function find(int $id): ?array
     {
         $st = $this->db->prepare(
-            "SELECT m.*, u.first_name, u.last_name, u.email, u.phone, u.username, u.status
+            "SELECT m.*, u.first_name, u.last_name, u.email, u.phone, u.username, u.status,
+                    b.branch_id, b.branch_code, b.name AS branch_name
                FROM managers m
                JOIN users u ON u.user_id = m.user_id
+          LEFT JOIN branches b ON b.manager_id = m.manager_id
               WHERE m.manager_id = ?"
         );
         $st->execute([$id]);
@@ -101,11 +141,12 @@ public function codeFromId(int $managerId): string
         }
 
         $sql = "INSERT INTO managers (" . implode(',', $cols) . ") VALUES (" . implode(',', $vals) . ")";
-        $st  = $this->db->prepare($sql);
-        $ok  = $st->execute([':code' => $managerCode, ':uid' => $userId]);
-        if (!$ok) throw new Exception('Failed to create manager');
+        $st = $this->db->prepare($sql);
+        $ok = $st->execute([':code' => $managerCode, ':uid' => $userId]);
+        if (!$ok)
+            throw new Exception('Failed to create manager');
 
-        return (int)$this->db->lastInsertId();
+        return (int) $this->db->lastInsertId();
     }
 
     /**
@@ -114,7 +155,7 @@ public function codeFromId(int $managerId): string
      */
     public function update(int $managerId, array $data): void
     {
-        $parts  = [];
+        $parts = [];
         $params = [':id' => $managerId];
 
         if (isset($data['manager_code'])) {
@@ -122,14 +163,15 @@ public function codeFromId(int $managerId): string
             $params[':manager_code'] = $data['manager_code'];
         }
 
-        if (!$parts) return;
+        if (!$parts)
+            return;
 
         if ($this->hasCol('updated_at')) {
             $parts[] = "updated_at = NOW()";
         }
 
         $sql = "UPDATE managers SET " . implode(', ', $parts) . " WHERE manager_id = :id";
-        $st  = $this->db->prepare($sql);
+        $st = $this->db->prepare($sql);
         $st->execute($params);
     }
 
@@ -165,7 +207,8 @@ public function codeFromId(int $managerId): string
             $this->db->commit();
             return ['user_id' => $userId, 'manager_id' => $managerId, 'manager_code' => $managerCode];
         } catch (\Throwable $e) {
-            if ($this->db->inTransaction()) $this->db->rollBack();
+            if ($this->db->inTransaction())
+                $this->db->rollBack();
             throw $e;
         }
     }
@@ -174,11 +217,13 @@ public function codeFromId(int $managerId): string
     public function findWithUser(int $managerId): ?array
     {
         $sql = "SELECT m.manager_id, m.manager_code, " .
-               ($this->hasCol('created_at') ? "m.created_at AS manager_created_at," : "NULL AS manager_created_at,") .
-               " u.user_id, u.first_name, u.last_name, u.username, u.email, u.phone, 
+            ($this->hasCol('created_at') ? "m.created_at AS manager_created_at," : "NULL AS manager_created_at,") .
+            " u.user_id, u.first_name, u.last_name, u.username, u.email, u.phone, 
                  u.status, u.role, u.created_at AS user_created_at
+                                 , b.branch_id, b.branch_code, b.name AS branch_name
             FROM managers m
             JOIN users u ON u.user_id = m.user_id
+             LEFT JOIN branches b ON b.manager_id = m.manager_id
            WHERE m.manager_id = :id
            LIMIT 1";
         $stmt = $this->db->prepare($sql);

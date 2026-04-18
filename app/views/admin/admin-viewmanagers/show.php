@@ -3,6 +3,11 @@
 /** @var string $base */
 $base = rtrim($base ?? BASE_URL, '/');
 $current = 'service-managers';
+$branchCode = trim((string) ($row['branch_code'] ?? ''));
+$branchName = trim((string) ($row['branch_name'] ?? ''));
+$branchText = ($branchCode !== '' || $branchName !== '')
+  ? trim($branchCode . ' ' . ($branchName !== '' ? '(' . $branchName . ')' : ''))
+  : 'Not assigned';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -58,6 +63,11 @@ $current = 'service-managers';
         <div>
           <div class="label">Status</div>
           <div class="value"><?= htmlspecialchars($row['status'] ?? '') ?></div>
+        </div>
+
+        <div>
+          <div class="label">Assigned Branch</div>
+          <div class="value"><?= htmlspecialchars($branchText) ?></div>
         </div>
 
         <div>

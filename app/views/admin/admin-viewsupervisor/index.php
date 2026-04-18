@@ -1,5 +1,9 @@
-<?php $current = 'supervisors';
-$B = rtrim(BASE_URL, '/'); ?>
+<?php
+$current = 'supervisors';
+$B = rtrim($base ?? BASE_URL, '/');
+$q = $q ?? '';
+$status = $status ?? 'all';
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -36,12 +40,23 @@ $B = rtrim(BASE_URL, '/'); ?>
             <span>Back to Staff Management</span>
           </a>
 
-          <input type="text" id="searchInput" class="search-input" placeholder="Search supervisor…">
-
-          <a class="add-btn" href="<?= $B ?>/admin/supervisors/create">
-            <i class="fa-solid fa-user-plus"></i>
-            <span>Add Supervisor</span>
-          </a>
+          <form method="get" action="<?= $B ?>/admin/supervisors" class="tools">
+            <input type="text" id="searchInput" class="search-input" name="q" placeholder="Search supervisor…"
+              value="<?= htmlspecialchars($q, ENT_QUOTES, 'UTF-8') ?>">
+            <select class="status-filter" name="status">
+              <option value="all" <?= $status === 'all' ? 'selected' : '' ?>>All Status</option>
+              <option value="active" <?= $status === 'active' ? 'selected' : '' ?>>Active</option>
+              <option value="inactive" <?= $status === 'inactive' ? 'selected' : '' ?>>Inactive</option>
+            </select>
+            <button class="add-btn" type="submit" style="border:none; cursor:pointer;">
+              <i class="fa-solid fa-filter"></i>
+              <span>Filter</span>
+            </button>
+            <a class="add-btn" href="<?= $B ?>/admin/supervisors/create">
+              <i class="fa-solid fa-user-plus"></i>
+              <span>Add Supervisor</span>
+            </a>
+          </form>
         </div>
       </header>
 
@@ -122,20 +137,6 @@ $B = rtrim(BASE_URL, '/'); ?>
     </section>
 
   </main>
-
-  <!-- JS: Live text search -->
-  <script>
-    const input = document.getElementById('searchInput');
-    const rows = document.querySelectorAll('#supervisorRows tr');
-
-    input.addEventListener('input', () => {
-      const q = input.value.toLowerCase();
-
-      rows.forEach(tr => {
-        tr.style.display = tr.innerText.toLowerCase().includes(q) ? '' : 'none';
-      });
-    });
-  </script>
 
 </body>
 

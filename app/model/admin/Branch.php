@@ -31,11 +31,11 @@ class Branch
         }
 
         // Extract numeric part
-        $num = (int)preg_replace('/\D/', '', $last);
+        $num = (int) preg_replace('/\D/', '', $last);
         $next = $num + 1;
 
         // Return formatted code
-        return 'BR' . str_pad((string)$next, 3, '0', STR_PAD_LEFT);
+        return 'BR' . str_pad((string) $next, 3, '0', STR_PAD_LEFT);
     }
 
     /** Get all branches */
@@ -43,6 +43,14 @@ class Branch
     {
         $stmt = $this->pdo->query("SELECT * FROM branches ORDER BY branch_code");
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function findByManagerId(int $managerId): ?array
+    {
+        $stmt = $this->pdo->prepare("SELECT * FROM branches WHERE manager_id = :mid LIMIT 1");
+        $stmt->execute(['mid' => $managerId]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $row ?: null;
     }
 
     /**
@@ -71,9 +79,11 @@ class Branch
 
     public function updateByCode(string $code, array $data): void
     {
-        if (array_key_exists('branch_code', $data)) unset($data['branch_code']);
+        if (array_key_exists('branch_code', $data))
+            unset($data['branch_code']);
         $cols = array_keys($data);
-        if (empty($cols)) return;
+        if (empty($cols))
+            return;
 
         $set = implode(',', array_map(fn($k) => "$k = :$k", $cols));
         $sql = "UPDATE branches SET $set WHERE branch_code = :where_code";
@@ -91,32 +101,64 @@ class Branch
         $stmt->execute(['c' => $code]);
     }
 
-    /** ✅ Return branches + manager info */
-   public function allWithManager(): array
-{
-    $sql = "SELECT 
-                b.branch_id,
-                b.branch_code,
-                b.name,
-                b.city,
-                b.phone,
-                b.email,
-                b.status,
-                b.created_at,
-                b.manager_id,
-                u.first_name AS m_first,
-                u.last_name AS m_last
-            FROM branches b
-            LEFT JOIN managers m ON m.manager_id = b.manager_id
-            LEFT JOIN users u ON u.user_id = m.user_id
-            ORDER BY CAST(SUBSTRING(b.branch_code, 3) AS UNSIGNED) ASC";
-    return $this->pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
-}
+    /** Return branches + manager info, with optional search/filter */
+    public function allWithManager(string $q = '', string $status = 'all'): array
+    {
+        $sql = "SELECT 
+                    b.branch_id,
+                    b.branch_code,
+                    b.name,
+                    b.city,
+                    b.phone,
+                    b.email,
+                    b.status,
+                    b.created_at,
+                    b.manager_id,
+                    m.manager_code AS m_code,
+                    u.first_name AS m_first,
+                    u.last_name AS m_last
+                FROM branches b
+                LEFT JOIN managers m ON m.manager_id = b.manager_id
+                LEFT JOIN users u ON u.user_id = m.user_id
+                WHERE 1 = 1";
+
+        $params = [];
+
+        if ($q !== '') {
+            $sql .= " AND (
+                        b.branch_code LIKE ?
+                     OR b.name LIKE ?
+                     OR b.city LIKE ?
+                     OR b.phone LIKE ?
+                     OR u.first_name LIKE ?
+                     OR u.last_name LIKE ?
+                     OR CONCAT(u.first_name, ' ', u.last_name) LIKE ?
+                    )";
+            $params[] = '%' . $q . '%';
+            $params[] = '%' . $q . '%';
+            $params[] = '%' . $q . '%';
+            $params[] = '%' . $q . '%';
+            $params[] = '%' . $q . '%';
+            $params[] = '%' . $q . '%';
+            $params[] = '%' . $q . '%';
+        }
+
+        if (in_array($status, ['active', 'inactive'], true)) {
+            $sql .= " AND COALESCE(b.status, 'active') = ?";
+            $params[] = $status;
+        }
+
+        $sql .= " ORDER BY CAST(SUBSTRING(b.branch_code, 3) AS UNSIGNED) ASC";
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 
     public function idsOfActive(): array
     {
         $rows = $this->pdo->query("SELECT branch_id FROM branches WHERE status='active'")
-                          ->fetchAll(PDO::FETCH_COLUMN, 0);
+            ->fetchAll(PDO::FETCH_COLUMN, 0);
         return array_map('intval', $rows);
     }
 
