@@ -4,19 +4,20 @@
 /** @var string $q */
 /** @var string $status */
 
-$current  = 'branches';
+$current = 'branches';
 $branches = $branches ?? [];
-$base     = rtrim($base ?? BASE_URL, '/');
-$q        = $q ?? '';
-$status   = $status ?? 'all';
+$base = rtrim($base ?? BASE_URL, '/');
+$q = $q ?? '';
+$status = $status ?? 'all';
 
 function e($value): string
 {
-    return htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8');
+  return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
 }
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -33,7 +34,7 @@ function e($value): string
 
     body {
       margin: 0;
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background: #f3f4f6;
       color: #111827;
     }
@@ -361,6 +362,7 @@ function e($value): string
     }
   </style>
 </head>
+
 <body>
   <?php include(__DIR__ . '/../../layouts/admin-sidebar/sidebar.php'); ?>
 
@@ -374,13 +376,7 @@ function e($value): string
       <div class="toolbar">
         <form method="get" action="<?= e($base . '/admin/branches') ?>">
           <div class="search-wrap">
-            <input
-              type="text"
-              class="search-input"
-              name="q"
-              placeholder="Search branch..."
-              value="<?= e($q) ?>"
-            />
+            <input type="text" class="search-input" name="q" placeholder="Search branch..." value="<?= e($q) ?>" />
           </div>
 
           <select class="status-filter" name="status">
@@ -417,16 +413,16 @@ function e($value): string
             <?php if (!empty($branches)): ?>
               <?php foreach ($branches as $b): ?>
                 <?php
-                  $code = (string)($b['branch_code'] ?? '');
-                  $rowStatus = strtolower((string)($b['status'] ?? 'active'));
-                  $isInactive = $rowStatus === 'inactive';
-                  $statusClass = $isInactive ? 'inactive' : 'active';
-                  $statusLabel = $isInactive ? 'Inactive' : 'Active';
+                $code = (string) ($b['branch_code'] ?? '');
+                $rowStatus = strtolower((string) ($b['status'] ?? 'active'));
+                $isInactive = $rowStatus === 'inactive';
+                $statusClass = $isInactive ? 'inactive' : 'active';
+                $statusLabel = $isInactive ? 'Inactive' : 'Active';
 
-                  $managerName = trim(
-                    ((string)($b['m_first'] ?? '')) . ' ' . ((string)($b['m_last'] ?? ''))
-                  );
-                  $managerName = $managerName !== '' ? $managerName : 'Not assigned';
+                $managerName = trim(
+                  ((string) ($b['m_first'] ?? '')) . ' ' . ((string) ($b['m_last'] ?? ''))
+                );
+                $managerName = $managerName !== '' ? $managerName : 'Not assigned';
                 ?>
                 <tr>
                   <td><?= e($code) ?></td>
@@ -442,30 +438,20 @@ function e($value): string
                   </td>
                   <td>
                     <div class="table-actions">
-                      <a
-                        href="<?= e($base . '/admin/branches/' . rawurlencode($code)) ?>"
-                        class="chip-btn chip-btn--view"
-                        title="View"
-                      >
+                      <a href="<?= e($base . '/admin/branches/' . rawurlencode($code)) ?>" class="chip-btn chip-btn--view"
+                        title="View">
                         <i class="fa-solid fa-eye"></i>
                         <span>View</span>
                       </a>
 
-                      <a
-                        href="<?= e($base . '/admin/branches/' . rawurlencode($code) . '/edit') ?>"
-                        class="chip-btn chip-btn--edit"
-                        title="Edit"
-                      >
+                      <a href="<?= e($base . '/admin/branches/' . rawurlencode($code) . '/edit') ?>"
+                        class="chip-btn chip-btn--edit" title="Edit">
                         <i class="fa-solid fa-pen"></i>
                         <span>Edit</span>
                       </a>
 
-                      <form
-                        method="post"
-                        action="<?= e($base . '/admin/branches/' . rawurlencode($code) . '/delete') ?>"
-                        class="inline-form"
-                        onsubmit="return confirm('Delete this branch?');"
-                      >
+                      <form method="post" action="<?= e($base . '/admin/branches/' . rawurlencode($code) . '/delete') ?>"
+                        class="inline-form" onsubmit="return confirm('Delete this branch?');">
                         <button type="submit" class="chip-btn chip-btn--delete" title="Delete">
                           <i class="fa-solid fa-trash"></i>
                           <span>Delete</span>
@@ -486,4 +472,5 @@ function e($value): string
     </section>
   </main>
 </body>
+
 </html>

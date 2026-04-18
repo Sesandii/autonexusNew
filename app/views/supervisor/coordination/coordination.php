@@ -5,7 +5,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Daily Report | AutoNexus</title>
+  <title>Coordinate | AutoNexus</title>
   <link rel="stylesheet" href="/autonexus/public/assets/css/supervisor/style-coordination.css"/>
 </head>
 <body>
@@ -55,7 +55,7 @@
      data-mechanic="<?= $mech['mechanic_id'] ?>"
      data-code="<?= htmlspecialchars($mech['mechanic_code']) ?>"
      data-spec="<?= htmlspecialchars($mech['specialization']) ?>"
-     data-status="<?= htmlspecialchars($mech['status']) ?>">
+     data-status="<?= $mech['status'] ?>">
 
 
   <h3><?= $mech['mechanic_code'] ?></h3>
@@ -95,10 +95,11 @@ $end   = new DateTime($wo['calculated_end']);
     <input type="hidden" name="mechanic_id" value="<?= $mech['mechanic_id'] ?>">
     <input type="hidden" name="mechanic_code" value="<?= htmlspecialchars($mech['mechanic_code']) ?>">
     <select name="status">
-  <option value="Active" <?= $mech['status'] == 'Active' ? 'selected' : '' ?>>Active</option>
-  <option value="Busy" <?= $mech['status'] == 'Busy' ? 'selected' : '' ?>>Busy</option>
-  <option value="On Break" <?= $mech['status'] == 'On Break' ? 'selected' : '' ?>>On Break</option>
-  <option value="Off-Duty" <?= $mech['status'] == 'Off-Duty' ? 'selected' : '' ?>>Off-Duty</option>
+    <?php $currentStatus = trim($mech['status']); ?>
+    <option value="Active" <?= strcasecmp($currentStatus, 'Active') == 0 ? 'selected' : '' ?>>Active</option>
+    <option value="Busy" <?= strcasecmp($currentStatus, 'Busy') == 0 ? 'selected' : '' ?>>Busy</option>
+    <option value="On Break" <?= strcasecmp($currentStatus, 'On Break') == 0 ? 'selected' : '' ?>>On Break</option>
+    <option value="Off-Duty" <?= strcasecmp($currentStatus, 'Off-Duty') == 0 ? 'selected' : '' ?>>Off-Duty</option>
 </select>
     <button class="update-btn">Update</button>
   </form>
@@ -112,47 +113,52 @@ $end   = new DateTime($wo['calculated_end']);
 </div>
 </main>
 <script>
-const codeInput = document.getElementById('filter-code');
-const specSelect = document.getElementById('filter-spec');
-const statusSelect = document.getElementById('filter-status');
-const resetBtn = document.getElementById('reset-filters');
-const mechanicCards = document.querySelectorAll('.mechanic-card');
+document.addEventListener('DOMContentLoaded', function() {
+    const codeSelect = document.getElementById('filter-code');
+    const specSelect = document.getElementById('filter-spec');
+    const statusSelect = document.getElementById('filter-status');
+    const resetBtn = document.getElementById('reset-filters');
+    const mechanicCards = document.querySelectorAll('.mechanic-card');
 
-function filterMechanics() {
-    const codeVal = codeInput.value.toLowerCase();
-    const specVal = specSelect.value;
-    const statusVal = statusSelect.value;
+    function filterMechanics() {
+        // We use lowercase and trim to avoid any "Hidden Space" bugs
+        const codeVal = codeSelect.value.trim().toLowerCase();
+        const specVal = specSelect.value.trim().toLowerCase();
+        const statusVal = statusSelect.value.trim().toLowerCase();
 
-    mechanicCards.forEach(card => {
-        const code = card.dataset.code.toLowerCase();
-        const spec = card.dataset.spec;
-        const status = card.dataset.status;
+        mechanicCards.forEach(card => {
+            // Get data attributes and normalize them
+            const cardCode = (card.getAttribute('data-code') || "").trim().toLowerCase();
+            const cardSpec = (card.getAttribute('data-spec') || "").trim().toLowerCase();
+            const cardStatus = (card.getAttribute('data-status') || "").trim().toLowerCase();
 
-        const matchesCode = !codeVal || code === codeVal;
-        const matchesSpec = !specVal || spec === specVal;
-        const matchesStatus = !statusVal || status === statusVal;
+            // Check if they match. If the filter is empty, it's a match.
+            const matchesCode = !codeVal || cardCode.includes(codeVal);
+            const matchesSpec = !specVal || cardSpec === specVal;
+            const matchesStatus = !statusVal || cardStatus === statusVal;
 
-        if (matchesCode && matchesSpec && matchesStatus) {
-            card.style.display = 'block';
-        } else {
-            card.style.display = 'none';
-        }
+            if (matchesCode && matchesSpec && matchesStatus) {
+                card.classList.remove('hidden-card');
+            } else {
+                card.classList.add('hidden-card');
+            }
+        });
+    }
+
+    // Attach listeners
+    codeSelect.addEventListener('change', filterMechanics);
+    specSelect.addEventListener('change', filterMechanics);
+    statusSelect.addEventListener('change', filterMechanics);
+
+    resetBtn.addEventListener('click', () => {
+        codeSelect.value = '';
+        specSelect.value = '';
+        statusSelect.value = '';
+        filterMechanics();
     });
-}
 
-codeInput.addEventListener('change', filterMechanics);
-specSelect.addEventListener('change', filterMechanics);
-statusSelect.addEventListener('change', filterMechanics);
-
-resetBtn.addEventListener('click', () => {
-    codeInput.value = '';
-    specSelect.value = '';
-    statusSelect.value = '';
-    filterMechanics();
+    filterMechanics(); // Run on load
 });
-
-filterMechanics();
-
 </script>
 </body>
 </html>
