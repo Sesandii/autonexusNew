@@ -48,7 +48,7 @@ if (defined('APP_ROOT') && file_exists(APP_ROOT . '/views/layouts/customer-sideb
       include APP_ROOT . '/views/partials/customer-page-header.php';
     ?>
     
-    <div class="complaint-response">We'll review your complaint and reply via your registered email/phone. You'll also see status updates here.</div>
+    <div class="complaint-response">We'll review your complaint and reply via your registered email/phone.</div>
     
     <?php
     // Display success message
