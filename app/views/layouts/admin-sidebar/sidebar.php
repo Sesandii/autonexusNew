@@ -5,11 +5,11 @@ $current = $current ?? '';
 
 <aside class="sidebar">
   <div class="logo-wrap">
-  <a href="<?= $B ?>/admin-dashboard" class="logo-link">
-    <img src="<?= $B ?>/public/assets/img/logo.jpg" alt="AutoNexus Logo" class="logo-img">
-    <span class="logo-text">AutoNexus</span>
-  </a>
-</div>
+    <a href="<?= $B ?>/admin-dashboard" class="logo-link">
+      <img src="<?= $B ?>/public/assets/img/logo.jpg" alt="AutoNexus Logo" class="logo-img">
+      <span class="logo-text">AutoNexus</span>
+    </a>
+  </div>
 
   <ul class="menu">
     <!-- Dashboard -->
@@ -21,7 +21,8 @@ $current = $current ?? '';
     </li>
 
     <!-- Operations -->
-    <li class="menu-item has-submenu <?= in_array($current, ['appointments', 'approval', 'progress', 'history'], true) ? 'open' : '' ?>">
+    <li
+      class="menu-item has-submenu <?= in_array($current, ['appointments', 'approval', 'progress', 'history'], true) ? 'open' : '' ?>">
       <button class="submenu-toggle" type="button">
         <i class="fa-solid fa-gear"></i>
         <span>Operations</span>
@@ -61,7 +62,7 @@ $current = $current ?? '';
     </li>
 
     <!-- Users -->
-    <li class="menu-item has-submenu <?= in_array($current, ['staff', 'customers', 'mechanics', 'supervisors', 'service-managers', 'receptionists'], true) ? 'open' : '' ?>">
+    <li class="menu-item has-submenu <?= in_array($current, ['staff', 'customers'], true) ? 'open' : '' ?>">
       <button class="submenu-toggle" type="button">
         <i class="fa-solid fa-users"></i>
         <span>Users</span>
@@ -75,23 +76,12 @@ $current = $current ?? '';
         <li class="<?= $current === 'customers' ? 'active' : '' ?>">
           <a href="<?= $B ?>/admin/customers">Customers</a>
         </li>
-        <li class="<?= $current === 'mechanics' ? 'active' : '' ?>">
-          <a href="<?= $B ?>/admin/mechanics">Mechanics</a>
-        </li>
-        <li class="<?= $current === 'supervisors' ? 'active' : '' ?>">
-          <a href="<?= $B ?>/admin/supervisors">Workshop Supervisors</a>
-        </li>
-        <li class="<?= $current === 'service-managers' ? 'active' : '' ?>">
-          <a href="<?= $B ?>/admin/service-managers">Service Managers</a>
-        </li>
-        <li class="<?= $current === 'receptionists' ? 'active' : '' ?>">
-          <a href="<?= $B ?>/admin/viewreceptionist">Receptionists</a>
-        </li>
       </ul>
     </li>
 
     <!-- Communication -->
-    <li class="menu-item has-submenu <?= in_array($current, ['feedback', 'notifications', 'complaints'], true) ? 'open' : '' ?>">
+    <li
+      class="menu-item has-submenu <?= in_array($current, ['feedback', 'notifications', 'complaints'], true) ? 'open' : '' ?>">
       <button class="submenu-toggle" type="button">
         <i class="fa-regular fa-comments"></i>
         <span>Communication</span>
@@ -112,7 +102,8 @@ $current = $current ?? '';
     </li>
 
     <!-- Finance & Analytics -->
-    <li class="menu-item has-submenu <?= in_array($current, ['invoices', 'payments', 'reports'], true) ? 'open' : '' ?>">
+    <li
+      class="menu-item has-submenu <?= in_array($current, ['invoices', 'payments', 'reports'], true) ? 'open' : '' ?>">
       <button class="submenu-toggle" type="button">
         <i class="fa-solid fa-chart-column"></i>
         <span>Finance & Analytics</span>
@@ -151,14 +142,14 @@ $current = $current ?? '';
 </aside>
 
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-  document.querySelectorAll('.submenu-toggle').forEach(function (btn) {
-    btn.addEventListener('click', function () {
-      const parent = btn.closest('.has-submenu, .submenu-group');
-      if (parent) {
-        parent.classList.toggle('open');
-      }
+  document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.submenu-toggle').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        const parent = btn.closest('.has-submenu, .submenu-group');
+        if (parent) {
+          parent.classList.toggle('open');
+        }
+      });
     });
   });
-});
 </script>
