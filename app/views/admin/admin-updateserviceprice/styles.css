@@ -3,7 +3,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: 'Segoe UI', sans-serif;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 body {
@@ -73,7 +73,7 @@ body {
   padding: 20px;
   background-color: white;
   border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .section-header {
@@ -166,6 +166,7 @@ input[type="text"] {
   border: none;
   height: 100vh;
 }
+
 .container {
   display: flex;
 }

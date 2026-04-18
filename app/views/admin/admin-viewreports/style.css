@@ -1,6 +1,6 @@
 body {
   margin: 0;
-  font-family: 'Segoe UI', sans-serif;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   display: flex;
   background: #f5f6fa;
 }
@@ -15,18 +15,18 @@ body {
   overflow-y: auto;
 }
 
-h2{
-   margin-bottom:20px;
-    font-size: 24px;
+h2 {
+  margin-bottom: 20px;
+  font-size: 24px;
   font-weight: 600;
   color: #333;
- }
+}
 
 
 .reports-container {
   background: white;
   border-radius: 10px;
-  padding: 20px ;
+  padding: 20px;
 }
 
 .filter-bar {
@@ -88,7 +88,8 @@ table {
   margin-top: 10px;
 }
 
-th, td {
+th,
+td {
   border: 1px solid #ddd;
   padding: 12px;
   text-align: left;
@@ -136,6 +137,7 @@ th {
   border: none;
   height: 100vh;
 }
+
 .container {
   display: flex;
 }
