@@ -1,0 +1,70 @@
+/* Supervisors admin page styles */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f3f4f6;
+    color: #111827;
+}
+
+.main-content {
+    margin-left: 260px;
+    min-height: 100vh;
+    padding: 28px;
+    background: #f3f4f6;
+}
+
+.management-header h2 {
+    font-size: 38px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: #111827;
+}
+
+.management-subtitle {
+    margin-top: 4px;
+    font-size: 16px;
+    color: #6b7280;
+}
+
+.tools .search-input {
+    width: 290px;
+    height: 40px;
+}
+
+.table-wrap {
+    background: #fff;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(15, 23, 42, 0.06);
+}
+
+.table-actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+}
+
+.inline-form {
+    display: inline;
+    margin: 0;
+}
+
+@media (max-width: 700px) {
+    .management-header h2 {
+        font-size: 30px;
+    }
+
+    .management-subtitle {
+        font-size: 14px;
+    }
+
+    .tools .search-input {
+        width: 100%;
+    }
+}

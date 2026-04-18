@@ -20,6 +20,7 @@ $B = rtrim(BASE_URL, '/');
 
   <link rel="stylesheet" href="<?= $B ?>/app/views/layouts/admin-shared/management.css">
   <link rel="stylesheet" href="<?= $B ?>/app/views/layouts/admin-sidebar/styles.css">
+  <link rel="stylesheet" href="<?= $B ?>/app/views/admin/admin-viewmanagers/service-managers.css">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 </head>
 
