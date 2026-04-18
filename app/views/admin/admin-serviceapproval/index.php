@@ -446,7 +446,7 @@ $typeId = (int) ($filters['type_id'] ?? 0);
                         <input type="hidden" name="action" value="approve">
                         <button type="submit" class="chip-btn chip-btn--approve">
                           <i class="fa-solid fa-check"></i>
-                          
+
                         </button>
                       </form>
 
@@ -455,14 +455,14 @@ $typeId = (int) ($filters['type_id'] ?? 0);
                         <input type="hidden" name="action" value="reject">
                         <button type="submit" class="chip-btn chip-btn--reject">
                           <i class="fa-solid fa-xmark"></i>
-                          
+
                         </button>
                       </form>
 
                       <a href="<?= $B ?>/admin/admin-serviceapproval/show?id=<?= (int) $c['id'] ?>"
                         class="chip-btn chip-btn--view">
                         <i class="fa-regular fa-eye"></i>
-                        
+
                       </a>
                     </div>
                   </td>
