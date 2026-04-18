@@ -334,9 +334,8 @@ textarea:focus {
 
 .btn-primary:hover {
   background: #0284c7;
+  /* sky-600 */
 }
-
-/* sky-600 */
 
 .btn-secondary {
   background: #f3f4f6;

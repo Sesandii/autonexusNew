@@ -138,6 +138,7 @@ $B = rtrim(BASE_URL, '/');
       const searchInput = document.getElementById('searchInput');
       const statusFilter = document.getElementById('statusFilter');
       const rows = document.querySelectorAll('#receptionistsTable tbody tr');
+      const dataRows = document.querySelectorAll('#receptionistsTable tbody tr[data-status]');
 
       function applyFilters() {
         const search = (searchInput.value || '').toLowerCase();
@@ -146,6 +147,11 @@ $B = rtrim(BASE_URL, '/');
         rows.forEach(row => {
           const text = row.innerText.toLowerCase();
           const rowStatus = row.getAttribute('data-status');
+
+          if (!rowStatus) {
+            row.style.display = '';
+            return;
+          }
 
           const matchSearch = !search || text.includes(search);
           const matchStatus = (status === 'all') || (status === rowStatus);
@@ -157,8 +163,8 @@ $B = rtrim(BASE_URL, '/');
       if (searchInput) searchInput.addEventListener('input', applyFilters);
       if (statusFilter) statusFilter.addEventListener('change', applyFilters);
 
-      // Default to active on load
-      if (statusFilter) {
+      // Default to active on load when real receptionist rows exist.
+      if (statusFilter && dataRows.length > 0) {
         statusFilter.value = 'active';
         applyFilters();
       }
