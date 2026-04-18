@@ -6,37 +6,10 @@ use app\core\Controller;
 use app\model\Manager\ServiceModel;
 use app\model\Manager\PackageModel;
 
-class ServicesController extends Controller
+class ServicesController extends BaseManagerController
 {
     private ServiceModel $serviceModel;
     private PackageModel $packageModel;
-
-        private function guardManager(): void
-{
-    if (session_status() !== PHP_SESSION_ACTIVE) session_start();
-    $u = $_SESSION['user'] ?? null;
-
-    // Check role
-    if (!$u || ($u['role'] ?? '') !== 'manager') {
-        header('Location: ' . rtrim(BASE_URL, '/') . '/login');
-        exit;
-    }
-
-    // Load branch_id if not set yet
-    // Load branch_id if not set yet
-    if (!isset($_SESSION['user']['branch_id'])) {
-        $stmt = db()->prepare('SELECT branch_id FROM managers WHERE user_id = :uid LIMIT 1');
-        $stmt->execute(['uid' => $u['user_id']]); // ✅ FIX
-        $manager = $stmt->fetch(\PDO::FETCH_ASSOC);
-        if (!$manager) {
-            // Something is wrong: user exists but not a manager in table
-            header('Location: ' . rtrim(BASE_URL, '/') . '/login');
-            exit;
-        }
-
-        $_SESSION['user']['branch_id'] = $manager['branch_id'];
-    }
-}
 
     public function __construct(array $config = [])
     {
@@ -44,8 +17,6 @@ class ServicesController extends Controller
         
         $this->serviceModel = new ServiceModel();
         $this->packageModel = new PackageModel();
-    
-        $this->guardManager(); // 🔐 protect all methods
     
     }
 

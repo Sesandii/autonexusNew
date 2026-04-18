@@ -12,6 +12,7 @@
   <link rel="stylesheet" href="<?= BASE_URL ?>/public/assets/css/receptionist/sidebar.css">
   <link rel="stylesheet" href="<?= BASE_URL ?>/public/assets/css/receptionist/complainDetailsReceptionist.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
   
@@ -43,6 +44,70 @@
         </div>
       </div>
 
+    <div class="info-cards">
+<?php if (!empty($complaint['appointment_id'])): ?>
+  <div class="card">
+    <h3>📅 Appointment Details</h3>
+
+    <p><strong>Date:</strong> 
+      <?= htmlspecialchars($complaint['appointment_date']) ?>
+    </p>
+
+    <p><strong>Time:</strong> 
+      <?= htmlspecialchars($complaint['appointment_time']) ?>
+    </p>
+
+    <p><strong>Status:</strong> 
+      <?= htmlspecialchars($complaint['appointment_status']) ?>
+    </p>
+
+    <p><strong>Notes:</strong><br>
+      <?= nl2br(htmlspecialchars($complaint['notes'] ?? 'N/A')) ?>
+    </p>
+  </div>
+<?php else: ?>
+  <div class="card">
+    <h3>📅 Appointment Details</h3>
+    <p>No related appointment</p>
+  </div>
+<?php endif; ?>
+
+<?php if (!empty($complaint['work_order_id'])): ?>
+  <div class="card">
+    <h3>🛠 Work Order Details</h3>
+
+    <p><strong>Work Order ID:</strong> 
+      <?= htmlspecialchars($complaint['work_order_id']) ?>
+    </p>
+
+    <p><strong>Status:</strong> 
+      <?= htmlspecialchars($complaint['work_order_status']) ?>
+    </p>
+
+    <p><strong>Service Summary:</strong><br>
+      <?= nl2br(htmlspecialchars($complaint['service_summary'] ?? 'N/A')) ?>
+    </p>
+
+    <p><strong>Total Cost:</strong> 
+      Rs. <?= htmlspecialchars($complaint['total_cost'] ?? '0.00') ?>
+    </p>
+
+    <p><strong>Started At:</strong> 
+      <?= htmlspecialchars($complaint['started_at'] ?? '-') ?>
+    </p>
+
+    <p><strong>Completed At:</strong> 
+      <?= htmlspecialchars($complaint['completed_at'] ?? '-') ?>
+    </p>
+  </div>
+<?php else: ?>
+  <div class="card">
+    <h3>🛠 Work Order Details</h3>
+    <p>No work order available</p>
+  </div>
+<?php endif; ?>
+</div>
+
       <div class="complaint">
        <p class="date">Submitted on <strong><?= date('M d, Y', strtotime($complaint['created_at'])) ?></strong></p> </br>
        
@@ -55,6 +120,7 @@
           <p><strong>Assigned to:</strong> <?= htmlspecialchars($complaint['assigned_to']) ?></p>
         </div>
       </div>
+
 
       <!-- Update Button -->
       <!-- Update Button -->

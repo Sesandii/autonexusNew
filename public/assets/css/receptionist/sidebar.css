@@ -1,85 +1,148 @@
 * {
+  box-sizing: border-box;
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Segoe UI', sans-serif;
 }
 
 body {
   display: flex;
-  background: #f6f7fa;
-  color: #333;
+  height: 100vh;
+  background-color: #f8f9fc;
 }
 
-.sidebar .logo img {
-  width: 80%;      
-  max-width: 200px; 
-  height: auto;    
-  display: block;
-  margin: 0 auto;  
-}
-
-.sidebar {
-  position: fixed;
-  top: 0;        /* stick to very top */
-  left: 0;
-  width: 280px;
-  background: #000;
-  color: #fff;
-  padding: 0px;
-  min-height: 100vh;
-}
-
-.sidebar .logo {
-  text-align: center;
-  margin-bottom: 30px;
-}
-
-.sidebar .logo h2 {
-  color: #ffffff;
-  margin: 5px 0 0;
-}
-
-.sidebar .logo p {
-  font-size: 12px;
-  letter-spacing: 1px;
-}
-
-.sidebar .menu {
-  list-style: none;
-  margin-top: 20px;
-}
-
-.sidebar .menu li {
-  padding: 20px 40px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  color: #ccc;
-  border-radius: 0px;
-}
-
-.sidebar .menu li.active,
-.sidebar .menu li:hover {
-  background: #2a2d34;
-}
-
-.sidebar .menu li a {
-  color: inherit;        /* matches li text color */
-  text-decoration: none; /* removes underline */
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  width: 100%;
-}
-
-
-.main {
+.main{
   flex: 1;
-  padding: 30px;
+  padding: 15px;
+  overflow-y: auto;
+}
+
+/* Sidebar Container */
+.sidebar {
+  background-color: #000;
+  color: white;
+  width: 260px; 
+  height: 100vh;
   display: flex;
   flex-direction: column;
-  overflow-y: auto; 
-  margin-left: 280px;
+  padding: 20px 0;
+  position: sticky;
+  top: 0;
+  overflow-x: hidden;
+  font-family: 'Inter', sans-serif;
 }
+
+/* Logo Styling */
+.brand-text {
+  margin: 0 8px 18px 8px;
+  margin-left: 20px;
+  color: var(--text-strong);
+  color: #fff;
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 24px;
+}
+/* Menu List */
+.menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+}
+
+.menu li {
+    margin-bottom: 8px;
+}
+
+/* Links and Icons */
+.menu li a {
+    text-decoration: none;
+    color: #ffffff;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    transition: all 0.3s ease;
+    border-radius: 12px; /* Smooth corners for hover */
+}
+
+.menu li a i {
+    color: #ef4444; /* Red icon color from image */
+    margin-right: 15px;
+    font-size: 18px;
+    width: 25px;
+    text-align: center;
+}
+
+/* Active State - The white pill shape from your image */
+.menu li.active a {
+    background-color: #ffffff;
+    color: #000000;
+}
+
+.menu li.active a i {
+    color: #ef4444; /* Icons remain red even when background is white */
+}
+
+/* Hover effect for non-active items */
+.menu li a:hover:not(.active) {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Sign out styling */
+.sign-out i {
+    color: #ef4444;
+}
+
+.menu-divider {
+    margin: 20px 0;
+    border-top: 1px solid #333;
+}
+
+.modal {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  background-color: rgba(0, 0, 0, 0.8) !important;
+  backdrop-filter: blur(10px) !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  z-index: 2147483647 !important; 
+}
+
+.modal.hidden {
+  display: none !important;
+}
+
+.modal-content {
+  background-color: #1a1a1a;
+  color: #fff;
+  padding: 40px;
+  border-radius: 24px;
+  text-align: center;
+  width: 90%;
+  max-width: 400px;
+  border: 1px solid #333;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+}
+
+.modal-buttons {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  margin-top: 25px;
+}
+
+.modal-buttons .btn {
+  padding: 12px 30px;
+  border-radius: 50px;
+  cursor: pointer;
+  border: none;
+  font-weight: 600;
+  width: 130px;
+}
+
+.btn-cancel { background-color: #333; color: #fff; }
+.btn-confirm { background-color: #ff4d4d; color: #fff; }

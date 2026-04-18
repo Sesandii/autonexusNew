@@ -456,6 +456,10 @@ $router->get('/customer/payments/success', [\app\controllers\customer\PaymentsCo
 $router->get('/customer/payments/cancel', [\app\controllers\customer\PaymentsController::class, 'cancel']);
 $router->post('/customer/payments/webhook', [\app\controllers\customer\PaymentsController::class, 'webhook']);
 
+
+
+
+
 //manager: Dashboard
 $router->get('/manager/dashboard', [app\controllers\Manager\DashboardController::class, 'index']);
 
@@ -527,6 +531,7 @@ $router->post('/manager/reports', [\app\controllers\Manager\ReportController::cl
 $router->get('/receptionist/complaints', [app\controllers\Receptionist\ComplaintController::class, 'index']);
 $router->get('/receptionist/complaints/new', [app\controllers\Receptionist\ComplaintController::class, 'create']);
 $router->get('/receptionist/complaints/fetchByPhone', [app\controllers\Receptionist\ComplaintController::class, 'fetchByPhone']); // important: before dynamic
+$router->get('/receptionist/complaints/fetchAppointments', [app\controllers\Receptionist\ComplaintController::class, 'fetchAppointments']);
 $router->post('/receptionist/complaints', [app\controllers\Receptionist\ComplaintController::class, 'store']);
 $router->get('/receptionist/complaints/{complaintId}', [app\controllers\Receptionist\ComplaintController::class, 'show']);
 $router->get('/receptionist/complaints/history/{customer_name}', [app\controllers\Receptionist\ComplaintController::class, 'history']);
@@ -569,9 +574,15 @@ $router->get('/receptionist/billing', [app\controllers\Receptionist\BillingContr
 $router->get('/receptionist/billing/create', [app\controllers\Receptionist\BillingController::class, 'create']);
 $router->get('/receptionist/billing/invoice/{id}', [app\controllers\Receptionist\BillingController::class, 'preview']);
 $router->post('/receptionist/billing/invoice/{id}', [app\controllers\Receptionist\BillingController::class, 'store']); // Invoice creation page
-$router->get('/receptionist/billing/downloadInvoice/{id}', [app\controllers\Receptionist\BillingController::class, 'downloadInvoice']);
+$router->get('/receptionist/billing/printInvoice/{id}', [app\controllers\Receptionist\BillingController::class, 'printInvoice']);
+$router->get('/receptionist/billing/downloadInvoice/{id}', [app\controllers\Receptionist\BillingController::class, 'downloadInvoicePdf']);
 $router->get('/receptionist/billing/paid', [app\controllers\Receptionist\BillingController::class, 'paidInvoices']);
+$router->get('/receptionist/billing/mark-paid',[app\controllers\Receptionist\BillingController::class, 'markAsPaid']);
 
+
+//Receptionist: Profile
+$router->get('/receptionist/profile', [app\controllers\Receptionist\ProfileController::class, 'index']);
+$router->post('/receptionist/profile/update', [app\controllers\Receptionist\ProfileController::class, 'update']);
 
 
 

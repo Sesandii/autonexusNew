@@ -181,6 +181,57 @@ public function getCustomerById(int $customerId): array
     return $customer;
 }
 
+public function getAppointmentsByCustomer($customerId)
+{
+    $sql = "SELECT *
+            FROM appointments
+            WHERE customer_id = ?
+            ORDER BY appointment_date DESC";
+
+    $stmt = $this->db->prepare($sql);
+    $stmt->execute([$customerId]);
+
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+public function getWorkOrdersByAppointments($appointmentIds)
+{
+    if (empty($appointmentIds)) return [];
+
+    $placeholders = implode(',', array_fill(0, count($appointmentIds), '?'));
+
+    $sql = "SELECT wo.*,
+                   m.first_name AS mechanic_first,
+                   m.last_name AS mechanic_last,
+                   s.first_name AS supervisor_first,
+                   s.last_name AS supervisor_last
+            FROM work_orders wo
+            LEFT JOIN users m ON wo.mechanic_id = m.user_id
+            LEFT JOIN users s ON wo.supervisor_id = s.user_id
+            WHERE wo.appointment_id IN ($placeholders)";
+
+    $stmt = $this->db->prepare($sql);
+    $stmt->execute($appointmentIds);
+
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+public function getComplaintsByAppointments($appointmentIds)
+{
+    if (empty($appointmentIds)) return [];
+
+    $placeholders = implode(',', array_fill(0, count($appointmentIds), '?'));
+
+    $sql = "SELECT *
+            FROM complaints
+            WHERE appointment_id IN ($placeholders)
+            ORDER BY created_at DESC";
+
+    $stmt = $this->db->prepare($sql);
+    $stmt->execute($appointmentIds);
+
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
 // In CustomerModel
 
 /**

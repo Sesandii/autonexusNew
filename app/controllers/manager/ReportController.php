@@ -5,39 +5,13 @@ use app\core\Controller;
 use app\model\Manager\ReportModel;
 use PDO;
 
-class ReportController extends Controller
+class ReportController extends BaseManagerController
 {
     private ReportModel $reportModel;
-
-    private function guardManager(): void
-    {
-        if (session_status() !== PHP_SESSION_ACTIVE) session_start();
-        $u = $_SESSION['user'] ?? null;
-
-        if (!$u || ($u['role'] ?? '') !== 'manager') {
-            header('Location: ' . rtrim(BASE_URL, '/') . '/login');
-            exit;
-        }
-
-        // Also reload if branch_id is null
-        if (!isset($_SESSION['user']['branch_id']) || $_SESSION['user']['branch_id'] === null) {
-            $stmt = db()->prepare('SELECT branch_id FROM managers WHERE user_id = :uid LIMIT 1');
-            $stmt->execute(['uid' => $u['user_id']]);
-            $manager = $stmt->fetch(\PDO::FETCH_ASSOC);
-
-            if (!$manager || empty($manager['branch_id'])) {
-                header('Location: ' . rtrim(BASE_URL, '/') . '/login');
-                exit;
-            }
-
-            $_SESSION['user']['branch_id'] = $manager['branch_id'];
-        }
-    }
 
     public function __construct()
     {
         parent::__construct();
-        $this->guardManager();
         $this->reportModel = new ReportModel(db());
     }
 
@@ -57,7 +31,7 @@ class ReportController extends Controller
             $toDate     = ($_POST['to_date']   ?? date('Y-m-d'))  . ' 23:59:59';
             $from       = substr($fromDate, 0, 10);
             $to         = substr($toDate,   0, 10);
-            $branchId   = (int)$_SESSION['user']['branch_id'];
+            $branchId   = (int)$this->getBranchId();
             $serviceId  = !empty($_POST['service_type']) && is_numeric($_POST['service_type'])
                 ? (int)$_POST['service_type']
                 : null;

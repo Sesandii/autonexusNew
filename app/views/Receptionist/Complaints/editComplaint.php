@@ -6,6 +6,7 @@
   <title>Edit Complaint</title>
   <link rel="stylesheet" href="<?= BASE_URL ?>/public/assets/css/receptionist/sidebar.css">
   <link rel="stylesheet" href="<?= BASE_URL ?>/public/assets/css/receptionist/editComplaint.css?v=1.1">
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   </head>
   
 <body>
@@ -18,7 +19,7 @@
       <form action="<?= BASE_URL ?>/receptionist/complaints/update/<?= $complaint['complaint_id'] ?>" method="POST">
         
         <input type="hidden" name="customer_id" id="customer_id" value="<?= $complaint['customer_id'] ?>">
-        <input type="hidden" name="user_id" id="user_id" value="<?= $complaint['user_id'] ?>">
+        
         
         <label for="customer_name">Name:</label>
         <input type="text" id="customer_name" name="customer_name" value="<?= htmlspecialchars($complaint['customer_name']) ?>" required>
@@ -36,6 +37,13 @@
 
 <label for="vehicle_number">Vehicle Number:</label>
 <input type="text" id="vehicle_number" name="vehicle_number" value="<?= htmlspecialchars($complaint['vehicle_number']) ?>" readonly>
+
+<label>Appointment:</label>
+<input type="text" 
+       value="<?= htmlspecialchars($complaint['appointment_display'] ?? 'No appointment') ?>" 
+       readonly>
+
+<input type="hidden" name="appointment_id" value="<?= $complaint['appointment_id'] ?>">
 
 <label>Date:</label>
   <input type="date" name="complaint_date">
@@ -58,11 +66,14 @@
 
         <label for="status">Status:</label>
         <select id="status" name="status">
-          <option value="Open" <?= $complaint['status'] == 'Open' ? 'selected' : '' ?>>Open</option>
-          <option value="In Progress" <?= $complaint['status'] == 'In Progress' ? 'selected' : '' ?>>In Progress</option>
-          <option value="Resolved" <?= $complaint['status'] == 'Resolved' ? 'selected' : '' ?>>Resolved</option>
-          <option value="Canceled" <?= $complaint['status'] == 'Canceled' ? 'selected' : '' ?>>Canceled</option>
-        </select>
+  <option value="open" <?= $complaint['status'] == 'open' ? 'selected' : '' ?>>Open</option>
+
+  <option value="in_progress" <?= $complaint['status'] == 'in_progress' ? 'selected' : '' ?>>In Progress</option>
+
+  <option value="resolved" <?= $complaint['status'] == 'resolved' ? 'selected' : '' ?>>Resolved</option>
+
+  <option value="closed" <?= $complaint['status'] == 'closed' ? 'selected' : '' ?>>Closed</option>
+</select>
 
       
         <div class="modal-footer">

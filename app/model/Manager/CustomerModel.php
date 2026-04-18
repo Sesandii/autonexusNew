@@ -46,51 +46,58 @@ class CustomerModel
         return (int) $stmt->fetchColumn();
     }
 
-    /**
-     * Insert one vehicle for a customer.
-     * Generates vehicle_code as VEH001, VEH002, etc. per customer.
-     */
-    public function addVehicle(int $customerId, array $v, int $index): void
-    {
-        $stmt = $this->db->query("SELECT AUTO_INCREMENT FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME='vehicles'");
-$nextId = $stmt->fetchColumn();
+    public function getAppointmentsByCustomer($customerId)
+{
+    $sql = "SELECT *
+            FROM appointments
+            WHERE customer_id = ?
+            ORDER BY appointment_date DESC";
 
-$vehicleCode = 'VEH' . str_pad($nextId, 3, '0', STR_PAD_LEFT);
-        $sql = "INSERT INTO vehicles 
-                (vehicle_code, license_plate, make, model, year, color, customer_id, created_at)
-                VALUES 
-                (:vehicle_code, :license_plate, :make, :model, :year, :color, :customer_id, NOW())";
+    $stmt = $this->db->prepare($sql);
+    $stmt->execute([$customerId]);
 
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute([
-            ':vehicle_code'  => $vehicleCode,
-            ':license_plate' => $v['license_plate'],
-            ':make'          => $v['make'],
-            ':model'         => $v['model'],
-            ':year'          => $v['year'],
-            ':color'         => $v['color'],
-            ':customer_id'   => $customerId
-        ]);
-    }
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
 
-    /**
-     * Full flow: insert user, get customer_id, insert multiple vehicles
-     */
-    public function storeCustomerWithVehicles(array $userData, array $vehiclesData): int
-    {
-        // 1. Insert user (role=customer)
-        $userId = $this->createCustomer($userData);
+public function getWorkOrdersByAppointments($appointmentIds)
+{
+    if (empty($appointmentIds)) return [];
 
-        // 2. Fetch customer_id created by trigger
-        $customerId = $this->getCustomerIdByUserId($userId);
+    $placeholders = implode(',', array_fill(0, count($appointmentIds), '?'));
 
-        // 3. Insert all vehicles
-        foreach ($vehiclesData as $index => $vehicle) {
-            $this->addVehicle($customerId, $vehicle, $index);
-        }
+    $sql = "SELECT wo.*,
+                   m.first_name AS mechanic_first,
+                   m.last_name AS mechanic_last,
+                   s.first_name AS supervisor_first,
+                   s.last_name AS supervisor_last
+            FROM work_orders wo
+            LEFT JOIN users m ON wo.mechanic_id = m.user_id
+            LEFT JOIN users s ON wo.supervisor_id = s.user_id
+            WHERE wo.appointment_id IN ($placeholders)";
 
-        return $customerId;
-    }
+    $stmt = $this->db->prepare($sql);
+    $stmt->execute($appointmentIds);
+
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+public function getComplaintsByAppointments($appointmentIds)
+{
+    if (empty($appointmentIds)) return [];
+
+    $placeholders = implode(',', array_fill(0, count($appointmentIds), '?'));
+
+    $sql = "SELECT *
+            FROM complaints
+            WHERE appointment_id IN ($placeholders)
+            ORDER BY created_at DESC";
+
+    $stmt = $this->db->prepare($sql);
+    $stmt->execute($appointmentIds);
+
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+   
 
    
 /**
@@ -171,45 +178,7 @@ public function getCustomerById(int $customerId): array
     return $customer;
 }
 
-// In CustomerModel
 
-/**
- * Update user info
- */
-public function updateUser(int $userId, array $data): void
-{
-    $sql = "UPDATE users SET
-                first_name = :first_name,
-                last_name  = :last_name,
-                username   = :username,
-                email      = :email,
-                phone      = :phone
-            WHERE user_id = :user_id";
-    $stmt = $this->db->prepare($sql);
-    $stmt->execute([
-        ':first_name' => $data['first_name'],
-        ':last_name'  => $data['last_name'],
-        ':username'   => $data['username'],
-        ':email'      => $data['email'],
-        ':phone'      => $data['phone'],
-        ':user_id'    => $userId
-    ]);
-}
-
-/**
- * Replace all vehicles for a customer
- */
-public function updateVehicles(int $customerId, array $vehicles): void
-{
-    // Delete existing vehicles
-    $stmt = $this->db->prepare("DELETE FROM vehicles WHERE customer_id = :customer_id");
-    $stmt->execute(['customer_id' => $customerId]);
-
-    // Insert new vehicles
-    foreach ($vehicles as $index => $v) {
-        $this->addVehicle($customerId, $v, $index);
-    }
-}
 
 /**
  * Get customer appointments with work orders and complaints

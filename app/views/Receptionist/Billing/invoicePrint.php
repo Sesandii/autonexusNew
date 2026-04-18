@@ -3,65 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <title>Invoice</title>
-
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 30px;
-            background: #fff;
-        }
-
-        .invoice-box {
-            max-width: 850px;
-            margin: auto;
-        }
-
-        h2 {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 15px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-
-        th, td {
-            border-bottom: 1px solid #ddd;
-            padding: 10px;
-            text-align: left;
-        }
-
-        th {
-            background: #f5f5f5;
-        }
-
-        .right {
-            text-align: right;
-        }
-
-        .total {
-            margin-top: 25px;
-            text-align: right;
-            font-size: 18px;
-            font-weight: bold;
-        }
-
-        @media print {
-            .no-print {
-                display: none;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="<?= BASE_URL ?>/public/assets/css/receptionist/invoicePrint.css">
 </head>
+
 <body>
 
 <div class="invoice-box">
@@ -83,8 +27,9 @@
         </div>
     </div>
 
-    <p><strong>Work Order:</strong> #<?= $order['work_order_id'] ?></p>
-    <p><strong>Date:</strong> <?= $order['completed_at'] ?></p>
+    <p><strong>Work Order:</strong> #<?= htmlspecialchars($order['work_order_id']) ?></p>
+
+    <p><strong>Date:</strong> <?= htmlspecialchars($order['completed_at'] ?? 'N/A') ?></p>
 
     <table>
         <tr>
@@ -101,8 +46,13 @@
         Grand Total: Rs. <?= number_format($order['total_cost'], 2) ?>
     </div>
 
-    <div class="no-print" style="margin-top:30px; text-align:center;">
-        <button onclick="window.print()">Print / Save as PDF</button>
+    <!-- ACTION BUTTONS -->
+    <div class="no-print">
+
+        <button onclick="window.print()" class="btn btn-dark">
+            Print Invoice
+        </button>
+
     </div>
 
 </div>
