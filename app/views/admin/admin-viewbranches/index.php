@@ -406,7 +406,7 @@ function e($value): string
               <th>Manager Name</th>
               <th>Contact</th>
               <th>Status</th>
-              <th style="text-align:right;">Actions</th>
+              <th class="u-text-right">Actions</th>
             </tr>
           </thead>
           <tbody>

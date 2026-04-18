@@ -84,7 +84,7 @@ $current = $current ?? '';
     <li
       class="menu-item has-submenu <?= in_array($current, ['feedback', 'notifications', 'complaints'], true) ? 'open' : '' ?>">
       <button class="submenu-toggle" type="button">
-        <i class="fa-regular fa-comments"></i>
+        <i class="fa-solid fa-comments"></i>
         <span>Communication</span>
         <i class="fa-solid fa-chevron-right caret"></i>
       </button>

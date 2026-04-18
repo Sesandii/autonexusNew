@@ -30,8 +30,7 @@ $B = rtrim(BASE_URL, '/'); ?>
         </div>
 
         <div class="tools">
-          <a class="add-btn" href="<?= $B ?>/admin/admin-viewstaff"
-            style="display:inline-flex; align-items:center; gap:8px;">
+          <a class="add-btn back-btn" href="<?= $B ?>/admin/admin-viewstaff">
             <i class="fa-solid fa-arrow-left"></i>
             <span>Back to Staff Management</span>
           </a>

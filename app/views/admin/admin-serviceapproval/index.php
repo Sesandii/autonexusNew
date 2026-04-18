@@ -24,6 +24,7 @@ $typeId = (int) ($filters['type_id'] ?? 0);
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><?= htmlspecialchars($pageTitle) ?></title>
 
+  <link rel="stylesheet" href="<?= $B ?>/app/views/layouts/admin-shared/management.css">
   <link rel="stylesheet" href="<?= $B ?>/app/views/layouts/admin-sidebar/styles.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -63,8 +64,12 @@ $typeId = (int) ($filters['type_id'] ?? 0);
       color: #0f172a;
     }
 
+    .page-title-wrap {
+      display: block;
+    }
+
     .page-title-wrap p {
-      margin: 8px 0 0;
+      margin: 6px 0 0;
       font-size: 15px;
       color: #64748b;
     }
@@ -231,10 +236,11 @@ $typeId = (int) ($filters['type_id'] ?? 0);
     }
 
     .table-actions {
-      display: flex;
+      display: grid;
+      grid-template-columns: repeat(2, max-content);
+      justify-content: end;
       align-items: center;
       gap: 8px;
-      flex-wrap: wrap;
     }
 
     .chip-btn {
@@ -284,6 +290,11 @@ $typeId = (int) ($filters['type_id'] ?? 0);
     .chip-btn--approve,
     .chip-btn--reject {
       border: none;
+    }
+
+    .table-actions .chip-btn--view {
+      grid-column: 1 / -1;
+      justify-self: end;
     }
 
     .empty-state {
@@ -410,7 +421,7 @@ $typeId = (int) ($filters['type_id'] ?? 0);
                 <th>Price</th>
                 <th>Duration</th>
                 <th>Status</th>
-                <th style="width:220px;">Actions</th>
+                <th class="u-width-actions">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -430,28 +441,28 @@ $typeId = (int) ($filters['type_id'] ?? 0);
                   <td><span class="status-pill">Pending</span></td>
                   <td>
                     <div class="table-actions">
-                      <form method="post" action="<?= $B ?>/admin/admin-serviceapproval/update" style="display:inline;">
+                      <form method="post" action="<?= $B ?>/admin/admin-serviceapproval/update" class="u-inline">
                         <input type="hidden" name="id" value="<?= (int) $c['id'] ?>">
                         <input type="hidden" name="action" value="approve">
                         <button type="submit" class="chip-btn chip-btn--approve">
                           <i class="fa-solid fa-check"></i>
-                          <span>Approve</span>
+                          
                         </button>
                       </form>
 
-                      <form method="post" action="<?= $B ?>/admin/admin-serviceapproval/update" style="display:inline;">
+                      <form method="post" action="<?= $B ?>/admin/admin-serviceapproval/update" class="u-inline">
                         <input type="hidden" name="id" value="<?= (int) $c['id'] ?>">
                         <input type="hidden" name="action" value="reject">
                         <button type="submit" class="chip-btn chip-btn--reject">
                           <i class="fa-solid fa-xmark"></i>
-                          <span>Reject</span>
+                          
                         </button>
                       </form>
 
                       <a href="<?= $B ?>/admin/admin-serviceapproval/show?id=<?= (int) $c['id'] ?>"
                         class="chip-btn chip-btn--view">
                         <i class="fa-regular fa-eye"></i>
-                        <span>View</span>
+                        
                       </a>
                     </div>
                   </td>
