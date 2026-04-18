@@ -32,9 +32,9 @@ body {
 
 .page-title-wrap h1 {
     margin: 0;
-    font-size: 32px;
-    line-height: 1.15;
-    font-weight: 800;
+    font-size: 28px;
+    line-height: 1.2;
+    font-weight: 700;
     color: #0f172a;
 }
 
@@ -206,11 +206,12 @@ tbody tr:last-child td {
 }
 
 .table-actions {
-    display: grid;
-    grid-template-columns: repeat(2, max-content);
-    justify-content: end;
+    display: flex;
+    justify-content: flex-end;
     align-items: center;
     gap: 8px;
+    flex-wrap: nowrap;
+    white-space: nowrap;
 }
 
 .chip-btn {
@@ -264,11 +265,6 @@ tbody tr:last-child td {
 .chip-btn--approve,
 .chip-btn--reject {
     border: none;
-}
-
-.table-actions .chip-btn--view {
-    grid-column: 1 / -1;
-    justify-self: end;
 }
 
 .empty-state {

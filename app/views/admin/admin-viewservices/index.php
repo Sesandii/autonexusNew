@@ -8,239 +8,22 @@ $base = rtrim(BASE_URL, '/'); ?>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Service & Package Management</title>
 
+  <link rel="stylesheet" href="<?= $base ?>/app/views/layouts/admin-shared/management.css">
   <link rel="stylesheet" href="<?= $base ?>/app/views/layouts/admin-sidebar/styles.css">
+  <link rel="stylesheet" href="<?= $base ?>/public/assets/css/admin/services/style.css">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-
-  <style>
-    .sidebar {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 260px;
-      height: 100vh;
-      overflow-y: auto
-    }
-
-    .main-content {
-      margin-left: 260px;
-      padding: 30px;
-      background: #f8fafc;
-      min-height: 100vh
-    }
-
-    .page-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 20px;
-      margin-bottom: 20px
-    }
-
-    .page-head h1 {
-      margin: 0;
-      font-size: 28px
-    }
-
-    .muted {
-      color: #64748b
-    }
-
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 14px;
-      border-radius: 10px;
-      text-decoration: none;
-      border: 0;
-      cursor: pointer
-    }
-
-    .btn-primary {
-      background: #dc2626;
-      color: #fff
-    }
-
-    .btn-primary:hover {
-      background: #ef4444
-    }
-
-    .section-card {
-      background: #fff;
-      border: 1px solid #e2e8f0;
-      border-radius: 16px;
-      padding: 20px;
-      margin-bottom: 22px
-    }
-
-    .section-card h2 {
-      margin: 0 0 6px
-    }
-
-    .tabs {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-top: 14px
-    }
-
-    .tab {
-      border: 1px solid #cbd5e1;
-      background: #fff;
-      border-radius: 999px;
-      padding: 8px 14px;
-      cursor: pointer
-    }
-
-    .tab.active {
-      background: #111827;
-      color: #fff;
-      border-color: #111827
-    }
-
-    .table-wrap {
-      overflow: auto;
-      border: 1px solid #e2e8f0;
-      border-radius: 14px;
-      margin-top: 16px
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      background: #fff
-    }
-
-    th,
-    td {
-      padding: 12px 14px;
-      border-bottom: 1px solid #e2e8f0;
-      text-align: left;
-      vertical-align: top
-    }
-
-    th {
-      background: #f8fafc;
-      font-size: 14px
-    }
-
-    .badge {
-      display: inline-block;
-      padding: 4px 10px;
-      border-radius: 999px;
-      font-size: 12px;
-      font-weight: 700
-    }
-
-    .badge-type {
-      background: #eef2ff;
-      color: #3730a3
-    }
-
-    .badge-active {
-      background: #dcfce7;
-      color: #166534
-    }
-
-    .badge-inactive {
-      background: #fee2e2;
-      color: #991b1b
-    }
-
-    .actions {
-      display: flex;
-      gap: 10px;
-      align-items: center
-    }
-
-    .icon-link,
-    .icon-btn {
-      background: none;
-      border: 0;
-      cursor: pointer;
-      color: #111827
-    }
-
-    .pkg-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap: 16px;
-      margin-top: 16px
-    }
-
-    .pkg-card {
-      background: #fff;
-      border: 1px solid #e2e8f0;
-      border-radius: 16px;
-      padding: 18px
-    }
-
-    .pkg-top {
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
-      align-items: flex-start
-    }
-
-    .pkg-top h3 {
-      margin: 0
-    }
-
-    .pkg-meta {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 10px;
-      margin: 14px 0
-    }
-
-    .metric {
-      background: #f8fafc;
-      border: 1px solid #e2e8f0;
-      border-radius: 12px;
-      padding: 10px
-    }
-
-    .metric .label {
-      font-size: 12px;
-      color: #64748b
-    }
-
-    .metric .value {
-      font-weight: 700;
-      margin-top: 3px
-    }
-
-    .pkg-items {
-      margin: 12px 0 0;
-      padding-left: 18px
-    }
-
-    .pkg-items li {
-      margin-bottom: 6px
-    }
-
-    .small {
-      font-size: 12px;
-      color: #64748b
-    }
-
-    .empty {
-      padding: 14px;
-      color: #64748b
-    }
-  </style>
 </head>
 
 <body>
   <?php include APP_ROOT . '/views/layouts/admin-sidebar/sidebar.php'; ?>
 
-  <main class="main-content">
+  <main class="main-content services-page">
     <div class="page-head">
       <div>
         <h1>Service & Package Management</h1>
         <p class="muted">Manage standalone services and bundled packages from one admin area.</p>
       </div>
-      <div style="display: flex; gap: 10px;">
+      <div class="page-head-actions">
         <a class="btn btn-primary" href="<?= $base ?>/admin/services/create">
           <i class="fa-solid fa-plus"></i> Add Service
         </a>
@@ -251,18 +34,16 @@ $base = rtrim(BASE_URL, '/'); ?>
     </div>
 
     <section class="section-card">
-      <div class="tabs" id="mainTabs" style="margin-bottom: 20px; border-bottom: 2px solid #e2e8f0; padding-bottom: 0;">
-        <button class="tab active" data-main-tab="services"
-          style="border-bottom: 3px solid #111827; border-radius: 0; padding-bottom: 12px;">
+      <div class="tabs main-tabs" id="mainTabs">
+        <button class="tab active" data-main-tab="services">
           <i class="fa-solid fa-wrench"></i> Services
         </button>
-        <button class="tab" data-main-tab="packages"
-          style="border-bottom: 3px solid transparent; border-radius: 0; padding-bottom: 12px;">
+        <button class="tab" data-main-tab="packages">
           <i class="fa-solid fa-box"></i> Packages
         </button>
       </div>
 
-      <div id="servicesView" style="display: block;">
+      <div id="servicesView" class="main-view">
         <h2>Services</h2>
         <p class="muted">Regular services excluding package-type entries.</p>
 
@@ -288,7 +69,7 @@ $base = rtrim(BASE_URL, '/'); ?>
                 <th>Price</th>
                 <th>Branches</th>
                 <th>Status</th>
-                <th>Actions</th>
+                <th class="actions-col">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -317,17 +98,20 @@ $base = rtrim(BASE_URL, '/'); ?>
                         <?= htmlspecialchars($row['status']) ?>
                       </span>
                     </td>
-                    <td class="actions">
-                      <a class="icon-link" href="<?= $base ?>/admin/services/<?= (int) $row['service_id'] ?>/edit"
-                        title="Edit">
-                        <i class="fa-solid fa-pen"></i>
-                      </a>
-                      <form method="post" action="<?= $base ?>/admin/services/<?= (int) $row['service_id'] ?>/delete"
-                        onsubmit="return confirm('Delete this service?');">
-                        <button type="submit" class="icon-btn" title="Delete">
-                          <i class="fa-solid fa-trash"></i>
-                        </button>
-                      </form>
+                    <td class="actions-col">
+                      <div class="table-actions">
+                        <a class="chip-btn chip-btn--edit"
+                          href="<?= $base ?>/admin/services/<?= (int) $row['service_id'] ?>/edit" title="Edit">
+                          <i class="fa-solid fa-pen"></i>
+                        </a>
+                        <form class="inline-form" method="post"
+                          action="<?= $base ?>/admin/services/<?= (int) $row['service_id'] ?>/delete"
+                          onsubmit="return confirm('Delete this service?');">
+                          <button type="submit" class="chip-btn chip-btn--delete" title="Delete">
+                            <i class="fa-solid fa-trash"></i>
+                          </button>
+                        </form>
+                      </div>
                     </td>
                   </tr>
                 <?php endforeach; ?>
@@ -341,7 +125,7 @@ $base = rtrim(BASE_URL, '/'); ?>
         </div>
       </div>
 
-      <div id="packagesView" style="display: none;">
+      <div id="packagesView" class="main-view is-hidden">
         <h2>Packages</h2>
         <p class="muted">Package-type services with included items and usage analytics.</p>
 
@@ -361,7 +145,7 @@ $base = rtrim(BASE_URL, '/'); ?>
                   </span>
                 </div>
 
-                <p class="small" style="margin-top:10px;"><?= htmlspecialchars($pkg['description'] ?? '') ?></p>
+                <p class="small pkg-desc"><?= htmlspecialchars($pkg['description'] ?? '') ?></p>
 
                 <div class="pkg-meta">
                   <div class="metric">
@@ -395,7 +179,7 @@ $base = rtrim(BASE_URL, '/'); ?>
                   <?= (int) $pkg['branch_count'] > 0 ? htmlspecialchars($pkg['branches']) : 'Not assigned' ?>
                 </div>
 
-                <div class="small" style="margin-top:8px;">
+                <div class="small pkg-last-booked">
                   <strong>Last booked:</strong>
                   <?= !empty($pkg['last_booked_date']) ? htmlspecialchars($pkg['last_booked_date']) : 'Never' ?>
                 </div>
@@ -414,14 +198,18 @@ $base = rtrim(BASE_URL, '/'); ?>
                   <?php endif; ?>
                 </ul>
 
-                <div class="actions" style="margin-top:14px;">
-                  <a class="icon-link" href="<?= $base ?>/admin/packages/<?= (int) $pkg['service_id'] ?>/edit" title="Edit">
-                    <i class="fa-solid fa-pen"></i> Edit
+                <div class="actions pkg-actions">
+                  <a class="chip-btn chip-btn--edit chip-btn--label"
+                    href="<?= $base ?>/admin/packages/<?= (int) $pkg['service_id'] ?>/edit" title="Edit">
+                    <i class="fa-solid fa-pen"></i>
+                    <span>Edit</span>
                   </a>
-                  <form method="post" action="<?= $base ?>/admin/services/<?= (int) $pkg['service_id'] ?>/delete"
+                  <form class="inline-form" method="post"
+                    action="<?= $base ?>/admin/services/<?= (int) $pkg['service_id'] ?>/delete"
                     onsubmit="return confirm('Delete this package?');">
-                    <button type="submit" class="icon-btn" title="Delete">
-                      <i class="fa-solid fa-trash"></i> Delete
+                    <button type="submit" class="chip-btn chip-btn--delete chip-btn--label" title="Delete">
+                      <i class="fa-solid fa-trash"></i>
+                      <span>Delete</span>
                     </button>
                   </form>
                 </div>

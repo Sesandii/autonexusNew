@@ -257,3 +257,256 @@ body {
 .sidebar::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.24);
 }
+
+/* =====================================================
+   Global Admin Theme Overrides (cross-page consistency)
+   ===================================================== */
+.main-content {
+  background: #f3f4f6;
+}
+
+.topbar,
+.management-header,
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+
+.topbar .page-title,
+.page-header .page-title,
+.page-header h1,
+.management-header h2,
+.page-title-wrap h1,
+.page-title-wrap h2 {
+  margin: 0;
+  font-size: 28px !important;
+  line-height: 1.2;
+  font-weight: 700 !important;
+  color: #0f172a !important;
+}
+
+.topbar .subtitle,
+.page-header .subtitle,
+.management-subtitle,
+.page-title-wrap p,
+.page-header p {
+  margin: 4px 0 0;
+  font-size: 15px;
+  color: #64748b;
+}
+
+.table-wrap,
+.table-card,
+.panel,
+.card,
+.filters-card,
+.filter-section,
+.detail-card,
+.form-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+table thead th,
+.table thead th {
+  background: #f8fafc;
+  color: #334155;
+  font-weight: 700;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+table td,
+table th,
+.table td,
+.table th {
+  font-size: 14px;
+  padding: 12px 14px;
+  border-bottom: 1px solid #eef2f7;
+}
+
+input,
+select,
+textarea,
+.input,
+.select,
+.search-input,
+.status-filter,
+.date-input {
+  border-radius: 10px;
+  border: 1px solid #d1d5db;
+  background: #fff;
+  color: #111827;
+}
+
+input:focus,
+select:focus,
+textarea:focus,
+.input:focus,
+.select:focus,
+.search-input:focus,
+.status-filter:focus,
+.date-input:focus {
+  outline: none;
+  border-color: #fb923c;
+  box-shadow: 0 0 0 3px rgba(251, 146, 60, 0.16);
+}
+
+.btn,
+.add-btn,
+.filter-btn,
+.action-btn,
+.chip-btn,
+.nav-btn,
+.back-btn,
+.btn-primary,
+.btn-secondary {
+  border-radius: 10px;
+  font-weight: 600;
+}
+
+.main-content .tools,
+.main-content .filters-row,
+.main-content .filter-actions,
+.main-content .date-navigation,
+.main-content .actions,
+.main-content .table-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.main-content .btn,
+.main-content .add-btn,
+.main-content .filter-btn,
+.main-content .nav-btn,
+.main-content .back-btn,
+.main-content .btn-primary,
+.main-content .btn-secondary,
+.main-content .tools .apply-btn {
+  min-height: 40px;
+  padding: 0 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 14px;
+  line-height: 1;
+}
+
+.main-content .action-buttons .action-btn,
+.main-content .table-actions .chip-btn,
+.main-content td .chip-btn {
+  min-height: 32px;
+  padding: 0 10px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 12px;
+  line-height: 1;
+}
+
+.main-content .chip-group .chip-btn {
+  min-height: 36px;
+  padding: 0 12px;
+  font-size: 13px;
+}
+
+.main-content .btn i,
+.main-content .add-btn i,
+.main-content .filter-btn i,
+.main-content .nav-btn i,
+.main-content .back-btn i,
+.main-content .btn-primary i,
+.main-content .btn-secondary i,
+.main-content .action-btn i,
+.main-content .chip-btn i {
+  font-size: 13px;
+}
+
+.main-content input[type="text"],
+.main-content input[type="email"],
+.main-content input[type="password"],
+.main-content input[type="date"],
+.main-content input[type="time"],
+.main-content input[type="number"],
+.main-content select {
+  min-height: 40px;
+  padding: 0 12px;
+  font-size: 14px;
+}
+
+/* Consistent vertical rhythm across admin pages */
+.main-content>.table-wrap,
+.main-content>.table-card,
+.main-content>.panel,
+.main-content>.filters-card,
+.main-content>.filter-section,
+.main-content>.summary-grid,
+.main-content>.stat-grid,
+.main-content>.kpi-grid,
+.main-content>.chip-group,
+.main-content>.filters-row,
+.main-content>.form-card,
+.main-content>.detail-card {
+  margin-bottom: 18px;
+}
+
+.main-content .management>.table-wrap,
+.main-content .management>.table-card,
+.main-content .management>.panel,
+.main-content .management>.filters-card,
+.main-content .management>.filter-section,
+.main-content .management>.summary-grid,
+.main-content .management>.stat-grid,
+.main-content .management>.kpi-grid,
+.main-content .management>.chip-group,
+.main-content .management>.filters-row,
+.main-content .management>.form-card,
+.main-content .management>.detail-card,
+.main-content .management>.empty-state,
+.main-content .dash-wrap>.table-wrap,
+.main-content .dash-wrap>.table-card,
+.main-content .dash-wrap>.panel,
+.main-content .dash-wrap>.filters-card,
+.main-content .dash-wrap>.filter-section,
+.main-content .dash-wrap>.summary-grid,
+.main-content .dash-wrap>.stat-grid,
+.main-content .dash-wrap>.kpi-grid,
+.main-content .dash-wrap>.chip-group,
+.main-content .dash-wrap>.filters-row,
+.main-content .dash-wrap>.form-card,
+.main-content .dash-wrap>.detail-card,
+.main-content .dash-wrap>.empty-state {
+  margin-bottom: 18px;
+}
+
+.main-content .management> :last-child,
+.main-content .dash-wrap> :last-child {
+  margin-bottom: 0;
+}
+
+@media (max-width: 768px) {
+
+  .topbar .page-title,
+  .page-header .page-title,
+  .page-header h1,
+  .management-header h2,
+  .page-title-wrap h1,
+  .page-title-wrap h2 {
+    font-size: 26px !important;
+  }
+}

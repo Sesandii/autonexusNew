@@ -17,13 +17,13 @@ function e($value): string
 
 function fieldRow($icon, $label, $value): string
 {
-  return "<div style=\"display:flex; gap:12px; padding:10px 0; border-bottom:1px solid #f3f4f6;\">
-        <div style=\"color:#6b7280; width:24px; text-align:center;\"><i class=\"fa-solid {$icon}\"></i></div>
-        <div style=\"flex:1;\">
-            <div style=\"font-size:11px; font-weight:700; color:#9ca3af; text-transform:uppercase; letter-spacing:0.5px;\">$label</div>
-            <div style=\"font-size:14px; color:#111827; margin-top:4px;\">$value</div>
-        </div>
-    </div>";
+  return "<div class=\"detail-row\">
+    <div class=\"detail-row-icon\"><i class=\"fa-solid {$icon}\"></i></div>
+    <div class=\"detail-row-content\">
+      <div class=\"detail-row-label\">$label</div>
+      <div class=\"detail-row-value\">$value</div>
+    </div>
+  </div>";
 }
 ?>
 <!DOCTYPE html>
@@ -34,226 +34,16 @@ function fieldRow($icon, $label, $value): string
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><?= htmlspecialchars($pageTitle ?? 'Service Details') ?></title>
 
+  <link rel="stylesheet" href="<?= $B ?>/app/views/layouts/admin-shared/management.css">
   <link rel="stylesheet" href="<?= $B ?>/app/views/layouts/admin-sidebar/styles.css">
-
+  <link rel="stylesheet" href="<?= $B ?>/public/assets/css/admin/servicehistory/style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <style>
-    .main-content {
-      min-height: 100vh;
-    }
-
-    .topbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      margin-bottom: 24px;
-    }
-
-    .page-title {
-      font-size: 28px;
-      font-weight: 700;
-      margin: 10px 0 2px;
-      color: #111827;
-    }
-
-    .subtitle {
-      color: #6b7280;
-      margin: 0 0 8px;
-      font-size: 14px;
-    }
-
-    /* KPI Grid - Stays 3 columns always */
-    .grid-three {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 20px;
-      margin-bottom: 20px;
-    }
-
-    .detail-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 20px;
-      margin-bottom: 20px;
-    }
-
-    .detail-card {
-      background: #fff;
-      border-radius: 16px;
-      box-shadow: 0 2px 8px rgba(15, 23, 42, .06);
-      overflow: hidden;
-    }
-
-    .card-header {
-      background: #f9fafb;
-      padding: 16px;
-      border-bottom: 1px solid #e5e7eb;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .card-header h3 {
-      margin: 0;
-      font-size: 15px;
-      font-weight: 700;
-      color: #111827;
-    }
-
-    .card-header i {
-      font-size: 18px;
-      color: #6b7280;
-    }
-
-    .card-body {
-      padding: 16px;
-    }
-
-    .field-label {
-      font-size: 11px;
-      font-weight: 700;
-      color: #9ca3af;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-bottom: 4px;
-    }
-
-    .summary-box {
-      background: #f8fafc;
-      border-left: 4px solid #2563eb;
-      padding: 12px 14px;
-      border-radius: 8px;
-      font-size: 13px;
-      line-height: 1.6;
-      color: #374151;
-    }
-
-    .grid-two {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 20px;
-      margin-bottom: 20px;
-    }
-
-    .status-badge {
-      display: inline-block;
-      padding: 4px 10px;
-      border-radius: 999px;
-      font-size: 11px;
-      font-weight: 700;
-      background: #ecfdf5;
-      color: #047857;
-    }
-
-    .back-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 16px;
-      background: #f3f4f6;
-      color: #111827;
-      border: 1px solid #e5e7eb;
-      border-radius: 10px;
-      text-decoration: none;
-      font-size: 14px;
-      font-weight: 600;
-      transition: all 0.15s ease;
-    }
-
-    .back-btn:hover {
-      background: #e5e7eb;
-    }
-
-    .kpi-card {
-      background: #fff;
-      border-radius: 16px;
-      padding: 16px;
-      box-shadow: 0 2px 8px rgba(15, 23, 42, .06);
-      text-align: center;
-    }
-
-    .kpi-icon {
-      height: 48px;
-      width: 48px;
-      border-radius: 12px;
-      display: grid;
-      place-items: center;
-      background: #f3f4f6;
-      margin: 0 auto 10px;
-    }
-
-    .kpi-icon i {
-      font-size: 22px;
-      color: #2563eb;
-    }
-
-    .kpi-label {
-      font-size: 12px;
-      color: #6b7280;
-      font-weight: 600;
-      margin-bottom: 6px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .kpi-value {
-      font-size: 24px;
-      font-weight: 700;
-      color: #111827;
-    }
-
-    @media (max-width: 120px) {
-      .detail-grid {
-        grid-template-columns: 1fr 1fr;
-      }
-    }
-
-    @media (max-width: 76px) {
-      /* Detail sections stack vertically */
-      .detail-grid,
-      .grid-two {
-        grid-template-columns: 1fr;
-      }
-
-      /* Keep KPIs in 3 columns but reduce spacing and text size for fit */
-      .grid-three {
-        grid-template-columns: repeat(3, 1fr);
-        gap: 8px;
-      }
-
-      .kpi-card {
-        padding: 10px 5px;
-      }
-
-      .kpi-value {
-        font-size: 14px;
-      }
-
-      .kpi-label {
-        font-size: 9px;
-      }
-
-      .kpi-icon {
-        height: 36px;
-        width: 36px;
-      }
-
-      .kpi-icon i {
-        font-size: 16px;
-      }
-
-      .main-content {
-        padding: 16px 16px 24px;
-      }
-    }
-  </style>
 </head>
 
 <body>
   <?php include APP_ROOT . '/views/layouts/admin-sidebar/sidebar.php'; ?>
 
-  <main class="main-content">
+  <main class="main-content service-history-page">
     <header class="topbar">
       <div>
         <h1 class="page-title">Service Details</h1>
@@ -279,7 +69,7 @@ function fieldRow($icon, $label, $value): string
       <div class="kpi-card">
         <div class="kpi-icon"><i class="fa-solid fa-circle-check"></i></div>
         <div class="kpi-label">Status</div>
-        <div style="margin-top: 8px;"><span class="status-badge">Completed</span></div>
+        <div class="status-wrap"><span class="status-badge">Completed</span></div>
       </div>
     </div>
 
@@ -397,7 +187,7 @@ function fieldRow($icon, $label, $value): string
         </div>
         <div class="card-body">
           <?php if (!empty($r['service_summary'])): ?>
-            <div style="margin-bottom: 16px;">
+            <div class="notes-block">
               <div class="field-label"><i class="fa-solid fa-clipboard"></i> Service Summary</div>
               <div class="summary-box">
                 <?= nl2br(e($r['service_summary'])) ?>
@@ -417,7 +207,7 @@ function fieldRow($icon, $label, $value): string
       </div>
     <?php endif; ?>
 
-    <div style="margin-top: 24px;">
+    <div class="back-wrap">
       <a href="<?= $B ?>/admin/admin-servicehistory" class="back-btn">
         <i class="fa-solid fa-arrow-left"></i> Back to Service History
       </a>
