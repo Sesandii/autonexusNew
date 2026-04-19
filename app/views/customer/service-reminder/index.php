@@ -45,44 +45,47 @@ $base = rtrim(BASE_URL, '/');
       <section class="cx-grid">
         <?php foreach ($reminders as $r): ?>
           <?php
-            $brand   = trim(($r['make'] ?? '') . ' ' . ($r['model'] ?? ''));
-            $regNo   = $r['reg_no'] ?? '—';
-            $mileage = max(0, (int)($r['current_mileage'] ?? 0));
-            $interval = max(1000, (int)($r['service_interval_km'] ?? 5000));
+    $brand    = trim(($r['make'] ?? '') . ' ' . ($r['model'] ?? ''));
+    $regNo    = $r['reg_no'] ?? '—';
+    $mileage  = max(0, (int)($r['current_mileage'] ?? 0));
+    $interval = max(1000, (int)($r['service_interval_km'] ?? 5000));
 
-            $last = isset($r['last_service_mileage'])
-                ? (int)$r['last_service_mileage']
-                : null;
+    // We are now treating the 'last_service_mileage' data as our "Next Due" target
+    $nextDueKm = isset($r['last_service_mileage']) ? (int)$r['last_service_mileage'] : null;
 
-            $statusLabel = 'No history';
-            $statusClass = 'cx-status-unknown';
-            $progress    = 0;
-            $nextDueKm   = null;
-            $kmToNext    = null;
+    $statusLabel = 'No target set';
+    $statusClass = 'cx-status-unknown';
+    $progress    = 0;
+    $kmToNext    = null;
 
-            if ($last !== null && $last >= 0) {
-                $elapsed   = max(0, $mileage - $last);
-                $nextDueKm = $last + $interval;
-                $kmToNext  = $nextDueKm - $mileage;
+    if ($nextDueKm !== null && $nextDueKm >= 0) {
+        // Distance is calculated: Target Mileage - Current Mileage
+        $kmToNext = $nextDueKm - $mileage;
 
-                if ($interval > 0) {
-                    $ratio    = min(1, $elapsed / $interval);
-                    $progress = (int)round($ratio * 100);
-                }
+        // Progress calculation: How much of the interval has been covered
+        // (Assuming the interval ends at $nextDueKm)
+        $startPoint = max(0, $nextDueKm - $interval);
+        $totalPath  = $nextDueKm - $startPoint;
+        $covered    = $mileage - $startPoint;
+        
+        if ($totalPath > 0) {
+            $ratio    = min(1, max(0, $covered / $totalPath));
+            $progress = (int)round($ratio * 100);
+        }
 
-                if ($kmToNext <= 0) {
-                    $statusLabel = 'Overdue';
-                    $statusClass = 'cx-status-overdue';
-                    $progress    = 100;
-                } elseif ($kmToNext <= $interval * 0.1) { // last 10%
-                    $statusLabel = 'Due soon';
-                    $statusClass = 'cx-status-soon';
-                } else {
-                    $statusLabel = 'On track';
-                    $statusClass = 'cx-status-ok';
-                }
-            }
-          ?>
+        if ($kmToNext <= 0) {
+            $statusLabel = 'Overdue';
+            $statusClass = 'cx-status-overdue';
+            $progress    = 100;
+        } elseif ($kmToNext <= $interval * 0.1) { // last 10% of the interval
+            $statusLabel = 'Due soon';
+            $statusClass = 'cx-status-soon';
+        } else {
+            $statusLabel = 'On track';
+            $statusClass = 'cx-status-ok';
+        }
+    }
+?>
 
           <article class="cx-card">
             <header class="cx-card-header">
@@ -98,49 +101,43 @@ $base = rtrim(BASE_URL, '/');
             </header>
 
             <div class="cx-card-body">
-              <div class="cx-card-row">
-                <span class="cx-label">Current mileage</span>
-                <span class="cx-value"><?= number_format($mileage) ?> km</span>
-              </div>
+    <div class="cx-card-row">
+        <span class="cx-label">Current mileage</span>
+        <span class="cx-value"><?= number_format($mileage) ?> km</span>
+    </div>
 
-              <div class="cx-card-row">
-                <span class="cx-label">Last service mileage</span>
-                <span class="cx-value">
-                  <?= $last !== null ? number_format($last) . ' km' : 'Not set' ?>
-                </span>
-              </div>
+    <div class="cx-card-row">
+        <span class="cx-label">Service interval</span>
+        <span class="cx-value"><?= number_format($interval) ?> km</span>
+    </div>
 
-              <div class="cx-card-row">
-                <span class="cx-label">Service interval</span>
-                <span class="cx-value"><?= number_format($interval) ?> km</span>
-              </div>
+    <div class="cx-card-row">
+        <span class="cx-label">Next service due at</span>
+        <span class="cx-value">
+            <?= $nextDueKm !== null ? number_format($nextDueKm) . ' km' : 'Not set' ?>
+        </span>
+    </div>
 
-              <div class="cx-card-row">
-                <span class="cx-label">Next service due at</span>
-                <span class="cx-value">
-                  <?= $nextDueKm !== null ? number_format($nextDueKm) . ' km' : '—' ?>
-                </span>
-              </div>
+    <div class="cx-card-row <?= ($kmToNext !== null && $kmToNext <= 0) ? 'cx-overdue-text' : 'cx-card-row--muted' ?>">
+        <span class="cx-label">Distance to next service</span>
+        <span class="cx-value">
+            <?php if ($kmToNext !== null): ?>
+                <?= $kmToNext > 0 ? number_format($kmToNext) . ' km remaining' : 'Overdue by ' . number_format(abs($kmToNext)) . ' km' ?>
+            <?php else: ?>
+                —
+            <?php endif; ?>
+        </span>
+    </div>
 
-              <?php if ($kmToNext !== null && $kmToNext > 0): ?>
-                <div class="cx-card-row cx-card-row--muted">
-                  <span class="cx-label">Distance to next service</span>
-                  <span class="cx-value">
-                    <?= number_format($kmToNext) ?> km
-                  </span>
-                </div>
-              <?php endif; ?>
-
-              <div class="cx-progress-wrap">
-                <div class="cx-progress-label">
-                  <span>Progress toward next service</span>
-                  <span><?= $progress ?>%</span>
-                </div>
-                <div class="cx-progress-bar">
-                  <div class="cx-progress-fill"
-                       style="width: <?= $progress ?>%;"></div>
-                </div>
-              </div>
+    <div class="cx-progress-wrap">
+        <div class="cx-progress-label">
+            <span>Progress toward next service</span>
+            <span><?= $progress ?>%</span>
+        </div>
+        <div class="cx-progress-bar">
+            <div class="cx-progress-fill" style="width: <?= $progress ?>%;"></div>
+        </div>
+    </div>
 
               <form class="cx-form" method="post"
                     action="<?= $base ?>/customer/service-reminder/update">
@@ -160,7 +157,7 @@ $base = rtrim(BASE_URL, '/');
                 </button>
               </form>
 
-              <?php if ($last === null): ?>
+              <?php if ($nextDueKm === null): ?>
                 <p class="cx-note">
                   Tip: ask our staff to set your last service mileage
                   after your next visit so reminders become more accurate.
