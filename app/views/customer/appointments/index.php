@@ -43,6 +43,7 @@ foreach ($items as $item) {
     $rows[] = [
         'appointment_id' => (int)($item['appointment_id'] ?? 0),
         'service'        => (string)($item['service'] ?? 'Service'),
+        'license_plate'  => (string)($item['license_plate'] ?? '—'),
         'branch'         => (string)($item['branch'] ?? '-'),
         'date_raw'       => $dateRaw,
         'time_raw'       => $formatTime($timeRaw),
@@ -174,6 +175,7 @@ foreach ($rows as $row) {
             <thead>
               <tr>
                 <th>Service Name</th>
+                <th>License Plate</th>
                 <th>Date</th>
                 <th>Time</th>
                 <th>Location</th>
@@ -184,11 +186,11 @@ foreach ($rows as $row) {
             <tbody>
               <?php if (empty($todayRows)): ?>
                 <tr id="todayEmptyRow" class="empty-row">
-                  <td colspan="6">No appointments scheduled for today.</td>
+                  <td colspan="7">No appointments scheduled for today.</td>
                 </tr>
               <?php else: ?>
                 <tr id="todayEmptyRow" class="empty-row" style="display:none;">
-                  <td colspan="6">No appointments match your current filters.</td>
+                  <td colspan="7">No appointments match your current filters.</td>
                 </tr>
                 <?php foreach ($todayRows as $row): ?>
                   <?php $id = (int)$row['appointment_id']; ?>
@@ -199,6 +201,7 @@ foreach ($rows as $row) {
                     data-service="<?= htmlspecialchars(strtolower($row['service']), ENT_QUOTES, 'UTF-8') ?>"
                   >
                     <td class="service-name"><?= htmlspecialchars($row['service'], ENT_QUOTES, 'UTF-8') ?></td>
+                    <td><?= htmlspecialchars($row['license_plate'], ENT_QUOTES, 'UTF-8') ?></td>
                     <td><?= htmlspecialchars($row['date_label'], ENT_QUOTES, 'UTF-8') ?></td>
                     <td><?= htmlspecialchars($row['time_raw'], ENT_QUOTES, 'UTF-8') ?></td>
                     <td><?= htmlspecialchars($row['branch'], ENT_QUOTES, 'UTF-8') ?></td>
@@ -251,6 +254,7 @@ foreach ($rows as $row) {
             <thead>
               <tr>
                 <th>Service Name</th>
+                <th>License Plate</th>
                 <th>Date</th>
                 <th>Time</th>
                 <th>Location</th>
@@ -261,11 +265,11 @@ foreach ($rows as $row) {
             <tbody>
               <?php if (empty($rows)): ?>
                 <tr id="allEmptyRow" class="empty-row">
-                  <td colspan="6">No appointments found. Book a service to get started.</td>
+                  <td colspan="7">No appointments found. Book a service to get started.</td>
                 </tr>
               <?php else: ?>
                 <tr id="allEmptyRow" class="empty-row" style="display:none;">
-                  <td colspan="6">No appointments match your current filters.</td>
+                  <td colspan="7">No appointments match your current filters.</td>
                 </tr>
                 <?php foreach ($rows as $row): ?>
                   <?php $id = (int)$row['appointment_id']; ?>
@@ -276,6 +280,7 @@ foreach ($rows as $row) {
                     data-service="<?= htmlspecialchars(strtolower($row['service']), ENT_QUOTES, 'UTF-8') ?>"
                   >
                     <td class="service-name"><?= htmlspecialchars($row['service'], ENT_QUOTES, 'UTF-8') ?></td>
+                    <td><?= htmlspecialchars($row['license_plate'], ENT_QUOTES, 'UTF-8') ?></td>
                     <td><?= htmlspecialchars($row['date_label'], ENT_QUOTES, 'UTF-8') ?></td>
                     <td><?= htmlspecialchars($row['time_raw'], ENT_QUOTES, 'UTF-8') ?></td>
                     <td><?= htmlspecialchars($row['branch'], ENT_QUOTES, 'UTF-8') ?></td>
