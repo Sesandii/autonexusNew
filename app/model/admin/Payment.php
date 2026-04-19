@@ -11,11 +11,13 @@ class Payment
 {
     private PDO $db;
 
+    // Initialize model dependencies and database access.
     public function __construct()
     {
         $this->db = db();
     }
 
+    // Handle summary operation.
     public function summary(): array
     {
         return [
@@ -29,6 +31,7 @@ class Payment
         ];
     }
 
+    // Handle getAll operation.
     public function getAll(array $filters = []): array
     {
         $sql = "
@@ -96,6 +99,7 @@ class Payment
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // Handle getInvoiceOptions operation.
     public function getInvoiceOptions(): array
     {
         $sql = "
@@ -125,6 +129,7 @@ class Payment
         return $this->db->query($sql)->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // Handle createManualPayment operation.
     public function createManualPayment(array $data): int
     {
         $invoiceId = (int)($data['invoice_id'] ?? 0);
@@ -200,6 +205,7 @@ class Payment
         }
     }
 
+    // Handle cancelInvoice operation.
     public function cancelInvoice(int $invoiceId): bool
     {
         $check = $this->db->prepare("SELECT COUNT(*) FROM payments WHERE invoice_id = :invoice_id AND status='success'");

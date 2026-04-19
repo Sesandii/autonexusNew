@@ -10,11 +10,13 @@ class Notifications
 {
     private PDO $db;
 
+    // Initialize model dependencies and database access.
     public function __construct(?PDO $pdo = null)
     {
         $this->db = $pdo ?? db();
     }
 
+    // Handle stmt operation.
     private function stmt(string $sql, array $params = [])
     {
         $st = $this->db->prepare($sql);
@@ -37,6 +39,7 @@ class Notifications
         return $st->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // Handle templateByKey operation.
     public function templateByKey(string $key): ?array
     {
         $st = $this->db->prepare("
@@ -234,6 +237,7 @@ class Notifications
         return $nid;
     }
 
+    // Handle queuedRecipients operation.
     public function queuedRecipients(int $notificationId): array
     {
         return $this->stmt("
@@ -244,6 +248,7 @@ class Notifications
         ", [':nid'=>$notificationId])->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // Handle markRecipient operation.
     public function markRecipient(int $recipientId, string $status, ?string $error = null): void
     {
         $this->stmt("
@@ -260,6 +265,7 @@ class Notifications
         ]);
     }
 
+    // Handle finalizeNotification operation.
     public function finalizeNotification(int $notificationId): void
     {
         $row = $this->stmt("

@@ -1,0 +1,56 @@
+.main-content {
+      margin-left: 260px;
+      padding: 30px;
+      background: #fff;
+      min-height: 100vh
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px
+    }
+
+    .error {
+      background: #ffe6e6;
+      color: #991b1b;
+      border: 1px solid #fca5a5;
+      padding: 10px;
+      border-radius: 8px;
+      margin-bottom: 14px
+    }
+
+    .btn-row {
+      margin-top: 16px;
+      display: flex;
+      gap: 10px
+    }
+
+    .btn,
+    button {
+      border: none;
+      background: #111;
+      color: #fff;
+      padding: 10px 14px;
+      border-radius: 8px;
+      cursor: pointer
+    }
+
+    .btn.secondary {
+      background: #666
+    }
+
+    label {
+      font-weight: 600;
+      margin-bottom: 4px;
+      display: block
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 8px
+    }

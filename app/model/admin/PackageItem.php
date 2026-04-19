@@ -9,11 +9,13 @@ class PackageItem
 {
     private PDO $pdo;
 
+    // Initialize model dependencies and database access.
     public function __construct()
     {
         $this->pdo = db();
     }
 
+    // Handle replaceItems operation.
     public function replaceItems(int $packageId, array $items): void
     {
         $del = $this->pdo->prepare("DELETE FROM service_package_items WHERE package_id = :package_id");
@@ -44,6 +46,7 @@ class PackageItem
         }
     }
 
+    // Handle itemsForPackage operation.
     public function itemsForPackage(int $packageId): array
     {
         $sql = "

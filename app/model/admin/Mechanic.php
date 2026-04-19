@@ -9,6 +9,7 @@ class Mechanic
     private PDO $db;
     private string $table = 'mechanics';
 
+    // Initialize model dependencies and database access.
     public function __construct()
     {
         $this->db = db();
@@ -184,6 +185,7 @@ class Mechanic
         }
     }
 
+    // Handle emailExists operation.
     public function emailExists(string $email, ?int $excludeUserId = null): bool
     {
         $email = trim($email);
@@ -202,6 +204,7 @@ class Mechanic
         return (bool) $st->fetchColumn();
     }
 
+    // Handle phoneExists operation.
     public function phoneExists(string $phone, ?int $excludeUserId = null): bool
     {
         $phone = trim($phone);
@@ -245,6 +248,7 @@ class Mechanic
         }
     }
 
+    // Handle nextMechanicCode operation.
     private function nextMechanicCode(): string
     {
         $row = $this->db->query("SELECT mechanic_code FROM mechanics ORDER BY mechanic_id DESC LIMIT 1")
@@ -254,6 +258,7 @@ class Mechanic
         return sprintf('MEC%03d', $num + 1);
     }
 
+    // Handle uniqueUsername operation.
     private function uniqueUsername(string $first, string $last): string
     {
         $base = strtolower(preg_replace('/\W+/', '', $first . $last)) ?: 'mechanic';

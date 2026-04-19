@@ -1,120 +1,123 @@
-<?php $current = 'customers'; ?>
+<?php /* Admin view: renders admin-viewcustomers/create page. */ ?>
+<?php
+$current = 'customers';
+$B = rtrim(BASE_URL, '/');
+
+function e($value): string
+{
+  return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>Create Customer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Customer</title>
 
-  <link rel="stylesheet" href="<?= rtrim(BASE_URL,'/') ?>/app/views/layouts/admin-shared/management.css">
-  <link rel="stylesheet" href="<?= rtrim(BASE_URL,'/') ?>/app/views/layouts/admin-sidebar/styles.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="<?= $B ?>/app/views/layouts/admin-shared/management.css">
+  <link rel="stylesheet" href="<?= $B ?>/app/views/layouts/admin-sidebar/styles.css">
+  <link rel="stylesheet" href="<?= $B ?>/public/assets/css/admin/branches/create.css">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 </head>
+
 <body>
-<?php include(__DIR__ . '/../../layouts/admin-sidebar/sidebar.php'); ?>
+  <?php include(__DIR__ . '/../../layouts/admin-sidebar/sidebar.php'); ?>
 
-<main class="main-content">
-  <header class="page-header">
-    <div class="page-breadcrumb">
-      <a href="<?= rtrim(BASE_URL,'/') ?>/admin/customers">Customers</a>
-      <span>›</span>
-      <span>Create</span>
-    </div>
-
-    <div class="page-header-main">
-      <div class="page-title-wrap">
-        <div class="page-icon"><i class="fa-solid fa-user-plus"></i></div>
-        <div>
-          <h2>Create Customer</h2>
-          <p>Add a new customer to AutoNexus.</p>
+  <main class="main-content branch-create-page">
+    <div class="branch-create-shell">
+      <header class="create-header">
+        <div class="create-title">
+          <h1>Add Customer</h1>
+          <p>Create a new customer account with contact details and initial status.</p>
         </div>
-      </div>
-      <span class="page-chip">New record</span>
+        <a href="<?= e($B . '/admin/customers') ?>" class="btn-secondary">
+          <i class="fa-solid fa-arrow-left"></i>
+          <span>Back to Customers</span>
+        </a>
+      </header>
+
+      <?php if (!empty($errors)): ?>
+        <div class="alert alert-danger">
+          <?php foreach ($errors as $err): ?>
+            <div><?= e($err) ?></div>
+          <?php endforeach; ?>
+        </div>
+      <?php endif; ?>
+
+      <form class="create-form-shell" method="post" action="<?= e($B . '/admin/customers') ?>">
+        <section class="create-card">
+          <div class="create-card-header">
+            <i class="fa-solid fa-user-plus"></i>
+            <h2>Customer Information</h2>
+          </div>
+
+          <div class="create-card-body">
+            <div class="form-grid">
+              <div class="field">
+                <label class="label" for="first_name">First Name</label>
+                <input class="input" id="first_name" name="first_name" required
+                  value="<?= e($old['first_name'] ?? '') ?>">
+              </div>
+
+              <div class="field">
+                <label class="label" for="last_name">Last Name</label>
+                <input class="input" id="last_name" name="last_name" required value="<?= e($old['last_name'] ?? '') ?>">
+              </div>
+
+              <div class="field">
+                <label class="label" for="email">Email</label>
+                <input class="input" id="email" type="email" name="email" value="<?= e($old['email'] ?? '') ?>">
+                <div class="hint">We’ll send booking confirmations to this address.</div>
+              </div>
+
+              <div class="field">
+                <label class="label" for="phone">Phone</label>
+                <input class="input" id="phone" name="phone" value="<?= e($old['phone'] ?? '') ?>">
+                <div class="hint">Primary contact number for the customer.</div>
+              </div>
+
+              <div class="field">
+                <label class="label" for="status">Status</label>
+                <?php $s = $old['status'] ?? 'active'; ?>
+                <select class="input" id="status" name="status">
+                  <option value="active" <?= $s === 'active' ? 'selected' : '' ?>>Active</option>
+                  <option value="inactive" <?= $s === 'inactive' ? 'selected' : '' ?>>Inactive</option>
+                  <option value="pending" <?= $s === 'pending' ? 'selected' : '' ?>>Pending</option>
+                </select>
+              </div>
+
+              <div class="field">
+                <label class="label" for="customer_code">Customer Code (optional)</label>
+                <input class="input" id="customer_code" name="customer_code" placeholder="Auto-generated if left blank"
+                  value="<?= e($old['customer_code'] ?? '') ?>">
+              </div>
+
+              <div class="field full">
+                <label class="label" for="password">Initial Password (optional)</label>
+                <input class="input" id="password" name="password" type="password"
+                  placeholder="Defaults to 'autonexus' if left blank">
+                <div class="hint">Customer can change this after logging in.</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <div class="form-actions">
+          <a class="btn-secondary" href="<?= e($B . '/admin/customers') ?>">
+            <i class="fa-solid fa-xmark"></i>
+            <span>Cancel</span>
+          </a>
+
+          <button class="btn-primary" type="submit">
+            <i class="fa-solid fa-floppy-disk"></i>
+            <span>Save Customer</span>
+          </button>
+        </div>
+      </form>
     </div>
-  </header>
-
-  <?php if (!empty($errors)): ?>
-    <div class="error-box">
-      <?php foreach ($errors as $err): ?>
-        <?= htmlspecialchars($err) ?><br>
-      <?php endforeach; ?>
-    </div>
-  <?php endif; ?>
-
-  <form class="form-card" method="post"
-        action="<?= rtrim(BASE_URL,'/') ?>/admin/customers">
-
-    <div class="section-title">Basic Info</div>
-    <div class="section-divider"></div>
-
-    <div class="form-grid">
-      <div>
-        <label for="first_name">First Name</label>
-        <input id="first_name" name="first_name" required
-               value="<?= htmlspecialchars($old['first_name'] ?? '') ?>">
-      </div>
-      <div>
-        <label for="last_name">Last Name</label>
-        <input id="last_name" name="last_name" required
-               value="<?= htmlspecialchars($old['last_name'] ?? '') ?>">
-      </div>
-    </div>
-
-    <div class="form-grid" style="margin-top:14px;">
-      <div>
-        <label for="email">Email</label>
-        <input id="email" type="email" name="email"
-               value="<?= htmlspecialchars($old['email'] ?? '') ?>">
-        <small>We’ll send booking confirmations to this address.</small>
-      </div>
-      <div>
-        <label for="phone">Phone</label>
-        <input id="phone" name="phone"
-               value="<?= htmlspecialchars($old['phone'] ?? '') ?>">
-        <small>Primary contact number for the customer.</small>
-      </div>
-    </div>
-
-    <div class="section-title" style="margin-top:22px;">Account & Status</div>
-    <div class="section-divider"></div>
-
-    <div class="form-grid">
-      <div>
-        <label for="status">Status</label>
-        <?php $s = $old['status'] ?? 'active'; ?>
-        <select id="status" name="status">
-          <option value="active"   <?= $s==='active'?'selected':'' ?>>Active</option>
-          <option value="inactive" <?= $s==='inactive'?'selected':'' ?>>Inactive</option>
-          <option value="pending"  <?= $s==='pending'?'selected':'' ?>>Pending</option>
-        </select>
-        <small>Choose how this account should behave initially.</small>
-      </div>
-      <div>
-        <label for="customer_code">Customer Code (optional)</label>
-        <input id="customer_code" name="customer_code"
-               placeholder="Auto-generated if left blank"
-               value="<?= htmlspecialchars($old['customer_code'] ?? '') ?>">
-        <small>Useful if you follow a custom coding scheme.</small>
-      </div>
-    </div>
-
-    <div style="margin-top:16px;">
-      <label for="password">Initial Password (optional)</label>
-      <input id="password" name="password" type="password"
-             placeholder="Defaults to 'autonexus' if left blank">
-      <small>Customer can change this after logging in.</small>
-    </div>
-
-    <div class="form-actions">
-      <button class="btn-primary" type="submit">
-        <i class="fas fa-plus"></i>&nbsp;Create Customer
-      </button>
-      <a class="btn-secondary"
-         href="<?= rtrim(BASE_URL,'/') ?>/admin/customers">
-        Cancel
-      </a>
-    </div>
-  </form>
-</main>
+  </main>
 </body>
+
 </html>

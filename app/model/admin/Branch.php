@@ -8,6 +8,7 @@ class Branch
     private PDO $pdo;
     private ?bool $managerHasBranchId = null;
 
+    // Initialize model dependencies and database access.
     public function __construct()
     {
         $this->pdo = db(); // your global db() function
@@ -46,6 +47,7 @@ class Branch
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // Handle findByManagerId operation.
     public function findByManagerId(int $managerId): ?array
     {
         $stmt = $this->pdo->prepare("SELECT * FROM branches WHERE manager_id = :mid LIMIT 1");
@@ -84,6 +86,7 @@ class Branch
         }
     }
 
+    // Handle findByCode operation.
     public function findByCode(string $code): ?array
     {
         $stmt = $this->pdo->prepare("SELECT * FROM branches WHERE branch_code = :c");
@@ -92,6 +95,7 @@ class Branch
         return $row ?: null;
     }
 
+    // Handle updateByCode operation.
     public function updateByCode(string $code, array $data): void
     {
         $current = $this->findByCode($code);
@@ -137,6 +141,7 @@ class Branch
         }
     }
 
+    // Handle deleteByCode operation.
     public function deleteByCode(string $code): void
     {
         $current = $this->findByCode($code);
@@ -163,6 +168,15 @@ class Branch
         }
     }
 
+    // Handle archiveByCode operation.
+    public function archiveByCode(string $code): bool
+    {
+        $stmt = $this->pdo->prepare("UPDATE branches SET status = 'inactive' WHERE branch_code = :c");
+        $stmt->execute(['c' => $code]);
+        return $stmt->rowCount() > 0;
+    }
+
+    // Handle managersHaveBranchId operation.
     private function managersHaveBranchId(): bool
     {
         if ($this->managerHasBranchId !== null) {
@@ -174,6 +188,7 @@ class Branch
         return $this->managerHasBranchId;
     }
 
+    // Handle setManagerBranch operation.
     private function setManagerBranch(int $managerId, int $branchId): void
     {
         if ($managerId <= 0 || $branchId <= 0 || !$this->managersHaveBranchId()) {
@@ -189,6 +204,7 @@ class Branch
         ]);
     }
 
+    // Handle clearManagerBranch operation.
     private function clearManagerBranch(int $managerId, int $branchId): void
     {
         if ($managerId <= 0 || $branchId <= 0 || !$this->managersHaveBranchId()) {
@@ -261,6 +277,7 @@ class Branch
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // Handle idsOfActive operation.
     public function idsOfActive(): array
     {
         $rows = $this->pdo->query("SELECT branch_id FROM branches WHERE status='active'")
@@ -268,6 +285,7 @@ class Branch
         return array_map('intval', $rows);
     }
 
+    // Handle allActive operation.
     public function allActive(): array
     {
         $sql = "SELECT branch_id, branch_code, name, city

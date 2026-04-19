@@ -15,8 +15,9 @@
 
 .filter-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-template-columns: minmax(180px, 1.3fr) repeat(5, minmax(120px, 1fr)) auto;
     gap: 12px;
+    align-items: end;
 }
 
 .filter-input {
@@ -54,15 +55,23 @@
     display: flex;
     gap: 8px;
     align-items: flex-end;
+    min-width: 0;
+    flex-wrap: nowrap;
+    white-space: nowrap;
+    justify-self: end;
+}
+
+.filter-actions .filter-btn {
+    white-space: nowrap;
 }
 
 .filter-btn {
-    padding: 8px 16px;
+    padding: 7px 10px;
     background: #ff0202;
     color: white;
     border: none;
     border-radius: 8px;
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 600;
     cursor: pointer;
     transition: background 0.2s;
@@ -277,7 +286,7 @@
 
 @media (max-width: 1024px) {
     .filter-grid {
-        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 }
 
@@ -287,11 +296,11 @@
     }
 
     .filter-actions {
-        flex-direction: column;
+        flex-direction: row;
     }
 
     .filter-actions button {
-        width: 100%;
+        width: auto;
     }
 
     .stat-grid {

@@ -8,6 +8,7 @@ class CustomersController extends Controller
 {
     private Customer $Customer;
 
+    // Initialize controller dependencies and request context.
     public function __construct(array $config)
     {
         parent::__construct($config);
@@ -19,8 +20,11 @@ class CustomersController extends Controller
     {
         $out = [];
         foreach ($src as $k => $v) {
-            if (is_array($v)) { $out[$k] = $this->sanitize($v); continue; }
-            $v = trim((string)$v);
+            if (is_array($v)) {
+                $out[$k] = $this->sanitize($v);
+                continue;
+            }
+            $v = trim((string) $v);
             $v = preg_replace('/[^\P{C}\n\r\t]+/u', '', $v);
             $out[$k] = $v;
         }
@@ -46,9 +50,12 @@ class CustomersController extends Controller
         $data = $this->sanitize($_POST);
 
         $errors = [];
-        if (empty($data['first_name'])) $errors[] = 'First name is required';
-        if (empty($data['last_name']))  $errors[] = 'Last name is required';
-        if (!empty($data['email']) && !filter_var($data['email'], FILTER_VALIDATE_EMAIL)) $errors[] = 'Invalid email';
+        if (empty($data['first_name']))
+            $errors[] = 'First name is required';
+        if (empty($data['last_name']))
+            $errors[] = 'Last name is required';
+        if (!empty($data['email']) && !filter_var($data['email'], FILTER_VALIDATE_EMAIL))
+            $errors[] = 'Invalid email';
 
         if ($errors) {
             http_response_code(422);
@@ -57,31 +64,40 @@ class CustomersController extends Controller
         }
 
         $custId = $this->Customer->create([
-            'first_name'    => $data['first_name'] ?? '',
-            'last_name'     => $data['last_name']  ?? '',
-            'email'         => $data['email']      ?? null,
-            'phone'         => $data['phone']      ?? null,
-            'status'        => $data['status']     ?? 'active',
-            'password'      => $data['password']   ?? null,
+            'first_name' => $data['first_name'] ?? '',
+            'last_name' => $data['last_name'] ?? '',
+            'email' => $data['email'] ?? null,
+            'phone' => $data['phone'] ?? null,
+            'status' => $data['status'] ?? 'active',
+            'password' => $data['password'] ?? null,
             'customer_code' => $data['customer_code'] ?? null,
         ]);
 
-        $this->redirect(BASE_URL . '/admin/customers' );
+        $this->setSuccessToast('Customer created successfully.');
+        $this->redirect(BASE_URL . '/admin/customers');
     }
 
     /** GET /admin/customers/{id} */
     public function show($id)
     {
-        $customer = $this->Customer->find((int)$id);
-        if (!$customer) { http_response_code(404); echo "Customer not found"; return; }
+        $customer = $this->Customer->find((int) $id);
+        if (!$customer) {
+            http_response_code(404);
+            echo "Customer not found";
+            return;
+        }
         $this->view('admin/admin-viewcustomers/show', ['c' => $customer]);
     }
 
     /** GET /admin/customers/{id}/edit */
     public function edit($id)
     {
-        $customer = $this->Customer->find((int)$id);
-        if (!$customer) { http_response_code(404); echo "Customer not found"; return; }
+        $customer = $this->Customer->find((int) $id);
+        if (!$customer) {
+            http_response_code(404);
+            echo "Customer not found";
+            return;
+        }
         $this->view('admin/admin-viewcustomers/edit', ['c' => $customer]);
     }
 
@@ -90,32 +106,34 @@ class CustomersController extends Controller
     {
         $data = $this->sanitize($_POST);
 
-        $this->Customer->update((int)$id, [
-            'first_name'    => $data['first_name'] ?? null,
-            'last_name'     => $data['last_name']  ?? null,
-            'email'         => $data['email']      ?? null,
-            'phone'         => $data['phone']      ?? null,
-            'status'        => $data['status']     ?? null,
-            'password'      => $data['password']   ?? null,
+        $this->Customer->update((int) $id, [
+            'first_name' => $data['first_name'] ?? null,
+            'last_name' => $data['last_name'] ?? null,
+            'email' => $data['email'] ?? null,
+            'phone' => $data['phone'] ?? null,
+            'status' => $data['status'] ?? null,
+            'password' => $data['password'] ?? null,
             'customer_code' => $data['customer_code'] ?? null,
         ]);
 
-       header('Location: ' . rtrim(BASE_URL,'/') . '/admin/customers');
-exit;
+        $this->setSuccessToast('Customer updated successfully.');
+        header('Location: ' . rtrim(BASE_URL, '/') . '/admin/customers');
+        exit;
 
     }
 
     /** POST /admin/customers/{id}/delete */
     public function destroy($id)
     {
-        $this->Customer->delete((int)$id);
+        $this->Customer->delete((int) $id);
+        $this->setSuccessToast('Customer deleted successfully.');
         $this->redirect(BASE_URL . '/admin/customers');
     }
 
     /** POST /admin/customers/{id}/deactivate */
     public function deactivate($id)
     {
-        $id = (int)$id;
+        $id = (int) $id;
 
         // Ensure customer exists
         $customer = $this->Customer->find($id);
@@ -131,7 +149,7 @@ exit;
         ]);
 
         // Optionally: add success message
-        $_SESSION['flash'] = "Customer has been marked as inactive.";
+        $this->setSuccessToast('Customer has been marked as inactive.');
 
         $this->redirect(BASE_URL . '/admin/customers');
     }
@@ -139,7 +157,7 @@ exit;
     /** POST /admin/customers/{id}/activate */
     public function activate($id)
     {
-        $id = (int)$id;
+        $id = (int) $id;
 
         // Ensure customer exists
         $customer = $this->Customer->find($id);
@@ -155,7 +173,7 @@ exit;
         ]);
 
         // Optional flash message
-        $_SESSION['flash'] = "Customer has been marked as active.";
+        $this->setSuccessToast('Customer has been marked as active.');
 
         $this->redirect(BASE_URL . '/admin/customers');
     }

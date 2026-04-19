@@ -10,6 +10,7 @@ class FeedbackController extends Controller
 {
     private FeedbackModel $feedback;
 
+    // Initialize controller dependencies and request context.
     public function __construct(array $config = [])
     {
         parent::__construct($config);
@@ -21,10 +22,10 @@ class FeedbackController extends Controller
     public function index(): void
     {
         $filters = [
-            'q'       => trim($_GET['q']       ?? ''),
-            'rating'  => $_GET['rating']      ?? '',
-            'replied' => $_GET['replied']     ?? '',
-            'date'    => $_GET['date']        ?? '',
+            'q' => trim($_GET['q'] ?? ''),
+            'rating' => $_GET['rating'] ?? '',
+            'replied' => $_GET['replied'] ?? '',
+            'date' => $_GET['date'] ?? '',
         ];
 
         $rows = $this->feedback->list($filters);
@@ -34,16 +35,16 @@ class FeedbackController extends Controller
         if ($rows) {
             $sum = 0;
             foreach ($rows as $r) {
-                $sum += (int)$r['rating'];
+                $sum += (int) $r['rating'];
             }
             $avgRating = round($sum / count($rows), 1);
         }
 
         $this->view('admin/admin-viewfeedback/index', [
             'pageTitle' => 'Customer Feedback - AutoNexus',
-            'current'   => 'feedback',
+            'current' => 'feedback',
             'feedbacks' => $rows,
-            'filters'   => $filters,
+            'filters' => $filters,
             'avgRating' => $avgRating,
         ]);
     }
@@ -56,23 +57,26 @@ class FeedbackController extends Controller
             exit;
         }
 
-        $id        = (int)($_POST['feedback_id'] ?? 0);
-        $replyText = trim((string)($_POST['reply_text'] ?? ''));
+        $id = (int) ($_POST['feedback_id'] ?? 0);
+        $replyText = trim((string) ($_POST['reply_text'] ?? ''));
 
         if ($id <= 0 || $replyText === '') {
+            $this->setErrorToast('Please provide a valid feedback reply.');
             header('Location: ' . rtrim(BASE_URL, '/') . '/admin/admin-viewfeedback');
             exit;
         }
 
-        $adminUserId = (int)($_SESSION['user']['user_id'] ?? 0);
+        $adminUserId = (int) ($_SESSION['user']['user_id'] ?? 0);
 
         $this->feedback->reply($id, $replyText, $adminUserId);
+        $this->setSuccessToast('Reply sent successfully.');
 
         // Redirect back to list (PRG)
         header('Location: ' . rtrim(BASE_URL, '/') . '/admin/admin-viewfeedback');
         exit;
     }
 
+    // Ensure the current session belongs to an admin user.
     private function requireAdmin(): void
     {
         if (session_status() !== PHP_SESSION_ACTIVE) {

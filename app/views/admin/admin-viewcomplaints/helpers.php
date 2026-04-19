@@ -1,3 +1,4 @@
+<?php /* Admin view: renders admin-viewcomplaints/helpers page. */ ?>
 <?php
 /**
  * View helpers for Complaints Management
@@ -50,7 +51,7 @@ function escalationFlag($escalated): string
 
 function linkBtn($href, $label, $icon = 'fa-arrow-right'): string
 {
-    return "<a class=\"link-btn\" href=\"" . htmlspecialchars($href) . "\" style=\"display:inline-flex; align-items:center; gap:6px; padding:6px 10px; border-radius:8px; background:#ecfdf5; color:#047857; border:1px solid #d1fae5; font-size:12px; font-weight:600; text-decoration:none; white-space:nowrap;\">"
+    return "<a class=\"link-btn\" href=\"" . htmlspecialchars($href) . "\" style=\"display:inline-flex; align-items:center; gap:6px; padding:6px 10px; border-radius:8px; background:#111827; color:#ffffff; border:1px solid #111827; font-size:12px; font-weight:600; text-decoration:none; white-space:nowrap;\">"
         . "<i class=\"fa-solid {$icon}\" style=\"font-size:10px;\"></i> " . htmlspecialchars($label) . "</a>";
 }
 

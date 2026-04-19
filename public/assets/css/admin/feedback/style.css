@@ -1,98 +1,71 @@
-/* Reset & Base */
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+.feedback-management {
+  margin-top: 10px;
 }
 
-html,
-body {
-  height: 100%;
-  background-color: #f5f7fa;
+.feedback-metric {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 12px 16px;
+  min-width: 180px;
+  text-align: right;
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.06);
 }
 
-
-
-/* Main Content */
-.main-content {
-  flex: 1;
-  padding: 30px;
-  overflow-y: auto;
+.feedback-metric-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #6b7280;
+  font-weight: 700;
 }
 
-/* Top Bar */
-.top-bar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 30px;
-  background-color: #fff;
-  padding: 10px 20px;
-  border-radius: 4px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.page-title {
-  font-weight: 600;
-  font-size: 18px;
-}
-
-.profile-icon {
-  width: 36px;
-  height: 36px;
-  background-color: #ccc;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-}
-
-/* Feedback Section */
-.feedback-section h2 {
-  margin-bottom: 20px;
+.feedback-metric-value {
+  margin-top: 2px;
   font-size: 24px;
-  font-weight: 600;
-  color: #333;
+  color: #0f172a;
+  font-weight: 700;
 }
 
-/* Filters */
-.filters {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
-  flex-wrap: wrap;
+.feedback-metric-sub {
+  margin-top: 2px;
+  color: #64748b;
+  font-size: 12px;
 }
 
-.filters input[type="text"],
-.filters select,
-.filters input[type="date"] {
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
+.feedback-tools {
+  margin-bottom: 16px;
+}
+
+.feedback-tools .search-input {
+  width: 340px;
+}
+
+.feedback-date {
+  height: var(--admin-control-height);
+  border: 1px solid var(--admin-border);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--admin-text);
+  padding: 0 12px;
   font-size: 14px;
-  flex: 1;
-  min-width: 150px;
 }
 
-/* Cards container */
 .cards-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 16px;
 }
 
-/* Card */
 .card {
-  background: white;
-  border-radius: 10px;
-  box-shadow: 0 0 8px rgba(0, 0, 0, 0.05);
-  padding: 20px;
-  width: 300px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.06);
+  padding: 16px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  gap: 8px;
 }
 
 .card-header {
@@ -138,17 +111,17 @@ body {
 
 /* Feedback Text */
 .feedback-text {
-  margin: 12px 0;
+  margin: 8px 0;
   font-size: 14px;
-  line-height: 1.4;
+  line-height: 1.5;
   color: #333;
-  flex-grow: 1;
+  min-height: 44px;
 }
 
 /* Reply Status */
 .reply-status {
   font-size: 12px;
-  margin-bottom: 8px;
+  margin-top: 4px;
 }
 
 .reply-status.replied {
@@ -163,29 +136,70 @@ body {
 
 /* Reply Button */
 .reply-btn {
-  background-color: #ef5350;
+  background-color: #cf3202;
   color: white;
   border: none;
-  border-radius: 6px;
-  padding: 8px 12px;
+  border-radius: 10px;
+  min-height: 36px;
+  padding: 0 12px;
   cursor: pointer;
   font-weight: 600;
-  font-size: 14px;
+  font-size: 13px;
   align-self: flex-start;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.2s ease;
 }
 
 .reply-btn:hover {
-  background-color: #d43f3f;
+  background-color: #ab2c08;
 }
 
-/* Dont forget to put this after u merge the dashboard*/
-.sidebar-frame {
-  width: 260px;
-  border: none;
-  height: 100vh;
+.reply-form {
+  margin-top: 8px;
 }
 
-.container {
+.reply-form textarea {
+  width: 100%;
+  resize: vertical;
+  font-size: 13px;
+  line-height: 1.4;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  min-height: 64px;
+}
+
+.reply-form textarea:focus {
+  outline: none;
+  border-color: #f97316;
+  box-shadow: 0 0 0 2px rgba(249, 115, 22, 0.18);
+}
+
+.reply-preview {
+  font-size: 13px;
+  margin-top: 4px;
+}
+
+.empty-state-box {
+  grid-column: 1 / -1;
+  background: #fff;
+  border: 1px dashed #d1d5db;
+  border-radius: 12px;
+  padding: 28px 18px;
+  color: #6b7280;
   display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 14px;
+}
+
+@media (max-width: 768px) {
+  .feedback-metric {
+    width: 100%;
+    text-align: left;
+  }
+
+  .feedback-tools .search-input {
+    width: 100%;
+  }
 }

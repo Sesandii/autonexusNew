@@ -1,174 +1,155 @@
-<?php $current = $current ?? 'mechanics';
+<?php /* Admin view: renders admin-viewmechanics/create page. */ ?>
+<?php
+$current = $current ?? 'mechanics';
 $B = rtrim(BASE_URL, '/');
 $old = $old ?? [];
-$errors = $errors ?? []; ?>
+$errors = $errors ?? [];
+
+function e($value): string
+{
+  return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Create Mechanic</title>
-  <link rel="stylesheet" href="../../app/views/layouts/admin-shared/management.css">
-  <link rel="stylesheet" href="../../app/views/layouts/admin-sidebar/styles.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <style>
-    .main-content {
-      margin-left: 260px;
-      padding: 30px;
-      background: #fff;
-      min-height: 100vh
-    }
+  <title>Add Mechanic</title>
 
-    .form-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 16px
-    }
-
-    .error {
-      background: #ffe6e6;
-      color: #991b1b;
-      border: 1px solid #fca5a5;
-      padding: 10px;
-      border-radius: 8px;
-      margin-bottom: 14px
-    }
-
-    .btn-row {
-      margin-top: 16px;
-      display: flex;
-      gap: 10px
-    }
-
-    .btn,
-    button {
-      border: none;
-      background: #111;
-      color: #fff;
-      padding: 10px 14px;
-      border-radius: 8px;
-      cursor: pointer
-    }
-
-    .btn.secondary {
-      background: #666
-    }
-
-    label {
-      font-weight: 600;
-      margin-bottom: 4px;
-      display: block
-    }
-
-    input,
-    select,
-    textarea {
-      width: 100%;
-      padding: 10px;
-      border: 1px solid #ddd;
-      border-radius: 8px
-    }
-  </style>
+  <link rel="stylesheet" href="<?= $B ?>/app/views/layouts/admin-shared/management.css">
+  <link rel="stylesheet" href="<?= $B ?>/app/views/layouts/admin-sidebar/styles.css">
+  <link rel="stylesheet" href="<?= $B ?>/public/assets/css/admin/branches/create.css">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 </head>
 
 <body>
   <?php include(__DIR__ . '/../../layouts/admin-sidebar/sidebar.php'); ?>
 
-  <main class="main-content">
-    <h2>Create Mechanic</h2>
-
-    <?php if ($errors): ?>
-      <div class="error">
-        <ul style="margin:0;padding-left:18px;">
-          <?php foreach ($errors as $e): ?>
-            <li><?= htmlspecialchars($e) ?></li><?php endforeach; ?>
-        </ul>
-      </div>
-    <?php endif; ?>
-
-    <form method="post" action="<?= rtrim(BASE_URL, '/') ?>/admin/mechanics">
-
-      <div class="form-grid">
-        <div>
-          <label>Mechanic Code</label>
-          <input name="mechanic_code" value="<?= htmlspecialchars($old['mechanic_code'] ?? '') ?>" placeholder="MEC010">
-          <small>Leave empty to auto-generate.</small>
+  <main class="main-content branch-create-page">
+    <div class="branch-create-shell">
+      <header class="create-header">
+        <div class="create-title">
+          <h1>Add Mechanic</h1>
+          <p>Create a new mechanic profile with branch assignment and specialization details.</p>
         </div>
+        <a href="<?= e($B . '/admin/mechanics') ?>" class="btn-secondary">
+          <i class="fa-solid fa-arrow-left"></i>
+          <span>Back to Mechanics</span>
+        </a>
+      </header>
 
-        <div>
-          <label>Branch</label>
-          <select name="branch_id" required>
-            <option value="">-- Select Branch --</option>
-            <?php foreach ($branches as $b): ?>
-              <option value="<?= $b['branch_id'] ?>" <?= (($old['branch_id'] ?? '') == $b['branch_id']) ? 'selected' : '' ?>>
-                [<?= htmlspecialchars($b['branch_code']) ?>] <?= htmlspecialchars($b['name']) ?>
-              </option>
-            <?php endforeach; ?>
-          </select>
+      <?php if (!empty($errors)): ?>
+        <div class="alert alert-danger">
+          <?php foreach ($errors as $error): ?>
+            <div><?= e($error) ?></div>
+          <?php endforeach; ?>
         </div>
+      <?php endif; ?>
 
+      <form class="create-form-shell" method="post" action="<?= e($B . '/admin/mechanics') ?>">
+        <section class="create-card">
+          <div class="create-card-header">
+            <i class="fa-solid fa-tools"></i>
+            <h2>Mechanic Information</h2>
+          </div>
 
-        <div>
-          <label>Specialization</label>
-          <input name="specialization" value="<?= htmlspecialchars($old['specialization'] ?? '') ?>">
+          <div class="create-card-body">
+            <div class="form-grid">
+              <div class="field">
+                <label class="label">First Name</label>
+                <input class="input" name="first_name" value="<?= e($old['first_name'] ?? '') ?>" required>
+              </div>
+
+              <div class="field">
+                <label class="label">Last Name</label>
+                <input class="input" name="last_name" value="<?= e($old['last_name'] ?? '') ?>" required>
+              </div>
+
+              <div class="field">
+                <label class="label">Email</label>
+                <input class="input" type="email" name="email" value="<?= e($old['email'] ?? '') ?>">
+              </div>
+
+              <div class="field">
+                <label class="label">Phone</label>
+                <input class="input" name="phone" value="<?= e($old['phone'] ?? '') ?>">
+              </div>
+
+              <div class="field">
+                <label class="label">Assigned Branch</label>
+                <select name="branch_id" class="input" required>
+                  <option value="">-- Select a branch --</option>
+                  <?php foreach (($branches ?? []) as $b): ?>
+                    <option value="<?= (int) $b['branch_id'] ?>" <?= (($old['branch_id'] ?? '') == $b['branch_id']) ? 'selected' : '' ?>>
+                      <?= e(($b['branch_code'] ? $b['branch_code'] . ' • ' : '') . ($b['name'] ?? 'Branch')) ?>
+                    </option>
+                  <?php endforeach; ?>
+                </select>
+              </div>
+
+              <div class="field">
+                <label class="label">Specialization</label>
+                <input class="input" name="specialization" value="<?= e($old['specialization'] ?? '') ?>">
+              </div>
+
+              <div class="field">
+                <label class="label">Experience (years)</label>
+                <input class="input" type="number" min="0" name="experience_years"
+                  value="<?= e($old['experience_years'] ?? '0') ?>">
+              </div>
+
+              <div class="field">
+                <label class="label">Mechanic Status</label>
+                <select name="mech_status" class="input">
+                  <option value="active" <?= (($old['mech_status'] ?? 'active') === 'active') ? 'selected' : '' ?>>Active
+                  </option>
+                  <option value="inactive" <?= (($old['mech_status'] ?? '') === 'inactive') ? 'selected' : '' ?>>Inactive
+                  </option>
+                </select>
+              </div>
+
+              <div class="field">
+                <label class="label">User Status</label>
+                <select name="user_status" class="input">
+                  <option value="active" <?= (($old['user_status'] ?? 'active') === 'active') ? 'selected' : '' ?>>Active
+                  </option>
+                  <option value="inactive" <?= (($old['user_status'] ?? '') === 'inactive') ? 'selected' : '' ?>>Inactive
+                  </option>
+                  <option value="pending" <?= (($old['user_status'] ?? '') === 'pending') ? 'selected' : '' ?>>Pending
+                  </option>
+                </select>
+              </div>
+
+              <div class="field">
+                <label class="label">Password</label>
+                <input class="input" type="password" name="password" placeholder="default: Mechanic@123">
+                <div class="hint">Default password is Mechanic@123.</div>
+              </div>
+
+              <div class="field">
+                <label class="label">Mechanic Code</label>
+                <input class="input" name="mechanic_code" value="<?= e($old['mechanic_code'] ?? '') ?>"
+                  placeholder="Auto-generated if empty">
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <div class="form-actions">
+          <a href="<?= e($B . '/admin/mechanics') ?>" class="btn-secondary">
+            <i class="fa-solid fa-xmark"></i>
+            <span>Cancel</span>
+          </a>
+
+          <button type="submit" class="btn-primary">
+            <i class="fa-solid fa-floppy-disk"></i>
+            <span>Save Mechanic</span>
+          </button>
         </div>
-
-        <div>
-          <label>Experience (years)</label>
-          <input type="number" min="0" name="experience_years"
-            value="<?= htmlspecialchars($old['experience_years'] ?? '0') ?>">
-        </div>
-
-        <div>
-          <label>Mechanic Status</label>
-          <select name="mech_status">
-            <option value="active" <?= (($old['mech_status'] ?? 'active') === 'active') ? 'selected' : ''; ?>>Active</option>
-            <option value="inactive" <?= (($old['mech_status'] ?? '') === 'inactive') ? 'selected' : ''; ?>>Inactive</option>
-          </select>
-        </div>
-
-        <div>
-          <label>User Status</label>
-          <select name="user_status">
-            <option value="active" <?= (($old['user_status'] ?? 'active') === 'active') ? 'selected' : ''; ?>>Active</option>
-            <option value="inactive" <?= (($old['user_status'] ?? '') === 'inactive') ? 'selected' : ''; ?>>Inactive</option>
-            <option value="pending" <?= (($old['user_status'] ?? '') === 'pending') ? 'selected' : ''; ?>>Pending</option>
-          </select>
-        </div>
-
-        <div>
-          <label>First Name *</label>
-          <input name="first_name" required value="<?= htmlspecialchars($old['first_name'] ?? '') ?>">
-        </div>
-
-        <div>
-          <label>Last Name *</label>
-          <input name="last_name" required value="<?= htmlspecialchars($old['last_name'] ?? '') ?>">
-        </div>
-
-        <div>
-          <label>Email</label>
-          <input type="email" name="email" value="<?= htmlspecialchars($old['email'] ?? '') ?>">
-        </div>
-
-        <div>
-          <label>Phone</label>
-          <input name="phone" value="<?= htmlspecialchars($old['phone'] ?? '') ?>">
-        </div>
-
-        <div style="grid-column:1/-1;">
-          <label>Initial Password (optional)</label>
-          <input type="text" name="password" placeholder="default: Mechanic@123"
-            value="<?= htmlspecialchars($old['password'] ?? '') ?>">
-        </div>
-      </div>
-
-      <div class="btn-row">
-        <button type="submit"><i class="fa fa-plus"></i> Create</button>
-        <a class="btn secondary" href="<?= $B ?>/admin-viewmechanics">Cancel</a>
-      </div>
-    </form>
+      </form>
+    </div>
   </main>
 </body>
 

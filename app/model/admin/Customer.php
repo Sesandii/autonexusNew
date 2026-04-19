@@ -8,11 +8,13 @@ class Customer
 {
     private PDO $db;
 
+    // Initialize model dependencies and database access.
     public function __construct()
     {
         $this->db = db();
     }
 
+    // Handle all operation.
     public function all(): array
     {
         $sql = "SELECT 
@@ -24,6 +26,7 @@ class Customer
         return $this->db->query($sql)->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // Handle find operation.
     public function find(int $customer_id): ?array
     {
         $st = $this->db->prepare(
@@ -38,6 +41,7 @@ class Customer
         return $row ?: null;
     }
 
+    // Render the form for creating a new record.
     public function create(array $data): int
     {
         $this->db->beginTransaction();
@@ -71,6 +75,7 @@ class Customer
         }
     }
 
+    // Validate input and update an existing record.
     public function update(int $customer_id, array $data): void
     {
         $st = $this->db->prepare("SELECT user_id FROM customers WHERE customer_id = ?");
@@ -103,6 +108,7 @@ class Customer
         }
     }
 
+    // Delete the selected record.
     public function delete(int $customer_id): void
     {
         $this->db->beginTransaction();
@@ -124,6 +130,7 @@ class Customer
         }
     }
 
+    // Handle nextCustomerCode operation.
     private function nextCustomerCode(): string
     {
         $row = $this->db->query("SELECT customer_code FROM customers ORDER BY customer_id DESC LIMIT 1")
@@ -133,6 +140,7 @@ class Customer
         return sprintf('CUST%03d', $num + 1);
     }
 
+    // Handle uniqueUsername operation.
     private function uniqueUsername(string $first, string $last): string
     {
         $base = strtolower(preg_replace('/\W+/','', $first . $last)) ?: 'customer';

@@ -9,11 +9,13 @@ class Complaints
 {
     private PDO $pdo;
 
+    // Initialize model dependencies and database access.
     public function __construct()
     {
         $this->pdo = db();
     }
 
+    // Handle list operation.
     public function list(array $filters = []): array
     {
         $sql = "
@@ -149,6 +151,7 @@ class Complaints
         return $rows;
     }
 
+    // Handle find operation.
     public function find(int $id): ?array
     {
         $sql = "
@@ -222,6 +225,7 @@ class Complaints
         return $row;
     }
 
+    // Validate input and update an existing record.
     public function update(int $id, array $data): bool
     {
         $status = $data['status'] ?? 'open';
@@ -274,12 +278,14 @@ class Complaints
         ]);
     }
 
+    // Handle getBranches operation.
     public function getBranches(): array
     {
         $sql = "SELECT branch_id, branch_code, name FROM branches WHERE status = 'active' ORDER BY name";
         return $this->pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // Handle getAssignableUsers operation.
     public function getAssignableUsers(): array
     {
         $sql = "
@@ -300,6 +306,7 @@ class Complaints
         return $this->pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // Handle summaryCards operation.
     public function summaryCards(): array
     {
         $sql = "
@@ -324,6 +331,7 @@ class Complaints
         ];
     }
 
+    // Handle analytics operation.
     public function analytics(): array
     {
         return [
@@ -335,6 +343,7 @@ class Complaints
         ];
     }
 
+    // Handle assignmentQueue operation.
     public function assignmentQueue(): array
     {
         $sql = "
@@ -369,6 +378,7 @@ class Complaints
         return $rows;
     }
 
+    // Handle analyticsByBranch operation.
     private function analyticsByBranch(): array
     {
         return $this->queryAnalytics(
@@ -378,6 +388,7 @@ class Complaints
         );
     }
 
+    // Handle analyticsByStaff operation.
     private function analyticsByStaff(): array
     {
         return $this->queryAnalytics(
@@ -387,6 +398,7 @@ class Complaints
         );
     }
 
+    // Handle analyticsByService operation.
     private function analyticsByService(): array
     {
         return $this->queryAnalytics(
@@ -397,6 +409,7 @@ class Complaints
         );
     }
 
+    // Handle analyticsByPriority operation.
     private function analyticsByPriority(): array
     {
         return $this->queryAnalytics(
@@ -405,6 +418,7 @@ class Complaints
         );
     }
 
+    // Handle analyticsByStatus operation.
     private function analyticsByStatus(): array
     {
         return $this->queryAnalytics(
@@ -413,11 +427,13 @@ class Complaints
         );
     }
 
+    // Handle queryAnalytics operation.
     private function queryAnalytics(string $sql): array
     {
         return $this->pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // Handle buildSlaWhere operation.
     private function buildSlaWhere(string $sla): array
     {
         if ($sla === 'due_soon') {
@@ -452,6 +468,7 @@ class Complaints
         return ['', []];
     }
 
+    // Handle decorateComplaint operation.
     private function decorateComplaint(array &$row): void
     {
         $createdAt = (string) ($row['created_at'] ?? '');
@@ -485,6 +502,7 @@ class Complaints
             : '—';
     }
 
+    // Handle computeSla operation.
     private function computeSla(string $priority, string $status, string $createdAt): array
     {
         if (!in_array($status, ['open', 'in_progress'], true) || $createdAt === '') {
@@ -514,6 +532,7 @@ class Complaints
         return ['healthy', $left];
     }
 
+    // Handle formatAging operation.
     private function formatAging(int $hours): string
     {
         if ($hours < 24) {
@@ -530,6 +549,7 @@ class Complaints
         return $days . 'd ' . $rem . 'h';
     }
 
+    // Handle extractTimeline operation.
     private function extractTimeline(string $description): array
     {
         $lines = preg_split('/\R/', $description) ?: [];

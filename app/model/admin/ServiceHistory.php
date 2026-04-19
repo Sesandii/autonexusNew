@@ -10,6 +10,7 @@ class ServiceHistory
 {
     private PDO $pdo;
 
+    // Initialize model dependencies and database access.
     public function __construct()
     {
         $this->pdo = db(); // your global db() function
@@ -210,12 +211,14 @@ class ServiceHistory
         return $row ?: null;
     }
 
+    // Handle getBranches operation.
     public function getBranches(): array
     {
         $sql = "SELECT branch_id, name FROM branches WHERE status = 'active' ORDER BY name";
         return $this->pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // Handle getServiceTypes operation.
     public function getServiceTypes(): array
     {
         $sql = "SELECT type_id, type_name FROM service_types ORDER BY type_name";

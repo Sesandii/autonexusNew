@@ -1,3 +1,4 @@
+<?php /* Admin view: renders admin-viewservices/edit page. */ ?>
 <?php $current = 'services';
 $base = rtrim(BASE_URL, '/'); ?>
 <!DOCTYPE html>
@@ -20,7 +21,7 @@ $base = rtrim(BASE_URL, '/'); ?>
   <main class="main-content services-form-page">
     <header class="page-head">
       <div>
-        <h1>Edit Service / Package</h1>
+        <h1>Edit Service</h1>
         <p class="muted">Update details, package composition, pricing, and branch availability.</p>
       </div>
     </header>
@@ -244,6 +245,14 @@ $base = rtrim(BASE_URL, '/'); ?>
     }
 
     function refreshPackageSummary() {
+      if (!isPackageSelected()) {
+        baseTotalLabel.textContent = 'Rs. 0.00';
+        durationLabel.textContent = '0 min';
+        finalPriceLabel.textContent = 'Rs. 0.00';
+        itemCountLabel.textContent = '0';
+        return;
+      }
+
       const rows = itemsWrap.querySelectorAll('.pkg-row');
       let duration = 0;
       let total = 0;
@@ -296,7 +305,10 @@ $base = rtrim(BASE_URL, '/'); ?>
     discountType.addEventListener('change', refreshPackageSummary);
     discountValue.addEventListener('input', refreshPackageSummary);
     manualPrice.addEventListener('input', refreshPackageSummary);
-    typeSelect.addEventListener('change', togglePackageBuilder);
+    typeSelect.addEventListener('change', () => {
+      togglePackageBuilder();
+      refreshPackageSummary();
+    });
 
     if (existingItems.length > 0) {
       existingItems.forEach(item => addPackageRow(item.service_id, item.quantity));
@@ -306,7 +318,9 @@ $base = rtrim(BASE_URL, '/'); ?>
 
     togglePackageBuilder();
     toggleBranches();
-    refreshPackageSummary();
+    if (isPackageSelected()) {
+      refreshPackageSummary();
+    }
   </script>
 </body>
 

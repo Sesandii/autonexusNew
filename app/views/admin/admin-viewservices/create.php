@@ -1,3 +1,4 @@
+<?php /* Admin view: renders admin-viewservices/create page. */ ?>
 <?php $current = 'services';
 $base = rtrim(BASE_URL, '/'); ?>
 <!DOCTYPE html>
@@ -21,8 +22,8 @@ $base = rtrim(BASE_URL, '/'); ?>
     <div class="services-form-shell">
       <header class="page-head">
         <div>
-          <h1>Create Service / Package</h1>
-          <p class="muted">Choose a normal service type or select the package type to build a package.</p>
+          <h1>Create Service</h1>
+          <p class="muted">Fill in the details to create a new service.</p>
         </div>
         <a class="btn btn-secondary" href="<?= $base ?>/admin/admin-viewservices">
           <i class="fa-solid fa-arrow-left"></i>

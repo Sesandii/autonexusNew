@@ -48,9 +48,36 @@ class Controller
         exit;
     }
 
-     /* =========================
-       Auth / Role helpers
-       ========================= */
+    protected function setAdminToast(string $type, string $text): void
+    {
+        if (session_status() !== \PHP_SESSION_ACTIVE) {
+            session_start();
+        }
+
+        $_SESSION['toast_admin'] = [
+            'type' => $type,
+            'text' => $text,
+        ];
+    }
+
+    protected function setSuccessToast(string $text): void
+    {
+        $this->setAdminToast('success', $text);
+    }
+
+    protected function setErrorToast(string $text): void
+    {
+        $this->setAdminToast('error', $text);
+    }
+
+    protected function setWarningToast(string $text): void
+    {
+        $this->setAdminToast('warning', $text);
+    }
+
+    /* =========================
+      Auth / Role helpers
+      ========================= */
 
     /** Base URL helper */
     protected function baseUrl(): string
@@ -61,7 +88,7 @@ class Controller
     /** Current user id from session (supports both shapes you’ve used) */
     protected function userId(): int
     {
-        return (int)($_SESSION['user']['user_id'] ?? $_SESSION['user_id'] ?? 0);
+        return (int) ($_SESSION['user']['user_id'] ?? $_SESSION['user_id'] ?? 0);
     }
 
     /** Current user role from session */
@@ -73,7 +100,8 @@ class Controller
     /** Simple login gate: redirect to /login if not logged in */
     protected function requireLogin(): void
     {
-        if ($this->userId() > 0) return;
+        if ($this->userId() > 0)
+            return;
 
         $_SESSION['flash'] = 'Please log in to continue.';
         header('Location: ' . $this->baseUrl() . '/login');
@@ -87,7 +115,7 @@ class Controller
      */
     protected function requireCustomer(): void
     {
-        $uid  = $this->userId();
+        $uid = $this->userId();
         $role = $this->userRole();
 
         if ($uid <= 0) {

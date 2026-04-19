@@ -10,6 +10,7 @@ class DashboardController extends Controller
 {
     private Dashboard $dashboard;
 
+    // Initialize controller dependencies and request context.
     public function __construct(array $config = [])
     {
         parent::__construct($config);

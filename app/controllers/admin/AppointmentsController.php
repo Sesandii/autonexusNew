@@ -10,6 +10,7 @@ class AppointmentsController extends Controller
 {
     private Appointment $appointments;
 
+    // Initialize controller dependencies and request context.
     public function __construct(array $config = [])
     {
         parent::__construct($config);
@@ -21,8 +22,8 @@ class AppointmentsController extends Controller
     public function index(): void
     {
         $dateFrom = trim($_GET['dateFrom'] ?? '');
-        $dateTo   = trim($_GET['dateTo'] ?? '');
-        $date     = trim($_GET['date'] ?? date('Y-m-d'));
+        $dateTo = trim($_GET['dateTo'] ?? '');
+        $date = trim($_GET['date'] ?? date('Y-m-d'));
 
         if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) {
             $date = date('Y-m-d');
@@ -124,12 +125,14 @@ class AppointmentsController extends Controller
         $id = (int) ($_POST['id'] ?? 0);
         if ($id > 0) {
             $this->appointments->delete($id);
+            $this->setSuccessToast('Appointment deleted successfully.');
         }
 
         header('Location: ' . rtrim(BASE_URL, '/') . '/admin/appointments');
         exit;
     }
 
+    // Ensure the current session belongs to an admin user.
     private function requireAdmin(): void
     {
         if (session_status() !== PHP_SESSION_ACTIVE) {

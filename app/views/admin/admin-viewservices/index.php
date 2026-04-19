@@ -1,3 +1,4 @@
+<?php /* Admin view: renders admin-viewservices/index page. */ ?>
 <?php $current = 'services';
 $base = rtrim(BASE_URL, '/'); ?>
 <!DOCTYPE html>
@@ -87,8 +88,18 @@ $base = rtrim(BASE_URL, '/'); ?>
                     <td>Rs. <?= number_format((float) $row['default_price'], 2) ?></td>
                     <td>
                       <?php if ((int) $row['branch_count'] > 0): ?>
-                        <?= htmlspecialchars($row['branches']) ?><br>
-                        <span class="small"><?= (int) $row['branch_count'] ?> branch(es)</span>
+                        <?php
+                        $branchNames = array_values(array_filter(array_map(
+                          static fn($name) => trim((string) $name),
+                          explode(',', (string) ($row['branches'] ?? ''))
+                        )));
+                        ?>
+                        <div class="branch-chip-list">
+                          <?php foreach ($branchNames as $branchName): ?>
+                            <span class="branch-chip"><?= htmlspecialchars($branchName) ?></span>
+                          <?php endforeach; ?>
+                        </div>
+                        <span class="small branch-chip-meta"><?= (int) $row['branch_count'] ?> branch(es)</span>
                       <?php else: ?>
                         <span class="small">Not assigned</span>
                       <?php endif; ?>

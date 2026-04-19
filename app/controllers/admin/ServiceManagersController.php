@@ -4,12 +4,14 @@ namespace app\controllers\admin;
 use app\core\Controller;
 use app\model\admin\Manager;
 use app\model\admin\User;
+use PDOException;
 
 class ServiceManagersController extends Controller
 {
     private Manager $Manager;
     private User $User;
 
+    // Initialize controller dependencies and request context.
     public function __construct(array $config = [])
     {
         parent::__construct($config);
@@ -17,6 +19,7 @@ class ServiceManagersController extends Controller
         $this->User = new User();
     }
 
+    // Display the main listing or dashboard page.
     public function index()
     {
         $q = isset($_GET['q']) ? trim((string) $_GET['q']) : '';
@@ -31,6 +34,7 @@ class ServiceManagersController extends Controller
         ]);
     }
 
+    // Render the form for creating a new record.
     public function create()
     {
         $this->view('admin/admin-viewmanagers/create', [
@@ -41,12 +45,14 @@ class ServiceManagersController extends Controller
         ]);
     }
 
+    // Handle list operation.
     public function list()
     {
         header('Content-Type: application/json; charset=utf-8');
         echo json_encode($this->Manager->all(), JSON_UNESCAPED_UNICODE);
     }
 
+    // Display details for a single record.
     public function show($id)
     {
         $id = (int) $id;
@@ -69,6 +75,7 @@ class ServiceManagersController extends Controller
         ]);
     }
 
+    // Validate input and save a new record.
     public function store()
     {
         $d = $this->sanitize($_POST);
@@ -97,16 +104,45 @@ class ServiceManagersController extends Controller
                 'password' => $d['password'],
                 'phone' => $d['phone'] ?? null,
                 'status' => $d['status'] ?? 'active',
-            ], $d['manager_code']);
+            ]);
 
+            $this->setSuccessToast('Manager created successfully.');
             header('Location: ' . BASE_URL . '/admin/service-managers');
             exit;
+        } catch (PDOException $e) {
+            $msg = (string) $e->getMessage();
+            $errors = [];
+
+            if (str_contains($msg, "users.phone")) {
+                $errors[] = 'phone already exists';
+            } elseif (str_contains($msg, "users.email")) {
+                $errors[] = 'email already exists';
+            } elseif (str_contains($msg, "users.username")) {
+                $errors[] = 'username already exists';
+            } else {
+                $errors[] = 'Could not create manager. Please try again.';
+            }
+
+            http_response_code(422);
+            $this->view('admin/admin-viewmanagers/create', [
+                'base' => BASE_URL,
+                'nextCode' => $this->Manager->nextCode(),
+                'errors' => $errors,
+                'old' => $d,
+            ]);
+            return;
         } catch (\Throwable $e) {
-            http_response_code(400);
-            echo "Error: " . $e->getMessage();
+            http_response_code(422);
+            $this->view('admin/admin-viewmanagers/create', [
+                'base' => BASE_URL,
+                'nextCode' => $this->Manager->nextCode(),
+                'errors' => ['Could not create manager. Please try again.'],
+                'old' => $d,
+            ]);
         }
     }
 
+    // Render the form for editing an existing record.
     public function edit($id)
     {
         $id = (int) $id;
@@ -131,6 +167,7 @@ class ServiceManagersController extends Controller
         ]);
     }
 
+    // Validate input and update an existing record.
     public function update($id)
     {
         $id = (int) $id;
@@ -168,10 +205,12 @@ class ServiceManagersController extends Controller
             $this->Manager->update($id, ['manager_code' => $d['manager_code']]);
         }
 
+        $this->setSuccessToast('Manager updated successfully.');
         header('Location: ' . BASE_URL . '/admin/service-managers');
         exit;
     }
 
+    // Delete the selected record.
     public function destroy($id)
     {
         $row = $this->Manager->find((int) $id);
@@ -181,15 +220,32 @@ class ServiceManagersController extends Controller
             return;
         }
 
+        // Check if this manager is assigned to any branches.
+        $managerId = (int) $row['manager_id'];
+        $db = db();
+        $stmt = $db->prepare("SELECT COUNT(*) FROM branches WHERE manager_id = ?");
+        $stmt->execute([$managerId]);
+        $branchCount = (int) $stmt->fetchColumn();
+
+        if ($branchCount > 0) {
+            $this->setWarningToast("Cannot delete manager with assigned branches. Unassign or transfer branches first.");
+            header('Location: ' . rtrim(BASE_URL, '/') . '/admin/service-managers');
+            exit;
+        }
+
         $this->User->delete((int) $row['user_id']);
-        echo "OK";
+        $this->setSuccessToast('Manager deleted successfully.');
+        header('Location: ' . rtrim(BASE_URL, '/') . '/admin/service-managers');
+        exit;
     }
 
+    // Handle sanitize operation.
     private function sanitize(array $in): array
     {
         return array_map(static fn($v) => is_string($v) ? trim($v) : $v, $in);
     }
 
+    // Handle validateCreate operation.
     private function validateCreate(array $d): array
     {
         $errors = [];
@@ -212,9 +268,15 @@ class ServiceManagersController extends Controller
         if ($exists)
             $errors[] = 'email/username already exists';
 
+        $phone = trim((string) ($d['phone'] ?? ''));
+        if ($phone !== '' && $this->User->findByPhone($phone)) {
+            $errors[] = 'phone already exists';
+        }
+
         return $errors;
     }
 
+    // Handle validateUpdate operation.
     private function validateUpdate(array $d, int $currentUserId): array
     {
         $errors = [];
@@ -237,6 +299,14 @@ class ServiceManagersController extends Controller
         $exists = $this->User->findByEmailOrUsername($d['email'] ?? '', $d['username'] ?? '');
         if ($exists && (int) ($exists['user_id'] ?? 0) !== $currentUserId) {
             $errors[] = 'email/username already exists';
+        }
+
+        $phone = trim((string) ($d['phone'] ?? ''));
+        if ($phone !== '') {
+            $byPhone = $this->User->findByPhone($phone);
+            if ($byPhone && (int) ($byPhone['user_id'] ?? 0) !== $currentUserId) {
+                $errors[] = 'phone already exists';
+            }
         }
 
         return $errors;

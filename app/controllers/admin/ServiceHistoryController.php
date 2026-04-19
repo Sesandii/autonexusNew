@@ -10,6 +10,7 @@ class ServiceHistoryController extends Controller
 {
     private ServiceHistory $history;
 
+    // Initialize controller dependencies and request context.
     public function __construct(array $config = [])
     {
         parent::__construct($config);
@@ -87,6 +88,7 @@ class ServiceHistoryController extends Controller
         ]);
     }
 
+    // Ensure the current session belongs to an admin user.
     private function requireAdmin(): void
     {
         if (session_status() !== PHP_SESSION_ACTIVE) {

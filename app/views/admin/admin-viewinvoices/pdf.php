@@ -1,3 +1,4 @@
+<?php /* Admin view: renders admin-viewinvoices/pdf page. */ ?>
 <!DOCTYPE html>
 <html>
 <head>

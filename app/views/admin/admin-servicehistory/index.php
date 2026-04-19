@@ -1,3 +1,4 @@
+<?php /* Admin view: renders admin-servicehistory/index page. */ ?>
 <?php
 /** @var array $cards */
 /** @var array $branches */

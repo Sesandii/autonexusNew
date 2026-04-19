@@ -1,3 +1,4 @@
+<?php /* Admin view: renders admin-profile/index page. */ ?>
 <?php $current = 'profile'; ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -73,7 +74,7 @@
               <label>Email</label>
               <div class="input with-icon">
                 <i class="fa-regular fa-envelope"></i>
-                <input type="email" name="email" value="<?= htmlspecialchars($admin['email'] ?? '') ?>" required>
+                <input type="email" name="email" value="<?= htmlspecialchars($admin['email'] ?? '') ?>" readonly>
               </div>
             </div>
 
@@ -113,10 +114,10 @@
             </div>
 
             <div class="field">
-              <label>Street</label>
+              <label>Street Address</label>
               <div class="input with-icon">
                 <i class="fa-regular fa-map"></i>
-                <input type="text" name="street" value="<?= htmlspecialchars($admin['street'] ?? '') ?>">
+                <input type="text" name="street_address" value="<?= htmlspecialchars($admin['street_address'] ?? ($admin['street'] ?? '')) ?>">
               </div>
             </div>
 

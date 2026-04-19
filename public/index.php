@@ -293,7 +293,6 @@ $router->post('/admin/complaints/update', [ComplaintsController::class, 'update'
 use app\controllers\admin\StaffController;
 
 $router->get('/admin/admin-viewstaff', [StaffController::class, 'index']);
-$router->post('/admin/admin-viewstaff/update-status', [StaffController::class, 'updateStatus']);
 $router->post('/admin/admin-viewstaff/transfer', [StaffController::class, 'transfer']);
 
 use app\controllers\admin\PaymentsController;
@@ -573,11 +572,11 @@ $router->post('/receptionist/billing/invoice/{id}', [app\controllers\Receptionis
 $router->get('/receptionist/billing/printInvoice/{id}', [app\controllers\Receptionist\BillingController::class, 'printInvoice']);
 $router->get('/receptionist/billing/downloadInvoice/{id}', [app\controllers\Receptionist\BillingController::class, 'downloadInvoicePdf']);
 $router->get('/receptionist/billing/paid', [app\controllers\Receptionist\BillingController::class, 'paidInvoices']);
-$router->get('/receptionist/billing/mark-paid',[app\controllers\Receptionist\BillingController::class, 'markAsPaid']);
+$router->get('/receptionist/billing/mark-paid', [app\controllers\Receptionist\BillingController::class, 'markAsPaid']);
 
 
 // Receptionist: Profile
-$router->get('/receptionist/profile',         [app\controllers\Receptionist\ProfileController::class, 'index']);
+$router->get('/receptionist/profile', [app\controllers\Receptionist\ProfileController::class, 'index']);
 $router->post('/receptionist/profile/update', [app\controllers\Receptionist\ProfileController::class, 'update']);
 
 

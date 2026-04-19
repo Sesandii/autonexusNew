@@ -4,12 +4,14 @@ namespace app\controllers\admin;
 use app\core\Controller;
 use app\model\admin\Branch;
 use app\model\admin\Manager;
+use PDOException;
 
 class BranchesController extends Controller
 {
     private Branch $Branch;
     private Manager $Manager;
 
+    // Initialize controller dependencies and request context.
     public function __construct(array $config)
     {
         parent::__construct($config);
@@ -56,9 +58,16 @@ class BranchesController extends Controller
             return;
         }
 
+        $manager = null;
+        $managerId = (int) ($row['manager_id'] ?? 0);
+        if ($managerId > 0) {
+            $manager = $this->Manager->findWithUser($managerId);
+        }
+
         $this->view('admin/admin-viewbranches/show', [
             'row' => $row,
             'base' => BASE_URL,
+            'manager' => $manager,
         ]);
     }
 
@@ -106,6 +115,7 @@ class BranchesController extends Controller
         }
 
         $this->Branch->create($data);
+        $this->setAdminToast('success', 'Branch created successfully.');
         header('Location: ' . BASE_URL . '/admin/branches');
         exit;
     }
@@ -137,6 +147,7 @@ class BranchesController extends Controller
         }
 
         $this->Branch->updateByCode($code, $data);
+        $this->setAdminToast('success', 'Branch updated successfully.');
         header('Location: ' . BASE_URL . '/admin/branches');
         exit;
     }
@@ -145,12 +156,35 @@ class BranchesController extends Controller
     public function destroy($code)
     {
         $code = (string) $code;
-        if (!$this->Branch->findByCode($code)) {
+        $row = $this->Branch->findByCode($code);
+        if (!$row) {
             http_response_code(404);
             echo "Not found";
             return;
         }
-        $this->Branch->deleteByCode($code);
+
+        try {
+            $this->Branch->deleteByCode($code);
+            $this->setSuccessToast('Branch deleted successfully.');
+        } catch (PDOException $e) {
+            $sqlState = (string) ($e->errorInfo[0] ?? '');
+            $mysqlCode = (int) ($e->errorInfo[1] ?? 0);
+
+            if ($sqlState === '23000' || $mysqlCode === 1451) {
+                $wasArchived = $this->Branch->archiveByCode($code);
+
+                if ($wasArchived && (($row['status'] ?? 'active') !== 'inactive')) {
+                    $this->setSuccessToast('Branch has linked records, so it was archived (set inactive) instead of being permanently deleted.');
+                } elseif ($wasArchived) {
+                    $this->setErrorToast('Branch is already archived and cannot be permanently deleted while linked records exist.');
+                } else {
+                    $this->setErrorToast('Cannot delete this branch because it is linked to existing records (appointments/services/staff).');
+                }
+            } else {
+                $this->setErrorToast('Failed to delete branch. Please try again.');
+            }
+        }
+
         header('Location: ' . BASE_URL . '/admin/branches');
         exit;
     }
@@ -224,6 +258,7 @@ class BranchesController extends Controller
         ];
     }
 
+    // Handle validate operation.
     private function validate(array $d, bool $creating, int $currentBranchId = 0): array
     {
         $e = [];
@@ -271,6 +306,7 @@ class BranchesController extends Controller
         return array_values(array_unique($e));
     }
 
+    // Handle availableManagers operation.
     private function availableManagers(int $currentBranchId = 0): array
     {
         $managers = $this->Manager->all();
@@ -293,6 +329,7 @@ class BranchesController extends Controller
         return $available;
     }
 
+    // Handle formValues operation.
     private function formValues(array $data): array
     {
         return [
@@ -308,6 +345,18 @@ class BranchesController extends Controller
             'status' => $data['status'] ?? 'active',
             'created_at' => $data['created_at'] ?? '',
             'manager_id' => $data['manager_id'] ?? null,
+        ];
+    }
+
+    protected function setAdminToast(string $type, string $text): void
+    {
+        if (session_status() !== PHP_SESSION_ACTIVE) {
+            session_start();
+        }
+
+        $_SESSION['toast_admin'] = [
+            'type' => $type,
+            'text' => $text,
         ];
     }
 

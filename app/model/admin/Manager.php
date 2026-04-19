@@ -10,6 +10,7 @@ class Manager
     private PDO $db;
     private array $managerCols;
 
+    // Initialize model dependencies and database access.
     public function __construct()
     {
         $this->db = db();
@@ -107,6 +108,7 @@ class Manager
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // Handle find operation.
     public function find(int $id): ?array
     {
         $st = $this->db->prepare(
@@ -175,6 +177,7 @@ class Manager
         $st->execute($params);
     }
 
+    // Delete the selected record.
     public function delete(int $managerId): void
     {
         $st = $this->db->prepare("DELETE FROM managers WHERE manager_id = ?");
@@ -214,6 +217,7 @@ class Manager
     }
 
 
+    // Handle findWithUser operation.
     public function findWithUser(int $managerId): ?array
     {
         $sql = "SELECT m.manager_id, m.manager_code, " .

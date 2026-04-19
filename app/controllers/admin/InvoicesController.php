@@ -10,6 +10,7 @@ class InvoicesController extends Controller
 {
     private Invoice $invoice;
 
+    // Initialize controller dependencies and request context.
     public function __construct(array $config = [])
     {
         parent::__construct($config);
@@ -23,9 +24,9 @@ class InvoicesController extends Controller
     public function index(): void
     {
         $this->view('admin/admin-viewinvoices/index', [
-            'current'  => 'invoices',
+            'current' => 'invoices',
             'invoices' => $this->invoice->getAll(),
-            'summary'  => $this->invoice->summary(),
+            'summary' => $this->invoice->summary(),
         ]);
     }
 
@@ -34,7 +35,7 @@ class InvoicesController extends Controller
      * ============================ */
     public function show(): void
     {
-        $id = (int)($_GET['id'] ?? 0);
+        $id = (int) ($_GET['id'] ?? 0);
         $invoice = $this->invoice->find($id);
 
         if (!$invoice) {
@@ -55,7 +56,7 @@ class InvoicesController extends Controller
     public function create(): void
     {
         $this->view('admin/admin-viewinvoices/create', [
-            'current'    => 'invoices',
+            'current' => 'invoices',
             'workOrders' => $this->invoice->completedWorkOrders(),
         ]);
     }
@@ -64,25 +65,27 @@ class InvoicesController extends Controller
      * STORE INVOICE
      * ============================ */
     public function store(): void
-{
-    $data = [
-        'work_order_id' => (int)($_POST['work_order_id'] ?? 0),
-        'invoice_no'    => 'INV-' . time(),
-        'discount'      => (float)($_POST['discount'] ?? 0),
-    ];
+    {
+        $data = [
+            'work_order_id' => (int) ($_POST['work_order_id'] ?? 0),
+            'invoice_no' => 'INV-' . time(),
+            'discount' => (float) ($_POST['discount'] ?? 0),
+        ];
 
-    $this->invoice->create($data);
+        $this->invoice->create($data);
 
-    header('Location: ' . rtrim(BASE_URL,'/') . '/admin/admin-viewinvoices');
-    exit;
-}
+        $this->setSuccessToast('Invoice created successfully.');
+
+        header('Location: ' . rtrim(BASE_URL, '/') . '/admin/admin-viewinvoices');
+        exit;
+    }
     /* ============================
      * DOWNLOAD PDF
      * URL: /admin/admin-viewinvoices/download?id=#
      * ============================ */
     public function download(): void
     {
-        $id = (int)($_GET['id'] ?? 0);
+        $id = (int) ($_GET['id'] ?? 0);
         $invoice = $this->invoice->find($id);
 
         if (!$invoice) {
@@ -99,7 +102,7 @@ class InvoicesController extends Controller
         }
 
         // Render invoice HTML to string
-        $B = rtrim(BASE_URL,'/');
+        $B = rtrim(BASE_URL, '/');
         ob_start();
         // Make $invoice available inside the pdf view
         $invoice_for_pdf = $invoice; // safety alias if needed
@@ -124,9 +127,11 @@ class InvoicesController extends Controller
         exit;
     }
 
+    // Ensure the current session belongs to an admin user.
     private function requireAdmin(): void
     {
-        if (session_status() !== PHP_SESSION_ACTIVE) session_start();
+        if (session_status() !== PHP_SESSION_ACTIVE)
+            session_start();
         $u = $_SESSION['user'] ?? null;
 
         if (!$u || ($u['role'] ?? '') !== 'admin') {

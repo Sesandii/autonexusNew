@@ -10,6 +10,7 @@ class OngoingService
 {
     private PDO $pdo;
 
+    // Initialize model dependencies and database access.
     public function __construct()
     {
         $this->pdo = db(); // your global db() function

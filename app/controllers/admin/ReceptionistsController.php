@@ -15,13 +15,14 @@ class ReceptionistsController extends Controller
     private Receptionist $recModel;
     private Branch $branchModel;
 
+    // Initialize controller dependencies and request context.
     public function __construct(array $config = [])
     {
         parent::__construct($config);
         $this->requireAdmin();
 
-        $this->userModel   = new User();
-        $this->recModel    = new Receptionist();
+        $this->userModel = new User();
+        $this->recModel = new Receptionist();
         $this->branchModel = new Branch();
     }
 
@@ -34,8 +35,8 @@ class ReceptionistsController extends Controller
         $receptionists = $this->recModel->all();
 
         $this->view('admin/admin-viewreceptionist/index', [
-            'pageTitle'     => 'Receptionists Management',
-            'current'       => 'receptionists',
+            'pageTitle' => 'Receptionists Management',
+            'current' => 'receptionists',
             'receptionists' => $receptionists
         ]);
     }
@@ -45,7 +46,7 @@ class ReceptionistsController extends Controller
      */
     public function show(): void
     {
-        $id = (int)($_GET['id'] ?? 0);
+        $id = (int) ($_GET['id'] ?? 0);
         if ($id <= 0) {
             die("Invalid receptionist ID");
         }
@@ -57,8 +58,8 @@ class ReceptionistsController extends Controller
 
         $this->view('admin/admin-viewreceptionist/show', [
             'pageTitle' => 'View Receptionist',
-            'current'   => 'receptionists',
-            'rec'       => $rec
+            'current' => 'receptionists',
+            'rec' => $rec
         ]);
     }
 
@@ -67,38 +68,41 @@ class ReceptionistsController extends Controller
      */
     public function create(): void
     {
-        $errors   = [];
+        $errors = [];
         $branches = $this->branchModel->allActive();
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             try {
-                if (empty($_POST['first_name']) ||
-                    empty($_POST['last_name'])  ||
-                    empty($_POST['username'])   ||
-                    empty($_POST['password'])) {
+                if (
+                    empty($_POST['first_name']) ||
+                    empty($_POST['last_name']) ||
+                    empty($_POST['username']) ||
+                    empty($_POST['password'])
+                ) {
                     throw new Exception("Required fields missing");
                 }
 
                 // create user first
                 $userId = $this->userModel->create([
                     'first_name' => $_POST['first_name'],
-                    'last_name'  => $_POST['last_name'],
-                    'username'   => $_POST['username'],
-                    'email'      => $_POST['email'] ?? '',
-                    'password'   => $_POST['password'],
-                    'phone'      => $_POST['phone'] ?? null,
-                    'role'       => 'receptionist',
-                    'status'     => $_POST['status'] ?? 'active'
+                    'last_name' => $_POST['last_name'],
+                    'username' => $_POST['username'],
+                    'email' => $_POST['email'] ?? '',
+                    'password' => $_POST['password'],
+                    'phone' => $_POST['phone'] ?? null,
+                    'role' => 'receptionist',
+                    'status' => $_POST['status'] ?? 'active'
                 ]);
 
                 // create receptionist linked to user
                 $recId = $this->recModel->create([
                     'receptionist_code' => $_POST['receptionist_code'] ?? null,
-                    'user_id'           => $userId,
-                    'branch_id'         => $_POST['branch_id'] ?? null,
-                    'status'            => $_POST['status'] ?? 'active'
+                    'user_id' => $userId,
+                    'branch_id' => $_POST['branch_id'] ?? null,
+                    'status' => $_POST['status'] ?? 'active'
                 ]);
 
+                $this->setSuccessToast('Receptionist created successfully.');
                 header("Location: " . rtrim(BASE_URL, '/') . "/admin/receptionists/show?id=$recId");
                 exit;
 
@@ -109,9 +113,9 @@ class ReceptionistsController extends Controller
 
         $this->view('admin/admin-viewreceptionist/create', [
             'pageTitle' => 'Create Receptionist',
-            'current'   => 'receptionists',
-            'errors'    => $errors,
-            'branches'  => $branches,
+            'current' => 'receptionists',
+            'errors' => $errors,
+            'branches' => $branches,
         ]);
     }
 
@@ -120,35 +124,38 @@ class ReceptionistsController extends Controller
      */
     public function edit(): void
     {
-        $id = (int)($_GET['id'] ?? 0);
-        if ($id <= 0) die("Invalid receptionist ID");
+        $id = (int) ($_GET['id'] ?? 0);
+        if ($id <= 0)
+            die("Invalid receptionist ID");
 
         $rec = $this->recModel->find($id);
-        if (!$rec) die("Receptionist not found");
+        if (!$rec)
+            die("Receptionist not found");
 
-        $errors   = [];
+        $errors = [];
         $branches = $this->branchModel->allActive();
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             try {
                 // Update user
-                $this->userModel->update((int)$rec['user_id'], [
+                $this->userModel->update((int) $rec['user_id'], [
                     'first_name' => $_POST['first_name'] ?? $rec['first_name'],
-                    'last_name'  => $_POST['last_name']  ?? $rec['last_name'],
-                    'username'   => $_POST['username']   ?? $rec['username'],
-                    'email'      => $_POST['email']      ?? $rec['email'],
-                    'phone'      => $_POST['phone']      ?? $rec['phone'],
-                    'status'     => $_POST['status']     ?? $rec['status'],
-                    'password'   => $_POST['password']   ?? '', // only if provided
+                    'last_name' => $_POST['last_name'] ?? $rec['last_name'],
+                    'username' => $_POST['username'] ?? $rec['username'],
+                    'email' => $_POST['email'] ?? $rec['email'],
+                    'phone' => $_POST['phone'] ?? $rec['phone'],
+                    'status' => $_POST['status'] ?? $rec['status'],
+                    'password' => $_POST['password'] ?? '', // only if provided
                 ]);
 
                 // Update receptionist
                 $this->recModel->update($id, [
                     'receptionist_code' => $_POST['receptionist_code'] ?? $rec['receptionist_code'],
-                    'branch_id'         => $_POST['branch_id'] ?? $rec['branch_id'],
-                    'status'            => $_POST['status'] ?? $rec['status'],
+                    'branch_id' => $_POST['branch_id'] ?? $rec['branch_id'],
+                    'status' => $_POST['status'] ?? $rec['status'],
                 ]);
 
+                $this->setSuccessToast('Receptionist updated successfully.');
                 header("Location: " . rtrim(BASE_URL, '/') . "/admin/receptionists/show?id=$id");
                 exit;
 
@@ -159,10 +166,10 @@ class ReceptionistsController extends Controller
 
         $this->view('admin/admin-viewreceptionist/edit', [
             'pageTitle' => 'Edit Receptionist',
-            'current'   => 'receptionists',
-            'rec'       => $rec,
-            'branches'  => $branches,
-            'errors'    => $errors,
+            'current' => 'receptionists',
+            'rec' => $rec,
+            'branches' => $branches,
+            'errors' => $errors,
         ]);
     }
 
@@ -175,15 +182,18 @@ class ReceptionistsController extends Controller
             die("Invalid request");
         }
 
-        $id = (int)($_POST['id'] ?? 0);
-        if ($id <= 0) die("Invalid receptionist ID");
+        $id = (int) ($_POST['id'] ?? 0);
+        if ($id <= 0)
+            die("Invalid receptionist ID");
 
         $rec = $this->recModel->find($id);
-        if (!$rec) die("Receptionist not found");
+        if (!$rec)
+            die("Receptionist not found");
 
         $this->recModel->delete($id);               // receptionist row
-        $this->userModel->delete((int)$rec['user_id']); // linked user
+        $this->userModel->delete((int) $rec['user_id']); // linked user
 
+        $this->setSuccessToast('Receptionist deleted successfully.');
         header("Location: " . rtrim(BASE_URL, '/') . "/admin/viewreceptionist");
         exit;
     }

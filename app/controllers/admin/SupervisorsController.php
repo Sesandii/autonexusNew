@@ -9,6 +9,7 @@ class SupervisorsController extends Controller
 {
     private Supervisor $Supervisor;
 
+    // Initialize controller dependencies and request context.
     public function __construct()
     {
         $this->Supervisor = new Supervisor(db());
@@ -68,6 +69,7 @@ class SupervisorsController extends Controller
 
         try {
             $code = $this->Supervisor->create($data); // returns supervisor_code
+            $this->setSuccessToast('Supervisor created successfully.');
             $this->redirect(rtrim(BASE_URL, '/') . "/admin/supervisors/{$code}");
         } catch (\Throwable $e) {
             $branchModel = new Branch();
@@ -147,6 +149,7 @@ class SupervisorsController extends Controller
         try {
             $this->Supervisor->updateByCode($code, $data);
             $newCode = $data['supervisor_code'] ?: $code;
+            $this->setSuccessToast('Supervisor updated successfully.');
             $this->redirect(rtrim(BASE_URL, '/') . "/admin/supervisors/{$newCode}");
         } catch (\Throwable $e) {
             $branchModel = new Branch();
@@ -164,6 +167,7 @@ class SupervisorsController extends Controller
     public function destroy(string $code): void
     {
         $this->Supervisor->deleteByCode($code);
+        $this->setSuccessToast('Supervisor deleted successfully.');
         $this->redirect(rtrim(BASE_URL, '/') . "/admin/supervisors");
     }
 
@@ -175,6 +179,7 @@ class SupervisorsController extends Controller
                 $data[$k] = trim($v);
         return $data;
     }
+    // Handle validate operation.
     private function validate(array $d, bool $creating, ?int $currentUserId = null): array
     {
         $e = [];

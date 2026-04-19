@@ -1,3 +1,4 @@
+<?php /* Admin view: renders admin-dashboard/index page. */ ?>
 <?php
 $current = 'dashboard';
 
@@ -64,263 +65,7 @@ function firstWords(?string $text, int $max = 10): string
   <link rel="stylesheet" href="<?= $B ?>/app/views/layouts/admin-sidebar/styles.css">
   <link rel="stylesheet" href="<?= $B ?>/public/assets/css/admin-dashboard.css?v=4">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-  <style>
-    .main-content{
-      min-height:100vh;
-    }
-
-    .kpi-grid{
-      display:grid;
-      grid-template-columns:repeat(3, minmax(0, 1fr));
-      gap:18px;
-      margin-bottom:18px;
-    }
-
-    .kpi-card-link{
-      text-decoration:none;
-      color:inherit;
-      display:block;
-    }
-
-    .kpi-card{
-      min-height:75px;
-    }
-
-    .compact-grid{
-      display:grid;
-      grid-template-columns:2fr 1fr;
-      gap:18px;
-      margin-top:18px;
-    }
-
-    .double-grid{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:18px;
-      margin-top:18px;
-    }
-
-    .triple-grid{
-      display:grid;
-      grid-template-columns:repeat(3, 1fr);
-      gap:18px;
-      margin-top:18px;
-    }
-
-    .panel{
-      background:#fff;
-      border-radius:16px;
-      box-shadow:0 2px 8px rgba(15,23,42,.06);
-      padding:14px 16px;
-    }
-
-    .panel-head{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:12px;
-      margin-bottom:10px;
-    }
-
-    .panel-head h2{
-      margin:0;
-      font-size:17px;
-      color:#111827;
-    }
-
-    .panel-link{
-      font-size:13px;
-      font-weight:600;
-      color:#2563eb;
-      text-decoration:none;
-      white-space:nowrap;
-    }
-
-    .panel-link:hover{
-      text-decoration:underline;
-    }
-
-    .table-wrap{
-      overflow-x:auto;
-    }
-
-    .table{
-      width:100%;
-      border-collapse:collapse;
-    }
-
-    .table th,
-    .table td{
-      text-align:left;
-      padding:8px 6px;
-      border-bottom:1px solid #e5e7eb;
-      font-size:13px;
-      vertical-align:top;
-    }
-
-    .table th{
-      font-weight:700;
-      color:#374151;
-      background:#f9fafb;
-    }
-
-    .row-link{
-      text-decoration:none;
-      color:inherit;
-      display:block;
-    }
-
-    .row-link:hover{
-      color:#2563eb;
-    }
-
-    .mini-list{
-      display:flex;
-      flex-direction:column;
-      gap:8px;
-    }
-
-    .mini-item{
-      border:1px solid #e5e7eb;
-      border-radius:12px;
-      padding:10px 12px;
-      background:#fff;
-      text-decoration:none;
-      color:inherit;
-      display:block;
-      transition:.15s ease;
-    }
-
-    .mini-item:hover{
-      border-color:#c7d2fe;
-      background:#f8faff;
-    }
-
-    .mini-item-top{
-      display:flex;
-      justify-content:space-between;
-      gap:10px;
-      align-items:flex-start;
-      margin-bottom:3px;
-    }
-
-    .mini-item-title{
-      margin:0;
-      font-size:13px;
-      font-weight:700;
-      color:#111827;
-      line-height:1.3;
-    }
-
-    .mini-item-sub{
-      margin:1px 0 0;
-      font-size:12px;
-      color:#6b7280;
-      line-height:1.35;
-    }
-
-    .mini-badge{
-      display:inline-block;
-      padding:3px 8px;
-      border-radius:999px;
-      font-size:11px;
-      font-weight:700;
-      white-space:nowrap;
-      background:#eef2ff;
-      color:#3730a3;
-    }
-
-    .mini-badge.warn{
-      background:#fff7ed;
-      color:#c2410c;
-    }
-
-    .mini-badge.danger{
-      background:#fef2f2;
-      color:#b91c1c;
-    }
-
-    .mini-badge.success{
-      background:#ecfdf5;
-      color:#047857;
-    }
-
-    .status-pill{
-      display:inline-block;
-      padding:3px 8px;
-      border-radius:999px;
-      background:#f3f4f6;
-      font-size:11px;
-      font-weight:700;
-      color:#374151;
-    }
-
-    .empty-state{
-      color:#6b7280;
-      font-size:13px;
-      margin:0;
-      padding:6px 0;
-    }
-
-    .quick-links.card{
-      background:#fff;
-      border-radius:16px;
-      box-shadow:0 2px 8px rgba(15,23,42,.06);
-      padding:14px 16px;
-    }
-
-    .quick-links h2{
-      margin:0 0 10px;
-      font-size:17px;
-    }
-
-    .ql-grid{
-      display:grid;
-      grid-template-columns:repeat(2,1fr);
-      gap:10px;
-    }
-
-    .ql-card{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      padding:12px;
-      border-radius:12px;
-      text-decoration:none;
-      background:#f8fafc;
-      color:#111827;
-      border:1px solid #e5e7eb;
-      font-weight:600;
-      transition:.15s ease;
-      min-height:50px;
-      font-size:14px;
-    }
-
-    .ql-card:hover{
-      background:#eef2ff;
-      border-color:#c7d2fe;
-    }
-
-    @media (max-width: 1200px){
-      .kpi-grid{
-        grid-template-columns:repeat(2, minmax(0, 1fr));
-      }
-
-      .compact-grid,
-      .double-grid,
-      .triple-grid{
-        grid-template-columns:1fr;
-      }
-    }
-
-    @media (max-width: 768px){
-      .kpi-grid,
-      .ql-grid{
-        grid-template-columns:1fr;
-      }
-    }
-  </style>
+  <link rel="stylesheet" href="<?= $B ?>/public/assets/css/admin-admin-dashboardindex.css?v=1">
 </head>
 <body>
   <?php include(__DIR__ . '/../../layouts/admin-sidebar/sidebar.php'); ?>
@@ -500,7 +245,7 @@ function firstWords(?string $text, int $max = 10): string
 
         <section class="panel">
           <div class="panel-head">
-            <h2>Overdue Work Orders</h2>
+            <h2>Work Orders</h2>
             <a class="panel-link" href="<?= $routes['ongoing_services'] ?>">View All</a>
           </div>
 
@@ -519,7 +264,7 @@ function firstWords(?string $text, int $max = 10): string
               <?php endforeach; ?>
             </div>
           <?php else: ?>
-            <p class="empty-state">No overdue work orders found.</p>
+            <p class="empty-state">No work orders found.</p>
           <?php endif; ?>
         </section>
 

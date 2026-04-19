@@ -10,6 +10,7 @@ class MechanicsController extends Controller
 {
     private Mechanic $Mechanic;
 
+    // Initialize controller dependencies and request context.
     public function __construct(array $config)
     {
         parent::__construct($config);
@@ -61,6 +62,7 @@ class MechanicsController extends Controller
         }
 
         $id = $this->Mechanic->create($data);
+        $this->setSuccessToast('Mechanic created successfully.');
         $this->redirect(BASE_URL . '/admin/mechanics');
     }
 
@@ -123,6 +125,7 @@ class MechanicsController extends Controller
         }
 
         $this->Mechanic->update((int) $id, $data);
+        $this->setSuccessToast('Mechanic updated successfully.');
         $this->redirect(rtrim(BASE_URL, '/') . "/admin/mechanics/{$id}");
     }
 
@@ -130,7 +133,8 @@ class MechanicsController extends Controller
     public function destroy($id)
     {
         $this->Mechanic->delete((int) $id);
-        $this->redirect(rtrim(BASE_URL, '/') . "/admin-viewmechanics");
+        $this->setSuccessToast('Mechanic deleted successfully.');
+        $this->redirect(rtrim(BASE_URL, '/') . "/admin/mechanics");
     }
 
     /** Basic trimming/safety */
@@ -143,6 +147,7 @@ class MechanicsController extends Controller
         return $data;
     }
 
+    // Handle validate operation.
     private function validate(array $d, bool $creating, ?int $currentUserId = null): array
     {
         $errors = [];

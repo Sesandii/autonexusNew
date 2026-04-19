@@ -1,3 +1,4 @@
+<?php /* Admin view: renders admin-serviceapproval/edit page. */ ?>
 <?php
 /** @var array  $service */
 /** @var array  $serviceTypes */
@@ -34,7 +35,8 @@ unset($_SESSION['flash']);
       <div>
         <h1 class="page-title">Edit / Review Service</h1>
         <p class="subtitle"><?= htmlspecialchars($service['name']) ?> • Code:
-          <?= htmlspecialchars($service['service_code']) ?></p>
+          <?= htmlspecialchars($service['service_code']) ?>
+        </p>
       </div>
 
       <a href="<?= $B ?>/admin/admin-serviceapproval" class="back-btn">
@@ -161,7 +163,8 @@ unset($_SESSION['flash']);
           </div>
 
           <div class="action-form">
-            <form method="post" action="<?= $B ?>/admin/admin-serviceapproval/update">
+            <form method="post" action="<?= $B ?>/admin/admin-serviceapproval/update"
+              onsubmit="return confirm('Approve this service request?');">
               <input type="hidden" name="id" value="<?= (int) $service['service_id'] ?>">
               <input type="hidden" name="action" value="approve">
               <button type="submit" class="btn btn-approve">
@@ -169,7 +172,8 @@ unset($_SESSION['flash']);
               </button>
             </form>
 
-            <form method="post" action="<?= $B ?>/admin/admin-serviceapproval/update">
+            <form method="post" action="<?= $B ?>/admin/admin-serviceapproval/update"
+              onsubmit="return confirm('Reject this service request?');">
               <input type="hidden" name="id" value="<?= (int) $service['service_id'] ?>">
               <input type="hidden" name="action" value="reject">
               <button type="submit" class="btn btn-reject">
