@@ -1,161 +1,139 @@
 <?php
-$base    = rtrim(BASE_URL, '/');
-$initial = $services ?? [];
+$base = rtrim(BASE_URL, '/');
+$initial = is_array($services ?? null) ? array_values($services) : [];
 $trackCssVersion = @filemtime(dirname(APP_ROOT) . '/public/assets/css/customer/track-services.css') ?: time();
+$trackJsVersion = @filemtime(dirname(APP_ROOT) . '/public/assets/js/customer/track-services-v2.js') ?: time();
+
+$branches = [];
+foreach ($initial as $service) {
+    $branch = trim((string)($service['branch'] ?? ''));
+    if ($branch !== '') {
+        $branches[$branch] = true;
+    }
+}
+$branchNames = array_keys($branches);
+sort($branchNames);
+
+$currentDateText = date('l, d M Y');
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><?= htmlspecialchars($title ?? 'Track Services') ?> - AutoNexus</title>
+  <title><?= htmlspecialchars($title ?? 'Track Services', ENT_QUOTES, 'UTF-8') ?> - AutoNexus</title>
 
-  <link rel="stylesheet" href="<?= $base ?>/public/assets/css/customer/page-header.css">
-  <link rel="stylesheet" href="<?= $base ?>/public/assets/css/customer/track-services.css?v=<?= (int)$trackCssVersion ?>">
   <link rel="stylesheet" href="<?= $base ?>/public/assets/css/customer/sidebar.css">
+  <link rel="stylesheet" href="<?= $base ?>/public/assets/css/customer/track-services.css?v=<?= (int)$trackCssVersion ?>">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-
   <?php include APP_ROOT . '/views/layouts/customer-sidebar.php'; ?>
 
-  <div class="track-layout customer-layout-main">
-    <main class="track-main">
-      <?php
-        $headerIcon = 'fa-solid fa-list-check';
-        $headerTitle = 'Track Services';
-        $headerSubtitle = 'Monitor the progress of your service jobs.';
-        include APP_ROOT . '/views/partials/customer-page-header.php';
-      ?>
+  <main class="main-content customer-layout-main">
+    <h2>Track Service</h2>
+    <div class="date-label"><?= htmlspecialchars($currentDateText, ENT_QUOTES, 'UTF-8') ?></div>
 
-      <section class="search-filter">
-        <input type="text" id="searchInput"
-               placeholder="Search by service, vehicle plate, or date (YYYY-MM-DD)">
-        <select id="statusFilter">
-          <option value="All">All Statuses</option>
-          <option value="Pending">Pending</option>
-          <option value="In Progress">In Progress</option>
-          <option value="Completed">Completed</option>
-        </select>
-        <button id="searchBtn">
-          <i class="fa-solid fa-magnifying-glass"></i>
-          <span>Search</span>
-        </button>
-      </section>
+    <section class="filters" aria-label="Filters">
+      <select id="branchFilter" aria-label="Filter by branch">
+        <option value="">All Branches</option>
+        <?php foreach ($branchNames as $branchName): ?>
+          <option value="<?= htmlspecialchars($branchName, ENT_QUOTES, 'UTF-8') ?>">
+            <?= htmlspecialchars($branchName, ENT_QUOTES, 'UTF-8') ?>
+          </option>
+        <?php endforeach; ?>
+      </select>
 
-      <section class="table-container">
-        <table id="servicesTable">
-          <thead>
-            <tr>
-              <th>Service Type</th>
-              <th>Vehicle</th>
-              <th>Date Booked</th>
-              <th>Status</th>
-              <th>Est. Completion</th>
-            </tr>
-          </thead>
-          <tbody>
-          <!-- JS fills rows -->
-          </tbody>
-        </table>
-        <div id="emptyState" class="empty-state" hidden>
-          <i class="fa-regular fa-folder-open"></i>
-          <p>No services match your filters yet.</p>
-        </div>
-      </section>
-    </main>
-  </div>
+      <select id="statusFilter" aria-label="Filter by status">
+        <option value="">All Status</option>
+        <option value="Pending">Pending</option>
+        <option value="In Progress">In Progress</option>
+        <option value="Completed">Completed</option>
+        <option value="Cancelled">Cancelled</option>
+      </select>
+
+      <input id="searchInput" type="search" placeholder="Search by service or license plate" aria-label="Search services">
+    </section>
+
+    <section class="cards" id="cardsContainer">
+      <?php foreach ($initial as $service): ?>
+        <?php
+          $statusText = (string)($service['status'] ?? 'Pending');
+          $statusLower = strtolower($statusText);
+          $badgeClass = $statusLower === 'completed'
+              ? 'completed'
+              : ($statusLower === 'in progress' ? 'in-service' : ($statusLower === 'cancelled' ? 'cancelled' : 'received'));
+
+          $stepReceived = in_array($statusLower, ['pending', 'in progress', 'completed'], true);
+          $stepProgress = in_array($statusLower, ['in progress', 'completed'], true);
+          $stepCompleted = ($statusLower === 'completed');
+
+          $type = (string)($service['type'] ?? 'Service');
+          $vehicle = trim((string)($service['vehicle'] ?? '')) ?: '-';
+          $branch = trim((string)($service['branch'] ?? '')) ?: 'Unknown Branch';
+          $duration = (int)($service['durationMinutes'] ?? 0);
+          $time24 = (string)($service['time24'] ?? '');
+          $timeDisplay = (string)($service['timeDisplay'] ?? '-');
+          $appointmentDate = (string)($service['appointmentDate'] ?? '');
+          $appointmentId = (int)($service['appointmentId'] ?? 0);
+          $detailsUrl = $appointmentId > 0 ? ($base . '/customer/appointments/' . $appointmentId) : '';
+        ?>
+        <article
+          class="card"
+          data-branch="<?= htmlspecialchars($branch, ENT_QUOTES, 'UTF-8') ?>"
+          data-status="<?= htmlspecialchars($statusText, ENT_QUOTES, 'UTF-8') ?>"
+          data-time="<?= htmlspecialchars($time24, ENT_QUOTES, 'UTF-8') ?>"
+          data-search="<?= htmlspecialchars(strtolower($type . ' ' . $vehicle), ENT_QUOTES, 'UTF-8') ?>"
+        >
+          <div class="card-header">
+            <div>
+              <h3><?= htmlspecialchars($type, ENT_QUOTES, 'UTF-8') ?></h3>
+              <div class="status-wrap">
+                <span class="status-badge <?= $badgeClass ?>"><?= htmlspecialchars($statusText, ENT_QUOTES, 'UTF-8') ?></span>
+              </div>
+            </div>
+            <div class="duration-pill"><?= $duration ?> min</div>
+          </div>
+
+          <p><strong>Vehicle:</strong> <?= htmlspecialchars($vehicle, ENT_QUOTES, 'UTF-8') ?></p>
+          <p><strong>Branch:</strong> <?= htmlspecialchars($branch, ENT_QUOTES, 'UTF-8') ?></p>
+          <p><strong>Appointment Date:</strong> <?= htmlspecialchars($appointmentDate, ENT_QUOTES, 'UTF-8') ?></p>
+          <p><strong>Appointment Time:</strong> <?= htmlspecialchars($timeDisplay, ENT_QUOTES, 'UTF-8') ?></p>
+
+          <div class="progress-bar">
+            <div class="progress-steps">
+              <span class="step <?= $stepReceived ? 'active' : '' ?>">Received</span>
+              <span class="step <?= $stepProgress ? 'active' : '' ?>">In Service</span>
+              <span class="step <?= $stepCompleted ? 'active' : '' ?>">Completed</span>
+            </div>
+            <div class="bar">
+              <div class="progress <?= $badgeClass ?>"></div>
+            </div>
+          </div>
+
+          <?php if ($detailsUrl !== ''): ?>
+            <div class="card-footer">
+              <a class="btn-view" href="<?= htmlspecialchars($detailsUrl, ENT_QUOTES, 'UTF-8') ?>">
+                <i class="fa-regular fa-eye" aria-hidden="true"></i>
+                View
+              </a>
+            </div>
+          <?php endif; ?>
+        </article>
+      <?php endforeach; ?>
+    </section>
+
+    <div id="emptyState" class="empty-state" <?= !empty($initial) ? 'hidden' : '' ?>>
+      No services found for the selected filters.
+    </div>
+  </main>
 
   <script>
-    const BASE_URL  = "<?= $base ?>";
-    const LIST_URL  = BASE_URL + "/customer/track-services/list";
-    const INITIAL_TRACK_DATA = <?= json_encode($initial, JSON_UNESCAPED_UNICODE) ?>;
-    
-    // Debug info
-    console.log('User session:', <?= json_encode($_SESSION['user'] ?? null) ?>);
-    console.log('Initial data:', INITIAL_TRACK_DATA);
-
-    // Inline JS to bypass cache
-    // Seed table with server-rendered data even if fetch fails
-    let servicesData = Array.isArray(INITIAL_TRACK_DATA) ? INITIAL_TRACK_DATA : [];
-
-    function renderTable(data) {
-      const tbody = document.querySelector("#servicesTable tbody");
-      if (!tbody) return;
-      tbody.innerHTML = "";
-
-      if (!data.length) {
-        tbody.innerHTML = `
-          <tr>
-            <td colspan="5" style="text-align:center; padding:40px; color:#6B7280;">
-              No services found matching your criteria
-            </td>
-          </tr>
-        `;
-        return;
-      }
-
-      data.forEach(service => {
-        const tr = document.createElement("tr");
-        const statusClass = (service.status || '').replace(/\s+/g, '-').toLowerCase();
-        tr.innerHTML = `
-          <td>${service.type || ''}</td>
-          <td>${service.vehicle || ''}</td>
-          <td>${service.dateBooked || ''}</td>
-          <td><span class="status ${statusClass}">${service.status || ''}</span></td>
-          <td>${service.estCompletion || '-'}</td>
-        `;
-        tbody.appendChild(tr);
-      });
-    }
-
-    async function filterServices() {
-      const qEl = document.getElementById("searchInput");
-      const sEl = document.getElementById("statusFilter");
-      const q = qEl ? qEl.value.trim() : '';
-      const status = sEl ? sEl.value : 'All';
-
-      if (typeof LIST_URL === 'string' && LIST_URL) {
-        const url = `${LIST_URL}?q=${encodeURIComponent(q)}&status=${encodeURIComponent(status)}`;
-        try {
-          const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
-          const json = await res.json();
-          console.log('API response:', json);
-          const data = Array.isArray(json.data) ? json.data : [];
-          servicesData = data;
-          renderTable(data);
-          return;
-        } catch (e) {
-          console.error('Fetch error:', e);
-        }
-      }
-
-      const filtered = servicesData.filter(s => {
-        const matchesSearch =
-          (s.type || '').toLowerCase().includes(q.toLowerCase()) ||
-          (s.vehicle || '').toLowerCase().includes(q.toLowerCase()) ||
-          (s.dateBooked || '').includes(q.toLowerCase());
-        const matchesStatus = (status === 'All') || (s.status === status);
-        return matchesSearch && matchesStatus;
-      });
-      renderTable(filtered);
-    }
-
-    function initTrackServices() {
-      const searchBtn = document.getElementById("searchBtn");
-      const searchInput = document.getElementById("searchInput");
-      const statusFilter = document.getElementById("statusFilter");
-
-      searchBtn && searchBtn.addEventListener("click", filterServices);
-      searchInput && searchInput.addEventListener("keyup", (e) => { if (e.key === "Enter") filterServices(); });
-      statusFilter && statusFilter.addEventListener("change", filterServices);
-
-      filterServices();
-    }
-
-    document.readyState === 'loading'
-      ? document.addEventListener('DOMContentLoaded', initTrackServices)
-      : initTrackServices();
+    window.TRACK_SERVICES_CONFIG = {
+      listUrl: "<?= $base ?>/customer/track-services/list",
+      initialData: <?= json_encode($initial, JSON_UNESCAPED_UNICODE) ?>
+    };
   </script>
+  <script src="<?= $base ?>/public/assets/js/customer/track-services-v2.js?v=<?= (int)$trackJsVersion ?>"></script>
 </body>
 </html>

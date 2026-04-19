@@ -32,10 +32,13 @@ class ServiceTracking
         $sql = "
             SELECT * FROM (
                 SELECT
+                    a.appointment_id,
                     s.name AS service_name,
+                    COALESCE(s.base_duration_minutes, 0) AS duration_minutes,
                     a.appointment_date,
                     a.appointment_time,
                     v.license_plate,
+                    b.name AS branch_name,
 
                     -- derive a friendly status for the UI
                     CASE
@@ -52,6 +55,7 @@ class ServiceTracking
                 JOIN customers c ON c.customer_id = a.customer_id
                 LEFT JOIN services s  ON s.service_id  = a.service_id
                 LEFT JOIN vehicles v ON v.vehicle_id = a.vehicle_id
+                LEFT JOIN branches b ON b.branch_id = a.branch_id
                 LEFT JOIN work_orders wo ON wo.appointment_id = a.appointment_id
                 WHERE c.user_id = :uid
             ) AS derived
@@ -75,7 +79,7 @@ class ServiceTracking
             $sql .= ' WHERE ' . implode(' AND ', $where);
         }
 
-        $sql .= ' ORDER BY appointment_date DESC LIMIT 500';
+        $sql .= ' ORDER BY appointment_date DESC, appointment_time DESC LIMIT 500';
 
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute($params);
@@ -83,17 +87,32 @@ class ServiceTracking
 
         // normalise to front-end keys
         return array_map(function (array $r): array {
-            $date = $r['appointment_date'];
-            if (!empty($r['appointment_time'])) {
-                $date .= ' ' . $r['appointment_time'];
+            $date = (string)($r['appointment_date'] ?? '');
+            $time = (string)($r['appointment_time'] ?? '');
+            $dateBooked = trim($date . ' ' . $time);
+
+            $time24 = '';
+            $timeDisplay = '-';
+            if ($time !== '') {
+                $ts = strtotime('1970-01-01 ' . $time);
+                if ($ts !== false) {
+                    $time24 = date('H:i', $ts);
+                    $timeDisplay = date('g:i A', $ts);
+                }
             }
 
             return [
+                'appointmentId' => (int)($r['appointment_id'] ?? 0),
                 'type'          => (string)($r['service_name'] ?? ''),
-                'dateBooked'    => (string)$date,
+                'dateBooked'    => (string)$dateBooked,
                 'status'        => (string)($r['job_status'] ?? 'Pending'),
                 'estCompletion' => (string)($r['est_completion'] ?? ''),
                 'vehicle'       => (string)($r['license_plate'] ?? ''),
+                'branch'        => (string)($r['branch_name'] ?? 'Unknown Branch'),
+                'durationMinutes'=> (int)($r['duration_minutes'] ?? 0),
+                'appointmentDate'=> $date,
+                'time24'        => $time24,
+                'timeDisplay'   => $timeDisplay,
             ];
         }, $rows);
     }

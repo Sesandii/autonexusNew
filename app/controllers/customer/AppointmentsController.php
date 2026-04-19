@@ -34,6 +34,8 @@ class AppointmentsController extends Controller
             return [
                 'appointment_id' => (int)$r['appointment_id'],
                 'service'        => $r['service_name'] ?? 'Service',
+                'vehicle'        => trim(($r['make'] ?? '') . ' ' . ($r['model'] ?? '')) ?: 'Vehicle',
+                'license_plate'  => trim((string)($r['license_plate'] ?? '')) ?: '—',
                 'branch'         => $r['branch_name']  ?? '—',
                 'date'           => $r['appointment_date'] ?? '',
                 'time'           => substr((string)($r['appointment_time'] ?? ''), 0, 5),
