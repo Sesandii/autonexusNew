@@ -41,6 +41,13 @@
       </a>
     </li>
 
+   <li class="<?= (strpos($current_path, 'profile') !== false) ? 'active' : '' ?>">
+    <a href="<?= BASE_URL ?>/receptionist/profile">
+        <i class="fa-solid fa-user"></i>
+        <span>Profile</span>
+    </a>
+</li>
+
     <li>
     <a href="<?= BASE_URL ?>/logout" id="logout-link">
         <i class="fa-solid fa-right-from-bracket"></i> 

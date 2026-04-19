@@ -14,29 +14,17 @@
 
 <div class="main">
   <div class="header">
-    <h2>Appointments</h2>
-
-    <div class="top-actions">
-      <!--<button class="add-btn" onclick="window.location.href='<?= BASE_URL ?>/receptionist/customers/new'">
-        + New Customer
-      </button>-->
-
-      <div class="search-bar">
-        <input type="text" id="searchInput" placeholder="Search Customer...." />
-        <button id="searchBtn">🔍</button>
-      </div>
-    </div>
+    <h2>Customers</h2>
   </div>
 
   <!-- Customer List -->
   <div class="card customer-list">
     <div class="card-header">
-      <h3>Customer List</h3>
-      <select>
+     <!-- <select>
         <option>All Customers</option>
         <option>Active</option>
         <option>Inactive</option>
-      </select>
+      </select> -->
     </div>
     <table>
       <thead>

@@ -5,6 +5,8 @@ use app\core\Controller;
 use app\model\Manager\ReportModel;
 use PDO;
 
+use Dompdf\Dompdf;   // ✅ IMPORTANT FIX
+
 class ReportController extends BaseManagerController
 {
     private ReportModel $reportModel;
@@ -19,48 +21,57 @@ class ReportController extends BaseManagerController
     {
         $step       = isset($_GET['step']) ? (int)$_GET['step'] : 1;
         $reportType = $_GET['report_type'] ?? '';
-        $rows       = [];
-        $from       = '';
-        $to         = '';
-        $services   = [];
+
+        $rows     = [];
+        $from     = '';
+        $to       = '';
+        $services = [];
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
             $reportType = $_POST['report_type'] ?? '';
             $metrics    = $_POST['metrics'] ?? ['total_revenue'];
-            $fromDate   = ($_POST['from_date'] ?? date('Y-m-01')) . ' 00:00:00';
-            $toDate     = ($_POST['to_date']   ?? date('Y-m-d'))  . ' 23:59:59';
-            $from       = substr($fromDate, 0, 10);
-            $to         = substr($toDate,   0, 10);
-            $branchId   = (int)$this->getBranchId();
-            $serviceId  = !empty($_POST['service_type']) && is_numeric($_POST['service_type'])
+
+            $fromDate = ($_POST['from_date'] ?? date('Y-m-01')) . ' 00:00:00';
+            $toDate   = ($_POST['to_date'] ?? date('Y-m-d')) . ' 23:59:59';
+
+            $from = substr($fromDate, 0, 10);
+            $to   = substr($toDate, 0, 10);
+
+            $branchId  = (int)$this->getBranchId();
+
+            $serviceId = !empty($_POST['service_type']) && is_numeric($_POST['service_type'])
                 ? (int)$_POST['service_type']
                 : null;
 
-            if ($reportType === 'revenue') {
-                $rows = $this->reportModel->revenueReport(
-                    $fromDate, $toDate, $metrics, $serviceId, $branchId
-                );
+            switch ($reportType) {
 
-            } elseif ($reportType === 'pending_services') {
-                $rows = $this->reportModel->pendingServices(
-                    $fromDate, $toDate, $branchId
-                );
+                case 'revenue':
+                    $rows = $this->reportModel->revenueReport(
+                        $fromDate, $toDate, $metrics, $serviceId, $branchId
+                    );
+                    break;
 
-            } elseif ($reportType === 'service_completion') {  // ← added
-                $rows = $this->reportModel->serviceCompletionReport(
-                    $fromDate, $toDate, $branchId
-                );
+                case 'pending_services':
+                    $rows = $this->reportModel->pendingServices(
+                        $fromDate, $toDate, $branchId
+                    );
+                    break;
+
+                case 'service_completion':
+                    $rows = $this->reportModel->serviceCompletionReport(
+                        $fromDate, $toDate, $branchId
+                    );
+                    break;
             }
 
             $step = 3;
+        }
 
-        } elseif ($step === 2) {
-            // Load dynamic filters per report type
+        elseif ($step === 2) {
             if ($reportType === 'revenue') {
                 $services = $this->reportModel->getServices();
             }
-            // service_completion and pending_services only need date range
-            // so nothing extra to load for those
         }
 
         $this->view('Manager/Reports/report', [
@@ -72,5 +83,116 @@ class ReportController extends BaseManagerController
             'to'           => $to,
             'services'     => $services,
         ]);
+    }
+
+    // ───────────────────────── EXPORT
+    public function export(): void
+    {
+        $type       = $_GET['type'] ?? 'csv';
+        $reportType = $_GET['report_type'] ?? '';
+        $from       = $_GET['from'] ?? date('Y-m-01');
+        $to         = $_GET['to'] ?? date('Y-m-d');
+
+        $fromDate = $from . ' 00:00:00';
+        $toDate   = $to . ' 23:59:59';
+
+        $branchId = (int)$this->getBranchId();
+
+        $rows = $this->getReportData($reportType, $fromDate, $toDate, $branchId);
+
+        match ($type) {
+            'csv' => $this->exportCSV($rows),
+            'pdf' => $this->exportPDF($rows),
+            default => $this->exportCSV($rows),
+        };
+    }
+
+    // ───────────────────────── DATA FETCH
+    private function getReportData($reportType, $fromDate, $toDate, $branchId): array
+    {
+        return match ($reportType) {
+
+            'revenue' => $this->reportModel->revenueReport(
+                $fromDate, $toDate,
+                ['total_revenue', 'invoice_count'],
+                null,
+                $branchId
+            ),
+
+            'pending_services' => $this->reportModel->pendingServices(
+                $fromDate, $toDate,
+                $branchId
+            ),
+
+            'service_completion' => $this->reportModel->serviceCompletionReport(
+                $fromDate, $toDate,
+                $branchId
+            ),
+
+            default => []
+        };
+    }
+
+    // ───────────────────────── CSV
+    private function exportCSV(array $data): void
+    {
+        header('Content-Type: text/csv');
+        header('Content-Disposition: attachment; filename="report.csv"');
+
+        $output = fopen('php://output', 'w');
+
+        if (!empty($data)) {
+            fputcsv($output, array_keys($data[0]));
+            foreach ($data as $row) {
+                fputcsv($output, $row);
+            }
+        }
+
+        fclose($output);
+        exit;
+    }
+
+    // ───────────────────────── PDF (FIXED)
+    private function exportPDF(array $data): void
+    {
+        // ⚠️ If Dompdf not installed, stop safely
+        if (!class_exists(Dompdf::class)) {
+            die("Dompdf is not installed. Run: composer require dompdf/dompdf");
+        }
+
+        $dompdf = new Dompdf();
+
+        $html = "<h2>Report</h2>";
+        $html .= "<table border='1' cellpadding='6' cellspacing='0' width='100%'>";
+
+        if (!empty($data)) {
+
+            $html .= "<tr>";
+            foreach (array_keys($data[0]) as $col) {
+                $html .= "<th>{$col}</th>";
+            }
+            $html .= "</tr>";
+
+            foreach ($data as $row) {
+                $html .= "<tr>";
+                foreach ($row as $cell) {
+                    $html .= "<td>{$cell}</td>";
+                }
+                $html .= "</tr>";
+            }
+        }
+
+        $html .= "</table>";
+
+        $dompdf->loadHtml($html);
+        $dompdf->setPaper('A4', 'landscape');
+        $dompdf->render();
+
+        // IMPORTANT FIX: open in browser tab
+        $dompdf->stream("report.pdf", [
+            "Attachment" => false
+        ]);
+
+        exit;
     }
 }

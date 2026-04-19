@@ -42,10 +42,10 @@ class BillingModel
             ON a.vehicle_id = v.vehicle_id
 
         WHERE wo.status = 'completed'
-        AND wo.work_order_id NOT IN (
-            SELECT work_order_id FROM invoices
-        )
-
+       AND NOT EXISTS (
+    SELECT 1 FROM invoices i
+    WHERE i.work_order_id = wo.work_order_id
+)
         ORDER BY wo.completed_at DESC
     ";
 
@@ -92,25 +92,23 @@ class BillingModel
     /**
      * 3️⃣ Create invoice + LOCK work order
      */
-    public function createInvoice(int $workOrderId): void
+   public function createInvoice(int $workOrderId): bool
 {
     $this->db->beginTransaction();
 
     try {
 
-        // 🔒 Check if invoice already exists
+        // check duplicate
         $stmt = $this->db->prepare("
-            SELECT invoice_id 
-            FROM invoices 
-            WHERE work_order_id = ?
+            SELECT 1 FROM invoices WHERE work_order_id = ?
         ");
         $stmt->execute([$workOrderId]);
 
         if ($stmt->fetch()) {
-            throw new \Exception("Invoice already exists for this work order.");
+            throw new \Exception("Invoice already exists.");
         }
 
-        // 🔎 Get work order
+        // get work order
         $stmt = $this->db->prepare("
             SELECT total_cost
             FROM work_orders
@@ -122,27 +120,31 @@ class BillingModel
         $order = $stmt->fetch();
 
         if (!$order) {
-            throw new \Exception('Invalid or already processed work order.');
+            throw new \Exception("Invalid work order.");
         }
 
-        // 🧾 Generate invoice number
         $invoiceNo = 'INV-' . date('Y') . '-' . str_pad($workOrderId, 5, '0', STR_PAD_LEFT);
 
-        // 💾 Insert invoice
+        // insert invoice
         $stmt = $this->db->prepare("
             INSERT INTO invoices
             (work_order_id, invoice_no, total_amount, discount, grand_total, issued_at, status)
             VALUES (?, ?, ?, 0, ?, NOW(), 'unpaid')
         ");
 
-        $stmt->execute([
+        $ok = $stmt->execute([
             $workOrderId,
             $invoiceNo,
             $order['total_cost'],
             $order['total_cost']
         ]);
 
+        if (!$ok) {
+            throw new \Exception("INSERT FAILED");
+        }
+
         $this->db->commit();
+        return true;
 
     } catch (\Throwable $e) {
         $this->db->rollBack();
@@ -194,6 +196,42 @@ public function getInvoices(?string $status = null): array
     $stmt->execute($params);
 
     return $stmt->fetchAll();
+}
+
+public function getInvoiceForPrint(int $workOrderId): array|false
+{
+    $stmt = $this->db->prepare("
+        SELECT
+            i.invoice_no,
+            i.issued_at,
+
+            wo.work_order_id,
+            wo.total_cost,
+            wo.service_summary,
+
+            u.first_name,
+            u.last_name,
+            u.phone,
+
+            v.license_plate AS vehicle_no,
+            v.make,
+            v.model,
+            v.year,
+            v.color
+
+        FROM invoices i
+        INNER JOIN work_orders wo ON i.work_order_id = wo.work_order_id
+        INNER JOIN appointments a ON wo.appointment_id = a.appointment_id
+        INNER JOIN customers c ON a.customer_id = c.customer_id
+        INNER JOIN users u ON c.user_id = u.user_id
+        INNER JOIN vehicles v ON a.vehicle_id = v.vehicle_id
+
+        WHERE i.work_order_id = ?
+        LIMIT 1
+    ");
+
+    $stmt->execute([$workOrderId]);
+    return $stmt->fetch();
 }
 
 /** Update invoice status (paid / unpaid / cancelled) */

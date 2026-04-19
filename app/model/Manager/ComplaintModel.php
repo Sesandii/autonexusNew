@@ -35,59 +35,6 @@ public function __construct() {
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
-
-
-    // 1️⃣ Create new complaint
-    public function create(array $data): int {
-    // Fetch user_id automatically from customer_id
-    $stmtUser = $this->pdo->prepare("SELECT user_id FROM customers WHERE customer_id = :customer_id");
-    $stmtUser->execute([':customer_id' => $data['customer_id']]);
-    $user_id = $stmtUser->fetchColumn();
-
-    if (!$user_id) {
-        throw new \Exception("Cannot find user linked to customer_id " . $data['customer_id']);
-    }
-
-    $stmt = $this->pdo->prepare("
-    INSERT INTO complaints
-    (customer_id, vehicle_id, subject, description, priority, status, assigned_to_user_id)
-    VALUES (:customer_id, :vehicle_id, :subject, :description, :priority, :status, :assigned_to)
-");
-
-    $stmt->execute([
-    ':customer_id' => $data['customer_id'],
-    ':vehicle_id'  => $data['vehicle_id'],
-    ':subject'     => $data['subject'] ?? 'General Complaint',
-    ':description' => $data['description'] ?? '',
-    ':priority'    => $data['priority'] ?? 'Medium',
-    ':status'      => $data['status'] ?? 'Open',
-    ':assigned_to' => $data['assigned_to'] ?? null
-]);
-
-    return (int)$this->pdo->lastInsertId();
-}
-
- /*   public function create(array $data): int {
- $stmt = $this->pdo->prepare("
-        INSERT INTO complaints
-        (customer_id, user_id, vehicle_id, complaint_date, complaint_time, description, priority, status, assigned_to)
-        VALUES (:customer_id, :user_id, :vehicle_id, :complaint_date, :complaint_time, :description, :priority, :status, :assigned_to)
-    ");
-    $stmt->execute([
-        ':customer_id'    => $data['customer_id'],
-        ':user_id'        => $data['user_id'],
-        ':vehicle_id'     => $data['vehicle_id'],
-        ':complaint_date' => $data['complaint_date'] ?? null,
-        ':complaint_time' => $data['complaint_time'] ?? null,
-        ':description'    => $data['description'] ?? '',
-        ':priority'       => $data['priority'] ?? 'Medium',
-        ':status'         => $data['status'] ?? 'Open',
-        ':assigned_to'    => $data['assigned_to'] ?? null
-    ]);
-    return (int)$this->pdo->lastInsertId();
-}*/
-
-
     // 2️⃣ Fetch all complaints
     public function all(): array {
     $stmt = $this->pdo->query("
@@ -192,8 +139,8 @@ public function getSupervisors(): array {
 }
 
     // 6️⃣ Update complaint
+// 6️⃣ Update complaint
 public function update(int $id, array $data): bool {
-
     $stmt = $this->pdo->prepare("
         UPDATE complaints SET
             customer_id = :customer_id,
@@ -202,7 +149,7 @@ public function update(int $id, array $data): bool {
             description = :description,
             priority = :priority,
             status = :status,
-            assigned_to_user_id = :assigned_to
+            assigned_to_user_id = :assigned_to_user_id
         WHERE complaint_id = :id
     ");
 
@@ -213,7 +160,7 @@ public function update(int $id, array $data): bool {
         ':description' => $data['description'] ?? '',
         ':priority'    => $data['priority'] ?? 'Medium',
         ':status'      => $data['status'] ?? 'Open',
-        ':assigned_to' => $data['assigned_to'] ?? null,
+        ':assigned_to_user_id' => !empty($data['assigned_to']) ? $data['assigned_to'] : null,  // Fixed key name
         ':id'          => $id
     ]);
 
@@ -223,26 +170,6 @@ public function update(int $id, array $data): bool {
     }
 
     return $result;
-}
-
-
-
- public function delete(int $id): bool {
-    $stmt = $this->pdo->prepare("DELETE FROM complaints WHERE complaint_id = :id");
-    return $stmt->execute([':id' => $id]);
-}
-
-// Get customer info by ID
-public function getCustomerById(int $customerId): ?array {
-    $stmt = $this->pdo->prepare("
-        SELECT c.customer_id, u.first_name, u.last_name, u.phone, u.email
-        FROM customers c
-        JOIN users u ON c.user_id = u.user_id
-        WHERE c.customer_id = :id
-        LIMIT 1
-    ");
-    $stmt->execute([':id' => $customerId]);
-    return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
 }
 
 public function getCustomerAppointments(int $customerId): array

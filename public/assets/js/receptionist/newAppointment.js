@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
+
     const phoneInput = document.getElementById('phone');
     const customerInput = document.getElementById('customer');
     const customerIdInput = document.getElementById('customer_id');
@@ -8,6 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const vehicleIdInput = document.getElementById('vehicle_id');
 
     const saveButton = document.querySelector('.save-button');
+
     const serviceInput = document.getElementById('service');
     const dateInput = document.getElementById('Date');
     const timeInput = document.getElementById('Time');
@@ -17,7 +19,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const branchIdInput = document.getElementById('branch_id');
     const branchList = document.getElementById('branch-list');
 
+    // ✅ Detect edit mode (you must pass appointment_id in URL when editing)
+    const urlParams = new URLSearchParams(window.location.search);
+    const appointmentId = urlParams.get('appointment_id');
+
+    // ----------------------------
     // Fetch customer by phone
+    // ----------------------------
     async function fetchCustomer(phone) {
         try {
             const res = await fetch(`${BASE_URL}/receptionist/appointments/getCustomer?phone=${encodeURIComponent(phone)}`);
@@ -28,9 +36,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Update vehicle info inputs
+    // ----------------------------
+    // Update vehicle info
+    // ----------------------------
     function updateVehicleInfo() {
         const selectedOption = vehicleSelect.options[vehicleSelect.selectedIndex];
+
         if (selectedOption && selectedOption.value) {
             vehicleIdInput.value = selectedOption.value;
             vehicleNumberInput.value = selectedOption.dataset.license || '';
@@ -40,9 +51,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Handle branch selection from datalist
+    // ----------------------------
+    // Branch selection
+    // ----------------------------
     branchSearchInput.addEventListener('input', () => {
         const value = branchSearchInput.value;
+
         for (let i = 0; i < branchList.options.length; i++) {
             if (branchList.options[i].value === value) {
                 branchIdInput.value = branchList.options[i].dataset.id;
@@ -51,18 +65,22 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Phone input change
+    // ----------------------------
+    // Phone lookup
+    // ----------------------------
     phoneInput.addEventListener('change', async () => {
+
         const phone = phoneInput.value.trim();
         if (!phone) return;
 
         const customer = await fetchCustomer(phone);
 
         if (customer && customer.customer_id) {
+
             customerIdInput.value = customer.customer_id;
             customerInput.value = `${customer.first_name} ${customer.last_name}`;
 
-            // Populate vehicle dropdown
+            // reset vehicles
             vehicleSelect.innerHTML = '<option value="">-- Select Vehicle --</option>';
 
             if (customer.vehicles && customer.vehicles.length > 0) {
@@ -74,14 +92,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     vehicleSelect.appendChild(option);
                 });
 
-                vehicleSelect.selectedIndex = 1; // select first vehicle
+                vehicleSelect.selectedIndex = 1;
                 updateVehicleInfo();
-            } else {
-                vehicleIdInput.value = '';
-                vehicleNumberInput.value = '';
             }
+
         } else {
-            alert('Customer not found.');
+            alert('Customer not found');
+
             customerIdInput.value = '';
             customerInput.value = '';
             vehicleSelect.innerHTML = '<option value="">-- Select Vehicle --</option>';
@@ -90,58 +107,66 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Vehicle select change
+    // ----------------------------
+    // Vehicle change
+    // ----------------------------
     vehicleSelect.addEventListener('change', updateVehicleInfo);
 
-    // Save appointment
+    // ----------------------------
+    // Save / Update appointment
+    // ----------------------------
     saveButton.addEventListener('click', async () => {
-        if (!customerIdInput.value) {
-            alert('Please enter a valid customer.');
-            return;
-        }
-        if (!vehicleIdInput.value) {
-            alert('Please select a vehicle.');
-            return;
-        }
-        if (!serviceInput.value) {
-            alert('Please select a service.');
-            return;
-        }
-        if (!branchIdInput.value) {
-            alert('Please select a branch from the list.');
-            return;
-        }
-const data = {
-    customer_id: customerIdInput.value,
-    vehicle_id: vehicleIdInput.value,
-    branch_id: branchIdInput.value,
-    service_id: serviceInput.value,
-    appointment_date: dateInput.value,   // match PHP key
-    appointment_time: timeInput.value,   // match PHP key
-    status: statusInput.value,
-    notes: ''
-};
 
+        if (!customerIdInput.value) return alert('Please enter a valid customer.');
+        if (!vehicleIdInput.value) return alert('Please select a vehicle.');
+        if (!serviceInput.value) return alert('Please select a service.');
+        if (!branchIdInput.value) return alert('Please select a branch.');
+        if (!dateInput.value) return alert('Please select a date.');
+        if (!timeInput.value) return alert('Please select a time.');
+
+        const data = {
+            customer_id: customerIdInput.value,
+            vehicle_id: vehicleIdInput.value,
+            branch_id: branchIdInput.value,
+            service_id: serviceInput.value,
+            appointment_date: dateInput.value,
+            appointment_time: timeInput.value,
+            status: statusInput.value,
+            notes: ''
+        };
+
+        // ✅ If editing, add ID + use update endpoint
+        let url = `${BASE_URL}/receptionist/appointments/save`;
+
+        if (appointmentId) {
+            data.appointment_id = appointmentId;
+            url = `${BASE_URL}/receptionist/appointments/update`;
+        }
 
         try {
-            const res = await fetch(`${BASE_URL}/receptionist/appointments/save`, {
+            const res = await fetch(url, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                 body: new URLSearchParams(data)
             });
 
             const result = await res.json();
+
             if (result.success) {
-                alert('Appointment saved successfully!');
-                document.querySelector('form').reset();
-                vehicleSelect.innerHTML = '<option value="">-- Select Vehicle --</option>';
-                branchIdInput.value = '';
+
+                alert(result.message || 'Success');
+
+                // ✅ IMPORTANT: redirect after success
+                window.location.href = "/autonexus/receptionist/appointments";
+
             } else {
                 alert('Failed: ' + result.message);
             }
+
         } catch (err) {
             console.error(err);
-            alert('An error occurred while saving the appointment.');
+            alert('Error processing appointment');
         }
     });
+
 });

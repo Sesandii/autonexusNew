@@ -19,59 +19,85 @@ $activePage = 'appointments';
 
 <div class="main">
     <div class="details-section">
-      <h3>Appointment Details</h3>
-      
-      <input type="hidden" id="appointment-id" value="<?= htmlspecialchars($appointment['appointment_id']) ?>">
-      
-      <label>Customer:</label>
-      <input type="text" id="customer" value="<?= htmlspecialchars($appointment['first_name'] . ' ' . $appointment['last_name']) ?>" readonly>
 
-      <label>Phone:</label>
-      <input type="text" id="phone" value="<?= htmlspecialchars($appointment['phone'] ?? '') ?>" readonly>
+        <h3><i class="fas fa-calendar-check"></i> Appointment Details</h3>
 
-      <label>Vehicle Number:</label>
-      <input type="text" id="vehicle-number" value="<?= htmlspecialchars($appointment['license_plate']) ?>" readonly>
+        <input type="hidden" id="appointment-id" value="<?= htmlspecialchars($appointment['appointment_id']) ?>">
 
-      <label>Vehicle:</label>
-      <input type="text" id="vehicle" value="<?= htmlspecialchars($appointment['make'] . ' ' . $appointment['model']) ?>" readonly>
+        <div class="form-group">
+            <label>Customer</label>
+            <input type="text" id="customer" value="<?= htmlspecialchars($appointment['first_name'] . ' ' . $appointment['last_name']) ?>" readonly>
+        </div>
 
-      <label>Service:</label>
-      <input type="text" id="service" value="<?= htmlspecialchars($appointment['service_name']) ?>" readonly>
+        <div class="form-group">
+            <label>Phone</label>
+            <input type="text" id="phone" value="<?= htmlspecialchars($appointment['phone'] ?? '') ?>" readonly>
+        </div>
 
-      <label>Date:</label>
-      <input type="date" id="Date" value="<?= htmlspecialchars($appointment['appointment_date']) ?>" readonly>
+        <div class="form-group">
+            <label>Vehicle Number</label>
+            <input type="text" id="vehicle-number" value="<?= htmlspecialchars($appointment['license_plate']) ?>" readonly>
+        </div>
 
-      <label>Time:</label>
-      <input type="time" id="Time" value="<?= htmlspecialchars($appointment['appointment_time']) ?>" readonly>
+        <div class="form-group">
+            <label>Vehicle</label>
+            <input type="text" id="vehicle" value="<?= htmlspecialchars($appointment['make'] . ' ' . $appointment['model']) ?>" readonly>
+        </div>
 
-      <label>Status:</label>
-      <select id="status" disabled>
-        <option <?= $appointment['status'] === 'Not Arrived' ? 'selected' : '' ?>>Not Arrived</option>
-        <option <?= $appointment['status'] === 'Waiting' ? 'selected' : '' ?>>Waiting</option>
-        <option <?= $appointment['status'] === 'In Service' ? 'selected' : '' ?>>In Service</option>
-        <option <?= $appointment['status'] === 'Completed' ? 'selected' : '' ?>>Completed</option>
-        <option <?= $appointment['status'] === 'Canceled' ? 'selected' : '' ?>>Canceled</option>
-      </select>
+        <div class="form-group full-width">
+            <label>Service</label>
+            <input type="text" id="service" value="<?= htmlspecialchars($appointment['service_name']) ?>" readonly>
+        </div>
 
-      <label>Assigned To:</label>
-      <select id="assigned-to">
-        <option value="">-- Select Supervisor --</option>
-        <?php foreach ($supervisors as $supervisor): ?>
-          <option value="<?= $supervisor['supervisor_id'] ?>" 
-            <?= $appointment['assigned_to'] == $supervisor['supervisor_id'] ? 'selected' : '' ?>>
-            <?= htmlspecialchars($supervisor['name']) ?> 
-            (<?= htmlspecialchars($supervisor['specialization'] ?? 'General') ?>)
-          </option>
-        <?php endforeach; ?>
-      </select>
+        <div class="form-group">
+            <label>Date</label>
+            <input type="date" id="Date" value="<?= htmlspecialchars($appointment['appointment_date']) ?>" readonly>
+        </div>
 
-      <label>Notes:</label>
-      <textarea id="notes"><?= htmlspecialchars($appointment['notes'] ?? '') ?></textarea>
+        <div class="form-group">
+            <label>Time</label>
+            <input type="time" id="Time" value="<?= htmlspecialchars($appointment['appointment_time']) ?>" readonly>
+        </div>
 
-      <div class="modal-footer">
-        <button class="cancel-button" onclick="window.location.href='<?= BASE_URL ?>/manager/appointments'">Cancel</button>
-        <button class="save-button" onclick="updateAssignment()">Save Changes</button>
-      </div>
+        <div class="form-group">
+            <label>Status</label>
+            <select id="status" disabled>
+                <option <?= $appointment['status'] === 'Not Arrived' ? 'selected' : '' ?>>Not Arrived</option>
+                <option <?= $appointment['status'] === 'Waiting' ? 'selected' : '' ?>>Waiting</option>
+                <option <?= $appointment['status'] === 'In Service' ? 'selected' : '' ?>>In Service</option>
+                <option <?= $appointment['status'] === 'Completed' ? 'selected' : '' ?>>Completed</option>
+                <option <?= $appointment['status'] === 'Canceled' ? 'selected' : '' ?>>Canceled</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Assigned To</label>
+            <select id="assigned-to">
+                <option value="">-- Select Supervisor --</option>
+                <?php foreach ($supervisors as $supervisor): ?>
+                    <option value="<?= $supervisor['supervisor_id'] ?>"
+                        <?= $appointment['assigned_to'] == $supervisor['supervisor_id'] ? 'selected' : '' ?>>
+                        <?= htmlspecialchars($supervisor['name']) ?>
+                        (<?= htmlspecialchars($supervisor['specialization'] ?? 'General') ?>)
+                    </option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+
+        <div class="form-group full-width">
+            <label>Notes</label>
+            <textarea id="notes" rows="4"><?= htmlspecialchars($appointment['notes'] ?? '') ?></textarea>
+        </div>
+
+        <div class="modal-footer full-width">
+            <button class="cancel-button" onclick="window.location.href='<?= BASE_URL ?>/manager/appointments'">
+                <i class="fas fa-times"></i> Cancel
+            </button>
+            <button class="save-button" onclick="updateAssignment()">
+                <i class="fas fa-save"></i> Save Changes
+            </button>
+        </div>
+
     </div>
 </div>
 

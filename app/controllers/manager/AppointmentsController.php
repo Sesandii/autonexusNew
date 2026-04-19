@@ -62,9 +62,9 @@ class AppointmentsController extends BaseManagerController
 
 
     public function update(): void
-    {
-        header('Content-Type: application/json');
-        
+{
+    header('Content-Type: application/json');
+    
         try {
             if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
                 throw new \Exception('Invalid request method');

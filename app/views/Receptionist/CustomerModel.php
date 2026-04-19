@@ -181,6 +181,57 @@ public function getCustomerById(int $customerId): array
     return $customer;
 }
 
+public function getAppointmentsByCustomer($customerId)
+{
+    $sql = "SELECT *
+            FROM appointments
+            WHERE customer_id = ?
+            ORDER BY appointment_date DESC";
+
+    $stmt = $this->db->prepare($sql);
+    $stmt->execute([$customerId]);
+
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+public function getWorkOrdersByAppointments($appointmentIds)
+{
+    if (empty($appointmentIds)) return [];
+
+    $placeholders = implode(',', array_fill(0, count($appointmentIds), '?'));
+
+    $sql = "SELECT wo.*,
+                   m.first_name AS mechanic_first,
+                   m.last_name AS mechanic_last,
+                   s.first_name AS supervisor_first,
+                   s.last_name AS supervisor_last
+            FROM work_orders wo
+            LEFT JOIN users m ON wo.mechanic_id = m.user_id
+            LEFT JOIN users s ON wo.supervisor_id = s.user_id
+            WHERE wo.appointment_id IN ($placeholders)";
+
+    $stmt = $this->db->prepare($sql);
+    $stmt->execute($appointmentIds);
+
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+public function getComplaintsByAppointments($appointmentIds)
+{
+    if (empty($appointmentIds)) return [];
+
+    $placeholders = implode(',', array_fill(0, count($appointmentIds), '?'));
+
+    $sql = "SELECT *
+            FROM complaints
+            WHERE appointment_id IN ($placeholders)
+            ORDER BY created_at DESC";
+
+    $stmt = $this->db->prepare($sql);
+    $stmt->execute($appointmentIds);
+
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
 // In CustomerModel
 
 /**
@@ -219,6 +270,46 @@ public function updateVehicles(int $customerId, array $vehicles): void
     foreach ($vehicles as $index => $v) {
         $this->addVehicle($customerId, $v, $index);
     }
+}
+
+public function getCustomerAppointments(int $customerId): array
+{
+    // Fetch appointments
+    $stmt = $this->db->prepare("
+        SELECT a.*, v.make, v.model, v.year, s.name AS service_name
+        FROM appointments a
+        LEFT JOIN vehicles v ON a.vehicle_id = v.vehicle_id
+        LEFT JOIN services s ON a.service_id = s.service_id
+        WHERE a.customer_id = :customer_id
+        ORDER BY a.appointment_date DESC, a.appointment_time DESC
+    ");
+    $stmt->execute(['customer_id' => $customerId]);
+    $appointments = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    foreach ($appointments as &$appt) {
+        // Fetch work orders
+        $stmtWO = $this->db->prepare("
+            SELECT wo.*, m.first_name AS mechanic_first, m.last_name AS mechanic_last,
+                   sup.first_name AS supervisor_first, sup.last_name AS supervisor_last
+            FROM work_orders wo
+            LEFT JOIN users m ON wo.mechanic_id = m.user_id
+            LEFT JOIN users sup ON wo.supervisor_id = sup.user_id
+            WHERE wo.appointment_id = :appointment_id
+        ");
+        $stmtWO->execute(['appointment_id' => $appt['appointment_id']]);
+        $appt['work_orders'] = $stmtWO->fetchAll(PDO::FETCH_ASSOC);
+
+        // Fetch complaints
+        $stmtC = $this->db->prepare("
+            SELECT c.*
+            FROM complaints c
+            WHERE c.appointment_id = :appointment_id
+        ");
+        $stmtC->execute(['appointment_id' => $appt['appointment_id']]);
+        $appt['complaints'] = $stmtC->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    return $appointments;
 }
 
 

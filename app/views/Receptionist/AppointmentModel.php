@@ -13,7 +13,30 @@ class AppointmentModel
         $this->db = $db;
     }
 
-    
+    public function getAppointmentsByDateAndBranch(string $date, int $branchId): array
+{
+    $stmt = $this->db->prepare("
+        SELECT a.appointment_id, a.appointment_date, a.appointment_time, a.status, a.notes, a.branch_id, a.assigned_to,
+               u.first_name, u.last_name,
+               v.make, v.model, v.license_plate,
+               s.name as service_name,
+               b.name as branch_name
+        FROM appointments a
+        INNER JOIN customers c ON a.customer_id = c.customer_id
+        INNER JOIN users u ON c.user_id = u.user_id
+        INNER JOIN vehicles v ON a.vehicle_id = v.vehicle_id
+        INNER JOIN services s ON a.service_id = s.service_id
+        INNER JOIN branches b ON a.branch_id = b.branch_id
+        WHERE a.appointment_date = :date
+          AND a.branch_id = :branch_id
+        ORDER BY a.appointment_time ASC
+    ");
+    $stmt->execute([
+        'date' => $date,
+        'branch_id' => $branchId
+    ]);
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
     //Get customer + vehicles by phone number
      
     public function getCustomerByPhone(string $phone): array
@@ -168,7 +191,7 @@ public function assignSupervisorToAppointment(int $appointmentId, int $superviso
     $stmt = $this->db->prepare("
         UPDATE appointments
         SET assigned_to = :supervisor_id,
-            status = 'requested',
+            status = 'confirmed',
             updated_at = NOW()
         WHERE appointment_id = :appointment_id
     ");
@@ -212,33 +235,59 @@ public function getAppointmentById($id): array
 
 public function updateAppointment(array $data): bool
 {
-    $stmt = $this->db->prepare("
-        UPDATE appointments
-        SET service_id = :service_id,
-            branch_id = :branch_id,
-            appointment_date = :appointment_date,
-            appointment_time = :appointment_time,
-            status = :status,
-            notes = :notes,
-            assigned_to = :assigned_to,
-            updated_at = NOW()
-        WHERE appointment_id = :appointment_id
+    // Get the original appointment first to check if branch changed
+    $originalStmt = $this->db->prepare("
+        SELECT branch_id FROM appointments WHERE appointment_id = :appointment_id
     ");
-
-    $stmt->execute([
-        'appointment_id'   => $data['appointment_id'],
-        'service_id'       => $data['service_id'],
-        'branch_id'        => $data['branch_id'],
-        'appointment_date' => $data['appointment_date'],
-        'appointment_time' => $data['appointment_time'],
-        'status'           => $data['status'],
-        'notes'            => $data['notes'],
-        'assigned_to'      => $data['assigned_to'] ?: null
-    ]);
-
-    return $stmt->rowCount() > 0;
+    $originalStmt->execute(['appointment_id' => $data['appointment_id']]);
+    $original = $originalStmt->fetch(PDO::FETCH_ASSOC);
+    
+    // Check if branch has changed
+    $branchChanged = ($original['branch_id'] != $data['branch_id']);
+    
+    if ($branchChanged) {
+        // Branch changed - reset assigned_to and set status to 'Requested'
+        $stmt = $this->db->prepare("
+            UPDATE appointments
+            SET service_id = :service_id,
+                branch_id = :branch_id,
+                appointment_date = :appointment_date,
+                appointment_time = :appointment_time,
+                notes = :notes,
+                assigned_to = NULL,
+                status = 'Requested',
+                updated_at = NOW()
+            WHERE appointment_id = :appointment_id
+        ");
+        
+        return $stmt->execute([
+            'appointment_id' => $data['appointment_id'],
+            'service_id' => $data['service_id'],
+            'branch_id' => $data['branch_id'],
+            'appointment_date' => $data['appointment_date'],
+            'appointment_time' => $data['appointment_time'],
+            'notes' => $data['notes'] ?? null
+        ]);
+    } else {
+        // Branch didn't change - only update editable fields
+        $stmt = $this->db->prepare("
+            UPDATE appointments
+            SET service_id = :service_id,
+                appointment_date = :appointment_date,
+                appointment_time = :appointment_time,
+                notes = :notes,
+                updated_at = NOW()
+            WHERE appointment_id = :appointment_id
+        ");
+        
+        return $stmt->execute([
+            'appointment_id' => $data['appointment_id'],
+            'service_id' => $data['service_id'],
+            'appointment_date' => $data['appointment_date'],
+            'appointment_time' => $data['appointment_time'],
+            'notes' => $data['notes'] ?? null
+        ]);
+    }
 }
 }
-
-
 ?>

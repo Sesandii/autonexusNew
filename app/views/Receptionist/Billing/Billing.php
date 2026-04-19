@@ -89,20 +89,25 @@
 
                 <td>
                     <!-- PRINT -->
-                   <a href="<?= BASE_URL ?>/receptionist/billing/printInvoice/<?= $inv['work_order_id'] ?>"
-   target="_blank"
-   title="Print Invoice">
-    <i class="fas fa-print"></i>
-</a>
+                   
+                <div class="invoice-actions-icons">
 
-                    <!-- MARK AS PAID -->
-                    <?php if ($inv['status'] === 'unpaid'): ?>
-                        <a href="<?= BASE_URL ?>/receptionist/billing/mark-paid?id=<?= $inv['invoice_id'] ?>"
-   title="Mark as Paid"
-   onclick="return confirm('Mark this invoice as PAID?')">
-    <i class="fas fa-file-invoice-dollar" style="color:green;"></i>
-</a>
-                    <?php endif; ?>
+    <a href="<?= BASE_URL ?>/receptionist/billing/printInvoice/<?= $inv['work_order_id'] ?>"
+       target="_blank"
+       title="Print Invoice">
+        <i class="fas fa-print"></i>
+    </a>
+
+    <?php if ($inv['status'] === 'unpaid'): ?>
+        <a href="<?= BASE_URL ?>/receptionist/billing/mark-paid?id=<?= $inv['invoice_id'] ?>"
+           title="Mark as Paid"
+           onclick="return confirm('Mark this invoice as PAID?')">
+            <i class="fas fa-money-check-dollar"></i>
+        </a>
+    <?php endif; ?>
+
+</div>
+                
                 </td>
 
             </tr>

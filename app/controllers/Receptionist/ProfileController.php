@@ -1,48 +1,102 @@
 <?php
-
 namespace app\controllers\Receptionist;
 
 use app\core\Controller;
-use app\model\supervisor\User; // use the same working User model
+use app\model\Receptionist\ProfileModel;
 
 class ProfileController extends Controller
 {
-    public function index()
+    private ProfileModel $model;
+
+    public function __construct()
     {
-        if (session_status() !== PHP_SESSION_ACTIVE) session_start();
+        parent::__construct();
 
-        $userId = $_SESSION['user']['user_id'];
+        if (session_status() !== PHP_SESSION_ACTIVE) {
+            session_start();
+        }
 
-        $userModel = new User();
-        $user = $userModel->findById($userId); // or add findReceptionistProfile() like mechanic has
+        $this->model = new ProfileModel();
+    }
+
+    // ───────── VIEW PROFILE ─────────
+    public function index(): void
+    {
+        $userId = $_SESSION['user']['user_id'] ?? null;
+
+        if (!$userId) {
+            header("Location: " . BASE_URL . "/login");
+            exit;
+        }
+
+        $user = $this->model->getUserProfile($userId);
+
+        if (!$user) {
+            $_SESSION['message'] = [
+                'type' => 'error',
+                'text' => 'Profile not found'
+            ];
+            header("Location: " . BASE_URL . "/receptionist/profile");
+            exit;
+        }
 
         $this->view('Receptionist/Profile/profile', [
-            'user' => $user
+            'user' => $user,
+            'editMode' => false
         ]);
     }
 
-    public function update()
+    // ───────── EDIT PROFILE FORM ─────────
+    public function edit(): void
     {
-        if (session_status() !== PHP_SESSION_ACTIVE) session_start();
+        $userId = $_SESSION['user']['user_id'] ?? null;
 
-        $userId = $_SESSION['user']['user_id'];
+        if (!$userId) {
+            header("Location: " . BASE_URL . "/login");
+            exit;
+        }
+
+        $user = $this->model->getUserProfile($userId);
+
+        $this->view('Receptionist/Profile/profile', [
+            'user' => $user,
+            'editMode' => true
+        ]);
+    }
+
+    // ───────── UPDATE PROFILE ─────────
+    public function update(): void
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header("Location: " . BASE_URL . "/receptionist/profile");
+            exit;
+        }
+
+        $userId = $_SESSION['user']['user_id'] ?? null;
+
+        if (!$userId) {
+            header("Location: " . BASE_URL . "/login");
+            exit;
+        }
 
         $data = [
             'first_name'     => trim($_POST['first_name'] ?? ''),
             'last_name'      => trim($_POST['last_name'] ?? ''),
             'phone'          => trim($_POST['phone'] ?? ''),
-            'alt_phone'      => trim($_POST['alt_phone'] ?? null),
-            'street_address' => trim($_POST['street_address'] ?? null),
-            'city'           => trim($_POST['city'] ?? null),
-            'state'          => trim($_POST['state'] ?? null),
+            'alt_phone'      => trim($_POST['alt_phone'] ?? ''),
+            'street_address' => trim($_POST['street_address'] ?? ''),
+            'city'           => trim($_POST['city'] ?? ''),
+            'state'          => trim($_POST['state'] ?? ''),
         ];
 
-        $userModel = new User();
-        $userModel->updateProfile($userId, $data);
+        $success = $this->model->updateProfile($userId, $data);
 
-        $_SESSION['flash'] = 'Profile updated successfully.';
+        $_SESSION['message'] = [
+            'type' => $success ? 'success' : 'error',
+            'text' => $success ? 'Profile updated successfully' : 'Update failed'
+        ];
 
-        header('Location: ' . BASE_URL . '/receptionist/profile');
+        header("Location: " . BASE_URL . "/receptionist/profile");
         exit;
     }
 }

@@ -21,10 +21,6 @@
         + New Customer
       </button>
 
-      <div class="search-bar">
-        <input type="text" id="searchInput" placeholder="Search Customer...." />
-        <button id="searchBtn">🔍</button>
-      </div>
     </div>
   </div>
 

@@ -17,36 +17,40 @@ class BillingModel
      * Includes customer name + vehicle number
      */
     public function getCompletedWorkOrders(): array
-    {
-        $sql = "
-            SELECT
-                wo.work_order_id,
-                wo.total_cost,
-                wo.status,
+{
+    $sql = "
+        SELECT
+            wo.work_order_id,
+            wo.total_cost,
+            wo.status,
 
-                u.first_name,
-                u.last_name,
+            u.first_name,
+            u.last_name,
 
-                v.license_plate AS vehicle_no,
-                v.make,
-                v.model
+            v.license_plate AS vehicle_no,
+            v.make,
+            v.model
 
-            FROM work_orders wo
-            INNER JOIN appointments a
-                ON wo.appointment_id = a.appointment_id
-            INNER JOIN customers c
-                ON a.customer_id = c.customer_id
-            INNER JOIN users u
-                ON c.user_id = u.user_id
-            INNER JOIN vehicles v
-                ON a.vehicle_id = v.vehicle_id
+        FROM work_orders wo
+        INNER JOIN appointments a
+            ON wo.appointment_id = a.appointment_id
+        INNER JOIN customers c
+            ON a.customer_id = c.customer_id
+        INNER JOIN users u
+            ON c.user_id = u.user_id
+        INNER JOIN vehicles v
+            ON a.vehicle_id = v.vehicle_id
 
-            WHERE wo.status = 'completed'
-            ORDER BY wo.completed_at DESC
-        ";
+        WHERE wo.status = 'completed'
+       AND NOT EXISTS (
+    SELECT 1 FROM invoices i
+    WHERE i.work_order_id = wo.work_order_id
+)
+        ORDER BY wo.completed_at DESC
+    ";
 
-        return $this->db->query($sql)->fetchAll();
-    }
+    return $this->db->query($sql)->fetchAll();
+}
 
     /**
      * 2️⃣ Get single work order for invoice preview
@@ -88,63 +92,75 @@ class BillingModel
     /**
      * 3️⃣ Create invoice + LOCK work order
      */
-    public function createInvoice(int $workOrderId): void
-    {
-        $this->db->beginTransaction();
+   public function createInvoice(int $workOrderId): bool
+{
+    $this->db->beginTransaction();
 
-        try {
-            $stmt = $this->db->prepare("
-                SELECT total_cost
-                FROM work_orders
-                WHERE work_order_id = ?
-                  AND status = 'completed'
-            ");
-            $stmt->execute([$workOrderId]);
-            $order = $stmt->fetch();
+    try {
 
-            if (!$order) {
-                throw new \Exception('Work order already invoiced.');
-            }
+        // check duplicate
+        $stmt = $this->db->prepare("
+            SELECT 1 FROM invoices WHERE work_order_id = ?
+        ");
+        $stmt->execute([$workOrderId]);
 
-            $invoiceNo = 'INV-' . date('Y') . '-' . str_pad($workOrderId, 5, '0', STR_PAD_LEFT);
-
-            $stmt = $this->db->prepare("
-                INSERT INTO invoices
-                (work_order_id, invoice_no, total_amount, discount, grand_total, issued_at, status)
-                VALUES (?, ?, ?, 0, ?, NOW(), 'issued')
-            ");
-            $stmt->execute([
-                $workOrderId,
-                $invoiceNo,
-                $order['total_cost'],
-                $order['total_cost']
-            ]);
-
-            $stmt = $this->db->prepare("
-                UPDATE work_orders
-                SET status = 'invoiced'
-                WHERE work_order_id = ?
-            ");
-            $stmt->execute([$workOrderId]);
-
-            $this->db->commit();
-
-        } catch (\Throwable $e) {
-            $this->db->rollBack();
-            throw $e;
+        if ($stmt->fetch()) {
+            throw new \Exception("Invoice already exists.");
         }
-    }
 
+        // get work order
+        $stmt = $this->db->prepare("
+            SELECT total_cost
+            FROM work_orders
+            WHERE work_order_id = ?
+              AND status = 'completed'
+        ");
+        $stmt->execute([$workOrderId]);
+
+        $order = $stmt->fetch();
+
+        if (!$order) {
+            throw new \Exception("Invalid work order.");
+        }
+
+        $invoiceNo = 'INV-' . date('Y') . '-' . str_pad($workOrderId, 5, '0', STR_PAD_LEFT);
+
+        // insert invoice
+        $stmt = $this->db->prepare("
+            INSERT INTO invoices
+            (work_order_id, invoice_no, total_amount, discount, grand_total, issued_at, status)
+            VALUES (?, ?, ?, 0, ?, NOW(), 'unpaid')
+        ");
+
+        $ok = $stmt->execute([
+            $workOrderId,
+            $invoiceNo,
+            $order['total_cost'],
+            $order['total_cost']
+        ]);
+
+        if (!$ok) {
+            throw new \Exception("INSERT FAILED");
+        }
+
+        $this->db->commit();
+        return true;
+
+    } catch (\Throwable $e) {
+        $this->db->rollBack();
+        throw $e;
+    }
+}
     /**
  * Get all invoices with customer and vehicle info
  */
-public function getInvoices(): array
+public function getInvoices(?string $status = null): array
 {
     $sql = "
         SELECT
             i.invoice_id,
             i.invoice_no,
-            i.work_order_id,   -- ✅ ADD THIS LINE
+            i.work_order_id,
             i.total_amount,
             i.discount,
             i.grand_total,
@@ -159,21 +175,81 @@ public function getInvoices(): array
             v.model
 
         FROM invoices i
-        INNER JOIN work_orders wo
-            ON i.work_order_id = wo.work_order_id
-        INNER JOIN appointments a
-            ON wo.appointment_id = a.appointment_id
-        INNER JOIN customers c
-            ON a.customer_id = c.customer_id
-        INNER JOIN users u
-            ON c.user_id = u.user_id
-        INNER JOIN vehicles v
-            ON a.vehicle_id = v.vehicle_id
-
-        ORDER BY i.issued_at DESC
+        INNER JOIN work_orders wo ON i.work_order_id = wo.work_order_id
+        INNER JOIN appointments a ON wo.appointment_id = a.appointment_id
+        INNER JOIN customers c ON a.customer_id = c.customer_id
+        INNER JOIN users u ON c.user_id = u.user_id
+        INNER JOIN vehicles v ON a.vehicle_id = v.vehicle_id
     ";
 
-    return $this->db->query($sql)->fetchAll();
+    // 🔥 FILTER LOGIC
+    $params = [];
+
+    if ($status && in_array($status, ['paid', 'unpaid', 'cancelled'])) {
+        $sql .= " WHERE i.status = ?";
+        $params[] = $status;
+    }
+
+    $sql .= " ORDER BY i.issued_at DESC";
+
+    $stmt = $this->db->prepare($sql);
+    $stmt->execute($params);
+
+    return $stmt->fetchAll();
+}
+
+public function getInvoiceForPrint(int $workOrderId): array|false
+{
+    $stmt = $this->db->prepare("
+        SELECT
+            i.invoice_no,
+            i.issued_at,
+
+            wo.work_order_id,
+            wo.total_cost,
+            wo.service_summary,
+
+            u.first_name,
+            u.last_name,
+            u.phone,
+
+            v.license_plate AS vehicle_no,
+            v.make,
+            v.model,
+            v.year,
+            v.color
+
+        FROM invoices i
+        INNER JOIN work_orders wo ON i.work_order_id = wo.work_order_id
+        INNER JOIN appointments a ON wo.appointment_id = a.appointment_id
+        INNER JOIN customers c ON a.customer_id = c.customer_id
+        INNER JOIN users u ON c.user_id = u.user_id
+        INNER JOIN vehicles v ON a.vehicle_id = v.vehicle_id
+
+        WHERE i.work_order_id = ?
+        LIMIT 1
+    ");
+
+    $stmt->execute([$workOrderId]);
+    return $stmt->fetch();
+}
+
+/** Update invoice status (paid / unpaid / cancelled) */
+public function updateInvoiceStatus(int $invoiceId, string $status): bool
+{
+    $allowed = ['paid', 'unpaid', 'cancelled'];
+
+    if (!in_array($status, $allowed, true)) {
+        throw new \Exception("Invalid status value");
+    }
+
+    $stmt = $this->db->prepare("
+        UPDATE invoices
+        SET status = ?
+        WHERE invoice_id = ?
+    ");
+
+    return $stmt->execute([$status, $invoiceId]);
 }
 
 /**
@@ -218,7 +294,40 @@ public function getPaidInvoices(): array
     return $this->db->query($sql)->fetchAll();
 }
 
+/**
+ * ✅ NEW: Check if an invoice already exists for a work order
+ */
+public function getInvoiceByWorkOrderId(int $workOrderId): array|false
+{
+    $stmt = $this->db->prepare("
+        SELECT invoice_id 
+        FROM invoices 
+        WHERE work_order_id = ? 
+        LIMIT 1
+    ");
+    $stmt->execute([$workOrderId]);
+    return $stmt->fetch();
+}
 
+/**
+ * ✅ NEW: Get invoice only if it belongs to the receptionist's branch
+ * Prevents receptionists from marking invoices from other branches as paid
+ */
+public function getInvoiceByIdAndBranch(int $invoiceId, int $branchId): array|false
+{
+    $stmt = $this->db->prepare("
+        SELECT i.invoice_id
+        FROM invoices i
+        INNER JOIN work_orders wo ON i.work_order_id = wo.work_order_id
+        INNER JOIN appointments a ON wo.appointment_id = a.appointment_id
+        INNER JOIN branches b ON a.branch_id = b.branch_id
+        WHERE i.invoice_id = ?
+          AND b.branch_id  = ?
+        LIMIT 1
+    ");
+    $stmt->execute([$invoiceId, $branchId]);
+    return $stmt->fetch();
+}
 
 }
 

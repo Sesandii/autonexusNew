@@ -129,7 +129,31 @@ class ScheduleModel
         if ($role === 'mechanic') {
             $sql = "UPDATE mechanics SET branch_id = ? WHERE user_id = ?";
         } else if ($role === 'supervisor') {
-            $sql = "UPDATE supervisors SET branch_id = ? WHERE user_id = ?";
+
+    // 1. Get valid manager_id for the branch
+    $stmt = $this->db->prepare("
+        SELECT manager_id 
+        FROM branches 
+        WHERE branch_id = ?
+        LIMIT 1
+    ");
+    $stmt->execute([$branchId]);
+    $managerId = $stmt->fetchColumn();
+
+    if (!$managerId) {
+        return false; // FK pair doesn't exist
+    }
+
+    // 2. Update BOTH fields to satisfy composite FK
+    $sql = "
+        UPDATE supervisors 
+        SET branch_id = ?, manager_id = ?
+        WHERE user_id = ?
+    ";
+
+    $stmt = $this->db->prepare($sql);
+    return $stmt->execute([$branchId, $managerId, $userId]);
+
         } else if ($role === 'receptionist') {
             $sql = "UPDATE receptionists SET branch_id = ? WHERE user_id = ?";
         } else {
@@ -209,36 +233,44 @@ class ScheduleModel
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function getSupervisorAppointments(int $userId): array
-    {
-        $sql = "
-            SELECT 
-                a.appointment_id,
-                a.appointment_date,
-                a.appointment_time,
-                a.status,
-                a.notes,
-                v.license_plate,
-                v.make,
-                v.model,
-                v.year,
-                s.name AS service_name,
-                cu.first_name AS customer_first_name,
-                cu.last_name AS customer_last_name
-            FROM appointments a
-            INNER JOIN supervisors sup ON a.assigned_to = sup.supervisor_id
-            INNER JOIN users u ON sup.user_id = u.user_id
-            LEFT JOIN vehicles v ON a.vehicle_id = v.vehicle_id
-            LEFT JOIN services s ON a.service_id = s.service_id
-            LEFT JOIN customers c ON a.customer_id = c.customer_id
-            LEFT JOIN users cu ON c.user_id = cu.user_id
-            WHERE u.user_id = :user_id
-            ORDER BY a.appointment_date DESC, a.appointment_time ASC
-        ";
-        
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute(['user_id' => $userId]);
-        
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
+  public function getSupervisorAppointments(int $userId): array
+{
+    $sql = "
+        SELECT 
+            a.appointment_id,
+            a.appointment_date,
+            a.appointment_time,
+            a.status,
+            a.notes,
+            a.assigned_to,
+            v.license_plate,
+            v.make,
+            v.model,
+            v.year,
+            s.name AS service_name,
+            cu.first_name AS customer_first_name,
+            cu.last_name AS customer_last_name
+        FROM supervisors sup
+        INNER JOIN appointments a 
+            ON a.assigned_to = sup.supervisor_id
+        LEFT JOIN vehicles v ON a.vehicle_id = v.vehicle_id
+        LEFT JOIN services s ON a.service_id = s.service_id
+        LEFT JOIN customers c ON a.customer_id = c.customer_id
+        LEFT JOIN users cu ON c.user_id = cu.user_id
+        WHERE sup.user_id = :user_id
+        ORDER BY 
+            CASE a.status
+                WHEN 'confirmed' THEN 1
+                WHEN 'in_progress' THEN 2
+                WHEN 'completed' THEN 3
+                ELSE 4
+            END,
+            a.appointment_date DESC,
+            a.appointment_time ASC
+    ";
+
+    $stmt = $this->db->prepare($sql);
+    $stmt->execute(['user_id' => $userId]);
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
 }

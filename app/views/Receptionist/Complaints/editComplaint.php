@@ -3,90 +3,139 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Edit Complaint</title>
+  <title>Edit Complaint - AutoNexus</title>
   <link rel="stylesheet" href="<?= BASE_URL ?>/public/assets/css/receptionist/sidebar.css">
-  <link rel="stylesheet" href="<?= BASE_URL ?>/public/assets/css/receptionist/editComplaint.css?v=1.1">
-   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  </head>
-  
+  <link rel="stylesheet" href="<?= BASE_URL ?>/public/assets/css/receptionist/newAppointment.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+
 <body>
-  
+
 <?php include APP_ROOT . '/views/layouts/receptionist-sidebar.php'; ?>
 
-  <div class="main">
+<div class="main">
     <div class="details-section">
-      <h3>Edit Complaint</h3>
-      <form action="<?= BASE_URL ?>/receptionist/complaints/update/<?= $complaint['complaint_id'] ?>" method="POST">
-        
-        <input type="hidden" name="customer_id" id="customer_id" value="<?= $complaint['customer_id'] ?>">
-        
-        
-        <label for="customer_name">Name:</label>
-        <input type="text" id="customer_name" name="customer_name" value="<?= htmlspecialchars($complaint['customer_name']) ?>" required>
+        <h3>Edit Complaint</h3>
 
-        <label for="phone">Phone:</label>
-        <input type="text" id="phone" name="phone" value="<?= htmlspecialchars($complaint['phone']) ?>" required>
+        <form action="<?= BASE_URL ?>/receptionist/complaints/update/<?= $complaint['complaint_id'] ?>" method="POST">
 
-        <label for="email">Email:</label>
-       
-        <input type="email" id="email" name="email" value="<?= htmlspecialchars($complaint['email']) ?>">
+            <input type="hidden" name="customer_id" id="customer_id" value="<?= $complaint['customer_id'] ?>">
+            <input type="hidden" name="vehicle_id"  id="vehicle_id"  value="<?= $complaint['vehicle_id'] ?>">
+            <input type="hidden" name="appointment_id" value="<?= $complaint['appointment_id'] ?>">
 
-<label> Vehicle:</label>
-<div id="vehicle-container" data-complaint-vehicle-id="<?= $complaint['vehicle_id'] ?>"></div>
-<input type="hidden" name="vehicle_id" id="vehicle_id" value="<?= $complaint['vehicle_id'] ?>">
+            <div class="grid">
 
-<label for="vehicle_number">Vehicle Number:</label>
-<input type="text" id="vehicle_number" name="vehicle_number" value="<?= htmlspecialchars($complaint['vehicle_number']) ?>" readonly>
+                <!-- ROW 1: Name + Phone -->
+                <div class="field">
+                    <label>Name</label>
+                    <input type="text" name="customer_name" value="<?= htmlspecialchars($complaint['customer_name']) ?>" readonly>
+                </div>
 
-<label>Appointment:</label>
-<input type="text" 
-       value="<?= htmlspecialchars($complaint['appointment_display'] ?? 'No appointment') ?>" 
-       readonly>
+                <div class="field">
+                    <label>Phone</label>
+                    <input type="text" name="phone" value="<?= htmlspecialchars($complaint['phone']) ?>" readonly>
+                </div>
 
-<input type="hidden" name="appointment_id" value="<?= $complaint['appointment_id'] ?>">
+                <!-- ROW 2: Email + Vehicle -->
+                <div class="field">
+                    <label>Email</label>
+                    <input type="email" name="email" value="<?= htmlspecialchars($complaint['email']) ?>" readonly>
+                </div>
 
-<label>Date:</label>
-  <input type="date" name="complaint_date">
+                <div class="field">
+                    <label>Vehicle</label>
+                    <div id="vehicle-container" data-complaint-vehicle-id="<?= $complaint['vehicle_id'] ?>">
+                        <!-- JS populates this -->
+                        <input type="text" value="<?= htmlspecialchars($complaint['vehicle'] ?? '') ?>" readonly>
+                    </div>
+                </div>
 
-  <label>Time:</label>
-  <input type="time" name="complaint_time">
+                <!-- ROW 3: Vehicle Number + Appointment -->
+                <div class="field">
+                    <label>Vehicle number</label>
+                    <input type="text" name="vehicle_number" id="vehicle_number"
+                        value="<?= htmlspecialchars($complaint['vehicle_number']) ?>" readonly>
+                </div>
 
-  <label>Subject:</label>
-<input type="text" name="subject" value="<?= $complaint['subject'] ?>">
+                <div class="field">
+                    <label>Appointment</label>
+                    <input type="text"
+                        value="<?= htmlspecialchars($complaint['appointment_display'] ?? 'No appointment') ?>"
+                        readonly>
+                </div>
 
-        <label for="description">Description:</label>
-        <textarea id="description" name="description" required><?= htmlspecialchars($complaint['description']) ?></textarea>
+                <!-- ROW 4: Date + Time -->
+                <div class="field">
+                    <label>Date</label>
+                    <input type="date" name="complaint_date"
+                        value="<?= htmlspecialchars($complaint['complaint_date'] ?? '') ?>">
+                </div>
 
-        <label for="priority">Priority:</label>
-        <select id="priority" name="priority">
-          <option value="Low" <?= $complaint['priority'] == 'Low' ? 'selected' : '' ?>>Low</option>
-          <option value="Medium" <?= $complaint['priority'] == 'Medium' ? 'selected' : '' ?>>Medium</option>
-          <option value="High" <?= $complaint['priority'] == 'High' ? 'selected' : '' ?>>High</option>
-        </select>
+                <div class="field">
+                    <label>Time</label>
+                    <input type="time" name="complaint_time"
+                        value="<?= htmlspecialchars($complaint['complaint_time'] ?? '') ?>">
+                </div>
 
-        <label for="status">Status:</label>
-        <select id="status" name="status">
-  <option value="open" <?= $complaint['status'] == 'open' ? 'selected' : '' ?>>Open</option>
+                <!-- ROW 5: Priority + Status -->
+                <div class="field">
+                    <label>Priority</label>
+                    <select name="priority">
+                        <option value="Low"    <?= $complaint['priority'] === 'Low'    ? 'selected' : '' ?>>Low</option>
+                        <option value="Medium" <?= $complaint['priority'] === 'Medium' ? 'selected' : '' ?>>Medium</option>
+                        <option value="High"   <?= $complaint['priority'] === 'High'   ? 'selected' : '' ?>>High</option>
+                    </select>
+                </div>
 
-  <option value="in_progress" <?= $complaint['status'] == 'in_progress' ? 'selected' : '' ?>>In Progress</option>
+            <div class="field">
+    <label>Status</label>
+    <select name="status">
+        <option value="open" <?= $complaint['status'] === 'open' ? 'selected' : '' ?>>Open</option>
 
-  <option value="resolved" <?= $complaint['status'] == 'resolved' ? 'selected' : '' ?>>Resolved</option>
+        <option value="in_progress" <?= $complaint['status'] === 'in_progress' ? 'selected' : '' ?>>
+            In Progress
+        </option>
 
-  <option value="closed" <?= $complaint['status'] == 'closed' ? 'selected' : '' ?>>Closed</option>
-</select>
+        <option value="resolved" <?= $complaint['status'] === 'resolved' ? 'selected' : '' ?>>
+            Resolved
+        </option>
 
-      
-        <div class="modal-footer">
-          <a href="<?= BASE_URL ?>/receptionist/complaints" class="cancel-button">Cancel</a>
-          <button type="submit" class="save-button"> Update </button>
-        </div>
-      </form>
+        <option value="closed" <?= $complaint['status'] === 'closed' ? 'selected' : '' ?>>
+            Closed
+        </option>
+    </select>
+</div>
+                <!-- Subject (full width) -->
+                <div class="field full">
+                    <label>Subject</label>
+                    <input type="text" name="subject" value="<?= htmlspecialchars($complaint['subject'] ?? '') ?>">
+                </div>
+
+                <!-- Description (full width) -->
+                <div class="field full">
+                    <label>Description</label>
+                    <textarea name="description" rows="4"><?= htmlspecialchars($complaint['description']) ?></textarea>
+                </div>
+
+                <!-- Footer (full width) -->
+                <div class="field full">
+                    <div class="modal-footer">
+                        <a href="<?= BASE_URL ?>/receptionist/complaints" class="cancel-button">Cancel</a>
+                        <button type="submit" class="save-button">Update Complaint</button>
+                    </div>
+                </div>
+
+            </div><!-- /.grid -->
+
+        </form>
     </div>
-  </div>
+</div>
 
- <script>
-  const BASE_URL = "<?= BASE_URL ?>";
+<script>
+    const BASE_URL = "<?= BASE_URL ?>";
 </script>
 <script src="<?= BASE_URL ?>/public/assets/js/receptionist/editComplaint.js"></script>
+
 </body>
 </html>

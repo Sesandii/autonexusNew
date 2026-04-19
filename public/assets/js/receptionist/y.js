@@ -1,142 +1,143 @@
 document.addEventListener("DOMContentLoaded", () => {
 
-    const saveBtn = document.querySelector(".save-button");
-    const cancelBtn = document.querySelector(".cancel-button");
-    const customerInput = document.querySelector('input[name="customer_name"]');
-    const phoneInput = document.querySelector('input[name="phone"]');
-    const emailInput = document.querySelector('input[name="email"]');
-    const vehicleContainer = document.querySelector('#vehicle-container');
-    const vehicleNumberInput = document.querySelector('input[name="vehicle_number"]');
-    const statusSelect = document.querySelector('select[name="status"]');
+    // ── Elements ──────────────────────────────────────────────────────────────
+    const phoneInput       = document.getElementById("phone");
+    const customerIdInput  = document.getElementById("customer_id");
+    const vehicleIdInput   = document.getElementById("vehicle_id");
+    const customerNameInput= document.getElementById("customer_name");
+    const emailInput       = document.getElementById("email");
+    const vehicleContainer = document.getElementById("vehicle-container");
+    const vehicleNumberInput = document.getElementById("vehicle_number");
+    const appointmentSelect  = document.getElementById("appointment_id");
+    const dateField        = document.getElementById("complaint_date");
+    const timeField        = document.getElementById("complaint_time");
 
-    // Hidden inputs for foreign keys
-    const customerIdInput = document.querySelector('#customer_id');
-    const userIdInput = document.querySelector('#user_id');
-    const vehicleIdInput = document.querySelector('#vehicle_id');
-
-    // Save validation
-    saveBtn.addEventListener("click", (e) => {
-        const vehicleInput = vehicleContainer.querySelector('[name="vehicle"]');
-
-        if (!customerInput.value.trim() || !phoneInput.value.trim() || !vehicleInput.value.trim() || !vehicleNumberInput.value.trim() || !statusSelect.value.trim() || !customerIdInput.value || !userIdInput.value || !vehicleIdInput.value) {
-            alert("Please fill in all the details.");
-            e.preventDefault();
-            return;
-        }
-
-        alert("Complaint saved successfully!");
-    });
-
-    // Cancel
-    cancelBtn.addEventListener("click", () => {
-        window.location.href = BASE_URL + "/receptionist/complaints";
-    });
-
-    // Auto-fill Date & Time
-    const dateField = document.querySelector('input[name="complaint_date"]');
-    const timeField = document.querySelector('input[name="complaint_time"]');
+    // ── Auto-fill today's date & time ─────────────────────────────────────────
     const now = new Date();
     if (dateField) dateField.value = now.toISOString().split("T")[0];
-    if (timeField) timeField.value = now.toTimeString().slice(0,5);
+    if (timeField) timeField.value = now.toTimeString().slice(0, 5);
 
-    // Phone lookup
+    // ── Phone lookup ──────────────────────────────────────────────────────────
+    let debounceTimer;
+
     phoneInput.addEventListener("keyup", () => {
-    const phone = phoneInput.value.trim();
-    if (phone.length < 3) return;
+        clearTimeout(debounceTimer);
+        const phone = phoneInput.value.trim();
 
-    fetch(`${BASE_URL}/receptionist/complaints/fetchByPhone?phone=${encodeURIComponent(phone)}`)
-        .then(res => res.json())
-        .then(response => {
-            if (!response.success || !response.data) return;
+        if (phone.length < 3) return;
 
-            const customer = response.data;
+        debounceTimer = setTimeout(() => {
+            fetch(`${BASE_URL}/receptionist/complaints/fetchByPhone?phone=${encodeURIComponent(phone)}`)
+                .then(res => res.json())
+                .then(response => {
+                    if (!response.success || !response.data) {
+                        clearCustomerFields();
+                        return;
+                    }
 
-            customerInput.value = `${customer.first_name} ${customer.last_name}`.trim();
-            emailInput.value = customer.email ?? "";
-            customerIdInput.value = customer.customer_id;
+                    const customer = response.data;
 
-            populateVehicleDropdown(customer.vehicles ?? []);
-        })
-        .catch(err => console.error("Fetch error:", err));
-});
+                    // Fill customer fields
+                    customerNameInput.value = `${customer.first_name} ${customer.last_name}`.trim();
+                    emailInput.value        = customer.email ?? "";
+                    customerIdInput.value   = customer.customer_id;
 
+                    // Fill vehicle dropdown
+                    populateVehicleDropdown(customer.vehicles ?? []);
 
-    /*function populateVehicleDropdown(vehicles) {
+                    // Fetch appointments for this customer
+                    fetchAppointments(customer.customer_id);
+                })
+                .catch(err => console.error("Phone lookup error:", err));
+        }, 400);
+    });
+
+    // ── Populate vehicle dropdown ─────────────────────────────────────────────
+    function populateVehicleDropdown(vehicles) {
         vehicleContainer.innerHTML = "";
 
         if (vehicles.length === 0) {
+            // No vehicles — show empty readonly input
             const input = document.createElement("input");
-            input.type = "text";
-            input.name = "vehicle";
-            input.className = "form-control";
+            input.type        = "text";
+            input.name        = "vehicle";
+            input.readOnly    = true;
+            input.placeholder = "No vehicles found";
             vehicleContainer.appendChild(input);
             vehicleNumberInput.value = "";
-            vehicleIdInput.value = "";
+            vehicleIdInput.value     = "";
             return;
         }
 
-        const dropdown = document.createElement("select");
-        dropdown.name = "vehicle";
-        dropdown.className = "form-control";
+        const select = document.createElement("select");
+        select.name = "vehicle";
 
         vehicles.forEach(v => {
-            const opt = document.createElement("option");
-            opt.value = `${v.make ?? ''} ${v.model ?? ''}`.trim();
-            opt.textContent = `${v.make ?? ''} ${v.model ?? ''}`.trim();
-            opt.dataset.plate = v.license_plate ?? '';
-            opt.dataset.vehicleId = v.vehicle_id; // hidden vehicle_id
-            dropdown.appendChild(opt);
+            const opt         = document.createElement("option");
+            opt.value         = `${v.make ?? ""} ${v.model ?? ""}`.trim();
+            opt.textContent   = `${v.make ?? ""} ${v.model ?? ""} — ${v.license_plate ?? ""}`.trim();
+            opt.dataset.plate = v.license_plate ?? "";
+            opt.dataset.id    = v.vehicle_id;
+            select.appendChild(opt);
         });
 
-        dropdown.selectedIndex = 0;
-        vehicleNumberInput.value = dropdown.selectedOptions[0].dataset.plate;
-        vehicleIdInput.value = dropdown.selectedOptions[0].dataset.vehicleId;
+        // Set initial values from first option
+        updateVehicleFields(select);
 
-        dropdown.addEventListener("change", () => {
-            vehicleNumberInput.value = dropdown.selectedOptions[0].dataset.plate;
-            vehicleIdInput.value = dropdown.selectedOptions[0].dataset.vehicleId;
-        });
+        // Update on change
+        select.addEventListener("change", () => updateVehicleFields(select));
 
-        vehicleContainer.appendChild(dropdown);
-    }*/
-   function populateVehicleDropdown(vehicles) {
-    vehicleContainer.innerHTML = "";
-
-    if (vehicles.length === 0) {
-        const input = document.createElement("input");
-        input.type = "text";
-        input.name = "vehicle";
-        input.className = "form-control";
-        vehicleContainer.appendChild(input);
-        vehicleNumberInput.value = "";
-        vehicleIdInput.value = "";
-        return;
-    } else {
-        const dropdown = document.createElement("select");
-        dropdown.name = "vehicle";
-        dropdown.className = "form-control";
-
-        vehicles.forEach(v => {
-            const opt = document.createElement("option");
-            opt.value = `${v.make ?? ''} ${v.model ?? ''}`.trim();
-            opt.textContent = `${v.make ?? ''} ${v.model ?? ''}`.trim();
-            opt.dataset.plate = v.license_plate ?? '';
-            opt.dataset.vehicleId = v.vehicle_id;
-            dropdown.appendChild(opt);
-        });
-
-        dropdown.selectedIndex = 0;
-        vehicleNumberInput.value = dropdown.selectedOptions[0].dataset.plate;
-        vehicleIdInput.value = dropdown.selectedOptions[0].dataset.vehicleId;
-
-        dropdown.addEventListener("change", () => {
-            vehicleNumberInput.value = dropdown.selectedOptions[0].dataset.plate;
-            vehicleIdInput.value = dropdown.selectedOptions[0].dataset.vehicleId;
-        });
-
-        vehicleContainer.appendChild(dropdown);
+        vehicleContainer.appendChild(select);
     }
-}
 
+    function updateVehicleFields(select) {
+        const selected = select.selectedOptions[0];
+        vehicleNumberInput.value = selected?.dataset.plate ?? "";
+        vehicleIdInput.value     = selected?.dataset.id    ?? "";
+    }
+
+    // ── Fetch & populate appointments ─────────────────────────────────────────
+    function fetchAppointments(customerId) {
+        appointmentSelect.innerHTML = '<option value="">None</option>';
+
+        fetch(`${BASE_URL}/receptionist/complaints/fetchAppointments?customer_id=${encodeURIComponent(customerId)}`)
+            .then(res => res.json())
+            .then(response => {
+                if (!response.success || !response.data?.length) return;
+
+                response.data.forEach(appt => {
+                    const opt       = document.createElement("option");
+                    opt.value       = appt.appointment_id;
+                    opt.textContent = appt.display_text ?? `Appointment #${appt.appointment_id}`;
+                    appointmentSelect.appendChild(opt);
+                });
+            })
+            .catch(err => console.error("Appointments fetch error:", err));
+    }
+
+    // ── Clear fields on no match ──────────────────────────────────────────────
+    function clearCustomerFields() {
+        customerNameInput.value  = "";
+        emailInput.value         = "";
+        customerIdInput.value    = "";
+        vehicleIdInput.value     = "";
+        vehicleNumberInput.value = "";
+        vehicleContainer.innerHTML = '<input type="text" name="vehicle" readonly placeholder="Auto-filled">';
+        appointmentSelect.innerHTML = '<option value="">None</option>';
+    }
+
+    // ── Form validation on submit ─────────────────────────────────────────────
+    document.querySelector("form").addEventListener("submit", (e) => {
+        if (!customerIdInput.value) {
+            e.preventDefault();
+            alert("Please enter a valid phone number to find the customer.");
+            return;
+        }
+
+        if (!vehicleIdInput.value) {
+            e.preventDefault();
+            alert("Please select a vehicle.");
+        }
+    });
 
 });

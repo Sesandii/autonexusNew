@@ -21,21 +21,6 @@
     <div class="header">
   <h2>Appointments</h2>
 
-  <div class="top-actions">
-    <!-- Create New Appointment Button -->
- <!--<button class="add-btn"
-    onclick="window.location.href='<?= BASE_URL ?>/manager/appointments/new'">
-    + Create New Appointment
-</button>-->
-
-
-
-    <!-- Search Appointment Bar -->
-    <div class="search-bar">
-      <input type="text" id="searchInput" placeholder="Search appointment..." />
-      <button id="searchBtn">🔍</button>
-    </div>
-  </div>
 </div>
 
 <div class="main-content">

@@ -274,73 +274,32 @@
   border: 1px dashed #d1d5db;
 }
 
-/* Filter Section */
-.filter-section {
-  background: white;
-  border-radius: 12px;
-  padding: 16px 20px;
-  margin-bottom: 24px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-  border: 1px solid #e5e7eb;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 16px;
+.filter-dropdown {
+    appearance: none;
+    -webkit-appearance: none;
+    padding: 8px 36px 8px 14px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    background-color: #fff;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    color: #374151;
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-.filter-buttons {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
+.filter-dropdown:hover {
+    border-color: #a5b4fc;
 }
 
-.filter-btn {
-  padding: 8px 16px;
-  background: #f3f4f6;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  color: #4b5563;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.filter-btn:hover {
-  background: #e5e7eb;
-  border-color: #d1d5db;
-}
-
-.filter-btn.active {
-  background: #3b82f6;
-  border-color: #3b82f6;
-  color: white;
-}
-
-.date-range-display {
-  color: #6b7280;
-  font-size: 14px;
-  font-weight: 500;
-}
-
-@media (max-width: 640px) {
-  .filter-section {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  
-  .filter-buttons {
-    width: 100%;
-    justify-content: space-between;
-  }
-  
-  .filter-btn {
-    flex: 1;
-    text-align: center;
-    padding: 8px 12px;
-    font-size: 13px;
-  }
+.filter-dropdown:focus {
+    border-color: red;
+    box-shadow: 0 0 0 3px rgba(241, 139, 99, 0.1);
 }
 
 /* Responsive Design */

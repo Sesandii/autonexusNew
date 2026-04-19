@@ -1,46 +1,25 @@
-// Select elements
-const saveBtn = document.querySelector(".save-button");
-const cancelBtn = document.querySelector(".cancel-button");
+// Branch change warning
+const branchSelect    = document.querySelector('select[name="branch_id"]');
+const originalBranch  = document.getElementById('original-branch')?.value;
+const branchWarning   = document.getElementById('branch-warning');
 
-// Cancel button
-cancelBtn.addEventListener("click", () => {
-    window.location.href = `${BASE_URL}/receptionist/appointments`;
-});
+if (branchSelect && branchWarning) {
+    branchSelect.addEventListener('change', () => {
+        branchWarning.style.display =
+            branchSelect.value !== originalBranch ? 'block' : 'none';
+    });
+}
 
-// Save button
-saveBtn.addEventListener("click", () => {
+// Form submit via fetch
+const form = document.getElementById('updateForm');
 
-    // Get values
-    const customer = document.getElementById("customer").value.trim();
-    const phone = document.getElementById("phone").value.trim();
-    const vehicleNumber = document.getElementById("vehicle-number").value.trim();
-    const vehicle = document.getElementById("vehicle").value.trim();
-    const service = document.getElementById("service").value;
-    const branch = document.getElementById("branch").value;
-    const date = document.getElementById("Date").value;
-    const time = document.getElementById("Time").value;
-    const status = document.getElementById("status").value;
-    const notes = document.getElementById("notes").value;
-    const assignedTo = document.getElementById("assigned_to").value;
+form.addEventListener('submit', (e) => {
+    e.preventDefault();
 
-    // Validation
-    if (!customer || !phone || !vehicleNumber || !vehicle || !service || !branch || !date || !time || !status) {
-        alert("Please fill in all required details.");
-        return;
-    }
-
-    const data = new FormData();
-    data.append("appointment_id", saveBtn.dataset.id);
-    data.append("service_id", service);
-    data.append("branch_id", branch);
-    data.append("appointment_date", date);
-    data.append("appointment_time", time);
-    data.append("status", status);
-    data.append("notes", notes);
-    data.append("assigned_to", assignedTo);
+    const data = new FormData(form); // ✅ grabs ALL named inputs automatically
 
     fetch(`${BASE_URL}/receptionist/appointments/update`, {
-        method: "POST",
+        method: 'POST',
         body: data
     })
     .then(res => res.json())
@@ -48,12 +27,12 @@ saveBtn.addEventListener("click", () => {
         alert(res.message);
 
         if (res.success) {
-            // Redirect back to day view with selected date
+            const date = form.querySelector('[name="appointment_date"]').value;
             window.location.href = `${BASE_URL}/receptionist/appointments/day?date=${date}`;
         }
     })
     .catch(err => {
-        console.error("Update error:", err);
-        alert("Something went wrong while updating.");
+        console.error('Update error:', err);
+        alert('Something went wrong while updating.');
     });
 });

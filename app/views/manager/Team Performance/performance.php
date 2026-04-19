@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+'<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -70,9 +70,14 @@
             <?php if (!empty($mechanics)): ?>
                 <?php foreach ($mechanics as $m): ?>
  <tr class="clickable-row" data-url="<?= BASE_URL ?>/manager/performance/viewMechanic?id=<?= (int)$m['mechanic_id'] ?>">
-    <td><?= htmlspecialchars($m['first_name'] . ' ' . $m['last_name'] ?? '-') ?></td>
-    <td><?= htmlspecialchars($m['specialization'] ?? '-') ?></td>
-    <td><?= htmlspecialchars($m['completed_jobs'] ?? 0) ?></td>
+    <td>
+        <?= htmlspecialchars($m['first_name'] . ' ' . $m['last_name']) ?>
+        <small>(<?= ucfirst($m['member_type']) ?>)</small>
+    </td>
+
+    <td><?= htmlspecialchars($m['role_detail'] ?? '-') ?></td>
+
+    <td><?= (int)$m['completed_jobs'] ?></td>
 </tr>
 
                 <?php endforeach; ?>
@@ -98,3 +103,4 @@
 
 </body>
 </html>
+'

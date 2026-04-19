@@ -69,20 +69,17 @@ class BillingController extends Controller
         $order = $this->billing->getWorkOrderForInvoice($id);
 
         if (!$order) {
-            $this->view('Receptionist/error', [
+            $this->view('Receptionist/Billing/invoicePreview', [
                 'message' => 'Work order not found or already invoiced.',
             ]);
             return;
         }
+$existing = $this->billing->getInvoiceByWorkOrderId($id);
 
-        // ✅ Check if invoice already exists and warn instead of silently breaking
-        $existing = $this->billing->getInvoiceByWorkOrderId($id);
-        if ($existing) {
-            $this->view('Receptionist/error', [
-                'message' => 'An invoice already exists for this work order.',
-            ]);
-            return;
-        }
+if ($existing) {
+    header('Location: ' . BASE_URL . '/receptionist/billing?error=Invoice already exists');
+    exit;
+}
 
         $this->view('Receptionist/Billing/invoicePreview', [
             'order' => $order,
@@ -90,26 +87,32 @@ class BillingController extends Controller
     }
 
     // ✅ FIX: $id now comes from the router path param (not $_GET fallback)
-    public function store(int $id): void
-    {
-        try {
-            $this->billing->createInvoice($id);
-
-            header('Location: ' . BASE_URL . '/receptionist/billing/printInvoice/' . $id);
-            exit;
-
-        } catch (\Exception $e) {
-            // ✅ FIX: No raw exception leak — show friendly error view
-            $this->view('Receptionist/error', [
-                'message' => 'Could not create invoice: ' . htmlspecialchars($e->getMessage()),
-            ]);
-        }
+   public function store(int $id): void
+{
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        header('Location: ' . BASE_URL . '/receptionist/billing/create');
+        exit;
     }
 
-    // ✅ FIX: $id now comes from the router path param (not $_GET)
+    try {
+        $this->billing->createInvoice($id);
+
+        // ALWAYS redirect using work_order_id
+        header('Location: ' . BASE_URL . '/receptionist/billing/printInvoice/' . $id);
+        exit;
+
+    } catch (\Throwable $e) {
+        echo "ERROR: " . $e->getMessage();
+        exit;
+    }
+}
+
+
+
+   // ✅ FIX: $id now comes from the router path param (not $_GET)
     public function downloadInvoicePdf(int $id): void
     {
-        $order = $this->billing->getWorkOrderForInvoice($id);
+        $order = $this->billing->getInvoiceForPrint($id);
 
         if (!$order) {
             http_response_code(404);
@@ -135,17 +138,18 @@ class BillingController extends Controller
     }
 
     public function printInvoice(int $id): void
-    {
-        $order = $this->billing->getWorkOrderForInvoice($id);
+{
+    $order = $this->billing->getInvoiceForPrint($id);
 
-        if (!$order) {
-            http_response_code(404);
-            $this->view('Receptionist/error', ['message' => 'Invoice not found.']);
-            return;
-        }
-
-        $this->view('Receptionist/Billing/invoicePrint', ['order' => $order]);
+    if (!$order) {
+        echo "Invoice not found.";
+        return;
     }
+
+    $this->view('Receptionist/Billing/invoicePrint', [
+        'order' => $order
+    ]);
+}
 
     public function paidInvoices(): void
     {

@@ -125,10 +125,10 @@ $activePage = 'dashboard';
         <i class="fas fa-calendar-plus ql-icon"></i>
         <span class="ql-text">Add New Appointment</span>
     </a>
-    <a href="<?= BASE_URL ?>/receptionist/invoices/new" class="q-link">
-        <i class="fas fa-file-invoice stat-icon ql-icon"></i>
-        <span class="ql-text">Create Invoice</span>
-    </a>
+   <a href="<?= BASE_URL ?>/receptionist/billing/create" class="q-link">
+    <i class="fas fa-file-invoice stat-icon ql-icon"></i>
+    <span class="ql-text">Create Invoice</span>
+</a>
     <a href="<?= BASE_URL ?>/receptionist/complaints/new" class="q-link">
         <i class="fas fa-clipboard-list ql-icon"></i>
         <span class="ql-text">New Complaint</span>

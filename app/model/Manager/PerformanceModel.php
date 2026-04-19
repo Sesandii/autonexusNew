@@ -194,6 +194,53 @@ class PerformanceModel
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+  public function getTeamPerformanceAll(int $branchId): array
+{
+    $sql = "
+        SELECT 
+            'mechanic' AS member_type,
+            m.mechanic_id AS member_id,
+            u.first_name,
+            u.last_name,
+            m.specialization AS role_detail,
+            COUNT(w.work_order_id) AS completed_jobs
+        FROM mechanics m
+        INNER JOIN users u ON m.user_id = u.user_id
+        LEFT JOIN work_orders w 
+            ON w.mechanic_id = m.mechanic_id
+            AND w.status = 'completed'
+        WHERE m.branch_id = :branch1
+        GROUP BY m.mechanic_id
+
+        UNION ALL
+
+        SELECT 
+            'supervisor' AS member_type,
+            s.supervisor_id AS member_id,
+            u.first_name,
+            u.last_name,
+            'Supervisor' AS role_detail,
+            COUNT(w.work_order_id) AS completed_jobs
+        FROM supervisors s
+        INNER JOIN users u ON s.user_id = u.user_id
+        LEFT JOIN work_orders w 
+            ON w.supervisor_id = s.supervisor_id
+            AND w.status = 'completed'
+        WHERE s.branch_id = :branch2
+        GROUP BY s.supervisor_id
+
+        ORDER BY completed_jobs DESC
+    ";
+
+    $stmt = $this->db->prepare($sql);
+
+    $stmt->bindValue(':branch1', $branchId, PDO::PARAM_INT);
+    $stmt->bindValue(':branch2', $branchId, PDO::PARAM_INT);
+
+    $stmt->execute();
+
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
     public function getMechanicsWithCompletedJobs(int $branchId): array
 {
     $sql = "
@@ -204,15 +251,19 @@ class PerformanceModel
             m.specialization,
             m.experience_years,
             m.status,
-            COUNT(w.work_order_id) AS completed_jobs
+            COALESCE(job_stats.completed_jobs, 0) AS completed_jobs
         FROM mechanics m
-        JOIN users u ON m.user_id = u.user_id
-        LEFT JOIN work_orders w 
-            ON w.mechanic_id = m.mechanic_id 
-            AND w.status = 'completed'
+        INNER JOIN users u ON m.user_id = u.user_id
+        LEFT JOIN (
+            SELECT 
+                mechanic_id,
+                COUNT(work_order_id) AS completed_jobs
+            FROM work_orders
+            WHERE status = 'completed'
+            GROUP BY mechanic_id
+        ) job_stats ON job_stats.mechanic_id = m.mechanic_id
         WHERE m.branch_id = :branchId
-        GROUP BY m.mechanic_id
-        ORDER BY completed_jobs DESC
+        ORDER BY completed_jobs DESC, m.status DESC
     ";
 
     $stmt = $this->db->prepare($sql);

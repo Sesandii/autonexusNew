@@ -47,42 +47,79 @@
   background: #c62828;
 }
 
+/* Profile card layout improvement */
 .profile-card {
   display: flex;
   justify-content: space-between;
+  align-items: center;           /* Vertically centers ALL content */
   background: #fff;
-  padding: 16px;
-  border-radius: 10px;
-  margin-bottom: 20px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  padding: 20px 25px;
+  border-radius: 12px;
   margin-bottom: 24px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
 }
 
-
+/* Avatar + Name Section */
 .avatar-name {
   display: flex;
-  gap: 16px;
+  align-items: center;           /* vertically align avatar + text */
+  gap: 18px;
 }
 
 .avatar {
-  width: 60px;
-  height: 60px;
-  background: #ccc;
+  width: 65px;
+  height: 65px;
   border-radius: 50%;
-  align-content: left;
+  object-fit: cover;
+  border: 2px solid #ddd;
 }
 
+/* Name block */
+.name-block h3 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.id-line {
+  margin-top: 4px;
+  font-size: 14px;
+  color: #555;
+}
+
+/* Right side status + since date */
 .profile-meta {
-  text-align: right;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;       /* vertical centering */
+  gap: 6px;
 }
 
-.badge.active {
-  background-color: #34d399;
-  color: white;
-  padding: 2px 8px;
-  border-radius: 12px;
-  font-size: 12px;
+.profile-meta .since {
+  font-size: 14px;
+  color: #444;
 }
+
+/* Status badge keeps your existing colors */
+.badge {
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 500;
+  color: white;
+}
+
+/* Active = Green */
+.badge.active {
+  background-color: #22c55e;   /* green */
+}
+
+/* Inactive = Red */
+.badge.inactive {
+  background-color: #ef4444;   /* red */
+}
+
 
 .tab-nav {
   background-color: #f1f5f9;
@@ -172,37 +209,57 @@ tbody tr:hover {
 }
 
 /* Vehicle Section */
+/* ================================
+   Vehicle Section (Updated UI)
+   ================================ */
+ /* 2 vehicles per row */
+.vehicle-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* two cards per row */
+  gap: 25px; /* space between cards */
+}
+
+/* Make sure each card fits nicely */
+.vehicle-card {
+  width: 100%;
+}
+ 
 #vehicle h3 {
   margin-bottom: 16px;
-  font-size: 18px;
+  font-size: 20px;
+  font-weight: 600;
   color: #111827;
 }
 
+/* Vehicle container cards (same style as overview cards) */
 .vehicle-card {
-  background: #f9fafb;
-  padding: 16px 20px;
-  border-radius: 8px;
-  margin-bottom: 20px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  background: #f3f4f7;
+  padding: 25px;
+  border-radius: 18px;
+  margin-bottom: 25px;
+  font-family: 'Inter', sans-serif;
 }
 
+/* Title inside vehicle card */
 .vehicle-card p {
-  margin: 4px 0;
-  font-size: 15px;
-  color: #374151;
+  margin: 6px 0;
+  font-size: 16px;
+  color: #333;
+  font-weight: 500;
 }
 
+/* Vehicle detail list */
 .vehicle-details {
   list-style: none;
   padding: 0;
-  margin: 0;
+  margin-top: 15px;
 }
 
 .vehicle-details li {
   padding: 10px 0;
-  font-size: 14px;
+  font-size: 15px;
   color: #333;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid #d1d5db;
   line-height: 1.6;
 }
 
@@ -210,64 +267,137 @@ tbody tr:hover {
   border-bottom: none;
 }
 
-/* Service History Tiles */
-.appointment-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 20px;
-  margin-top: 20px;
+
+/* ================================
+   Customer Overview Redesign
+   ================================ */
+
+.overview-grid {
+  display: flex;
+  flex-direction: column; /* stack vertically */
+  gap: 25px;              /* space between cards */
+  margin-top: 10px;
 }
 
+
+.overview-card {
+  background: #f3f4f7;
+  padding: 25px;
+  border-radius: 18px;
+  font-family: 'Inter', sans-serif;
+}
+
+.overview-card h3 {
+  margin-bottom: 18px;
+  font-size: 22px;
+  font-weight: 600;
+  color: black;
+}
+
+.overview-card p {
+  font-size: 16px;
+  margin: 8px 0;
+  color: black;
+}
+
+.overview-card b {
+  font-weight: 400;
+}
+
+/* ================================
+   SERVICE HISTORY MODERN CARDS
+   ================================ */
+
+.appointment-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 25px;
+}
+
+/* Main appointment card */
 .appointment-card {
-  background: #fff;
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  background: #f3f4f7;
+  border-radius: 18px;
+  padding: 22px;
+  font-family: 'Inter', sans-serif;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+  transition: transform 0.2s ease;
 }
 
 .appointment-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  transform: translateY(-3px);
 }
 
+/* Header */
 .appointment-card h4 {
-  margin-top: 0;
-  margin-bottom: 10px;
-  font-size: 1.1rem;
+  font-size: 16px;
+  margin: 0 0 10px 0;
+  font-weight: 600;
+  color: #111827;
 }
 
-.appointment-card p {
-  margin: 4px 0;
-  font-size: 0.95rem;
-}
-
-.appointment-card ul {
-  padding-left: 20px;
-  margin: 5px 0 10px 0;
-}
-
-.appointment-card ul li {
-  margin-bottom: 6px;
-  font-size: 0.9rem;
-}
-
+/* Status badge improvement */
 .badge-status {
   display: inline-block;
   padding: 4px 10px;
-  border-radius: 8px;
-  font-size: 0.8rem;
-  font-weight: 600;
-  text-transform: capitalize;
-  margin-bottom: 8px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 10px;
+  color: #fff;
 }
 
-.badge-status.requested { background-color: #f0f4ff; color: #3a6ef0; }
-.badge-status.completed { background-color: #e6f9f0; color: #27ae60; }
-.badge-status.cancelled { background-color: #ffe6e6; color: #e74c3c; }
+.badge-status.completed {
+  background: #22c55e;
+}
 
-h5 {
-  margin: 8px 0 4px 0;
-  font-size: 0.95rem;
-  color: #555;
+.badge-status.pending {
+  background: #f59e0b;
+}
+
+.badge-status.cancelled {
+  background: #ef4444;
+}
+
+.badge-status.inprogress {
+  background: #3b82f6;
+}
+
+/* Divider */
+.appointment-card hr {
+  border: none;
+  border-top: 1px solid #d1d5db;
+  margin: 12px 0;
+}
+
+/* Section titles */
+.appointment-card h5 {
+  font-size: 14px;
+  margin: 10px 0;
+  color: #111;
+  font-weight: 600;
+}
+
+/* Work orders & complaints list */
+.nested-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.nested-list li {
+  background: #ffffff;
+  padding: 12px 14px;
+  border-radius: 12px;
+  margin-bottom: 10px;
+  font-size: 14px;
+  color: #333;
+  border: 1px solid #e5e7eb;
+  line-height: 1.5;
+}
+
+/* subtle highlight for important labels */
+.nested-list li b {
+  color: #111;
+  font-weight: 600;
 }

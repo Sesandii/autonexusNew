@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -33,13 +34,18 @@
 
 <section id="invoice" class="tab-content active">
  <div class="invoice-list">
-  <div class="search-filter">
-    <input type="text" placeholder="Search by invoice ID, vehicle number..." class="search-bar">
-        <select>
-          <option>Paid</option>
-          <option>Unpaid</option>
-          <option>Partially Paid</option>
-        </select>
+ <form method="GET" action="<?= BASE_URL ?>/manager/billing">
+    <select name="status" onchange="this.form.submit()">
+
+       <option value="" <?= empty($status) ? 'selected' : '' ?>>All</option>
+
+<option value="paid" <?= ($status ?? '') === 'paid' ? 'selected' : '' ?>>Paid</option>
+
+<option value="unpaid" <?= ($status ?? '') === 'unpaid' ? 'selected' : '' ?>>Unpaid</option>
+
+<option value="cancelled" <?= ($status ?? '') === 'cancelled' ? 'selected' : '' ?>>Cancelled</option>
+    </select>
+</form>
       </div>
      <table>
     <thead>
@@ -49,34 +55,109 @@
             <th>Vehicle</th>
             <th>Date</th>
             <th>Amount</th>
+            <th>Status</th>
             <th>Actions</th>
         </tr>
     </thead>
+
     <tbody>
-        <?php if(!empty($invoices)): ?>
-            <?php foreach($invoices as $inv): ?>
-                <tr>
-                    <td><?= htmlspecialchars($inv['invoice_no']) ?></td>
-                    <td><?= htmlspecialchars($inv['first_name'].' '.$inv['last_name']) ?></td>
-                    <td><?= htmlspecialchars($inv['vehicle_no'].' ('.$inv['make'].' '.$inv['model'].')') ?></td>
-                    <td><?= htmlspecialchars($inv['issued_at']) ?></td>
-                    <td>Rs. <?= number_format($inv['grand_total'], 2) ?></td>
-<td>
-   <a href="<?= BASE_URL ?>/receptionist/billing/downloadInvoice/<?= $inv['work_order_id'] ?>"
+    <?php if (!empty($invoices)): ?>
+        <?php foreach ($invoices as $inv): ?>
+            <tr>
+
+                <td><?= htmlspecialchars($inv['invoice_no']) ?></td>
+
+                <td><?= htmlspecialchars($inv['first_name'].' '.$inv['last_name']) ?></td>
+
+                <td>
+                    <?= htmlspecialchars($inv['vehicle_no'].' ('.$inv['make'].' '.$inv['model'].')') ?>
+                </td>
+
+                <td><?= htmlspecialchars($inv['issued_at']) ?></td>
+
+                <td>Rs. <?= number_format($inv['grand_total'], 2) ?></td>
+
+                <td>
+                    <?php if ($inv['status'] === 'paid'): ?>
+                        <span class="badge badge-success">Paid</span>
+                    <?php elseif ($inv['status'] === 'unpaid'): ?>
+                        <span class="badge badge-warning">Unpaid</span>
+                    <?php else: ?>
+                        <span class="badge badge-danger">Cancelled</span>
+                    <?php endif; ?>
+                </td>
+
+                <td>
+                  <!-- PRINT -->
+<a href="<?= BASE_URL ?>/manager/billing/printInvoice/<?= $inv['work_order_id'] ?>"
    target="_blank"
    title="Print Invoice">
     <i class="fas fa-print"></i>
-</a> </td>
+                    </a>
+                </td>
 
-         </tr>
+            </tr>
+        <?php endforeach; ?>
+    <?php else: ?>
+        <tr>
+            <td colspan="7" style="text-align:center;">No invoices found</td>
+        </tr>
+    <?php endif; ?>
+    </tbody>
+</table>
+
+</section>
+
+<!-- ================= TRANSACTIONS ================= -->
+<section id="T_history" class="tab-content">
+
+<div class="T_history">
+
+    <div class="search-filter">
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Transaction ID</th>
+                <th>Customer</th>
+                <th>Vehicle</th>
+                <th>Date</th>
+                <th>Amount</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+
+        <tbody>
+        <?php if (!empty($paidInvoices)): ?>
+            <?php foreach ($paidInvoices as $txn): ?>
+                <tr>
+
+                    <td><?= htmlspecialchars($txn['invoice_no']) ?></td>
+
+                    <td><?= htmlspecialchars($txn['first_name'].' '.$txn['last_name']) ?></td>
+
+                    <td>
+                        <?= htmlspecialchars($txn['vehicle_no'].' ('.$txn['make'].' '.$txn['model'].')') ?>
+                    </td>
+
+                    <td><?= date('Y-m-d', strtotime($txn['issued_at'])) ?></td>
+
+                    <td>Rs. <?= number_format($txn['grand_total'], 2) ?></td>
+
+                    <td><span class="badge badge-success">Paid</span></td>
+
+                </tr>
             <?php endforeach; ?>
         <?php else: ?>
             <tr>
-                <td colspan="6" style="text-align:center;">No invoices found</td>
+                <td colspan="6" style="text-align:center;">No paid transactions found</td>
             </tr>
         <?php endif; ?>
-    </tbody>
-</table>
+        </tbody>
+
+    </table>
+
 
 </div>
 </section>

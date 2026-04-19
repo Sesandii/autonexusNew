@@ -2,57 +2,44 @@
 namespace app\controllers\Manager;
 
 use app\core\Controller;
-use app\model\Receptionist\BillingModel;
-use FPDF\FPDF;
+use app\model\manager\BillingModel;
 
-class BillingController extends BaseManagerController
+class BillingController extends BaseManagerController  // Remove BaseManagerController if not exists
 {
-
-    private BillingModel $billing;
+    private BillingModel $billing;  // This is $billing, not $billingModel
 
     public function __construct(array $config = [])
     {
         parent::__construct($config);
-        $this->billing = new BillingModel();
+        
+        $this->billing = new BillingModel();  // This is $billing
     }
 
     public function invoices(): void
 {
-    $invoices = $this->billing->getInvoices();
-    $paidInvoices = $this->billing->getPaidInvoices();
+    $status = $_GET['status'] ?? null;
 
-    $this->view('Manager/Billing/billing', [
-        'invoices'     => $invoices,
-        'paidInvoices' => $paidInvoices
-    ]);
+    $data['status'] = $status; // pass to view
+    $data['invoices'] = $this->billing->getInvoices($status);
+    $data['paidInvoices'] = $this->billing->getPaidInvoices();
+
+    $this->view('manager/Billing/billing', $data);
 }
 
-public function downloadInvoice(int $id): void
+    public function printInvoice(int $id): void
 {
-    $order = $this->billing->getWorkOrderForInvoice($id);
+    $invoice = $this->billing->getWorkOrderForInvoice($id);
 
-    if (!$order) {
-        http_response_code(404);
-        exit('Invalid invoice');
+    if (!$invoice) {
+        echo "Invoice not found";
+        return;
     }
 
-    $this->view('Manager/Billing/invoicePrint', [
-        'order' => $order
+    $invoice['invoice_no'] = $invoice['invoice_no'] ?? 'N/A';
+
+    $this->view('Receptionist/Billing/invoicePrint', [
+        'order' => $invoice
     ]);
 }
-/**
- * Show only PAID invoices
- */
-public function paidInvoices(): void
-{
-    $invoices = $this->billing->getPaidInvoices();
-
-    $this->view('Manager/Billing/paidInvoices', [
-        'invoices' => $invoices
-    ]);
 }
 
-
-
-}
-?>

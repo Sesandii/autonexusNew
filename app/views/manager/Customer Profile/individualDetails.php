@@ -4,23 +4,19 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Customer Profile</title>
+  
   <link rel="stylesheet" href="<?= BASE_URL ?>/public/assets/css/manager/sidebar.css">
   <link rel="stylesheet" href="<?= BASE_URL ?>/public/assets/css/manager/individualDetails.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
+
 <body>
 
-<?php include APP_ROOT . '/views/layouts/manager-sidebar.php'; ?>  
+<?php include APP_ROOT . '/views/layouts/manager-sidebar.php'; ?>
 
 <div class="main">
   <div class="header">
     <h2>Customer Profile</h2>
-    <div class="top-actions">
-     <!-- <button class="update-btn" onclick="window.location.href='<?= BASE_URL ?>/receptionist/customers/edit/<?= $customer['customer_id'] ?>'">
-      Update
-      </button>-->
-
-    </div>
   </div>
 
   <!-- Profile Card -->
@@ -139,7 +135,7 @@
 </div>
 
 
-<!-- Service History Tab -->
+ <!-- Service History Tab -->
   <div id="history" class="tab-content">
   <h3>Service History</h3>
 
@@ -230,5 +226,7 @@
 
 </div>
 
+<script src="<?= BASE_URL ?>/public/assets/js/manager/individualDetails.js"></script>
 </body>
 </html>
+
