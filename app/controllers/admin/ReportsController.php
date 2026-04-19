@@ -29,152 +29,62 @@ class ReportsController extends Controller
         ];
 
         $branches = $this->reports->branches();
-        $serviceTypes = $this->reports->serviceTypes();
-
         $topServices = $this->reports->topServices($filters);
-        $serviceTrend = $this->reports->serviceTrend($filters);
-        $serviceTypeDist = $this->reports->serviceTypeDistribution($filters);
-        $avgCompletionMins = $this->reports->avgCompletionMinutes($filters);
         $weekdayDemand = $this->reports->serviceDemandByWeekday($filters);
-        $seasonalDemand = $this->reports->seasonalDemand($filters);
-        $avgWaitingMins = $this->reports->averageWaitingTimeBeforeStart($filters);
-        $turnaroundByBranch = $this->reports->turnaroundTimeByBranch($filters);
-        $repeatCustomerFrequency = $this->reports->repeatCustomerFrequency($filters);
         $mostRebookedServices = $this->reports->mostRebookedServices($filters);
 
-        $revenueTrend = $this->reports->revenueTrend($filters);
-        $costTrend = $this->reports->costTrend($filters);
-        $profitTrend = $this->reports->profitTrend($filters);
         $revenueByBranch = $this->reports->revenueByBranch($filters);
-        $revenueByServiceType = $this->reports->revenueByServiceType($filters);
-        $avgInvoice = $this->reports->avgInvoiceValue($filters);
-        $unpaidInvoiceAging = $this->reports->unpaidInvoiceAging($filters);
         $paymentMethodBreakdown = $this->reports->paymentMethodBreakdown($filters);
         $paymentStatusBreakdown = $this->reports->paymentStatusBreakdown($filters);
-        $avgRevenuePerAppointment = $this->reports->avgRevenuePerAppointment($filters);
-        $avgRevenuePerCustomer = $this->reports->avgRevenuePerCustomer($filters);
-        $branchPaymentCollectionPerformance = $this->reports->branchPaymentCollectionPerformance($filters);
 
         $apptStatus = $this->reports->appointmentStatusCounts($filters);
         $apptByHour = $this->reports->appointmentsByHour($filters);
-        $apptTrend = $this->reports->appointmentsTrend($filters);
-        $cancellationTrend = $this->reports->cancellationTrend($filters);
 
         $branchCompleted = $this->reports->branchCompletedServices($filters);
-        $branchRating = $this->reports->branchAvgRating($filters);
-        $branchCapacityUtilization = $this->reports->branchCapacityUtilization($filters);
-        $branchStaffingVsWorkload = $this->reports->branchStaffingVsWorkload($filters);
         $branchServiceCoverageMatrix = $this->reports->branchServiceCoverageMatrix($filters);
-        $branchComplaintRate = $this->reports->branchComplaintRate($filters);
-        $branchApprovalRejectionRate = $this->reports->branchApprovalRejectionRate($filters);
-        $branchQualityScore = $this->reports->branchQualityScore($filters);
-        $underperformingBranches = $this->reports->underperformingBranches($filters);
 
         $jobsPerMechanic = $this->reports->jobsPerMechanic($filters);
         $submittedByManagers = $this->reports->servicesSubmittedByManagers($filters);
-        $managerApprovalDecisions = $this->reports->managerApprovalDecisions($filters);
-        $mechanicQualityOutcomes = $this->reports->mechanicQualityOutcomes($filters);
-        $staffComplaintAssociation = $this->reports->staffComplaintAssociation($filters);
         $avgJobsPerDayPerMechanic = $this->reports->avgJobsPerDayPerMechanic($filters);
-        $delayedWorkOrdersByMechanic = $this->reports->delayedWorkOrdersByMechanic($filters);
 
         $ratingDist = $this->reports->ratingDistribution($filters);
-        $feedbackTrend = $this->reports->feedbackTrend($filters);
-        $lowestRated = $this->reports->lowestRatedServices($filters);
-        $branchRatingTrend = $this->reports->branchRatingTrend($filters);
-        $ratingByServiceType = $this->reports->ratingByServiceType($filters);
-        $feedbackResponseTurnaround = $this->reports->feedbackResponseTurnaround($filters);
-        $mostPraisedServices = $this->reports->mostPraisedServices($filters);
-        $repeatNegativeFeedbackCustomers = $this->reports->repeatNegativeFeedbackCustomers($filters);
 
         $approvalStatus = $this->reports->approvalStatusCounts($filters);
-        $avgApprovalHours = $this->reports->avgApprovalHours($filters);
 
-        $complaintTrend = $this->reports->complaintTrend($filters);
-        $complaintResolutionTrend = $this->reports->complaintResolutionTrend($filters);
-        $complaintClosureRateByBranch = $this->reports->complaintClosureRateByBranch($filters);
         $complaintPriorityAnalysis = $this->reports->complaintPriorityAnalysis($filters);
-        $mostComplainedServices = $this->reports->mostComplainedServices($filters);
-        $mostComplainedBranches = $this->reports->mostComplainedBranches($filters);
-        $mostComplainedStaff = $this->reports->mostComplainedStaff($filters);
-        $slaBreachTrend = $this->reports->slaBreachTrend($filters);
 
         $payload = [
             'service' => [
                 'topServices' => $topServices,
-                'trend' => $serviceTrend,
-                'typeDist' => $serviceTypeDist,
-                'avgCompletionMins' => $avgCompletionMins,
                 'weekdayDemand' => $weekdayDemand,
-                'seasonalDemand' => $seasonalDemand,
-                'avgWaitingMins' => $avgWaitingMins,
-                'turnaroundByBranch' => $turnaroundByBranch,
-                'repeatCustomerFrequency' => $repeatCustomerFrequency,
                 'mostRebookedServices' => $mostRebookedServices,
             ],
             'revenue' => [
-                'trend' => $revenueTrend,
-                'costTrend' => $costTrend,
-                'profitTrend' => $profitTrend,
                 'byBranch' => $revenueByBranch,
-                'byServiceType' => $revenueByServiceType,
-                'avgInvoice' => $avgInvoice,
-                'unpaidInvoiceAging' => $unpaidInvoiceAging,
                 'paymentMethodBreakdown' => $paymentMethodBreakdown,
                 'paymentStatusBreakdown' => $paymentStatusBreakdown,
-                'avgRevenuePerAppointment' => $avgRevenuePerAppointment,
-                'avgRevenuePerCustomer' => $avgRevenuePerCustomer,
-                'branchPaymentCollectionPerformance' => $branchPaymentCollectionPerformance,
             ],
             'appointments' => [
                 'status' => $apptStatus,
                 'byHour' => $apptByHour,
-                'trend' => $apptTrend,
-                'cancellationTrend' => $cancellationTrend,
             ],
             'branches' => [
                 'completed' => $branchCompleted,
-                'avgRating' => $branchRating,
-                'capacityUtilization' => $branchCapacityUtilization,
-                'staffingVsWorkload' => $branchStaffingVsWorkload,
                 'serviceCoverageMatrix' => $branchServiceCoverageMatrix,
-                'complaintRate' => $branchComplaintRate,
-                'approvalRejectionRate' => $branchApprovalRejectionRate,
-                'qualityScore' => $branchQualityScore,
-                'underperformingBranches' => $underperformingBranches,
             ],
             'staff' => [
                 'jobsPerMechanic' => $jobsPerMechanic,
                 'submittedByManagers' => $submittedByManagers,
-                'managerApprovalDecisions' => $managerApprovalDecisions,
-                'mechanicQualityOutcomes' => $mechanicQualityOutcomes,
-                'staffComplaintAssociation' => $staffComplaintAssociation,
                 'avgJobsPerDayPerMechanic' => $avgJobsPerDayPerMechanic,
-                'delayedWorkOrdersByMechanic' => $delayedWorkOrdersByMechanic,
             ],
             'feedback' => [
                 'ratingDist' => $ratingDist,
-                'trend' => $feedbackTrend,
-                'lowestRated' => $lowestRated,
-                'branchRatingTrend' => $branchRatingTrend,
-                'ratingByServiceType' => $ratingByServiceType,
-                'feedbackResponseTurnaround' => $feedbackResponseTurnaround,
-                'mostPraisedServices' => $mostPraisedServices,
-                'repeatNegativeFeedbackCustomers' => $repeatNegativeFeedbackCustomers,
             ],
             'approval' => [
                 'statusCounts' => $approvalStatus,
-                'avgApprovalHours' => $avgApprovalHours,
             ],
             'complaints' => [
-                'trend' => $complaintTrend,
-                'resolutionTrend' => $complaintResolutionTrend,
-                'closureRateByBranch' => $complaintClosureRateByBranch,
                 'priorityAnalysis' => $complaintPriorityAnalysis,
-                'mostComplainedServices' => $mostComplainedServices,
-                'mostComplainedBranches' => $mostComplainedBranches,
-                'mostComplainedStaff' => $mostComplainedStaff,
-                'slaBreachTrend' => $slaBreachTrend,
             ],
         ];
 
@@ -183,7 +93,6 @@ class ReportsController extends Controller
             'current' => 'reports',
             'filters' => $filters,
             'branches' => $branches,
-            'serviceTypes' => $serviceTypes,
             'reportDataJson' => json_encode($payload, JSON_UNESCAPED_UNICODE),
         ]);
     }
@@ -318,45 +227,21 @@ class ReportsController extends Controller
     {
         $reportKeys = [
             'topServices',
-            'serviceTrend',
-            'serviceTypeDistribution',
-            'avgCompletionMins',
             'weekdayDemand',
-            'seasonalDemand',
-            'turnaroundByBranch',
-            'repeatCustomerFrequency',
             'mostRebookedServices',
-            'revenueTrend',
-            'costTrend',
-            'profitTrend',
             'revenueByBranch',
-            'revenueByServiceType',
-            'unpaidInvoiceAging',
             'paymentMethodBreakdown',
             'paymentStatusBreakdown',
-            'branchPaymentCollection',
-            'apptStatus',
-            'apptByHour',
-            'apptTrend',
-            'cancellationTrend',
-            'branchCompleted',
-            'branchRating',
-            'branchCapacityUtilization',
-            'branchStaffingVsWorkload',
-            'branchServiceCoverage',
-            'branchComplaintRate',
-            'branchApprovalRejectionRate',
-            'branchQualityScore',
-            'underperformingBranches',
+            'appointmentStatusCounts',
+            'appointmentsByHour',
+            'branchCompletedServices',
+            'branchServiceCoverageMatrix',
             'jobsPerMechanic',
-            'submittedByManagers',
-            'managerApprovalDecisions',
-            'mechanicQualityOutcomes',
-            'staffComplaintAssociation',
+            'servicesSubmittedByManagers',
             'avgJobsPerDayPerMechanic',
-            'delayedWorkOrdersByMechanic',
-            'ratingDist',
-            'feedbackTrend'
+            'ratingDistribution',
+            'approvalStatusCounts',
+            'complaintPriorityAnalysis'
         ];
 
         header('Content-Type: text/csv; charset=utf-8');
@@ -392,45 +277,21 @@ class ReportsController extends Controller
 
         $reportKeys = [
             'topServices',
-            'serviceTrend',
-            'serviceTypeDistribution',
-            'avgCompletionMins',
             'weekdayDemand',
-            'seasonalDemand',
-            'turnaroundByBranch',
-            'repeatCustomerFrequency',
             'mostRebookedServices',
-            'revenueTrend',
-            'costTrend',
-            'profitTrend',
             'revenueByBranch',
-            'revenueByServiceType',
-            'unpaidInvoiceAging',
             'paymentMethodBreakdown',
             'paymentStatusBreakdown',
-            'branchPaymentCollection',
-            'apptStatus',
-            'apptByHour',
-            'apptTrend',
-            'cancellationTrend',
-            'branchCompleted',
-            'branchRating',
-            'branchCapacityUtilization',
-            'branchStaffingVsWorkload',
-            'branchServiceCoverage',
-            'branchComplaintRate',
-            'branchApprovalRejectionRate',
-            'branchQualityScore',
-            'underperformingBranches',
+            'appointmentStatusCounts',
+            'appointmentsByHour',
+            'branchCompletedServices',
+            'branchServiceCoverageMatrix',
             'jobsPerMechanic',
-            'submittedByManagers',
-            'managerApprovalDecisions',
-            'mechanicQualityOutcomes',
-            'staffComplaintAssociation',
+            'servicesSubmittedByManagers',
             'avgJobsPerDayPerMechanic',
-            'delayedWorkOrdersByMechanic',
-            'ratingDist',
-            'feedbackTrend'
+            'ratingDistribution',
+            'approvalStatusCounts',
+            'complaintPriorityAnalysis'
         ];
 
         $allReports = [];
@@ -445,68 +306,119 @@ class ReportsController extends Controller
 
         ob_start();
         ?>
-                <!DOCTYPE html>
-                <html>
-                <head>
-                    <meta charset="UTF-8">
-                    <style>
-                        body { font-family: Arial, sans-serif; font-size: 11px; margin: 20px; }
-                        h1 { color: #111827; border-bottom: 2px solid #111827; padding-bottom: 10px; page-break-after: avoid; }
-                        h2 { color: #374151; font-size: 14px; margin-top: 20px; margin-bottom: 10px; page-break-after: avoid; }
-                        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-                        th { background: #f3f4f6; color: #111827; padding: 8px; text-align: left; border: 1px solid #d1d5db; }
-                        td { padding: 6px; border: 1px solid #e5e7eb; }
-                        .header { text-align: center; margin-bottom: 30px; }
-                        .footer { text-align: center; font-size: 10px; color: #6b7280; margin-top: 20px; page-break-before: avoid; }
-                        .report-section { page-break-inside: avoid; margin-bottom: 30px; }
-                    </style>
-                </head>
-                <body>
-                    <div class="header">
-                        <h1><?= htmlspecialchars($pdfTitle) ?></h1>
-                        <p>Generated on <?= htmlspecialchars($generatedAt) ?></p>
+        <!DOCTYPE html>
+        <html>
+
+        <head>
+            <meta charset="UTF-8">
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    font-size: 11px;
+                    margin: 20px;
+                }
+
+                h1 {
+                    color: #111827;
+                    border-bottom: 2px solid #111827;
+                    padding-bottom: 10px;
+                    page-break-after: avoid;
+                }
+
+                h2 {
+                    color: #374151;
+                    font-size: 14px;
+                    margin-top: 20px;
+                    margin-bottom: 10px;
+                    page-break-after: avoid;
+                }
+
+                table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    margin-bottom: 20px;
+                }
+
+                th {
+                    background: #f3f4f6;
+                    color: #111827;
+                    padding: 8px;
+                    text-align: left;
+                    border: 1px solid #d1d5db;
+                }
+
+                td {
+                    padding: 6px;
+                    border: 1px solid #e5e7eb;
+                }
+
+                .header {
+                    text-align: center;
+                    margin-bottom: 30px;
+                }
+
+                .footer {
+                    text-align: center;
+                    font-size: 10px;
+                    color: #6b7280;
+                    margin-top: 20px;
+                    page-break-before: avoid;
+                }
+
+                .report-section {
+                    page-break-inside: avoid;
+                    margin-bottom: 30px;
+                }
+            </style>
+        </head>
+
+        <body>
+            <div class="header">
+                <h1><?= htmlspecialchars($pdfTitle) ?></h1>
+                <p>Generated on <?= htmlspecialchars($generatedAt) ?></p>
+            </div>
+
+            <?php foreach ($reportKeys as $key): ?>
+                <?php if (!empty($allReports[$key])): ?>
+                    <div class="report-section">
+                        <h2><?= htmlspecialchars(ucwords(str_replace(['By', 'Per'], ' ', $key))) ?></h2>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Label</th>
+                                    <th>Value</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($allReports[$key] as $row): ?>
+                                    <tr>
+                                        <td><?= htmlspecialchars($row['label'] ?? '') ?></td>
+                                        <td><?= htmlspecialchars($row['value'] ?? '') ?></td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
                     </div>
+                <?php endif; ?>
+            <?php endforeach; ?>
 
-                    <?php foreach ($reportKeys as $key): ?>
-                            <?php if (!empty($allReports[$key])): ?>
-                                <div class="report-section">
-                                    <h2><?= htmlspecialchars(ucwords(str_replace(['By', 'Per'], ' ', $key))) ?></h2>
-                                    <table>
-                                        <thead>
-                                            <tr>
-                                                <th>Label</th>
-                                                <th>Value</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <?php foreach ($allReports[$key] as $row): ?>
-                                                <tr>
-                                                    <td><?= htmlspecialchars($row['label'] ?? '') ?></td>
-                                                    <td><?= htmlspecialchars($row['value'] ?? '') ?></td>
-                                                </tr>
-                                            <?php endforeach; ?>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            <?php endif; ?>
-                    <?php endforeach; ?>
+            <div class="footer">
+                <p>This report was automatically generated by AutoNexus</p>
+            </div>
+        </body>
 
-                    <div class="footer">
-                        <p>This report was automatically generated by AutoNexus</p>
-                    </div>
-                </body>
-                </html>
-                <?php
-                $html = ob_get_clean();
+        </html>
+        <?php
+        $html = ob_get_clean();
 
-                $dompdf = new \Dompdf\Dompdf(['isRemoteEnabled' => true]);
-                $dompdf->loadHtml($html);
-                $dompdf->setPaper('A4', 'portrait');
-                $dompdf->render();
+        $dompdf = new \Dompdf\Dompdf(['isRemoteEnabled' => true]);
+        $dompdf->loadHtml($html);
+        $dompdf->setPaper('A4', 'portrait');
+        $dompdf->render();
 
-                $filename = "all_reports_" . date('Ymd_His') . ".pdf";
-                $dompdf->stream($filename, ['Attachment' => true]);
-                exit;
+        $filename = "all_reports_" . date('Ymd_His') . ".pdf";
+        $dompdf->stream($filename, ['Attachment' => true]);
+        exit;
     }
 
     // Ensure the current session belongs to an admin user.
