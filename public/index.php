@@ -407,6 +407,7 @@ $router->post('/customer/profile/update', [\app\controllers\customer\ProfileCont
 
 $router->get('/customer/profile/vehicle', [\app\controllers\customer\ProfileController::class, 'vehicleForm']); // add OR edit by ?id=
 $router->post('/customer/profile/vehicle', [\app\controllers\customer\ProfileController::class, 'saveVehicle']);
+$router->post('/customer/profile/vehicle/sell', [\app\controllers\customer\ProfileController::class, 'sellVehicle']);
 $router->post('/customer/profile/vehicle/delete', [\app\controllers\customer\ProfileController::class, 'deleteVehicle']);
 
 

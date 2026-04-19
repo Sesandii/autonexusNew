@@ -128,6 +128,12 @@ class ProfileController extends Controller
         $model = new Profile();
         $vehicle = $vehId ? $model->getVehicleByIdForUser($userId, $vehId) : null;
 
+        if ($vehId > 0 && $vehicle === null) {
+            $_SESSION['flash'] = 'Vehicle not found or access denied.';
+            header('Location: ' . rtrim(BASE_URL,'/') . '/customer/profile');
+            exit;
+        }
+
         $this->view('customer/profile/vehicle_form', [
             'title'   => $vehId ? 'Edit Vehicle' : 'Add Vehicle',
             'vehicle' => $vehicle,
@@ -210,7 +216,13 @@ class ProfileController extends Controller
 
         $ok = $model->saveVehicle($userId, $data);
 
-        $_SESSION['flash'] = $ok ? 'Vehicle saved.' : 'Failed to save vehicle.';
+        if ($ok) {
+            $_SESSION['flash'] = 'Vehicle saved.';
+        } elseif ($vehicleId !== null) {
+            $_SESSION['flash'] = 'Vehicle not found or access denied.';
+        } else {
+            $_SESSION['flash'] = 'Failed to save vehicle.';
+        }
         header('Location: ' . rtrim(BASE_URL,'/') . '/customer/profile');
         exit;
     }
@@ -220,17 +232,49 @@ class ProfileController extends Controller
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') { http_response_code(405); echo "Method Not Allowed"; return; }
     $this->requireCustomer();
 
+    $userId = $this->userId();
     $id = (int)($_POST['vehicle_id'] ?? 0);
 
     $model = new Profile();
-    $ok    = $model->deleteVehicleOwnedBy($this->userId(), $id);
+
+    $vehicle = $model->getVehicleByIdForUser($userId, $id);
+    if (!$vehicle) {
+        $_SESSION['flash'] = 'Vehicle not found or access denied.';
+        header('Location: ' . rtrim(BASE_URL,'/') . '/customer/profile');
+        exit;
+    }
+
+    $ok = $model->deleteVehicleOwnedBy($userId, $id);
 
     $_SESSION['flash'] = $ok
       ? 'Vehicle removed.'
-      : 'Cannot remove this vehicle because it has appointments. Please cancel them first.';
+            : 'Cannot remove this vehicle because it has appointment history. Use "Mark as Sold" to keep your records.';
 
     header('Location: ' . rtrim(BASE_URL,'/') . '/customer/profile');
     exit;
 }
+
+        public function sellVehicle(): void
+        {
+                if ($_SERVER['REQUEST_METHOD'] !== 'POST') { http_response_code(405); echo "Method Not Allowed"; return; }
+                $this->requireCustomer();
+
+                $userId = $this->userId();
+                $id = (int)($_POST['vehicle_id'] ?? 0);
+
+                $model = new Profile();
+                $result = $model->markVehicleSold($userId, $id);
+
+                $_SESSION['flash'] = match ($result) {
+                        'sold' => 'Vehicle marked as sold. Past service history is preserved.',
+                        'already_sold' => 'This vehicle is already marked as sold.',
+                        'has_active_appointments' => 'Cannot mark as sold while active appointments exist. Cancel or complete them first.',
+                        'not_found' => 'Vehicle not found or access denied.',
+                        default => 'Failed to mark vehicle as sold.',
+                };
+
+                header('Location: ' . rtrim(BASE_URL,'/') . '/customer/profile');
+                exit;
+        }
 
 }

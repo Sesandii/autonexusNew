@@ -97,7 +97,7 @@ class Profile
         $cid = $this->customerIdByUserId($userId);
         if (!$cid) return [];
 
-        $sql = "SELECT vehicle_id, license_plate, make, model, year, color
+        $sql = "SELECT vehicle_id, license_plate, make, model, year, color, status
                   FROM vehicles
                  WHERE customer_id = :cid
               ORDER BY license_plate";
@@ -110,7 +110,7 @@ class Profile
     {
         $cid = $this->customerIdByUserId($userId);
         if (!$cid) return null;
-        $sql = "SELECT vehicle_id, license_plate, make, model, year, color
+        $sql = "SELECT vehicle_id, license_plate, make, model, year, color, status
                   FROM vehicles
                  WHERE vehicle_id = :vid AND customer_id = :cid
                  LIMIT 1";
@@ -118,6 +118,19 @@ class Profile
         $st->execute(['vid' => $vehicleId, 'cid' => $cid]);
         $row = $st->fetch(PDO::FETCH_ASSOC);
         return $row ?: null;
+    }
+
+    private function vehicleExistsForCustomer(int $customerId, int $vehicleId): bool
+    {
+        $st = $this->pdo->prepare(
+            "SELECT 1
+               FROM vehicles
+              WHERE vehicle_id = :vid
+                AND customer_id = :cid
+              LIMIT 1"
+        );
+        $st->execute(['vid' => $vehicleId, 'cid' => $customerId]);
+        return (bool)$st->fetchColumn();
     }
 
     public function saveVehicle(int $userId, array $data): bool
@@ -128,6 +141,10 @@ class Profile
         $vehId = isset($data['vehicle_id']) && $data['vehicle_id'] !== '' ? (int)$data['vehicle_id'] : null;
 
         if ($vehId) {
+            if (!$this->vehicleExistsForCustomer($cid, $vehId)) {
+                return false;
+            }
+
             $sql = "UPDATE vehicles
                        SET license_plate = :plate,
                            make          = :make,
@@ -137,7 +154,7 @@ class Profile
                      WHERE vehicle_id    = :vid
                        AND customer_id   = :cid";
             $st = $this->pdo->prepare($sql);
-            return $st->execute([
+            $ok = $st->execute([
                 'plate' => $data['license_plate'] ?? '',
                 'make'  => $data['make'] ?? '',
                 'model' => $data['model'] ?? '',
@@ -146,6 +163,7 @@ class Profile
                 'vid'   => $vehId,
                 'cid'   => $cid,
             ]);
+            return $ok;
         } else {
             // INSERT must include vehicle_code
             $code = $this->nextVehicleCode();
@@ -190,11 +208,18 @@ class Profile
             return false;
         }
 
+        if (!$this->vehicleExistsForCustomer($cid, $vehicleId)) {
+            return false;
+        }
+
         // Block delete if any appointment references this vehicle
         $chk = $this->pdo->prepare(
-            "SELECT COUNT(*) FROM appointments WHERE vehicle_id = :vid"
+            "SELECT COUNT(*)
+               FROM appointments
+              WHERE vehicle_id = :vid
+                AND customer_id = :cid"
         );
-        $chk->execute(['vid' => $vehicleId]);
+        $chk->execute(['vid' => $vehicleId, 'cid' => $cid]);
 
         if ((int)$chk->fetchColumn() > 0) {
             return false; // caller will set a friendly flash message
@@ -206,6 +231,59 @@ class Profile
 
         $ok = $st->execute(['vid' => $vehicleId, 'cid' => $cid]);
         return $ok && $st->rowCount() > 0;
+    }
+
+    public function markVehicleSold(int $userId, int $vehicleId): string
+    {
+        $cid = $this->customerIdByUserId($userId);
+        if (!$cid || $vehicleId <= 0) {
+            return 'not_found';
+        }
+
+        $st = $this->pdo->prepare(
+            "SELECT status
+               FROM vehicles
+              WHERE vehicle_id = :vid
+                AND customer_id = :cid
+              LIMIT 1"
+        );
+        $st->execute(['vid' => $vehicleId, 'cid' => $cid]);
+        $status = $st->fetchColumn();
+
+        if ($status === false) {
+            return 'not_found';
+        }
+
+        if (strtolower((string)$status) === 'sold') {
+            return 'already_sold';
+        }
+
+        $activeCheck = $this->pdo->prepare(
+            "SELECT COUNT(*)
+               FROM appointments
+              WHERE vehicle_id = :vid
+                AND customer_id = :cid
+                AND status IN ('requested','pending','confirmed','ongoing','in_service')"
+        );
+        $activeCheck->execute(['vid' => $vehicleId, 'cid' => $cid]);
+
+        if ((int)$activeCheck->fetchColumn() > 0) {
+            return 'has_active_appointments';
+        }
+
+        $upd = $this->pdo->prepare(
+            "UPDATE vehicles
+                SET status = 'sold'
+              WHERE vehicle_id = :vid
+                AND customer_id = :cid"
+        );
+
+        $ok = $upd->execute(['vid' => $vehicleId, 'cid' => $cid]);
+        if (!$ok) {
+            return 'failed';
+        }
+
+        return $upd->rowCount() > 0 ? 'sold' : 'failed';
     }
 
 

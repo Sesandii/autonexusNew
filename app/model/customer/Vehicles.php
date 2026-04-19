@@ -32,6 +32,7 @@ class Vehicles
         $sql = "SELECT v.vehicle_id, v.license_plate, v.make, v.model, v.year
                 FROM vehicles v
                 WHERE v.customer_id = :cid
+                  AND COALESCE(v.status, 'available') <> 'sold'
                 ORDER BY v.license_plate";
         $st = $this->pdo->prepare($sql);
         $st->execute(['cid' => $cid]);
