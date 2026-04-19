@@ -1,297 +1,206 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: 'Inter', sans-serif;
-}
-
-body {
-  display: flex;
-  background: #f6f7fa;
-  color: #333;
-}
-
-.sidebar .logo img {
-  width: 80%;      
-  max-width: 200px; 
-  height: auto;    
-  display: block;
-  margin: 0 auto;  
-}
-
-.sidebar {
-  position: fixed;
-  top: 0;        /* stick to very top */
-  left: 0;
-  width: 280px;
-  background: #000;
-  color: #fff;
-  padding: 0px;
-  min-height: 100vh;
-}
-
-.sidebar .logo {
-  text-align: center;
-  margin-bottom: 30px;
-}
-
-.sidebar .logo h2 {
-  color: #ffffff;
-  margin: 5px 0 0;
-}
-
-.sidebar .logo p {
-  font-size: 12px;
-  letter-spacing: 1px;
-}
-
-.sidebar .menu {
-  list-style: none;
-  margin-top: 20px;
-}
-
-.sidebar .menu li {
-  padding: 20px 40px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  color: #ccc;
-  border-radius: 0px;
-}
-
-.sidebar .menu li.active,
-.sidebar .menu li:hover {
-  background: #2a2d34;
-}
-
-.sidebar .menu li a {
-  color: inherit;        /* matches li text color */
-  text-decoration: none; /* removes underline */
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  width: 100%;
-}
-
-
 .main {
-  flex: 1;
-  padding: 30px;
-  display: flex;
-  flex-direction: column;
-  overflow-y: auto; 
-  margin-left: 280px;
+    flex: 1;
+    height: 100vh;
+    overflow-y: auto;
+    padding: 10px 30px 20px; /* reduced top gap */
+    display: block; /* remove flex centering */
 }
 
-.header {
-  display: flex;
-}
-
-
-/*.modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.modal-header h2 {
-  font-size: 18px;
-  margin: 0;
-}
-
-.close-button {
-  font-size: 20px;
-  cursor: pointer;
-}
-
-.modal-body {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-
-.form-group {
-  display: flex;
-  gap: 25px;
-  align-items: center;   /* vertically centers items */
-/*  margin-bottom: 15px;
-}
-
-
-.form-group label {
-  width: 150px;          /* fixed width for label */
-/*  margin-right: 0px;
-  font-weight: 600;
-}
-
-input[type="text"],
-input[type="number"] {
-  flex: 1;
-  padding: 10px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  background-color: #f5f5f5;
-  font-size: 14px;
-}
-
-.service-items-container {
-  flex-direction: row;
-}
-
-.service-items {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.add-item {
-  background: none;
-  border: none;
-  color: #d32f2f;
-  font-weight: bold;
-  font-size: 14px;
-  cursor: pointer;
-  margin-top: 10px;
-  align-self: flex-start;
-}
-
-.modal-footer {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 20px;
-  gap: 10px;
-}
-
-.cancel-button {
-  background: none;
-  border: none;
-  font-size: 14px;
-  cursor: pointer;
-}
-
-.save-button {
-  background-color: #d32f2f;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 6px;
-  font-size: 14px;
-  cursor: pointer;
-}
-*/
-/* Modal box styling */
+/* ================= CONTAINER ================= */
 .modal {
-  background-color: #fff;
-  padding: 24px;
-  border-radius: 10px;
-  width:95%;
-  height: 90%;
-  max-width: 800px;
-  margin: 40px auto;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  transition: height 0.3s ease;
+    width: 100%;
+    margin: 0;
 }
 
-/* Header and footer */
-.modal-header,
-.modal-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+/* ================= HEADER ================= */
+.modal-header {
+    padding: 20px 35px 10px 35px;
+    margin-bottom: 5px; /* tight gap */
 }
 
 .modal-header h2 {
-  margin: 0;
+    margin: 0;
 }
 
-.modal-body {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
+/* ================= DETAILS SECTION ================= */
+.details-section {
+    width: 100%;
+    max-width: 1400px; /* adjust if you want wider */
+    margin: 0 auto; /* centered but wide */
+    
+    background: #ffffff;
+    padding: 30px 35px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    border: 1px solid #f1f5f9;
+
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px 25px;
 }
 
-/* Form group */
+/* ================= FORM GROUP ================= */
 .form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
 }
 
-/* Inline price fields */
-.form-group input[type="number"] {
-  max-width: 100%;
+.form-group.full-width {
+    grid-column: span 2;
 }
 
+/* ================= LABEL ================= */
 .form-group label {
-  font-weight: bold;
-  margin-bottom: 4px;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: #374151;
 }
 
-.form-group input {
-  padding: 10px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  font-size: 16px;
+/* ================= INPUTS ================= */
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    height: 42px;
+    padding: 10px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 14px;
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+    color: #374151;
+    background: #fff;
+    box-sizing: border-box;
+    transition: all 0.25s ease;
 }
 
-.service-items{
-  display: flex;
-  align-items: center;   /* vertically centers ❌ with input */
-  gap: 10px;
-  margin-bottom: 8px;
-  width: 75%;
+/* TEXTAREA */
+.form-group textarea {
+    height: auto;
+    min-height: 100px;
+    resize: vertical;
+    line-height: 1.5;
 }
 
-.service-item-input {
-  flex: 1;
-  padding: 10px;
-  font-size: 16px;
-  border: 1px solid #ccc;
-  border-radius: 6px
+/* FOCUS */
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #f63b3b;
+    box-shadow: 0 0 0 4px rgba(246, 59, 59, 0.12);
 }
 
-.remove-item {
-  cursor: pointer;
-  color: red;
-  font-size: 20px;
-  user-select: none;
-  display: flex;
-  align-items: center;
-  height: 100%;
+/* SELECT */
+.form-group select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 14px;
+    cursor: pointer;
 }
 
-
-
-/* Add Item button */
-.add-item {
-  align-self: flex-start;
-  background: none;
-  border: none;
-  color: red;
-  font-weight: bold;
-  cursor: pointer;
-  margin-top: 5px;
+/* READONLY */
+.form-group input[readonly],
+.form-group select:disabled {
+    background-color: #f3f4f6;
+    cursor: not-allowed;
+    color: #6b7280;
+    border-color: #e5e7eb;
 }
 
-/* Buttons */
-.modal-footer button {
-  padding: 10px 20px;
-  border-radius: 6px;
-  border: none;
-  cursor: pointer;
-  font-size: 16px;
+/* MULTI SELECT */
+.form-group select[multiple] {
+    height: auto;
+    min-height: 140px;
+    padding: 10px;
 }
 
+/* ================= FOOTER ================= */
+.modal-footer {
+    grid-column: span 2;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 15px;
+    border-top: 1px solid #e5e7eb;
+    margin-top: 10px;
+}
+
+/* ================= BUTTONS ================= */
 .cancel-button {
-  background-color: #ccc;
+    padding: 10px 22px;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+    background-color: #f3f4f6;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    color: #374151;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.cancel-button:hover {
+    background: #e5e7eb;
+    color: #111827;
+    transform: translateY(-1px);
 }
 
 .save-button {
-  background-color: red;
-  color: white;
+    padding: 12px 26px;
+    border-radius: 8px;
+    border: none;
+    background: linear-gradient(135deg, #f63b3b 0%, #d32f2f 100%);
+    color: #fff;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(246, 59, 59, 0.2);
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.save-button:hover {
+    background: linear-gradient(135deg, #e53935 0%, #c62828 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(246, 59, 59, 0.3);
+}
+
+.save-button:active {
+    transform: translateY(0);
+}
+
+/* ================= RESPONSIVE ================= */
+@media (max-width: 768px) {
+    .main {
+        padding: 15px;
+    }
+
+    .details-section {
+        grid-template-columns: 1fr;
+        padding: 20px;
+    }
+
+    .form-group.full-width,
+    .modal-footer {
+        grid-column: span 1;
+    }
+
+    .modal-footer {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .cancel-button,
+    .save-button {
+        width: 100%;
+        justify-content: center;
+    }
 }

@@ -14,24 +14,29 @@
   margin: 0;
 }
 
-/* Create Invoice button styling */
-.create-btn {
-  background-color: red;
-  color: white;
-  border: none;
-  padding: 10px 18px;
-  border-radius: 6px;
-  font-size: 14px;
-  font-weight: 500;
+.invoice-list {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 15px;
+}
+
+/* Form container */
+.invoice-list form {
+    display: flex;
+    align-items: center;
+}
+
+/* Select dropdown */
+.invoice-list select {
+    padding: 10px 14px;
+  border-radius: 10px;
+  background: white;
+  border: 1px solid #ddd;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  font-size: 14px;
 }
 
-.create-btn:hover {
-  background-color: red;
-}
-
-
+/* Focus effect */
 
 .tab-nav {
   background-color: #f1f5f9;

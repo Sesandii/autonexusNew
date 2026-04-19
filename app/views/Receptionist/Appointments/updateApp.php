@@ -7,105 +7,139 @@ $activePage = 'appointments';
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Update Appointment - AutoNexus</title>
-  <link rel="stylesheet" href="<?= BASE_URL ?>/public/assets/css/manager/sidebar.css">
-  <link rel="stylesheet" href="<?= BASE_URL ?>/public/assets/css/manager/updateApp.css">
+  <link rel="stylesheet" href="<?= BASE_URL ?>/public/assets/css/receptionist/sidebar.css">
+  <link rel="stylesheet" href="<?= BASE_URL ?>/public/assets/css/receptionist/newAppointment.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-  <style>
-    .readonly-field {
-      background-color: #f5f5f5;
-      cursor: not-allowed;
-    }
-    .editable-field {
-      background-color: #fff;
-      border: 1px solid #007bff;
-    }
-    .warning-message {
-      color: #dc3545;
-      font-size: 0.875rem;
-      margin-top: 0.25rem;
-      display: none;
-    }
-    .warning-message.show {
-      display: block;
-    }
-  </style>
 </head>
 <body>
-  
- <?php include APP_ROOT . '/views/layouts/manager-sidebar.php'; ?>
+
+<?php include APP_ROOT . '/views/layouts/receptionist-sidebar.php'; ?>
 
 <div class="main">
     <div class="details-section">
-      <h3>Update Appointment</h3>
-      
-      <form id="updateForm">
-        <input type="hidden" id="appointment-id" name="appointment_id" value="<?= htmlspecialchars($appointment['appointment_id']) ?>">
-        <input type="hidden" id="original-branch" value="<?= htmlspecialchars($appointment['branch_id']) ?>">
-        
-        <!-- Read-only fields -->
-        <label>Customer:</label>
-        <input type="text" class="readonly-field" value="<?= htmlspecialchars($appointment['first_name'] . ' ' . $appointment['last_name']) ?>" readonly>
+        <h3>Update Appointment</h3>
 
-        <label>Phone:</label>
-        <input type="text" class="readonly-field" value="<?= htmlspecialchars($appointment['phone'] ?? '') ?>" readonly>
+        <form id="updateForm">
 
-        <label>Vehicle Number:</label>
-        <input type="text" class="readonly-field" value="<?= htmlspecialchars($appointment['license_plate']) ?>" readonly>
+            <input type="hidden" name="appointment_id" value="<?= htmlspecialchars($appointment['appointment_id']) ?>">
+            <input type="hidden" id="original-branch" value="<?= htmlspecialchars($appointment['branch_id']) ?>">
 
-        <label>Vehicle:</label>
-        <input type="text" class="readonly-field" value="<?= htmlspecialchars($appointment['make'] . ' ' . $appointment['model']) ?>" readonly>
+            <div class="grid">
 
-        <!-- Editable fields -->
-        <label>Service: <span style="color: red;">*</span></label>
-        <select id="service-id" name="service_id" class="editable-field" required>
-          <?php foreach ($services as $service): ?>
-            <option value="<?= $service['service_id'] ?>" 
-              <?= $appointment['service_id'] == $service['service_id'] ? 'selected' : '' ?>>
-              <?= htmlspecialchars($service['name']) ?> - $<?= number_format($service['default_price'], 2) ?>
-            </option>
-          <?php endforeach; ?>
-        </select>
+                <!-- ROW 1: Customer + Phone -->
+                <div class="field">
+                    <label>Customer</label>
+                    <input type="text" value="<?= htmlspecialchars($appointment['first_name'] . ' ' . $appointment['last_name']) ?>" readonly>
+                </div>
 
-        <label>Branch: <span style="color: red;">*</span></label>
-        <select id="branch-id" name="branch_id" class="editable-field" required>
-          <?php foreach ($branches as $branch): ?>
-            <option value="<?= $branch['branch_id'] ?>" 
-              <?= $appointment['branch_id'] == $branch['branch_id'] ? 'selected' : '' ?>>
-              <?= htmlspecialchars($branch['name'] . ' - ' . $branch['city']) ?>
-            </option>
-          <?php endforeach; ?>
-        </select>
-        <div id="branch-warning" class="warning-message">
-          <i class="fas fa-exclamation-triangle"></i> 
-          Changing the branch will reset the assigned supervisor and set status to "Requested".
-        </div>
+                <div class="field">
+                    <label>Phone</label>
+                    <input type="text" value="<?= htmlspecialchars($appointment['phone'] ?? '') ?>" readonly>
+                </div>
 
-        <label>Date: <span style="color: red;">*</span></label>
-        <input type="date" id="appointment-date" name="appointment_date" class="editable-field" 
-               value="<?= htmlspecialchars($appointment['appointment_date']) ?>" required>
+                <!-- ROW 2: Vehicle Number + Vehicle -->
+                <div class="field">
+                    <label>Vehicle number</label>
+                    <input type="text" value="<?= htmlspecialchars($appointment['license_plate']) ?>" readonly>
+                </div>
 
-        <label>Time: <span style="color: red;">*</span></label>
-        <input type="time" id="appointment-time" name="appointment_time" class="editable-field" 
-               value="<?= htmlspecialchars($appointment['appointment_time']) ?>" required>
+                <div class="field">
+                    <label>Vehicle</label>
+                    <input type="text" value="<?= htmlspecialchars($appointment['make'] . ' ' . $appointment['model']) ?>" readonly>
+                </div>
 
-        <!-- Read-only status and assigned supervisor -->
-        <label>Current Status:</label>
-        <input type="text" class="readonly-field" value="<?= htmlspecialchars($appointment['status']) ?>" readonly>
+                <!-- ROW 3: Service + Branch -->
+                <div class="field">
+                    <label>Service <span style="color:#e84040">*</span></label>
+                    <select name="service_id" required>
+                        <?php foreach ($services as $service): ?>
+                            <option value="<?= $service['service_id'] ?>"
+                                <?= $appointment['service_id'] == $service['service_id'] ? 'selected' : '' ?>>
+                                <?= htmlspecialchars($service['name']) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
 
-        <label>Currently Assigned To:</label>
-        <input type="text" class="readonly-field" 
-               value="<?= htmlspecialchars(($appointment['sup_first_name'] ?? '') . ' ' . ($appointment['sup_last_name'] ?? 'Not Assigned')) ?>" 
-               readonly>
+                <div class="field">
+                    <label>Branch <span style="color:#e84040">*</span></label>
+                    <select name="branch_id" id="branch-select" required>
+                        <?php foreach ($branches as $branch): ?>
+                            <option value="<?= $branch['branch_id'] ?>"
+                                <?= $appointment['branch_id'] == $branch['branch_id'] ? 'selected' : '' ?>>
+                                <?= htmlspecialchars($branch['name']) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
 
-        <label>Notes:</label>
-        <textarea id="notes" name="notes" class="editable-field" rows="4"><?= htmlspecialchars($appointment['notes'] ?? '') ?></textarea>
+                <!-- Branch warning (full width) -->
+                <div class="field full" id="branch-warning" style="display:none;">
+                    <div style="
+                        background: #fff8e1;
+                        border: 1px solid #f9c825;
+                        border-radius: 8px;
+                        padding: 10px 14px;
+                        font-size: 13px;
+                        color: #7c5e00;
+                        display: flex;
+                        align-items: center;
+                        gap: 8px;
+                    ">
+                        <i class="fas fa-exclamation-triangle" style="font-size:14px;color:#f9c825;"></i>
+                        Changing branch will reset the assigned supervisor and status.
+                    </div>
+                </div>
 
-        <div class="modal-footer">
-          <button type="button" class="cancel-button" onclick="window.location.href='<?= BASE_URL ?>/receptionist/appointments/day?date=<?= $appointment['appointment_date'] ?>'">Cancel</button>
-          <button type="submit" class="save-button">Update Appointment</button>
-        </div>
-      </form>
+                <!-- ROW 4: Date + Time -->
+                <div class="field">
+                    <label>Date</label>
+                    <input type="date" name="appointment_date" value="<?= htmlspecialchars($appointment['appointment_date']) ?>">
+                </div>
+
+                <div class="field">
+                    <label>Time</label>
+                    <input type="time" name="appointment_time" value="<?= htmlspecialchars($appointment['appointment_time']) ?>">
+                </div>
+
+                <!-- ROW 5: Status + Assigned To (full width each) -->
+                <div class="field">
+                    <label>Current status</label>
+                    <input type="text" value="<?= htmlspecialchars($appointment['status']) ?>" readonly>
+                </div>
+
+                <div class="field">
+                    <label>Assigned to</label>
+                    <input type="text"
+                        value="<?= htmlspecialchars(
+                            trim(($appointment['sup_first_name'] ?? '') . ' ' . ($appointment['sup_last_name'] ?? '')) ?: 'Not assigned'
+                        ) ?>"
+                        readonly>
+                </div>
+
+                <!-- Notes (full width) -->
+                <div class="field full">
+                    <label>Notes</label>
+                    <textarea name="notes" rows="3"><?= htmlspecialchars($appointment['notes'] ?? '') ?></textarea>
+                </div>
+
+                <!-- Footer (full width) -->
+                <div class="field full">
+                    <div class="modal-footer">
+                        <button type="button" class="cancel-button"
+                            onclick="window.location.href='<?= BASE_URL ?>/receptionist/appointments/day?date=<?= $appointment['appointment_date'] ?>'">
+                            Cancel
+                        </button>
+                        <button type="submit" class="save-button">
+                            Update Appointment
+                        </button>
+                    </div>
+                </div>
+
+            </div><!-- /.grid -->
+
+        </form>
     </div>
 </div>
 

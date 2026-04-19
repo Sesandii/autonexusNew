@@ -478,16 +478,14 @@ $router->get('/manager/services/activate/{id}/{type}', [app\controllers\Manager\
 
 //Manager: Billing
 $router->get('/manager/billing', [app\controllers\Manager\BillingController::class, 'invoices']);
-$router->get('/manager/billing/downloadInvoice/{id}', [app\controllers\Manager\BillingController::class, 'downloadInvoice']);
-
+$router->get('/manager/billing/printInvoice/{id}', [app\controllers\Manager\BillingController::class, 'printInvoice']);
 //Manager: WorkOrdes
 $router->get('/manager/work-orders', [app\controllers\Manager\WorkOrderController::class, 'index']);
 $router->get('/manager/work-orders/detail/{id}', [app\controllers\Manager\WorkOrderController::class, 'detail']);
 
 //Manager: Complaints
 $router->get('/manager/complaints', [app\controllers\Manager\ComplaintController::class, 'index']);
-$router->get('/manager/complaints/new', [app\controllers\Manager\ComplaintController::class, 'create']);
-$router->get('/manager/complaints/fetchByPhone', [app\controllers\Manager\ComplaintController::class, 'fetchByPhone']); // important: before dynamic
+$router->get('/manager/complaints/get-vehicles', [\app\controllers\Manager\ComplaintController::class, 'getVehiclesByCustomer']);
 $router->post('/manager/complaints', [app\controllers\Manager\ComplaintController::class, 'store']);
 $router->get('/manager/complaints/{complaintId}', [app\controllers\Manager\ComplaintController::class, 'show']);
 $router->get('/manager/complaints/history/{customerId}', [app\controllers\Manager\ComplaintController::class, 'history']);
@@ -518,6 +516,12 @@ $router->get('/manager/performance/viewMechanic', [\app\controllers\Manager\Perf
 // manager: reports
 $router->get('/manager/reports', [\app\controllers\Manager\ReportController::class, 'index']);
 $router->post('/manager/reports', [\app\controllers\Manager\ReportController::class, 'index']);
+$router->get('/manager/reports/export', [\app\controllers\Manager\ReportController::class, 'export']);
+
+// manager: profile
+$router->get('/manager/profile', [app\controllers\Manager\ProfileController::class, 'index']);
+$router->post('/manager/profile/update', [app\controllers\Manager\ProfileController::class, 'update']);
+
 //Receptionist: Complaints
 
 $router->get('/receptionist/complaints', [app\controllers\Receptionist\ComplaintController::class, 'index']);
@@ -565,17 +569,16 @@ $router->get('/receptionist/service', [app\controllers\Receptionist\ServiceContr
 $router->get('/receptionist/billing', [app\controllers\Receptionist\BillingController::class, 'invoices']);   // Index page
 $router->get('/receptionist/billing/create', [app\controllers\Receptionist\BillingController::class, 'create']);
 $router->get('/receptionist/billing/invoice/{id}', [app\controllers\Receptionist\BillingController::class, 'preview']);
-$router->post('/receptionist/billing/invoice/{id}', [app\controllers\Receptionist\BillingController::class, 'store']); // Invoice creation page
+$router->post('/receptionist/billing/invoice/{id}', [app\controllers\Receptionist\BillingController::class, 'store']);
 $router->get('/receptionist/billing/printInvoice/{id}', [app\controllers\Receptionist\BillingController::class, 'printInvoice']);
 $router->get('/receptionist/billing/downloadInvoice/{id}', [app\controllers\Receptionist\BillingController::class, 'downloadInvoicePdf']);
 $router->get('/receptionist/billing/paid', [app\controllers\Receptionist\BillingController::class, 'paidInvoices']);
-$router->get('/receptionist/billing/mark-paid', [app\controllers\Receptionist\BillingController::class, 'markAsPaid']);
+$router->get('/receptionist/billing/mark-paid',[app\controllers\Receptionist\BillingController::class, 'markAsPaid']);
 
 
-//Receptionist: Profile
-$router->get('/receptionist/profile', [app\controllers\Receptionist\ProfileController::class, 'index']);
+// Receptionist: Profile
+$router->get('/receptionist/profile',         [app\controllers\Receptionist\ProfileController::class, 'index']);
 $router->post('/receptionist/profile/update', [app\controllers\Receptionist\ProfileController::class, 'update']);
-
 
 
 

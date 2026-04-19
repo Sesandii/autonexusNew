@@ -16,19 +16,7 @@
   <div class="main">
     <header>
       <h1>Complaints Management</h1>
-      <div class="filters">
-        <button class="add-btn" id="openModal" onclick="window.location.href='<?= BASE_URL ?>/manager/complaints/new'">
-          + New Complaint
-        </button>
-    
-        <select>
-          <option>All Statuses</option>
-          <option>Open</option>
-          <option>In Progress</option>
-          <option>Resolved</option>
-          <option>Canceled</option>
-        </select>
-      </div>
+        
     </header>
 
     <!-- Complaints List -->

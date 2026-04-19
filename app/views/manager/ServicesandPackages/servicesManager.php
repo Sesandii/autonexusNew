@@ -34,24 +34,6 @@
     </ul>
   </nav>
 
-  
-
-
-    <div class="filter-container">
-  <select class="servicetype-filter">
-    <option value="">All Services</option>
-    <option value="maintenance">Maintenance</option>
-    <option value="tyre">Tyre</option>
-    <option value="cleaning">Cleaning</option>
-    <option value="nano">Nano</option>
-    <option value="paint">Paint</option>
-    <option value="electrical">Electrical</option>
-    <option value="brakes">Brakes</option>
-    <option value="air-conditioning">Air Conditioning</option>
-    <option value="packages">Packages</option>
-  </select>
-</div>
-
 
 <section id="service" class="tab-content active">
      <div class="service-grid">

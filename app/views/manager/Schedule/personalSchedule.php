@@ -1,3 +1,26 @@
+<?php
+// Filter logic - must be at the very top before any HTML
+$filter = $_GET['filter'] ?? 'today';
+
+$filtered = array_filter($workOrders, function($order) use ($filter) {
+    $date = date('Y-m-d', strtotime($order['job_start_time']));
+    $today = date('Y-m-d');
+
+    return match($filter) {
+        'today' => $date === $today,
+        'week'  => $date >= date('Y-m-d', strtotime('monday this week')) 
+                && $date <= date('Y-m-d', strtotime('sunday this week')),
+        'month' => date('Y-m', strtotime($date)) === date('Y-m'),
+        'all'   => true,
+        default => true
+    };
+});
+
+$scheduled  = array_filter($filtered, fn($wo) => $wo['status'] === 'open');
+$inProgress = array_filter($filtered, fn($wo) => $wo['status'] === 'in_progress');
+$completed  = array_filter($filtered, fn($wo) => $wo['status'] === 'completed');
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -37,145 +60,120 @@
           </p>
         </div>
       </div>
+
+  
       <!-- Date Filter Section -->
-<div class="filter-section">
-  <div class="filter-buttons">
-    <button class="filter-btn active" data-filter="today" onclick="filterWorkOrders('today')">Today</button>
-    <button class="filter-btn" data-filter="week" onclick="filterWorkOrders('week')">This Week</button>
-    <button class="filter-btn" data-filter="month" onclick="filterWorkOrders('month')">This Month</button>
-    <button class="filter-btn" data-filter="year" onclick="filterWorkOrders('year')">This Year</button>
-    <button class="filter-btn" data-filter="all" onclick="filterWorkOrders('all')">All Time</button>
-  </div>
-  <div class="date-range-display" id="dateRangeDisplay"></div>
-</div>
+
+  <form method="GET" action="">
+    <input type="hidden" name="id" value="<?= $employee['user_id'] ?>">
+    <select class="filter-dropdown" name="filter" onchange="this.form.submit()">
+        <option value="today" <?= ($filter === 'today') ? 'selected' : '' ?>>Today</option>
+        <option value="week"  <?= ($filter === 'week')  ? 'selected' : '' ?>>Week</option>
+        <option value="month" <?= ($filter === 'month') ? 'selected' : '' ?>>Month</option>
+        <option value="all"   <?= ($filter === 'all')   ? 'selected' : '' ?>>All Time</option>
+    </select>
+</form>
+
     </header>
 
     <!-- Kanban Board Columns -->
     <section class="schedule-columns">
       
       <!-- Scheduled Column -->
-      <div class="column scheduled">
-        <div class="column-header">
-          <h2>Scheduled</h2>
-          <div class="count"><?= count(array_filter($workOrders, fn($wo) => $wo['status'] === 'open')) ?></div>
-        </div>
-        <div class="cards-list">
-          <?php 
-          $hasScheduled = false;
-          foreach ($workOrders as $order): 
-            if ($order['status'] !== 'open') continue;
-            $hasScheduled = true;
-          ?>
-             <div class="card">
-  <div class="card-header">
-    <div class="tag scheduled-tag">
-      <?= htmlspecialchars($order['service_name'] ?? 'Service') ?>
+<div class="column scheduled">
+    <div class="column-header">
+        <h2>Scheduled</h2>
+        <div class="count"><?= count($scheduled) ?></div>
     </div>
- 
-           </div>
-  <div class="card-name">
-    <?= htmlspecialchars(($order['customer_first_name'] ?? '') . ' ' . ($order['customer_last_name'] ?? $order['license_plate'] ?? 'N/A')) ?>
-  </div>
-  <div class="card-details">
-    <span class="icon">🚗</span> 
-    <?= htmlspecialchars(($order['make'] ?? '') . ' ' . ($order['model'] ?? '') . ' (' . ($order['year'] ?? 'N/A') . ')') ?>
-  </div>
-  <div class="card-details">
-    <span class="icon">⏰</span> 
-    <?= date('h:i A', strtotime($order['job_start_time'] ?? 'now')) ?>
-  </div>
-</div>
-<?php endforeach; ?>
-          
-          <?php if (!$hasScheduled): ?>
-            <div class="empty-column">No scheduled work orders</div>
-          <?php endif; ?>
-        </div>
-      </div>
-
-      <!-- In Progress Column -->
-      <div class="column in-progress">
-        <div class="column-header">
-          <h2>In Progress</h2>
-          <div class="count"><?= count(array_filter($workOrders, fn($wo) => $wo['status'] === 'in_progress')) ?></div>
-        </div>
-        <div class="cards-list">
-          <?php 
-          $hasInProgress = false;
-          foreach ($workOrders as $order): 
-            if ($order['status'] !== 'in_progress') continue;
-            $hasInProgress = true;
-          ?>
-          <div class="card">
-  <div class="card-header">
-    <div class="tag scheduled-tag">
-      <?= htmlspecialchars($order['service_name'] ?? 'Service') ?>
-    </div>
-   
-  </div>
-  <div class="card-name">
-    <?= htmlspecialchars(($order['customer_first_name'] ?? '') . ' ' . ($order['customer_last_name'] ?? $order['license_plate'] ?? 'N/A')) ?>
-  </div>
-  <div class="card-details">
-    <span class="icon">🚗</span> 
-    <?= htmlspecialchars(($order['make'] ?? '') . ' ' . ($order['model'] ?? '') . ' (' . ($order['year'] ?? 'N/A') . ')') ?>
-  </div>
-  <div class="card-details">
-    <span class="icon">⏰</span> 
-    <?= date('h:i A', strtotime($order['job_start_time'] ?? 'now')) ?>
-  </div>
-</div>
-          <?php endforeach; ?>
-          
-          <?php if (!$hasInProgress): ?>
-            <div class="empty-column">No work orders in progress</div>
-          <?php endif; ?>
-        </div>
-      </div>
-
-      <!-- Completed Column -->
-      <div class="column completed">
-        <div class="column-header">
-          <h2>Completed</h2>
-          <div class="count"><?= count(array_filter($workOrders, fn($wo) => $wo['status'] === 'completed')) ?></div>
-        </div>
-        <div class="cards-list">
-          <?php 
-          $hasCompleted = false;
-          foreach ($workOrders as $order): 
-            if ($order['status'] !== 'completed') continue;
-            $hasCompleted = true;
-          ?>
+    <div class="cards-list">
+        <?php if (empty($scheduled)): ?>
+            <div class="empty-column">No scheduled appointments</div>
+        <?php else: foreach ($scheduled as $order): ?>
             <div class="card">
-  <div class="card-header">
-    <div class="tag scheduled-tag">
-      <?= htmlspecialchars($order['service_name'] ?? 'Service') ?>
+                <div class="card-header">
+                    <div class="tag scheduled-tag">
+                        <?= htmlspecialchars($order['service_name'] ?? 'Service') ?>
+                    </div>
+                </div>
+                <div class="card-name">
+                    <?= htmlspecialchars(($order['customer_first_name'] ?? '') . ' ' . ($order['customer_last_name'] ?? '')) ?>
+                </div>
+                <div class="card-details">
+                    <span class="icon">🚗</span>
+                    <?= htmlspecialchars(($order['make'] ?? '') . ' ' . ($order['model'] ?? '') . ' (' . ($order['year'] ?? 'N/A') . ')') ?>
+                </div>
+                <div class="card-details">
+                    <span class="icon">⏰</span>
+                    <?= date('h:i A', strtotime($order['job_start_time'])) ?>
+                </div>
+            </div>
+        <?php endforeach; endif; ?>
     </div>
-    <!--<button class="reassign-btn" 
-            onclick="openReassignModal(<?= $order['work_order_id'] ?>, <?= $order['mechanic_id'] ?? 0 ?>)"
-            title="Reassign work order">
-  
-    </button>-->
-  </div>
-  <div class="card-name">
-    <?= htmlspecialchars(($order['customer_first_name'] ?? '') . ' ' . ($order['customer_last_name'] ?? $order['license_plate'] ?? 'N/A')) ?>
-  </div>
-  <div class="card-details">
-    <span class="icon">🚗</span> 
-    <?= htmlspecialchars(($order['make'] ?? '') . ' ' . ($order['model'] ?? '') . ' (' . ($order['year'] ?? 'N/A') . ')') ?>
-  </div>
-  <div class="card-details">
-    <span class="icon">⏰</span> 
-    <?= date('h:i A', strtotime($order['job_start_time'] ?? 'now')) ?>
-  </div>
 </div>
-          <?php endforeach; ?>
-          
-          <?php if (!$hasCompleted): ?>
-            <div class="empty-column">No completed work orders</div>
-          <?php endif; ?>
-        </div>
-      </div>
+
+<!-- In Progress Column -->
+<div class="column in-progress">
+    <div class="column-header">
+        <h2>In Progress</h2>
+        <div class="count"><?= count($inProgress) ?></div>
+    </div>
+    <div class="cards-list">
+        <?php if (empty($inProgress)): ?>
+            <div class="empty-column">No appointments in progress</div>
+        <?php else: foreach ($inProgress as $order): ?>
+            <div class="card">
+                <div class="card-header">
+                    <div class="tag scheduled-tag">
+                        <?= htmlspecialchars($order['service_name'] ?? 'Service') ?>
+                    </div>
+                </div>
+                <div class="card-name">
+                    <?= htmlspecialchars(($order['customer_first_name'] ?? '') . ' ' . ($order['customer_last_name'] ?? '')) ?>
+                </div>
+                <div class="card-details">
+                    <span class="icon">🚗</span>
+                    <?= htmlspecialchars(($order['make'] ?? '') . ' ' . ($order['model'] ?? '') . ' (' . ($order['year'] ?? 'N/A') . ')') ?>
+                </div>
+                <div class="card-details">
+                    <span class="icon">⏰</span>
+                    <?= date('h:i A', strtotime($order['job_start_time'])) ?>
+                </div>
+            </div>
+        <?php endforeach; endif; ?>
+    </div>
+</div>
+
+<!-- Completed Column -->
+<div class="column completed">
+    <div class="column-header">
+        <h2>Completed</h2>
+        <div class="count"><?= count($completed) ?></div>
+    </div>
+    <div class="cards-list">
+        <?php if (empty($completed)): ?>
+            <div class="empty-column">No completed appointments</div>
+        <?php else: foreach ($completed as $order): ?>
+            <div class="card">
+                <div class="card-header">
+                    <div class="tag scheduled-tag">
+                        <?= htmlspecialchars($order['service_name'] ?? 'Service') ?>
+                    </div>
+                </div>
+                <div class="card-name">
+                    <?= htmlspecialchars(($order['customer_first_name'] ?? '') . ' ' . ($order['customer_last_name'] ?? '')) ?>
+                </div>
+                <div class="card-details">
+                    <span class="icon">🚗</span>
+                    <?= htmlspecialchars(($order['make'] ?? '') . ' ' . ($order['model'] ?? '') . ' (' . ($order['year'] ?? 'N/A') . ')') ?>
+                </div>
+                <div class="card-details">
+                    <span class="icon">⏰</span>
+                    <?= date('h:i A', strtotime($order['job_start_time'])) ?>
+                </div>
+            </div>
+        <?php endforeach; endif; ?>
+    </div>
+</div>
       
     </section>
   </div>

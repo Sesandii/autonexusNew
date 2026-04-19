@@ -180,3 +180,23 @@ tbody tr:hover {
 .filter-dropdown {
     margin-bottom: 15px;
 }
+
+.invoice-actions-icons {
+    display: flex;
+    gap: 14px;   /* 👈 space between icons */
+    align-items: center;
+}
+
+.invoice-actions-icons a {
+    font-size: 16px;
+    color: #333;
+    transition: 0.2s;
+}
+
+.invoice-actions-icons a:hover {
+    transform: scale(1.1);
+}
+
+.invoice-actions-icons i {
+    cursor: pointer;
+}

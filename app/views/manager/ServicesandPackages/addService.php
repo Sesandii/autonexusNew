@@ -22,103 +22,83 @@
       <h2>Add Service / Package</h2>
     </div>
 
-  <form method="POST" action="<?= BASE_URL ?>/manager/services/store">
+<form method="POST" action="<?= BASE_URL ?>/manager/services/store">
 
+  <div class="details-section">
 
+    <div class="form-group">
+      <label>Type</label>
+      <select name="type" id="typeSelect">
+    <option value="service" <?= ($defaultType ?? 'service') === 'service' ? 'selected' : '' ?>>Service</option>
+    <option value="package" <?= ($defaultType ?? 'service') === 'package' ? 'selected' : '' ?>>Package</option>
+</select>
+    </div>
 
-  <div class="form-group">
-    <label>Type</label>
-    <select name="type" id="typeSelect">
-      <option value="service">Service</option>
-      <option value="package">Package</option>
-    </select>
-  </div>
-
-  <!-- SERVICE CODE -->
-<div class="form-group" id="serviceCodeGroup">
-  <label>Service Code</label>
-  <input type="text" name="service_code" id="serviceCode"
-         value="<?= $lastServiceCode ?>">
+  <div class="form-group" id="codeGroup">
+    <label>Code</label>
+    <input type="text" name="service_code" id="serviceCode" value="<?= $lastCode ?>">
 </div>
 
-<!-- PACKAGE CODE -->
-<div class="form-group" id="packageCodeGroup" style="display:none;">
-  <label>Package Code</label>
-  <input type="text" name="package_code" id="packageCode"
-         value="<?= $lastPackageCode ?>">
+    <div class="form-group">
+  <label>Name</label>
+  <input type="text" name="name" required>
 </div>
 
-
-  <div class="form-group">
-    <label>Name</label>
-    <input type="text" name="name" required>
-  </div>
-
-  <div class="form-group">
-    <label>Description</label>
-    <textarea name="description"></textarea>
-  </div>
-
-  <!-- SERVICE -->
-  <div id="serviceFields">
-    <input type="number" name="duration" placeholder="Duration (min)">
-    <input type="number" name="price" placeholder="Price">
-
-    <select name="type_id">
-      <?php foreach ($serviceTypes as $t): ?>
-        <option value="<?= $t['type_id'] ?>"><?= $t['type_name'] ?></option>
-      <?php endforeach; ?>
-    </select>
-  </div>
-
- <!-- PACKAGE FIELDS -->
-<!-- PACKAGE FIELDS -->
-<div id="packageFields" style="display:none;">
-
-  <!-- Included Services -->
-  <div class="form-group">
-    <label>Included Services</label>
-    <select name="services[]" multiple size="6" required style="min-height:140px;">
-      <?php foreach ($services as $service): ?>
-        <option value="<?= $service['service_code'] ?>">
-          <?= htmlspecialchars($service['name']) ?> (<?= $service['service_code'] ?>)
-        </option>
-      <?php endforeach; ?>
-    </select>
-    <small style="color:#666">
-      Hold Ctrl (Windows) or Cmd (Mac) to select multiple services
-    </small>
-  </div>
-
-  <!-- Package Type -->
-  <div class="form-group">
-    <label>Package Type</label>
-    <select name="service_type_id" required>
-      <?php foreach ($serviceTypes as $t): ?>
-        <option value="<?= $t['type_id'] ?>"><?= $t['type_name'] ?></option>
-      <?php endforeach; ?>
-    </select>
-  </div>
-
-  <!-- Total Duration -->
-  <div class="form-group">
-    <label>Total Duration (minutes)</label>
-    <input type="number" name="total_duration" required>
-  </div>
-
-  <!-- Total Price -->
-  <div class="form-group">
-    <label>Total Price</label>
-    <input type="number" name="total_price" required>
-  </div>
-
+<div class="form-group full-width">
+  <label>Description</label>
+  <textarea name="description"></textarea>
 </div>
 
-  <button type="submit">Save</button>
-</form>
+<div class="form-group">
+  <label>Duration (min)</label>
+  <input type="number" name="duration">
+</div>
 
+<div class="form-group">
+  <label>Price</label>
+  <input type="number" name="price">
+</div>
+
+<div class="form-group full-width">
+  <label>Service Type</label>
+  <select name="type_id" required>
+    <?php foreach ($serviceTypes as $t): ?>
+      <option value="<?= $t['type_id'] ?>"><?= $t['type_name'] ?></option>
+    <?php endforeach; ?>
+  </select>
+</div>
+
+    <!-- PACKAGE FIELDS (UNCHANGED FOR JS) -->
+<div id="packageFields" style="display:none;" class="form-group full-width">
+  <label>Included Services</label>
+
+  <select name="services[]" multiple size="6">
+    <?php foreach ($services as $service): ?>
+      <option value="<?= $service['service_code'] ?>">
+        <?= htmlspecialchars($service['name']) ?>
+      </option>
+    <?php endforeach; ?>
+  </select>
+</div>
+
+<!-- FOOTER (MATCH YOUR CSS) -->
+    <div class="modal-footer">
+      <button type="button" class="cancel-button">Cancel</button>
+      <button type="submit" class="save-button">Save</button>
+    </div>
+
+    </div>
+
+    
+
+    </form>
+  </div>
+
+<!-- At the bottom of your addService.php, before including the JS -->
+<script>
+  window.lastCode = '<?= $lastCode ?>';
+</script>
 
 <script src="<?= BASE_URL ?>/public/assets/js/manager/addServices.js"></script>
-
 </body>
 </html>

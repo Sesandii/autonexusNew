@@ -4,7 +4,7 @@ namespace app\controllers\Receptionist;
 use app\core\Controller;
 use app\model\Receptionist\ComplaintModel;
 
-class ComplaintController extends Controller {
+class ComplaintController extends Controller{
 
     protected ComplaintModel $model;
 
@@ -240,10 +240,18 @@ public function fetchAppointments(): void {
 // Update the store method
 public function store(): void {
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+        $vehicle_id = $_POST['vehicle_id'] ?? null;
+
+        // ✅ Convert empty to NULL
+        if (empty($vehicle_id)) {
+            $vehicle_id = null;
+        }
+
         $data = [
             'customer_id'    => $_POST['customer_id'],
-            'vehicle_id'     => $_POST['vehicle_id'],
-            'appointment_id' => $_POST['appointment_id'] ?? null,  // Add this
+            'vehicle_id'     => $vehicle_id,
+            'appointment_id' => $_POST['appointment_id'] ?? null,
             'subject'        => $_POST['subject'] ?? 'General Complaint',
             'description'    => $_POST['description'] ?? '',
             'priority'       => $_POST['priority'] ?? 'Medium',
@@ -255,6 +263,5 @@ public function store(): void {
         $this->redirect(BASE_URL . '/receptionist/complaints');
     }
 }
-
 
 }

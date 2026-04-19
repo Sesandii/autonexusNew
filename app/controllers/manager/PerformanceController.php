@@ -18,18 +18,21 @@ class PerformanceController extends BaseManagerController
     /* ==========================
        MAIN TEAM PERFORMANCE PAGE
        ========================== */
-    public function index(): void
+     public function index(): void
     {
         $branchId = $_SESSION['user']['branch'] ?? 2;
-
-        $mechanics = $this->model->getMechanicsWithCompletedJobs($branchId);
+        
+        // Use getTeamPerformance instead - it shows ALL mechanics
+        $team = $this->model->getTeamPerformanceAll($branchId);
+        
+        // Also get mechanics with jobs for any additional data you might need
+        $mechanicsWithJobs = $this->model->getMechanicsWithCompletedJobs($branchId);
 
         $this->view('Manager/Team Performance/performance', [
             'pageTitle' => 'Team Performance',
-            'mechanics' => $mechanics
+            'team' => $team
         ]);
     }
-
     /* ==========================
        STATS API
        ========================== */

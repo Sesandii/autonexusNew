@@ -1,3 +1,6 @@
+/* =========================
+   INVOICE CONTAINER
+========================= */
 .invoice-box {
     background: #ffffff;
     padding: 40px 45px;
@@ -8,7 +11,9 @@
     font-family: 'Inter', sans-serif;
 }
 
-/* Header */
+/* =========================
+   HEADER
+========================= */
 .invoice-header {
     display: flex;
     justify-content: space-between;
@@ -31,7 +36,9 @@
     color: #333;
 }
 
-/* Meta info */
+/* =========================
+   META INFO
+========================= */
 .invoice-meta {
     display: flex;
     justify-content: space-between;
@@ -43,7 +50,9 @@
     color: #555;
 }
 
-/* Table */
+/* =========================
+   TABLE
+========================= */
 .invoice-table {
     width: 100%;
     border-collapse: separate;
@@ -77,12 +86,13 @@
     border-radius: 0 8px 8px 0;
 }
 
-/* Align right */
 .right {
     text-align: right;
 }
 
-/* Totals */
+/* =========================
+   TOTALS SECTION
+========================= */
 .invoice-totals {
     display: flex;
     justify-content: flex-end;
@@ -104,26 +114,42 @@
     color: #111;
 }
 
-/* Actions */
-.invoice-actions {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 40px;
+/* =========================
+   BUTTON WRAPPER (FIX)
+========================= */
+form {
+    margin-top: 35px;
 }
 
-/* Buttons */
+form + a {
+    display: inline-block;
+    margin-top: 15px;
+}
+
+/* =========================
+   BUTTON BASE
+========================= */
 .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
     padding: 12px 22px;
     border-radius: 10px;
+
     font-size: 14px;
     font-weight: 600;
     text-decoration: none;
+
     border: none;
     cursor: pointer;
+
     transition: all 0.2s ease;
 }
 
+/* =========================
+   PRIMARY BUTTON
+========================= */
 .btn-primary {
     background: linear-gradient(135deg, #2ecc71, #27ae60);
     color: #fff;
@@ -134,11 +160,41 @@
     box-shadow: 0 6px 18px rgba(46, 204, 113, 0.35);
 }
 
+/* =========================
+   SECONDARY BUTTON
+========================= */
 .btn-secondary {
     background: #f1f3f5;
     color: #333;
+    margin-left: 10px;
 }
 
 .btn-secondary:hover {
     background: #e5e7eb;
+}
+
+/* =========================
+   OPTIONAL DARK BUTTON
+========================= */
+.btn-dark {
+    background: #111;
+    color: #fff;
+}
+
+.btn-dark:hover {
+    background: #000;
+}
+
+.invoice-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 35px;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+/* make form not full width */
+.invoice-actions form {
+    margin: 0;
 }

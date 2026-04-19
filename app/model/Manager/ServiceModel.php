@@ -15,7 +15,13 @@ class ServiceModel
     public function getAllServices(): array
 {
     return $this->db
-        ->query("SELECT * FROM services ORDER BY name")
+        ->query("
+            SELECT * FROM services 
+            WHERE service_id NOT IN (
+                SELECT service_id FROM packages WHERE service_id IS NOT NULL
+            )
+            ORDER BY name
+        ")
         ->fetchAll(PDO::FETCH_ASSOC);
 }
 
@@ -26,14 +32,23 @@ class ServiceModel
             ->fetchAll();
     }
 
-    public function getLastServiceCode(): string
-    {
-        $code = $this->db
-            ->query("SELECT service_code FROM services ORDER BY created_at DESC LIMIT 1")
-            ->fetchColumn();
+  public function getLastCode(): string
+{
+    $stmt = $this->db->prepare("
+        SELECT service_code 
+        FROM services 
+        WHERE service_code LIKE 'SER%' 
+        ORDER BY CAST(SUBSTRING(service_code, 4) AS UNSIGNED) DESC
+        LIMIT 1
+    ");
+    $stmt->execute();
+    $code = $stmt->fetchColumn();
 
-        return $code ?: 'SRV001';
-    }
+    if (!$code) return 'SER001';
+
+    $number = (int) substr($code, 3);
+    return 'SER' . str_pad($number + 1, 3, '0', STR_PAD_LEFT);
+}
 
     public function create(array $data): void
     {
@@ -150,61 +165,65 @@ class PackageModel
 }
 
 
-
-    public function getLastPackageCode(): string
-    {
-        $code = $this->db
-            ->query("SELECT package_code FROM packages ORDER BY created_at DESC LIMIT 1")
-            ->fetchColumn();
-
-        return $code ?: 'PKG001';
-    }
-
 public function create(array $data): void
 {
     $this->db->beginTransaction();
 
     try {
-
-        // 1️⃣ Insert Package
+        // 1. Insert into services table first
         $stmt = $this->db->prepare("
-            INSERT INTO packages
-            (package_code, name, description, status,
-             total_duration_minutes, total_price, service_type_id)
-            VALUES
-            (:code, :name, :desc, 'active', :dur, :price, :type)
+            INSERT INTO services
+            (service_code, name, description, base_duration_minutes, default_price, status, type_id)
+            VALUES (:code, :name, :desc, :dur, :price, 'active', :type)
         ");
 
         $stmt->execute([
-            'code' => $data['package_code'],
-            'name' => $data['name'],
-            'desc' => $data['description'],
-            'dur'  => $data['total_duration'],
-            'price'=> $data['total_price'],
-            'type' => $data['service_type_id']
+            'code'  => $data['service_code'],
+            'name'  => $data['name'],
+            'desc'  => $data['description'],
+            'dur'   => $data['duration'],
+            'price' => $data['price'],
+            'type'  => $data['type_id'],
         ]);
 
-        // get package id
+        $serviceId = $this->db->lastInsertId();
+
+        // 2. Insert into packages table with the new service_id as FK
+        $stmt2 = $this->db->prepare("
+            INSERT INTO packages
+            (service_id, package_code, name, description, status,
+             total_duration_minutes, total_price, service_type_id)
+            VALUES
+            (:service_id, :code, :name, :desc, 'active', :dur, :price, :type)
+        ");
+
+        $stmt2->execute([
+            'service_id' => $serviceId,
+            'code'       => $data['service_code'],
+            'name'       => $data['name'],
+            'desc'       => $data['description'],
+            'dur'        => $data['duration'],
+            'price'      => $data['price'],
+            'type'  => $data['type_id'],
+        ]);
+
         $packageId = $this->db->lastInsertId();
 
-        // 2️⃣ Insert Package Items
+        // 3. Insert package items
         $findService = $this->db->prepare("
             SELECT service_id FROM services WHERE service_code = ?
         ");
 
         $insertItem = $this->db->prepare("
-            INSERT INTO service_package_items
-            (package_id, service_id)
+            INSERT INTO service_package_items (package_id, service_id)
             VALUES (?, ?)
         ");
 
         foreach ($data['services'] as $serviceCode) {
-
             $findService->execute([$serviceCode]);
-            $serviceId = $findService->fetchColumn();
-
-            if ($serviceId) {
-                $insertItem->execute([$packageId, $serviceId]);
+            $sid = $findService->fetchColumn();
+            if ($sid) {
+                $insertItem->execute([$packageId, $sid]);
             }
         }
 
@@ -243,38 +262,67 @@ public function getPackageById(int $id): array
     return $package;
 }
 
+
 public function update(int $id, array $data): void
 {
     $this->db->beginTransaction();
 
     try {
-        // 1. Update package details
+        // 1. Get the service_id FK from this package
         $stmt = $this->db->prepare("
+            SELECT service_id FROM packages WHERE package_id = ?
+        ");
+        $stmt->execute([$id]);
+        $serviceId = $stmt->fetchColumn();
+
+        // 2. Update the parent service row
+        if ($serviceId) {
+            $stmt2 = $this->db->prepare("
+                UPDATE services
+                SET name                  = :name,
+                    description           = :desc,
+                    base_duration_minutes = :dur,
+                    default_price         = :price,
+                    type_id               = :type,
+                    updated_at            = NOW()
+                WHERE service_id = :id
+            ");
+
+            $stmt2->execute([
+                'name'  => $data['name'],
+                'desc'  => $data['description'],
+                'dur'   => $data['total_duration'],
+                'price' => $data['total_price'],
+                'type'  => $data['type_id'],
+                'id'    => $serviceId,
+            ]);
+        }
+
+        // 3. Update the package row
+        $stmt3 = $this->db->prepare("
             UPDATE packages
-            SET name                  = :name,
-                description           = :desc,
+            SET name                   = :name,
+                description            = :desc,
                 total_duration_minutes = :dur,
-                total_price           = :price,
-                service_type_id       = :type
+                total_price            = :price,
+                service_type_id        = :type
             WHERE package_id = :id
         ");
 
-        $stmt->execute([
+        $stmt3->execute([
             'name'  => $data['name'],
             'desc'  => $data['description'],
             'dur'   => $data['total_duration'],
             'price' => $data['total_price'],
-            'type'  => $data['service_type_id'],
+            'type'  => $data['type_id'],
             'id'    => $id,
         ]);
 
-        // 2. Delete old service items
-        $del = $this->db->prepare("
+        // 4. Delete and re-insert package items
+        $this->db->prepare("
             DELETE FROM service_package_items WHERE package_id = ?
-        ");
-        $del->execute([$id]);
+        ")->execute([$id]);
 
-        // 3. Re-insert new service items
         $findService = $this->db->prepare("
             SELECT service_id FROM services WHERE service_code = ?
         ");
@@ -285,10 +333,9 @@ public function update(int $id, array $data): void
 
         foreach ($data['services'] as $serviceCode) {
             $findService->execute([$serviceCode]);
-            $serviceId = $findService->fetchColumn();
-
-            if ($serviceId) {
-                $insertItem->execute([$id, $serviceId]);
+            $sid = $findService->fetchColumn();
+            if ($sid) {
+                $insertItem->execute([$id, $sid]);
             }
         }
 
@@ -302,13 +349,36 @@ public function update(int $id, array $data): void
 
 public function updateStatus(int $id, string $status): void
 {
-    $sql = "UPDATE packages SET status = :status WHERE package_id = :id";
-    
-    $stmt = db()->prepare($sql); // ✅ prepare statement
-    
-    $stmt->execute([
-        'status' => $status,  // ✅ match :status
-        'id'     => $id       // ✅ match :id
-    ]);
+    $this->db->beginTransaction();
+
+    try {
+        // Get the service_id FK
+        $stmt = $this->db->prepare("
+            SELECT service_id FROM packages WHERE package_id = ?
+        ");
+        $stmt->execute([$id]);
+        $serviceId = $stmt->fetchColumn();
+
+        // Update both tables
+        if ($serviceId) {
+            $this->db->prepare("
+                UPDATE services SET status = ?, updated_at = NOW() WHERE service_id = ?
+            ")->execute([$status, $serviceId]);
+        }
+
+        $this->db->prepare("
+            UPDATE packages SET status = ? WHERE package_id = ?
+        ")->execute([$status, $id]);
+
+        $this->db->commit();
+
+    } catch (\Exception $e) {
+        $this->db->rollBack();
+        throw $e;
+    }
 }
+
 }
+
+
+

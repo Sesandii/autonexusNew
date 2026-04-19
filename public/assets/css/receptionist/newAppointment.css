@@ -1,73 +1,159 @@
+/* ── PAGE WRAPPER ─────────────────────────────────────────────────────────── */
 .details-section {
-  flex: 1;
-  margin-left: 280px;               /* keeps it next to sidebar */
-  padding: 40px 50px;               /* reasonable padding */
-  background: #fff;
-  border-radius: 10px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-  width: calc(100% - 320px);        /* full width minus sidebar + some margin */
-  max-width: 1400px;
-  margin: 40px auto;                /* centers it */
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
+    width: 100%;
+    max-width: 900px;
+    margin: 40px auto;
+    background: #fff;
+    padding: 30px 32px;
+    border-radius: 12px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.07);
 }
 
-/* Form header */
 .details-section h3 {
-  font-size: 22px;
-  font-weight: 600;
-  margin-bottom: 15px;
+    font-size: 20px;
+    font-weight: 600;
+    color: #111827;
+    margin: 0 0 24px;
 }
 
-/* Form groups */
-.details-section label {
-  font-weight: 600;
-  margin-bottom: 4px;
-  display: block;
+/* ── GRID ─────────────────────────────────────────────────────────────────── */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px 24px;
 }
 
-.details-section input,
-.details-section select {
-  padding: 10px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  font-size: 16px;
-  width: 100%;                   /* takes full width of container */
-  background-color: #f5f5f5;
-  box-sizing: border-box;
+/* ── FIELD BLOCK ──────────────────────────────────────────────────────────── */
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
 }
 
-/* Footer buttons */
+.field.full {
+    grid-column: 1 / -1;
+}
+
+/* ── LABEL ────────────────────────────────────────────────────────────────── */
+.field label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #374151;
+}
+
+/* ── INPUTS / SELECTS ─────────────────────────────────────────────────────── */
+.field input,
+.field select {
+    padding: 10px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 14px;
+    color: #111827;
+    background: #fff;
+    width: 100%;
+    box-sizing: border-box;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.field input:focus,
+.field select:focus {
+    outline: none;
+    border-color: #e84040;
+    box-shadow: 0 0 0 3px rgba(232, 64, 64, 0.12);
+}
+
+/* ── READONLY ─────────────────────────────────────────────────────────────── */
+.field input[readonly] {
+    background: #f3f4f6;
+    color: #6b7280;
+    cursor: default;
+}
+
+/* ── FOOTER ───────────────────────────────────────────────────────────────── */
 .modal-footer {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 20px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding-top: 20px;
+    border-top: 1px solid #e5e7eb;
+}
+
+/* ── BUTTONS ──────────────────────────────────────────────────────────────── */
+.cancel-button,
+.save-button {
+    padding: 10px 22px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: opacity 0.15s;
 }
 
 .cancel-button {
-  padding: 6px 16px;
-  border-radius: 5px;
-  border: none;
-  background-color: #ccc;
-  cursor: pointer;
-  font-size: 14px;
+    background: #f3f4f6;
+    color: #374151;
+    border: 1px solid #d1d5db;
+}
+
+.cancel-button:hover {
+    background: #e5e7eb;
 }
 
 .save-button {
-  padding: 6px 16px;
-  border-radius: 5px;
-  border: none;
-  background-color: red;
-  color: #fff;
-  cursor: pointer;
-  font-size: 14px;
+    background: #e84040;
+    color: #fff;
 }
 
-/* Responsive adjustments */
-@media (max-width: 1200px) {
-  .details-section {
-    width: calc(100% - 60px);  /* some margin on smaller screens */
-    padding: 30px 20px;
-  }
+.save-button:hover {
+    opacity: 0.88;
+}
+
+/* ── RESPONSIVE ───────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+    .details-section {
+        margin: 20px 16px;
+        padding: 20px;
+    }
+
+    .grid {
+        grid-template-columns: 1fr;
+    }
+
+    .field.full {
+        grid-column: span 1;
+    }
+
+    .modal-footer {
+        flex-direction: column;
+    }
+
+    .cancel-button,
+    .save-button {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+/* ── ADD TO BOTTOM OF newAppointment.css ─────────────────────────────────── */
+
+.field textarea {
+    padding: 10px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 14px;
+    color: #111827;
+    background: #fff;
+    width: 100%;
+    box-sizing: border-box;
+    resize: vertical;
+    min-height: 90px;
+    font-family: inherit;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.field textarea:focus {
+    outline: none;
+    border-color: #e84040;
+    box-shadow: 0 0 0 3px rgba(232, 64, 64, 0.12);
 }

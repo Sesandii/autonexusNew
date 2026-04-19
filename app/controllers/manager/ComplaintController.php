@@ -27,44 +27,21 @@ class ComplaintController extends BaseManagerController {
         ]);
     }
 
-    // 2️⃣ Show create form
-    public function create(): void {
-        $this->view('manager/Complaints/newComplaint');
-    }
-
-    public function fetchByPhone(): void {
-    $phone = $_GET['phone'] ?? '';
-
-    if (!$phone) {
-        $this->json(['success' => false, 'message' => 'Phone required']);
+    public function getVehiclesByCustomer(): void {
+    $customerId = $_GET['customer_id'] ?? 0;
+    
+    if (!$customerId) {
+        $this->json(['success' => false, 'message' => 'Customer ID required']);
         return;
     }
-
-    // Get customer info
-    $customer = $this->model->getCustomerByPhone($phone);
-
-    if (!$customer) {
-        $this->json(['success' => false, 'message' => 'Customer not found']);
-        return;
-    }
-
-    // Get all vehicles for this customer
-    $vehicles = $this->model->getVehiclesByCustomer($customer['customer_id']);
-
-    // Return combined data
+    
+    $vehicles = $this->model->getVehiclesByCustomer((int)$customerId);
+    
     $this->json([
         'success' => true,
-        'data' => array_merge($customer, ['vehicles' => $vehicles])
+        'vehicles' => $vehicles
     ]);
 }
-
-protected function json(array $data): void {
-    header('Content-Type: application/json');
-    echo json_encode($data);
-    exit;
-}
-
-
 
    // 3️⃣ Store new complaint
    public function store(): void {
@@ -100,7 +77,25 @@ public function show(int $complaintId): void {
     ]);
 }
 
-        
+public function history(int $customerId): void
+{
+    // 1. Appointments + work orders + embedded complaints
+    $appointments = $this->model->getCustomerAppointments($customerId);
+
+    // 2. Direct complaints (not tied to appointments)
+    $complaints = $this->model->getCustomerComplaints($customerId);
+
+    // 3. Build unified customer history object
+    $customer = [
+        'appointments' => $appointments,
+        'complaints'   => $complaints
+    ];
+
+    $this->view('manager/Complaints/viewHistory', [
+        'customer'   => $customer,
+        'customerId' => $customerId
+    ]);
+}     
 
 
     // 5️⃣ Show edit form
@@ -131,7 +126,6 @@ public function show(int $complaintId): void {
         $vehicle_id  = $_POST['vehicle_id'] ?? null;
 
         if (!$customer_id) {
-            // Customer ID is required
             $this->redirect(BASE_URL . "/manager/complaints/$id?error=missing_customer");
             return;
         }
@@ -139,7 +133,6 @@ public function show(int $complaintId): void {
         // Get user_id automatically from customer_id
         $user_id = $this->model->getUserIdByCustomer((int)$customer_id);
         if (!$user_id) {
-            // No linked user found → cannot update
             $this->redirect(BASE_URL . "/manager/complaints/$id?error=missing_user");
             return;
         }
@@ -153,7 +146,7 @@ public function show(int $complaintId): void {
             'description'    => $_POST['description'] ?? '',
             'priority'       => $_POST['priority'] ?? 'Medium',
             'status'         => $_POST['status'] ?? 'open',
-            'assigned_to'    => $_POST['assigned_to'] ?? null
+            'assigned_to'    => !empty($_POST['assigned_to']) ? (int)$_POST['assigned_to'] : null  // Make sure this is integer or null
         ];
 
         // Call model update
@@ -162,30 +155,6 @@ public function show(int $complaintId): void {
         // Redirect to complaint details page
         $this->redirect(BASE_URL . "/manager/complaints/$id");
     }
-}
-
-
-    // View complaints history of a customer by ID
-public function history(int $customerId): void {
-    // Get customer info
-    $customer = $this->model->getCustomerById($customerId);
-    if (!$customer) {
-        http_response_code(404);
-        echo "Customer not found";
-        return;
-    }
-
-    // Get all appointments (and work orders + complaints) for this customer
-    $appointments = $this->model->getCustomerAppointments($customerId);
-    //complaints
-    $complaints = $this->model->getCustomerComplaints($customerId);
-    $this->view('manager/Complaints/viewHistory', [
-        'customer' => [
-            'info' => $customer,
-            'appointments' => $appointments,
-            'complaints' => $complaints 
-        ]
-    ]);
 }
 
  public function delete(int $id): void {

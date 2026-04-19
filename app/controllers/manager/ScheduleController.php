@@ -63,38 +63,56 @@ public function index(): void
         exit;
     }
 
-    // Personal schedule view for a specific team member
-    public function personalSchedule(): void
-    {
-        $userId = $_GET['id'] ?? null;
-        
-        if (!$userId) {
-            header('Location: ' . BASE_URL . '/manager/schedule');
-            exit;
-        }
-        
-        $employee = $this->model->getEmployeeById((int)$userId);
-        
-        if (!$employee) {
-            header('Location: ' . BASE_URL . '/manager/schedule');
-            exit;
-        }
-        
-        if ($employee['role'] === 'mechanic') {
-            $workOrders = $this->model->getMechanicWorkOrders((int)$userId);
-        } else if ($employee['role'] === 'supervisor') {
-            $workOrders = $this->model->getSupervisorAppointments((int)$userId);
-        } else {
-            $workOrders = [];
-        }
-        
-        $this->view('manager/Schedule/personalSchedule', [
-            'pageTitle' => $employee['first_name'] . ' ' . $employee['last_name'] . ' - Schedule',
-            'employee' => $employee,
-            'workOrders' => $workOrders,
-            'activePage' => 'teamSchedule'
-        ]);
+   public function personalSchedule(): void
+{
+    $userId = $_GET['id'] ?? null;
+    
+    if (!$userId) {
+        header('Location: ' . BASE_URL . '/manager/schedule');
+        exit;
     }
+    
+    $employee = $this->model->getEmployeeById((int)$userId);
+    
+    if (!$employee) {
+        header('Location: ' . BASE_URL . '/manager/schedule');
+        exit;
+    }
+    
+    if ($employee['role'] === 'mechanic') {
+        $workOrders = $this->model->getMechanicWorkOrders((int)$userId);
+    } else if ($employee['role'] === 'supervisor') {
+        $raw = $this->model->getSupervisorAppointments((int)$userId);
+        $workOrders = array_map(function($appt) {
+            return [
+                'work_order_id'       => $appt['appointment_id'],
+                'status'              => match($appt['status']) {
+                    'confirmed'   => 'open',
+                    'in_progress' => 'in_progress',
+                    'completed'   => 'completed',
+                    default       => 'open'
+                },
+                'job_start_time'      => $appt['appointment_date'] . ' ' . $appt['appointment_time'],
+                'service_name'        => $appt['service_name'],
+                'customer_first_name' => $appt['customer_first_name'],
+                'customer_last_name'  => $appt['customer_last_name'],
+                'license_plate'       => $appt['license_plate'],
+                'make'                => $appt['make'],
+                'model'               => $appt['model'],
+                'year'                => $appt['year'],
+            ];
+        }, $raw);
+    } else {
+        $workOrders = [];
+    }
+    
+    $this->view('manager/Schedule/personalSchedule', [
+        'pageTitle' => $employee['first_name'] . ' ' . $employee['last_name'] . ' - Schedule',
+        'employee' => $employee,
+        'workOrders' => $workOrders,
+        'activePage' => 'teamSchedule'
+    ]);
+}
 
 // Show add team member page
 public function addMemberForm(): void

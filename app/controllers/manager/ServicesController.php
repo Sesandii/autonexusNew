@@ -35,15 +35,18 @@ $packages = $this->packageModel->getAllPackages();
     ]);
 }
 
-    public function create(): void
-    {
-        $this->view('manager/ServicesandPackages/addService', [
-            'services'        => $this->serviceModel->getAllServices(),
-            'serviceTypes'    => $this->serviceModel->getServiceTypes(),
-            'lastServiceCode' => $this->serviceModel->getLastServiceCode(),
-            'lastPackageCode' => $this->packageModel->getLastPackageCode(),
-        ]);
-    }
+   public function create(): void
+{
+    $defaultType = 'service';
+    $lastCode = $this->serviceModel->getLastCode(); // this was missing!
+    
+    $this->view('manager/ServicesandPackages/addService', [
+        'services'     => $this->serviceModel->getAllServices(),
+        'serviceTypes' => $this->serviceModel->getServiceTypes(),
+        'lastCode'     => $lastCode,
+        'defaultType'  => $defaultType,
+    ]);
+}
 
 public function store(): void
 {
@@ -67,13 +70,13 @@ public function store(): void
     } elseif ($type === 'package') {
 
         $this->packageModel->create([
-            'package_code' => $_POST['package_code'],
+            'service_code' => $_POST['service_code'],
             'name' => $_POST['name'],
             'description' => $_POST['description'],
             'services' => $_POST['services'] ?? [],
-            'total_duration' => $_POST['total_duration'],
-            'total_price' => $_POST['total_price'],
-            'service_type_id' => $_POST['service_type_id'], // REQUIRED
+            'duration' => $_POST['duration'],
+            'price' => $_POST['price'],
+            'type_id'        => $_POST['type_id'],
         ]);
     }
 
@@ -94,18 +97,16 @@ public function edit(int $id, string $type): void
         $package = $this->packageModel->getPackageById($id);
     }
 
-    $services = $this->serviceModel->getAllServices();
-    $serviceTypes = $this->serviceModel->getServiceTypes();
+    $lastCode = $this->serviceModel->getLastCode(); // updated here too
 
     $this->view('manager/ServicesandPackages/editService', [
-        'editing'         => $editing,
-        'editType'        => $editType,
-        'service'         => $service,
-        'package'         => $package,
-        'services'        => $services,
-        'serviceTypes'    => $serviceTypes,
-        'lastServiceCode' => $this->serviceModel->getLastServiceCode(),
-        'lastPackageCode' => $this->packageModel->getLastPackageCode(),
+        'editing'      => $editing,
+        'editType'     => $editType,
+        'service'      => $service,
+        'package'      => $package,
+        'services'     => $this->serviceModel->getAllServices(),
+        'serviceTypes' => $this->serviceModel->getServiceTypes(),
+        'lastCode'     => $lastCode, // single variable replaces both old ones
     ]);
 }
 
@@ -134,7 +135,7 @@ public function update(): void
             'services'         => $_POST['services'] ?? [],
             'total_duration'   => $_POST['total_duration'],
             'total_price'      => $_POST['total_price'],
-            'service_type_id'  => $_POST['service_type_id'],
+             'type_id'        => $_POST['type_id'],
         ]);
     }
 
@@ -144,21 +145,32 @@ public function update(): void
 public function delete(int $id, string $type): void
 {
     if ($type === 'service') {
-        $this->serviceModel->updateStatus($id, 'inactive');
+        $service = $this->serviceModel->getServiceById($id);
+        if ($service['status'] === 'active') {
+            $this->serviceModel->updateStatus($id, 'inactive');
+        }
     } elseif ($type === 'package') {
-        $this->packageModel->updateStatus($id, 'inactive');
+        $package = $this->packageModel->getPackageById($id);
+        if ($package['status'] === 'active') {
+            $this->packageModel->updateStatus($id, 'inactive');
+        }
     }
 
-    // Redirect back to the services/packages list
     $this->redirect(BASE_URL . '/manager/services');
 }
 
 public function activate(int $id, string $type): void
 {
     if ($type === 'service') {
-        $this->serviceModel->updateStatus($id, 'active');
+        $service = $this->serviceModel->getServiceById($id);
+        if ($service['status'] === 'inactive') {
+            $this->serviceModel->updateStatus($id, 'active');
+        }
     } elseif ($type === 'package') {
-        $this->packageModel->updateStatus($id, 'active');
+        $package = $this->packageModel->getPackageById($id);
+        if ($package['status'] === 'inactive') {
+            $this->packageModel->updateStatus($id, 'active');
+        }
     }
 
     $this->redirect(BASE_URL . '/manager/services');

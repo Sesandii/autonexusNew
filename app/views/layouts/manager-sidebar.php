@@ -83,5 +83,17 @@ $activePage = in_array($section, $sections) ? $section : '';
                 <span>Reports</span>
             </a>
         </li>
+        <li class="<?= $activePage == 'profile' ? 'active' : '' ?>">
+            <a href="<?= BASE_URL ?>/manager/profile">
+                <i class="fa-solid fa-user"></i>
+                <span>Profile</span>
+            </a>
+        </li>
+<li>
+  <a href="<?= BASE_URL ?>/logout.php">
+    <i class="fa-solid fa-right-from-bracket"></i>
+    <span>Log Out</span>
+  </a>
+</li>
     </ul>
 </div>
