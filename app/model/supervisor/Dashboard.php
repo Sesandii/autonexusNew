@@ -73,14 +73,13 @@ public function getWorkorderStats(int $supervisor_id, int $branch_id): array
         ";
 
         $stmt = $this->pdo->prepare($sql);
-        // Bind parameters in correct order
         $stmt->execute([
-            $branch_id, $supervisor_id, // total
-            $branch_id, $supervisor_id, // in_progress
-            $branch_id, $supervisor_id, // on_hold
-            $branch_id, $supervisor_id, // completed
-            $supervisor_id,             // my_assigned
-            $branch_id                  // pending_appointments
+            $branch_id, $supervisor_id, 
+            $branch_id, $supervisor_id, 
+            $branch_id, $supervisor_id, 
+            $branch_id, $supervisor_id, 
+            $supervisor_id,             
+            $branch_id                  
         ]);
 
         $row = $stmt->fetch(PDO::FETCH_ASSOC);

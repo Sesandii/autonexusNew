@@ -10,6 +10,20 @@
 <body>
 
 <?php include __DIR__ . '/../partials/sidebar.php'; ?>
+<?php 
+if (session_status() !== PHP_SESSION_ACTIVE) session_start();
+if (isset($_SESSION['message'])): 
+    $message = $_SESSION['message'];
+?>
+    <div class="toast-container" id="toast-notification">
+        <div class="toast-message <?= $message['type'] ?>">
+            <span><?= htmlspecialchars($message['text']) ?></span>
+        </div>
+    </div>
+<?php 
+    unset($_SESSION['message']); // Crucial: clear it so it doesn't repeat
+endif; 
+?>
 
 <div class="container">
 <div class="breadcrumb-text">
@@ -30,12 +44,6 @@
 </a>
 </div>
   </div>
-
-  <?php if (!empty($message)): ?>
-    <div class="toast <?= htmlspecialchars($message['type']) ?>">
-      <?= htmlspecialchars($message['text']) ?>
-    </div>
-  <?php endif; ?>
   <div class="filters-row">
   <input type="text" id="searchInput" placeholder="Search Service, Vehicle, Customer..." />
 
@@ -192,6 +200,17 @@ document.addEventListener("DOMContentLoaded", function () {
         ownerFilter.value = "";
         applyFilters();
     });
+});
+
+window.addEventListener('DOMContentLoaded', () => {
+    const toast = document.querySelector('.toast');
+    if (toast) {
+        setTimeout(() => {
+            toast.style.transition = 'opacity 0.5s';
+            toast.style.opacity = '0';
+            setTimeout(() => toast.remove(), 500);
+        }, 3000);
+    }
 });
 
 let formToDelete = null;

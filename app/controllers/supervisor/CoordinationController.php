@@ -59,7 +59,6 @@ class CoordinationController {
     public function updateMechanicStatus()
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            // Use ID if possible for more accuracy, but since you pass code:
             $mechanicCode = $_POST['mechanic_code'] ?? null;
             $status = $_POST['status'] ?? null;
     
@@ -67,14 +66,12 @@ class CoordinationController {
                 $updated = $this->mechanicModel->updateStatus($mechanicCode, $status);
     
                 if ($updated) {
-                    // Ensure BASE_URL is respected. If you are using /autonexus, 
-                    // make sure the redirect matches exactly where your index() is mapped.
+                    $this->flash('success', 'Status updated.');
                     header('Location: ' . BASE_URL . '/supervisor/coordination');
                     exit;
                 }
             }
-            
-            // If it fails, redirect anyway but maybe with an error flag
+
             header('Location: ' . BASE_URL . '/supervisor/coordination?error=update_failed');
             exit;
         }
@@ -88,4 +85,16 @@ class CoordinationController {
         );
         header("Location: /autonexus/supervisor/coordination");
     }    
+
+    private function flash(string $type, string $text): void
+{
+    if (session_status() !== PHP_SESSION_ACTIVE) {
+        session_start();
+    }
+
+    $_SESSION['message'] = [
+        'type' => $type,
+        'text' => $text
+    ];
+}
 }

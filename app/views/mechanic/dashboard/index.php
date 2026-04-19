@@ -17,6 +17,9 @@ $currentMechanicId = $_SESSION['user']['mechanic_id'] ?? null;
   <section class="welcome">
   <h1>Welcome, <?= htmlspecialchars(($_SESSION['user']['first_name'] ?? '') . ' ' . ($_SESSION['user']['last_name'] ?? '')) ?></h1>
     <p>Here's an overview of your dashboard</p>
+    <div class="lang-switcher-wrapper">
+        <?php require APP_ROOT . '/views/partials/lang-switcher.php'; ?>
+    </div>
   </section>
   <div class="dashboard-layout">
     <div class="tiles-grid">
@@ -46,7 +49,7 @@ $currentMechanicId = $_SESSION['user']['mechanic_id'] ?? null;
       </div>
       <div class="stat-content">
         <span class="stat-label">In-Progress Workorders</span>
-        <h2 class="stat-number"><?= (int)($stats['in_progress'] ?? 0) ?></h2>
+        <h2 class="stat-number"><?= (int)($stats['ongoing'] ?? 0) ?></h2>
       </div>
     </div>
 
@@ -56,7 +59,7 @@ $currentMechanicId = $_SESSION['user']['mechanic_id'] ?? null;
       </div>
       <div class="stat-content">
         <span class="stat-label">On-Hold Workorders</span>
-        <h2 class="stat-number"><?= (int)($stats['on_hold'] ?? 0) ?></h2>
+        <h2 class="stat-number"><?= (int)($stats['onhold'] ?? 0) ?></h2>
       </div>
     </div>
 
