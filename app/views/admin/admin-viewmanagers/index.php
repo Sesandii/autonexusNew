@@ -81,7 +81,6 @@ $B = rtrim(BASE_URL, '/');
             <tr>
               <th>Manager Code</th>
               <th>Name</th>
-              <th>Username</th>
               <th>Email</th>
               <th>Phone</th>
               <th>Branch</th>
@@ -99,7 +98,6 @@ $B = rtrim(BASE_URL, '/');
                   <td><?= htmlspecialchars($r['manager_code'] ?? '', ENT_QUOTES, 'UTF-8') ?></td>
                   <td><?= htmlspecialchars(($r['first_name'] ?? '') . ' ' . ($r['last_name'] ?? ''), ENT_QUOTES, 'UTF-8') ?>
                   </td>
-                  <td><?= htmlspecialchars($r['username'] ?? '', ENT_QUOTES, 'UTF-8') ?></td>
                   <td><?= htmlspecialchars($r['email'] ?? '', ENT_QUOTES, 'UTF-8') ?></td>
                   <td><?= htmlspecialchars($r['phone'] ?? '', ENT_QUOTES, 'UTF-8') ?></td>
                   <td>
@@ -144,7 +142,7 @@ $B = rtrim(BASE_URL, '/');
               <?php endforeach; ?>
             <?php else: ?>
               <tr>
-                <td colspan="8" class="empty-row">
+                <td colspan="7" class="empty-row">
                   <i class="fa-regular fa-circle-question"></i>
                   <span>No service managers found.</span>
                 </td>

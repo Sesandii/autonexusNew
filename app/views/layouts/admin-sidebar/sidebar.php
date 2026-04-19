@@ -1,7 +1,59 @@
 <?php
 $B = rtrim(BASE_URL, '/');
 $current = $current ?? '';
+
+if (session_status() !== PHP_SESSION_ACTIVE) {
+  session_start();
+}
+
+$adminToast = null;
+
+if (!empty($_SESSION['toast_admin']) && is_array($_SESSION['toast_admin'])) {
+  $adminToast = $_SESSION['toast_admin'];
+  unset($_SESSION['toast_admin']);
+} elseif (!empty($_SESSION['flash_notifications']) && is_array($_SESSION['flash_notifications'])) {
+  $adminToast = $_SESSION['flash_notifications'];
+  unset($_SESSION['flash_notifications']);
+} elseif (!empty($_SESSION['flash'])) {
+  $adminToast = ['type' => 'success', 'text' => (string) $_SESSION['flash']];
+  unset($_SESSION['flash']);
+} elseif (!empty($flash) && is_array($flash)) {
+  $adminToast = $flash;
+}
+
+if ($adminToast !== null) {
+  $allowed = ['success', 'error', 'warn', 'warning', 'info'];
+  $toastType = strtolower((string) ($adminToast['type'] ?? 'info'));
+  if (!in_array($toastType, $allowed, true)) {
+    $toastType = 'info';
+  }
+  if ($toastType === 'warning') {
+    $toastType = 'warn';
+  }
+  $adminToast = [
+    'type' => $toastType,
+    'text' => trim((string) ($adminToast['text'] ?? '')),
+  ];
+  if ($adminToast['text'] === '') {
+    $adminToast = null;
+  }
+}
 ?>
+
+<div id="admin-toast-root" class="admin-toast-root">
+  <div id="admin-toast"
+    class="admin-toast <?= $adminToast ? 'admin-toast--' . htmlspecialchars($adminToast['type'], ENT_QUOTES, 'UTF-8') . ' show' : '' ?>"
+    role="status" aria-live="polite" aria-atomic="true">
+    <div class="admin-toast-icon" aria-hidden="true">
+      <i class="fa-solid fa-circle-info"></i>
+    </div>
+    <div class="admin-toast-body" id="admin-toast-text">
+      <?= $adminToast ? htmlspecialchars($adminToast['text'], ENT_QUOTES, 'UTF-8') : '' ?></div>
+    <button type="button" class="admin-toast-close" id="admin-toast-close" aria-label="Close notification">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+  </div>
+</div>
 
 <aside class="sidebar">
   <div class="logo-wrap">
@@ -152,5 +204,49 @@ $current = $current ?? '';
         }
       });
     });
+
+    const toast = document.getElementById('admin-toast');
+    const toastText = document.getElementById('admin-toast-text');
+    const closeBtn = document.getElementById('admin-toast-close');
+    let hideTimer = null;
+
+    function closeToast() {
+      if (!toast) return;
+      toast.classList.remove('show');
+      if (hideTimer) {
+        clearTimeout(hideTimer);
+        hideTimer = null;
+      }
+    }
+
+    function openToast(message, type) {
+      if (!toast || !toastText || !message) return;
+
+      toastText.textContent = String(message);
+      toast.classList.remove('admin-toast--success', 'admin-toast--error', 'admin-toast--warn', 'admin-toast--info');
+      toast.classList.add('admin-toast--' + (type || 'info'));
+      toast.classList.add('show');
+
+      if (hideTimer) {
+        clearTimeout(hideTimer);
+      }
+      hideTimer = setTimeout(closeToast, 4200);
+    }
+
+    if (toast && toast.classList.contains('show')) {
+      hideTimer = setTimeout(closeToast, 4200);
+    }
+
+    if (closeBtn) {
+      closeBtn.addEventListener('click', closeToast);
+    }
+
+    window.adminToast = {
+      success: function (msg) { openToast(msg, 'success'); },
+      error: function (msg) { openToast(msg, 'error'); },
+      warn: function (msg) { openToast(msg, 'warn'); },
+      info: function (msg) { openToast(msg, 'info'); },
+      show: function (msg, type) { openToast(msg, type || 'info'); }
+    };
   });
 </script>

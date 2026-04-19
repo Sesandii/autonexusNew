@@ -135,7 +135,8 @@ $typeId = (int) ($filters['type_id'] ?? 0);
                   <td><span class="status-pill">Pending</span></td>
                   <td>
                     <div class="table-actions">
-                      <form method="post" action="<?= $B ?>/admin/admin-serviceapproval/update" class="u-inline">
+                      <form method="post" action="<?= $B ?>/admin/admin-serviceapproval/update" class="u-inline"
+                        onsubmit="return confirm('Approve this service request?');">
                         <input type="hidden" name="id" value="<?= (int) $c['id'] ?>">
                         <input type="hidden" name="action" value="approve">
                         <button type="submit" class="chip-btn chip-btn--approve">
@@ -144,7 +145,8 @@ $typeId = (int) ($filters['type_id'] ?? 0);
                         </button>
                       </form>
 
-                      <form method="post" action="<?= $B ?>/admin/admin-serviceapproval/update" class="u-inline">
+                      <form method="post" action="<?= $B ?>/admin/admin-serviceapproval/update" class="u-inline"
+                        onsubmit="return confirm('Reject this service request?');">
                         <input type="hidden" name="id" value="<?= (int) $c['id'] ?>">
                         <input type="hidden" name="action" value="reject">
                         <button type="submit" class="chip-btn chip-btn--reject">

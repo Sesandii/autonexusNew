@@ -41,11 +41,6 @@ function e($value)
         <h1 class="page-title">Appointments</h1>
         <p class="subtitle">Manage and track service appointments</p>
       </div>
-
-      <a class="user-chip user-chip--link" href="<?= $B ?>/admin/profile" aria-label="Open profile">
-        <div class="avatar"><i class="fa-solid fa-user"></i></div>
-        <span><?= e($adminName) ?></span>
-      </a>
     </header>
 
     <section class="dash-wrap">
@@ -139,14 +134,15 @@ function e($value)
             <label for="dateTo">To Date</label>
             <input type="date" id="dateTo" value="<?= e($dateTo) ?>" />
           </div>
-        </div>
-        <div class="filter-actions u-mt-12">
-          <button class="filter-btn" onclick="applyFilters()">
-            <i class="fa-solid fa-search"></i> Apply Filters
-          </button>
-          <button class="filter-btn secondary" onclick="clearFilters()">
-            <i class="fa-solid fa-xmark"></i> Clear
-          </button>
+
+          <div class="filter-actions">
+            <button class="filter-btn" onclick="applyFilters()" type="button">
+              <i class="fa-solid fa-search"></i> Apply Filters
+            </button>
+            <button class="filter-btn secondary" onclick="clearFilters()" type="button">
+              <i class="fa-solid fa-xmark"></i> Clear
+            </button>
+          </div>
         </div>
       </section>
 

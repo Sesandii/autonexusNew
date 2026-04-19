@@ -218,6 +218,14 @@ $base = rtrim(BASE_URL, '/'); ?>
       </div>
     `;
             itemsWrap.insertAdjacentHTML('beforeend', html);
+            const newRow = itemsWrap.querySelector(`[data-idx="${idx}"]`);
+            if (newRow) {
+                const selectEl = newRow.querySelector('select');
+                const qtyEl = newRow.querySelector('input[type="number"]');
+                selectEl?.addEventListener('change', updateSummary);
+                qtyEl?.addEventListener('input', updateSummary);
+                qtyEl?.addEventListener('change', updateSummary);
+            }
             updateSummary();
         }
 

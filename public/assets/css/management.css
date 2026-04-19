@@ -1,7 +1,11 @@
 /* ===============================
    Reset & Base
    =============================== */
-* { margin: 0; padding: 0; box-sizing: border-box; }
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
 body {
   font-family: 'Inter', Arial, sans-serif;
@@ -13,7 +17,8 @@ body {
    Layout
    =============================== */
 .main-content {
-  margin-left: 260px;              /* equals sidebar width */
+  margin-left: 260px;
+  /* equals sidebar width */
   padding: 30px;
   background: #fff;
   min-height: 100vh;
@@ -22,7 +27,9 @@ body {
 /* ===============================
    Management Header / Tools
    =============================== */
-.management { margin-top: 10px; }
+.management {
+  margin-top: 10px;
+}
 
 .management-header {
   display: flex;
@@ -41,7 +48,8 @@ body {
   display: flex;
   align-items: center;
   gap: 10px;
-  flex-wrap: wrap;                 /* better on small screens */
+  flex-wrap: wrap;
+  /* better on small screens */
 }
 
 /* Search */
@@ -53,6 +61,7 @@ body {
   width: 220px;
   background: #fff;
 }
+
 .tools .search-input:focus {
   outline: none;
   border-color: #f04f1e;
@@ -80,7 +89,10 @@ body {
   font-weight: 500;
   transition: background 0.2s ease;
 }
-.tools .add-btn:hover { background-color: #ab2c08; }
+
+.tools .add-btn:hover {
+  background-color: #ab2c08;
+}
 
 /* ===============================
    Date Range (library-free)
@@ -108,13 +120,16 @@ body {
   background: #fff;
   min-width: 160px;
 }
+
 .tools .date-input:focus {
   outline: none;
   border-color: #f04f1e;
-  box-shadow: 0 0 3px rgba(240,79,30,.4);
+  box-shadow: 0 0 3px rgba(240, 79, 30, .4);
 }
 
-.tools .dash { color: #6b7280; }
+.tools .dash {
+  color: #6b7280;
+}
 
 .tools .apply-btn {
   padding: 8px 14px;
@@ -127,11 +142,16 @@ body {
   cursor: pointer;
   transition: background .2s ease;
 }
-.tools .apply-btn:hover { background: #ab2c08; }
+
+.tools .apply-btn:hover {
+  background: #ab2c08;
+}
 
 /* Optional: compact on small screens */
 @media (max-width: 700px) {
-  .tools .date-input { min-width: 140px; }
+  .tools .date-input {
+    min-width: 140px;
+  }
 }
 
 /* ===============================
@@ -145,7 +165,8 @@ table {
   overflow: hidden;
 }
 
-table th, table td {
+table th,
+table td {
   padding: 12px 16px;
   text-align: left;
   font-size: 14px;
@@ -158,13 +179,29 @@ table th {
   border-bottom: 1px solid #e0e0e0;
 }
 
-table td { border-bottom: 1px solid #eee; }
-table tbody tr:hover { background-color: #fafafa; }
+table td {
+  border-bottom: 1px solid #eee;
+}
+
+table tbody tr:hover {
+  background-color: #fafafa;
+}
 
 /* Status helpers */
-.status--active   { color: #22c55e; font-weight: 600; }
-.status--inactive { color: #dc2626; font-weight: 600; }
-.status--pending  { color: #b45309; font-weight: 600; }
+.status--active {
+  color: #22c55e;
+  font-weight: 600;
+}
+
+.status--inactive {
+  color: #dc2626;
+  font-weight: 600;
+}
+
+.status--pending {
+  color: #b45309;
+  font-weight: 600;
+}
 
 /* ===============================
    Row Action Buttons
@@ -193,7 +230,10 @@ button.cross-btn:hover {
   font-size: 18px;
   transition: color 0.2s ease;
 }
-.tick-btn:hover i { color: #15803d; }
+
+.tick-btn:hover i {
+  color: #15803d;
+}
 
 /* Red Reject (cross) */
 .cross-btn i {
@@ -201,11 +241,15 @@ button.cross-btn:hover {
   font-size: 18px;
   transition: color 0.2s ease;
 }
-.cross-btn:hover i { color: #b91c1c; }
+
+.cross-btn:hover i {
+  color: #b91c1c;
+}
 
 /* Red Save button */
 .btn-save {
-  background-color: #dc2626;   /* red */
+  background-color: #dc2626;
+  /* red */
   color: #fff;
   border: none;
   padding: 10px 18px;
@@ -215,7 +259,8 @@ button.cross-btn:hover {
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  gap: 6px; /* space between icon and text */
+  gap: 6px;
+  /* space between icon and text */
   transition: background 0.2s ease, transform 0.1s ease;
 }
 
@@ -224,11 +269,13 @@ button.cross-btn:hover {
 }
 
 .btn-save:hover {
-  background-color: #b91c1c;   /* darker red on hover */
+  background-color: #b91c1c;
+  /* darker red on hover */
 }
 
 .btn-save:active {
-  transform: scale(0.97);      /* small click effect */
+  transform: scale(0.97);
+  /* small click effect */
 }
 
 /*Update Price Textbox*/
@@ -245,13 +292,15 @@ td input[type="text"] {
 }
 
 td input[type="text"]::placeholder {
-  color: #9ca3af;  /* subtle gray placeholder */
+  color: #9ca3af;
+  /* subtle gray placeholder */
   font-size: 13px;
 }
 
 td input[type="text"]:focus {
   outline: none;
-  border-color: #cf3202;  /* matches your theme (orange-red) */
+  border-color: #cf3202;
+  /* matches your theme (orange-red) */
   box-shadow: 0 0 0 3px rgba(207, 50, 2, 0.12);
 }
 
@@ -259,7 +308,10 @@ td input[type="text"]:focus {
 /* ===============================
    Modal (shared)
    =============================== */
-.modal { display: none; }
+.modal {
+  display: none;
+}
+
 .modal.is-open {
   display: block;
   position: fixed;
@@ -271,7 +323,7 @@ td input[type="text"]:focus {
 .modal__backdrop {
   position: absolute;
   inset: 0;
-  background: rgba(0,0,0,.45);
+  background: rgba(0, 0, 0, .45);
 }
 
 .modal__dialog {
@@ -282,7 +334,7 @@ td input[type="text"]:focus {
   background: #fff;
   border-radius: 12px;
   overflow: auto;
-  box-shadow: 0 10px 30px rgba(0,0,0,.2);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, .2);
 }
 
 .modal__header,
@@ -299,7 +351,9 @@ td input[type="text"]:focus {
   gap: 10px;
 }
 
-.modal__body { padding: 16px 20px; }
+.modal__body {
+  padding: 16px 20px;
+}
 
 /* Close button in top-right of header */
 .modal__close {
@@ -322,17 +376,30 @@ td input[type="text"]:focus {
 }
 
 /* If you want the same green/red text as table helpers: */
-.modal__status .status--active   { color: #22c55e; }
-.modal__status .status--inactive { color: #dc2626; }
-.modal__status .status--pending  { color: #b45309; }
+.modal__status .status--active {
+  color: #22c55e;
+}
+
+.modal__status .status--inactive {
+  color: #dc2626;
+}
+
+.modal__status .status--pending {
+  color: #b45309;
+}
 
 /* Modal grid + inputs */
 .modal__grid {
   display: grid;
   gap: 12px;
-  grid-template-columns: repeat(2, minmax(0,1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
-.label { color:#666; font-size:12px; margin-bottom:2px; }
+
+.label {
+  color: #666;
+  font-size: 12px;
+  margin-bottom: 2px;
+}
 
 .input {
   width: 100%;
@@ -343,31 +410,64 @@ td input[type="text"]:focus {
   background: #fff;
   color: #111;
 }
+
 .input:focus {
   outline: none;
   border-color: #cf3202;
-  box-shadow: 0 0 0 3px rgba(207,50,2,.12);
+  box-shadow: 0 0 0 3px rgba(207, 50, 2, .12);
 }
 
 .btn-primary {
-  background:#cf3202; color:#fff; border:none;
-  padding:10px 14px; border-radius:6px; cursor:pointer;
+  background: #cf3202;
+  color: #fff;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 6px;
+  cursor: pointer;
 }
-.btn-primary:hover{ background:#ab2c08; }
+
+.btn-primary:hover {
+  background: #ab2c08;
+}
 
 .btn-secondary {
-  background:#f3f4f6; color:#111; border:1px solid #e5e7eb;
-  padding:10px 14px; border-radius:6px; cursor:pointer;
+  background: #f3f4f6;
+  color: #111;
+  border: 1px solid #e5e7eb;
+  padding: 10px 14px;
+  border-radius: 6px;
+  cursor: pointer;
 }
-.btn-secondary:hover{ background:#e5e7eb; }
+
+.btn-secondary:hover {
+  background: #e5e7eb;
+}
 
 
 /* =============================== 
    Table Status Helpers (Service Type) 
    =============================== */
-.status--repair      { color: #dc2626; font-weight: 600; }  /* Repair */
-.status--maintenance { color: #3b82f6; font-weight: 600; }  /* Maintenance */
-.status--replacement { color: #9333ea; font-weight: 600; }  /* Replacement */
-.status--inspection  { color: #22c55e; font-weight: 600; }  /* Inspection */
+.status--repair {
+  color: #dc2626;
+  font-weight: 600;
+}
 
+/* Repair */
+.status--maintenance {
+  color: #dc2626;
+  font-weight: 600;
+}
 
+/* Maintenance */
+.status--replacement {
+  color: #9333ea;
+  font-weight: 600;
+}
+
+/* Replacement */
+.status--inspection {
+  color: #22c55e;
+  font-weight: 600;
+}
+
+/* Inspection */

@@ -23,18 +23,19 @@ class User
 
         $st = $this->db->prepare($sql);
         $ok = $st->execute([
-            ':first_name'    => $data['first_name'] ?? '',
-            ':last_name'     => $data['last_name'] ?? '',
-            ':username'      => $data['username'],
-            ':email'         => $data['email'],
+            ':first_name' => $data['first_name'] ?? '',
+            ':last_name' => $data['last_name'] ?? '',
+            ':username' => $data['username'],
+            ':email' => $data['email'],
             ':password_hash' => password_hash($data['password'], PASSWORD_DEFAULT),
-            ':phone'         => $data['phone'] ?? null,
-            ':role'          => $data['role'] ?? 'manager',
-            ':status'        => $data['status'] ?? 'active'
+            ':phone' => $data['phone'] ?? null,
+            ':role' => $data['role'] ?? 'manager',
+            ':status' => $data['status'] ?? 'active'
         ]);
 
-        if (!$ok) throw new Exception('Failed to create user');
-        return (int)$this->db->lastInsertId();
+        if (!$ok)
+            throw new Exception('Failed to create user');
+        return (int) $this->db->lastInsertId();
     }
 
     // Validate input and update an existing record.
@@ -43,7 +44,7 @@ class User
         $parts = [];
         $params = [':id' => $id];
 
-        foreach (['first_name','last_name','username','email','phone','status'] as $f) {
+        foreach (['first_name', 'last_name', 'username', 'email', 'phone', 'status'] as $f) {
             if (array_key_exists($f, $data)) {
                 $parts[] = "$f = :$f";
                 $params[":$f"] = $data[$f];
@@ -53,7 +54,8 @@ class User
             $parts[] = "password_hash = :password_hash";
             $params[':password_hash'] = password_hash($data['password'], PASSWORD_DEFAULT);
         }
-        if (!$parts) return;
+        if (!$parts)
+            return;
 
         $sql = "UPDATE users SET " . implode(',', $parts) . " WHERE user_id = :id";
         $st = $this->db->prepare($sql);
@@ -72,6 +74,14 @@ class User
     {
         $st = $this->db->prepare("SELECT * FROM users WHERE email = ? OR username = ? LIMIT 1");
         $st->execute([$email, $username]);
+        $row = $st->fetch(PDO::FETCH_ASSOC);
+        return $row ?: null;
+    }
+
+    public function findByPhone(string $phone): ?array
+    {
+        $st = $this->db->prepare("SELECT * FROM users WHERE phone = ? LIMIT 1");
+        $st->execute([$phone]);
         $row = $st->fetch(PDO::FETCH_ASSOC);
         return $row ?: null;
     }

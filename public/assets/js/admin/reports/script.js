@@ -56,37 +56,72 @@
     });
   });
 
-  const kpis = document.getElementById("kpis");
-  if (kpis) {
-    const avgCompletion = Number(data.service?.avgCompletionMins ?? 0);
-    const avgInvoice = Number(data.revenue?.avgInvoice ?? 0);
-    const avgApprovalHours = Number(data.approval?.avgApprovalHours ?? 0);
-    const avgRevenuePerAppointment = Number(data.revenue?.avgRevenuePerAppointment ?? 0);
-    const avgRevenuePerCustomer = Number(data.revenue?.avgRevenuePerCustomer ?? 0);
-    const avgWaitingMins = Number(data.service?.avgWaitingMins ?? 0);
-    const feedbackResponseTurnaround = Number(data.feedback?.feedbackResponseTurnaround ?? 0);
+  const SERVICE_RED = {
+    backgroundColor: "rgba(220, 38, 38, 0.78)",
+    borderColor: "#b91c1c",
+    pointBackgroundColor: "#dc2626",
+    pointBorderColor: "#991b1b",
+  };
+  const REVENUE_RED = {
+    backgroundColor: "rgba(220, 38, 38, 0.78)",
+    borderColor: "#b91c1c",
+    pointBackgroundColor: "#dc2626",
+    pointBorderColor: "#991b1b",
+  };
+  const APPOINTMENTS_RED = {
+    backgroundColor: "rgba(220, 38, 38, 0.78)",
+    borderColor: "#b91c1c",
+    pointBackgroundColor: "#dc2626",
+    pointBorderColor: "#991b1b",
+  };
 
-    kpis.innerHTML = `
-      <div class="kpi"><div class="label">Avg Completion Time</div><div class="value">${avgCompletion.toFixed(0)} mins</div></div>
-      <div class="kpi"><div class="label">Avg Waiting Time</div><div class="value">${avgWaitingMins.toFixed(0)} mins</div></div>
-      <div class="kpi"><div class="label">Avg Invoice Value</div><div class="value">${avgInvoice.toFixed(2)}</div></div>
-      <div class="kpi"><div class="label">Avg Revenue / Appointment</div><div class="value">${avgRevenuePerAppointment.toFixed(2)}</div></div>
-      <div class="kpi"><div class="label">Avg Revenue / Customer</div><div class="value">${avgRevenuePerCustomer.toFixed(2)}</div></div>
-      <div class="kpi"><div class="label">Avg Approval Time</div><div class="value">${avgApprovalHours.toFixed(1)} hrs</div></div>
-      <div class="kpi"><div class="label">Feedback Response Time</div><div class="value">${feedbackResponseTurnaround.toFixed(1)} hrs</div></div>
-    `;
+  function redPalette(count) {
+    const shades = [
+      "rgba(220, 38, 38, 0.90)",
+      "rgba(185, 28, 28, 0.88)",
+      "rgba(239, 68, 68, 0.86)",
+      "rgba(153, 27, 27, 0.85)",
+      "rgba(248, 113, 113, 0.84)",
+      "rgba(127, 29, 29, 0.84)",
+    ];
+    return Array.from({ length: count }, (_, i) => shades[i % shades.length]);
   }
 
-  function makeChart(canvasId, type, rows) {
+  function makeChart(canvasId, type, rows, style = null) {
     const el = document.getElementById(canvasId);
     if (!el) return null;
 
     const { labels, values } = toChartXY(rows);
+    const dataset = { label: "Value", data: values };
+
+    if (style) {
+      if (type === "bar") {
+        dataset.backgroundColor = style.backgroundColor;
+        dataset.borderColor = style.borderColor;
+        dataset.borderWidth = 1;
+      }
+
+      if (type === "line") {
+        dataset.borderColor = style.borderColor;
+        dataset.backgroundColor = "rgba(220, 38, 38, 0.18)";
+        dataset.pointBackgroundColor = style.pointBackgroundColor;
+        dataset.pointBorderColor = style.pointBorderColor;
+        dataset.tension = 0.3;
+        dataset.fill = true;
+      }
+
+      if (type === "doughnut") {
+        dataset.backgroundColor = redPalette(values.length || 1);
+        dataset.borderColor = "#ffffff";
+        dataset.borderWidth = 2;
+      }
+    }
+
     return new Chart(el, {
       type,
       data: {
         labels,
-        datasets: [{ label: "Value", data: values }],
+        datasets: [dataset],
       },
       options: {
         responsive: true,
@@ -99,64 +134,27 @@
   function makeLine(id, rows) { return makeChart(id, "line", rows); }
   function makeDoughnut(id, rows) { return makeChart(id, "doughnut", rows); }
 
-  makeBar("chartTopServices", data.service?.topServices || []);
-  makeLine("chartServiceTrend", data.service?.trend || []);
-  makeDoughnut("chartServiceTypeDist", data.service?.typeDist || []);
-  makeBar("chartWeekdayDemand", data.service?.weekdayDemand || []);
-  makeLine("chartSeasonalDemand", data.service?.seasonalDemand || []);
-  makeBar("chartTurnaroundByBranch", data.service?.turnaroundByBranch || []);
-  makeDoughnut("chartRepeatCustomerFrequency", data.service?.repeatCustomerFrequency || []);
-  makeBar("chartMostRebookedServices", data.service?.mostRebookedServices || []);
+  makeChart("chartTopServices", "bar", data.service?.topServices || [], SERVICE_RED);
+  makeChart("chartWeekdayDemand", "bar", data.service?.weekdayDemand || [], SERVICE_RED);
+  makeChart("chartMostRebookedServices", "bar", data.service?.mostRebookedServices || [], SERVICE_RED);
 
-  makeLine("chartRevenueTrend", data.revenue?.trend || []);
-  makeLine("chartCostTrend", data.revenue?.costTrend || []);
-  makeLine("chartProfitTrend", data.revenue?.profitTrend || []);
-  makeBar("chartRevenueByBranch", data.revenue?.byBranch || []);
-  makeDoughnut("chartRevenueByServiceType", data.revenue?.byServiceType || []);
-  makeBar("chartUnpaidInvoiceAging", data.revenue?.unpaidInvoiceAging || []);
-  makeDoughnut("chartPaymentMethodBreakdown", data.revenue?.paymentMethodBreakdown || []);
-  makeDoughnut("chartPaymentStatusBreakdown", data.revenue?.paymentStatusBreakdown || []);
-  makeBar("chartBranchPaymentCollection", data.revenue?.branchPaymentCollectionPerformance || []);
+  makeChart("chartRevenueByBranch", "bar", data.revenue?.byBranch || [], REVENUE_RED);
+  makeChart("chartPaymentMethodBreakdown", "doughnut", data.revenue?.paymentMethodBreakdown || [], REVENUE_RED);
+  makeChart("chartPaymentStatusBreakdown", "doughnut", data.revenue?.paymentStatusBreakdown || [], REVENUE_RED);
 
   makeDoughnut("chartApptStatus", data.appointments?.status || []);
-  makeBar("chartApptByHour", data.appointments?.byHour || []);
-  makeLine("chartApptTrend", data.appointments?.trend || []);
-  makeLine("chartCancellationTrend", data.appointments?.cancellationTrend || []);
+  makeChart("chartApptByHour", "bar", data.appointments?.byHour || [], APPOINTMENTS_RED);
 
-  makeBar("chartBranchCompleted", data.branches?.completed || []);
-  makeBar("chartBranchRating", data.branches?.avgRating || []);
-  makeBar("chartBranchCapacityUtilization", data.branches?.capacityUtilization || []);
-  makeBar("chartBranchStaffingVsWorkload", data.branches?.staffingVsWorkload || []);
-  makeBar("chartBranchServiceCoverage", data.branches?.serviceCoverageMatrix || []);
-  makeBar("chartBranchComplaintRate", data.branches?.complaintRate || []);
-  makeBar("chartBranchApprovalRejectionRate", data.branches?.approvalRejectionRate || []);
-  makeBar("chartBranchQualityScore", data.branches?.qualityScore || []);
-  makeBar("chartUnderperformingBranches", data.branches?.underperformingBranches || []);
+  makeChart("chartBranchCompleted", "bar", data.branches?.completed || [], SERVICE_RED);
+  makeChart("chartBranchServiceCoverage", "bar", data.branches?.serviceCoverageMatrix || [], SERVICE_RED);
 
-  makeBar("chartJobsPerMechanic", data.staff?.jobsPerMechanic || []);
-  makeBar("chartSubmittedByManagers", data.staff?.submittedByManagers || []);
-  makeBar("chartManagerApprovalDecisions", data.staff?.managerApprovalDecisions || []);
-  makeBar("chartMechanicQualityOutcomes", data.staff?.mechanicQualityOutcomes || []);
-  makeBar("chartStaffComplaintAssociation", data.staff?.staffComplaintAssociation || []);
-  makeBar("chartAvgJobsPerDayPerMechanic", data.staff?.avgJobsPerDayPerMechanic || []);
-  makeBar("chartDelayedWorkOrdersByMechanic", data.staff?.delayedWorkOrdersByMechanic || []);
+  makeChart("chartJobsPerMechanic", "bar", data.staff?.jobsPerMechanic || [], SERVICE_RED);
+  makeChart("chartSubmittedByManagers", "bar", data.staff?.submittedByManagers || [], SERVICE_RED);
+  makeChart("chartAvgJobsPerDayPerMechanic", "bar", data.staff?.avgJobsPerDayPerMechanic || [], SERVICE_RED);
 
   makeDoughnut("chartRatingDist", data.feedback?.ratingDist || []);
-  makeLine("chartFeedbackTrend", data.feedback?.trend || []);
-  makeBar("chartLowestRated", data.feedback?.lowestRated || []);
-  makeBar("chartBranchRatingTrend", data.feedback?.branchRatingTrend || []);
-  makeBar("chartRatingByServiceType", data.feedback?.ratingByServiceType || []);
-  makeBar("chartMostPraisedServices", data.feedback?.mostPraisedServices || []);
-  makeBar("chartRepeatNegativeCustomers", data.feedback?.repeatNegativeFeedbackCustomers || []);
 
   makeBar("chartApprovalStatus", data.approval?.statusCounts || []);
 
-  makeLine("chartComplaintTrend", data.complaints?.trend || []);
-  makeLine("chartComplaintResolutionTrend", data.complaints?.resolutionTrend || []);
-  makeBar("chartComplaintClosureRate", data.complaints?.closureRateByBranch || []);
   makeDoughnut("chartComplaintPriorityAnalysis", data.complaints?.priorityAnalysis || []);
-  makeBar("chartMostComplainedServices", data.complaints?.mostComplainedServices || []);
-  makeBar("chartMostComplainedBranches", data.complaints?.mostComplainedBranches || []);
-  makeBar("chartMostComplainedStaff", data.complaints?.mostComplainedStaff || []);
-  makeLine("chartSlaBreachTrend", data.complaints?.slaBreachTrend || []);
 })();

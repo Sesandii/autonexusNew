@@ -1,0 +1,11 @@
+.main-content{margin-left:260px;padding:30px;background:#fff;min-height:100vh}
+    .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+    .card{border:1px solid #eee;border-radius:10px;padding:16px}
+    .label{font-weight:600;color:#555;margin-bottom:4px}
+    .pill{display:inline-block;padding:6px 10px;border-radius:999px;font-size:12px}
+    .pill.active{background:#16a34a22;color:#166534;border:1px solid #16a34a55}
+    .pill.inactive{background:#ef444422;color:#7f1d1d;border:1px solid #ef444455}
+    .btn-row{margin-top:16px;display:flex;gap:10px}
+    .btn,button{border:none;background:#111;color:#fff;padding:10px 14px;border-radius:8px;cursor:pointer}
+    .btn.secondary{background:#666}
+    .btn.danger{background:#b91c1c}

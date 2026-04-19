@@ -3,8 +3,8 @@
 }
 
 .service-history-page .filters-form {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: minmax(260px, 1.4fr) repeat(4, minmax(150px, 1fr)) auto;
     gap: 12px;
     align-items: end;
 }
@@ -21,18 +21,18 @@
 }
 
 .service-history-page .filters-form .search {
-    min-width: 280px;
-    flex: 1 1 320px;
+    min-width: 0;
 }
 
 .service-history-page .filters-form select,
 .service-history-page .filters-form input {
-    min-width: 170px;
+    min-width: 0;
+    width: 100%;
 }
 
 .service-history-page .filters-form .btn-apply {
     border: none;
-    background: #111827;
+    background: #cf3202;
     color: #fff;
     border-radius: 10px;
     padding: 0 16px;
@@ -40,12 +40,39 @@
     font-size: 14px;
     font-weight: 700;
     cursor: pointer;
+    align-self: end;
     transition: background .16s ease, transform .08s ease;
 }
 
 .service-history-page .filters-form .btn-apply:hover {
-    background: #020617;
+    background: #ab2c08;
     transform: translateY(-1px);
+}
+
+@media (max-width: 1200px) {
+    .service-history-page .filters-form {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .service-history-page .filters-form .search {
+        grid-column: 1 / -1;
+    }
+
+    .service-history-page .filters-form .btn-apply {
+        grid-column: 1 / -1;
+        justify-self: start;
+    }
+}
+
+@media (max-width: 768px) {
+    .service-history-page .filters-form {
+        grid-template-columns: 1fr;
+    }
+
+    .service-history-page .filters-form .btn-apply {
+        width: 100%;
+        justify-self: stretch;
+    }
 }
 
 .service-history-page .cards-grid {
@@ -91,8 +118,8 @@
     border-radius: 999px;
     font-size: 11px;
     font-weight: 700;
-    background: #eff6ff;
-    color: #1d4ed8;
+    background: #fef2f2;
+    color: #dc2626;
     white-space: nowrap;
 }
 
@@ -148,12 +175,14 @@
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 16px;
+    margin-bottom: 20px;
 }
 
 .service-history-page .detail-grid {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 16px;
+    margin-bottom: 20px;
 }
 
 .service-history-page .kpi-card {
@@ -171,13 +200,13 @@
     border-radius: 12px;
     display: grid;
     place-items: center;
-    background: #eef2ff;
+    background: #fef2f2;
     margin: 0 auto 10px;
 }
 
 .service-history-page .kpi-icon i {
     font-size: 20px;
-    color: #2563eb;
+    color: #dc2626;
 }
 
 .service-history-page .kpi-label {
@@ -248,12 +277,14 @@
 .service-history-page .detail-row {
     display: flex;
     gap: 12px;
-    padding: 10px 0;
+    padding: 16px 0;
+    margin-bottom: 14px;
     border-bottom: 1px solid #f3f4f6;
 }
 
 .service-history-page .detail-row:last-child {
     border-bottom: none;
+    margin-bottom: 0;
 }
 
 .service-history-page .detail-row-icon {
@@ -281,11 +312,12 @@
 .service-history-page .detail-row-value {
     font-size: 13px;
     color: #0f172a;
+    line-height: 1.55;
 }
 
 .service-history-page .summary-box {
     background: #f8fafc;
-    border-left: 4px solid #2563eb;
+    border-left: 4px solid #dc2626;
     padding: 12px 14px;
     border-radius: 8px;
     font-size: 13px;

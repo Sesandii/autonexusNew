@@ -302,6 +302,33 @@
     text-align: right;
 }
 
+.services-page .branch-chip-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+    max-width: 320px;
+}
+
+.services-page .branch-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 10px;
+    border-radius: 999px;
+    border: 1px solid #dbe2ea;
+    background: #f8fafc;
+    color: #334155;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1.2;
+    white-space: nowrap;
+}
+
+.services-page .branch-chip-meta {
+    display: inline-block;
+    margin-top: 8px;
+}
+
 .icon-link,
 .icon-btn {
     display: inline-flex;

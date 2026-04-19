@@ -168,6 +168,14 @@ class Branch
         }
     }
 
+    // Handle archiveByCode operation.
+    public function archiveByCode(string $code): bool
+    {
+        $stmt = $this->pdo->prepare("UPDATE branches SET status = 'inactive' WHERE branch_code = :c");
+        $stmt->execute(['c' => $code]);
+        return $stmt->rowCount() > 0;
+    }
+
     // Handle managersHaveBranchId operation.
     private function managersHaveBranchId(): bool
     {

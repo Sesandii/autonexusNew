@@ -200,8 +200,16 @@ $base = rtrim(BASE_URL, '/'); ?>
       </div>
     `;
             itemsWrap.insertAdjacentHTML('beforeend', html);
-            if (serviceId) {
-                itemsWrap.querySelector(`[data-idx="${idx}"] select`).value = serviceId;
+            const newRow = itemsWrap.querySelector(`[data-idx="${idx}"]`);
+            if (serviceId && newRow) {
+                newRow.querySelector('select').value = serviceId;
+            }
+            if (newRow) {
+                const selectEl = newRow.querySelector('select');
+                const qtyEl = newRow.querySelector('input[type="number"]');
+                selectEl?.addEventListener('change', updateSummary);
+                qtyEl?.addEventListener('input', updateSummary);
+                qtyEl?.addEventListener('change', updateSummary);
             }
             updateSummary();
         }

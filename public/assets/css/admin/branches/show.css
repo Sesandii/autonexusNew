@@ -70,12 +70,12 @@
     border-radius: 12px;
     display: grid;
     place-items: center;
-    background: #eef2ff;
+    background: #fef2f2;
     margin: 0 auto 10px;
 }
 
 .kpi-icon i {
-    color: #2563eb;
+    color: #dc2626;
     font-size: 18px;
 }
 
@@ -190,7 +190,7 @@
 
 .summary-box {
     background: #f8fafc;
-    border-left: 4px solid #2563eb;
+    border-left: 4px solid #dc2626;
     padding: 12px 14px;
     border-radius: 8px;
     font-size: 13px;

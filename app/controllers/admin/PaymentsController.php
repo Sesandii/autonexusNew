@@ -23,18 +23,18 @@ class PaymentsController extends Controller
     public function index(): void
     {
         $filters = [
-            'q'      => trim((string)($_GET['q'] ?? '')),
-            'status' => trim((string)($_GET['status'] ?? '')),
-            'method' => trim((string)($_GET['method'] ?? '')),
+            'q' => trim((string) ($_GET['q'] ?? '')),
+            'status' => trim((string) ($_GET['status'] ?? '')),
+            'method' => trim((string) ($_GET['method'] ?? '')),
         ];
 
         $this->view('admin/admin-viewpayments/index', [
-            'current'        => 'payments',
-            'pageTitle'      => 'Payments Management',
-            'records'        => $this->payment->getAll($filters),
-            'summary'        => $this->payment->summary(),
+            'current' => 'payments',
+            'pageTitle' => 'Payments Management',
+            'records' => $this->payment->getAll($filters),
+            'summary' => $this->payment->summary(),
             'invoiceOptions' => $this->payment->getInvoiceOptions(),
-            'filters'        => $filters,
+            'filters' => $filters,
         ]);
     }
 
@@ -42,12 +42,14 @@ class PaymentsController extends Controller
     public function store(): void
     {
         $this->payment->createManualPayment([
-            'invoice_id'    => $_POST['invoice_id'] ?? 0,
-            'amount'        => $_POST['amount'] ?? 0,
-            'method'        => $_POST['method'] ?? '',
-            'reference_no'  => $_POST['reference_no'] ?? '',
-            'status'        => $_POST['status'] ?? 'pending',
+            'invoice_id' => $_POST['invoice_id'] ?? 0,
+            'amount' => $_POST['amount'] ?? 0,
+            'method' => $_POST['method'] ?? '',
+            'reference_no' => $_POST['reference_no'] ?? '',
+            'status' => $_POST['status'] ?? 'pending',
         ]);
+
+        $this->setSuccessToast('Payment recorded successfully.');
 
         header('Location: ' . rtrim(BASE_URL, '/') . '/admin/admin-viewpayments');
         exit;
@@ -56,7 +58,7 @@ class PaymentsController extends Controller
     // Handle cancelInvoice operation.
     public function cancelInvoice(): void
     {
-        $invoiceId = (int)($_POST['invoice_id'] ?? 0);
+        $invoiceId = (int) ($_POST['invoice_id'] ?? 0);
         if ($invoiceId <= 0) {
             http_response_code(400);
             echo 'Invalid invoice';
@@ -64,6 +66,8 @@ class PaymentsController extends Controller
         }
 
         $this->payment->cancelInvoice($invoiceId);
+
+        $this->setSuccessToast('Invoice cancelled successfully.');
 
         header('Location: ' . rtrim(BASE_URL, '/') . '/admin/admin-viewpayments');
         exit;

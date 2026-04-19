@@ -5,6 +5,7 @@ namespace app\model\admin;
 
 use PDO;
 use Exception;
+use PDOException;
 
 class Receptionist
 {
@@ -85,6 +86,10 @@ class Receptionist
             throw new Exception('user_id is required to create receptionist');
         }
 
+        $rawCode = trim((string) ($data['receptionist_code'] ?? ''));
+        $hasCustomCode = $rawCode !== '';
+        $code = $hasCustomCode ? $rawCode : $this->generateReceptionistCode();
+
         $sql = "
             INSERT INTO receptionists
                 (receptionist_code, user_id, branch_id, status, created_at)
@@ -93,18 +98,73 @@ class Receptionist
         ";
 
         $st = $this->db->prepare($sql);
-        $ok = $st->execute([
-            ':receptionist_code' => $data['receptionist_code'] ?? null,
-            ':user_id'           => (int)$data['user_id'],
-            ':branch_id'         => $data['branch_id'] ?: null,
-            ':status'            => $data['status'] ?? 'active',
-        ]);
+        $attempts = $hasCustomCode ? 1 : 5;
+        $ok = false;
+
+        for ($i = 0; $i < $attempts; $i++) {
+            try {
+                $ok = $st->execute([
+                    ':receptionist_code' => $code,
+                    ':user_id' => (int) $data['user_id'],
+                    ':branch_id' => $data['branch_id'] ?: null,
+                    ':status' => $data['status'] ?? 'active',
+                ]);
+                break;
+            } catch (PDOException $e) {
+                $sqlState = (string) ($e->errorInfo[0] ?? '');
+                $mysqlCode = (int) ($e->errorInfo[1] ?? 0);
+                $message = (string) $e->getMessage();
+                $isDuplicate = ($sqlState === '23000' || $mysqlCode === 1062);
+                $isCodeDuplicate = str_contains($message, 'receptionists.receptionist_code');
+
+                if ($isDuplicate && $isCodeDuplicate && !$hasCustomCode && $i < $attempts - 1) {
+                    $code = $this->generateReceptionistCode();
+                    continue;
+                }
+
+                if ($isDuplicate && $isCodeDuplicate) {
+                    throw new Exception('Receptionist code already exists. Please try again.');
+                }
+
+                throw $e;
+            }
+        }
 
         if (!$ok) {
             throw new Exception('Failed to create receptionist');
         }
 
-        return (int)$this->db->lastInsertId();
+        return (int) $this->db->lastInsertId();
+    }
+
+    /**
+     * Generate next receptionist code in REC### format.
+     */
+    private function generateReceptionistCode(): string
+    {
+        $sql = "
+            SELECT COALESCE(MAX(CAST(SUBSTRING(receptionist_code, 4) AS UNSIGNED)), 0) AS max_code
+            FROM receptionists
+            WHERE receptionist_code REGEXP '^REC[0-9]+$'
+        ";
+
+        $st = $this->db->query($sql);
+        $maxCode = (int) ($st->fetchColumn() ?: 0);
+
+        do {
+            $maxCode++;
+            $candidate = 'REC' . str_pad((string) $maxCode, 3, '0', STR_PAD_LEFT);
+        } while ($this->receptionistCodeExists($candidate));
+
+        return $candidate;
+    }
+
+    // Handle receptionistCodeExists operation.
+    private function receptionistCodeExists(string $code): bool
+    {
+        $st = $this->db->prepare('SELECT 1 FROM receptionists WHERE receptionist_code = :code LIMIT 1');
+        $st->execute([':code' => $code]);
+        return (bool) $st->fetchColumn();
     }
 
     /**
@@ -112,12 +172,12 @@ class Receptionist
      */
     public function update(int $id, array $data): void
     {
-        $parts  = [];
+        $parts = [];
         $params = [':id' => $id];
 
         foreach (['receptionist_code', 'branch_id', 'status'] as $f) {
             if (array_key_exists($f, $data)) {
-                $parts[]       = "$f = :$f";
+                $parts[] = "$f = :$f";
                 $params[":$f"] = $data[$f] ?: null;
             }
         }
@@ -127,7 +187,7 @@ class Receptionist
         }
 
         $sql = "UPDATE receptionists SET " . implode(', ', $parts) . " WHERE receptionist_id = :id";
-        $st  = $this->db->prepare($sql);
+        $st = $this->db->prepare($sql);
         $st->execute($params);
     }
 

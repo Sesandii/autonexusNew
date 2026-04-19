@@ -133,6 +133,7 @@ class ServicesController extends Controller
             $bsModel->replaceForService($serviceId, $branchIds);
 
             $pdo->commit();
+            $this->setSuccessToast('Service created successfully.');
             header('Location: ' . rtrim(BASE_URL, '/') . '/admin/services');
             exit;
         } catch (\Throwable $e) {
@@ -246,6 +247,7 @@ class ServicesController extends Controller
             $bsModel->replaceForService($id, $branchIds);
 
             $pdo->commit();
+            $this->setSuccessToast('Service updated successfully.');
             header('Location: ' . rtrim(BASE_URL, '/') . '/admin/services');
             exit;
         } catch (\Throwable $e) {
@@ -294,6 +296,7 @@ class ServicesController extends Controller
             $serviceModel->deleteById($id);
 
             $pdo->commit();
+            $this->setSuccessToast('Service deleted successfully.');
             header('Location: ' . rtrim(BASE_URL, '/') . '/admin/services');
             exit;
         } catch (\Throwable $e) {

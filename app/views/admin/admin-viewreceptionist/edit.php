@@ -6,152 +6,147 @@
 $current = 'receptionists';
 $B = rtrim(BASE_URL, '/');
 
-function oldOrRec(string $key, array $rec) {
-    return $_POST[$key] ?? ($rec[$key] ?? '');
+function oldOrRec(string $key, array $rec)
+{
+  return $_POST[$key] ?? ($rec[$key] ?? '');
+}
+
+function e($value): string
+{
+  return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
 }
 
 $code = $rec['receptionist_code'] ?? ('R' . $rec['receptionist_id']);
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>Edit Receptionist #<?= htmlspecialchars($code) ?></title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit Receptionist #<?= e($code) ?></title>
 
   <link rel="stylesheet" href="<?= $B ?>/app/views/layouts/admin-shared/management.css">
   <link rel="stylesheet" href="<?= $B ?>/app/views/layouts/admin-sidebar/styles.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="<?= $B ?>/public/assets/css/admin/branches/create.css">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 </head>
+
 <body>
-<?php include APP_ROOT . '/views/layouts/admin-sidebar/sidebar.php'; ?>
+  <?php include APP_ROOT . '/views/layouts/admin-sidebar/sidebar.php'; ?>
 
-<main class="main-content">
-  <header class="page-header">
-    <div class="page-breadcrumb">
-      <a href="<?= $B ?>/admin/viewreceptionist">Receptionists</a>
-      <span>›</span>
-      <span>Edit</span>
-    </div>
-
-    <div class="page-header-main">
-      <div class="page-title-wrap">
-        <div class="page-icon"><i class="fa-solid fa-pen-to-square"></i></div>
-        <div>
-          <h2>Edit Receptionist</h2>
-          <p>Update account details, branch assignment, and status.</p>
+  <main class="main-content branch-create-page">
+    <div class="branch-create-shell">
+      <header class="create-header">
+        <div class="create-title">
+          <h1>Edit Receptionist</h1>
+          <p>Update receptionist account details, branch assignment, and status.</p>
         </div>
-      </div>
-      <span class="page-chip">Code: <?= htmlspecialchars($code) ?></span>
-    </div>
-  </header>
+        <a href="<?= e($B . '/admin/viewreceptionist') ?>" class="btn-secondary">
+          <i class="fa-solid fa-arrow-left"></i>
+          <span>Back to Receptionists</span>
+        </a>
+      </header>
 
-  <?php if (!empty($errors)): ?>
-    <div class="error-box">
-      <?php foreach ($errors as $err): ?>
-        <?= htmlspecialchars($err) ?><br>
-      <?php endforeach; ?>
-    </div>
-  <?php endif; ?>
-
-  <!-- No explicit action: posts back to /admin/receptionists/edit?id=... -->
-  <form class="form-card" method="post">
-
-    <div class="section-title">User Account</div>
-    <div class="section-divider"></div>
-
-    <div class="form-grid">
-      <div>
-        <label for="first_name">First Name</label>
-        <input id="first_name" name="first_name" required
-               value="<?= htmlspecialchars(oldOrRec('first_name', $rec)) ?>">
-      </div>
-      <div>
-        <label for="last_name">Last Name</label>
-        <input id="last_name" name="last_name" required
-               value="<?= htmlspecialchars(oldOrRec('last_name', $rec)) ?>">
-      </div>
-    </div>
-
-    <div class="form-grid" style="margin-top:14px;">
-      <div>
-        <label for="username">Username</label>
-        <input id="username" name="username" required
-               value="<?= htmlspecialchars(oldOrRec('username', $rec)) ?>">
-        <small>Used to sign in to the receptionist portal.</small>
-      </div>
-      <div>
-        <label for="email">Email</label>
-        <input id="email" type="email" name="email"
-               value="<?= htmlspecialchars(oldOrRec('email', $rec)) ?>">
-        <small>We’ll send important notifications to this address.</small>
-      </div>
-    </div>
-
-    <div class="form-grid" style="margin-top:14px;">
-      <div>
-        <label for="phone">Phone</label>
-        <input id="phone" name="phone"
-               value="<?= htmlspecialchars(oldOrRec('phone', $rec)) ?>">
-        <small>Primary contact number at the front desk.</small>
-      </div>
-      <div>
-        <label for="password">New Password (optional)</label>
-        <input id="password" name="password" type="password"
-               placeholder="Leave blank to keep current password">
-        <small>If filled, this will replace the existing password.</small>
-      </div>
-    </div>
-
-    <div class="section-title" style="margin-top:22px;">Receptionist Profile</div>
-    <div class="section-divider"></div>
-
-    <div class="form-grid">
-      <div>
-        <label for="receptionist_code">Receptionist Code</label>
-        <input id="receptionist_code" name="receptionist_code"
-               value="<?= htmlspecialchars(oldOrRec('receptionist_code', $rec)) ?>">
-        <small>Internal reference code shown in lists.</small>
-      </div>
-
-      <div>
-        <label for="branch_id">Branch</label>
-        <?php $currentBranchId = $_POST['branch_id'] ?? $rec['branch_id'] ?? ''; ?>
-        <select id="branch_id" name="branch_id">
-          <option value="">-- Select Branch --</option>
-          <?php foreach ($branches as $b): ?>
-            <option value="<?= (int)$b['branch_id'] ?>"
-              <?= (int)$currentBranchId === (int)$b['branch_id'] ? 'selected' : '' ?>>
-              <?= htmlspecialchars($b['name']) ?> (<?= htmlspecialchars($b['branch_code']) ?>)
-            </option>
+      <?php if (!empty($errors)): ?>
+        <div class="alert alert-danger">
+          <?php foreach ($errors as $err): ?>
+            <div><?= e($err) ?></div>
           <?php endforeach; ?>
-        </select>
-        <small>Choose which branch this receptionist manages.</small>
-      </div>
-    </div>
+        </div>
+      <?php endif; ?>
 
-    <div class="form-grid" style="margin-top:14px;">
-      <div>
-        <label for="status">Status</label>
-        <?php $st = $_POST['status'] ?? ($rec['status'] ?? 'active'); ?>
-        <select id="status" name="status">
-          <option value="active"   <?= $st==='active'?'selected':'' ?>>Active</option>
-          <option value="inactive" <?= $st==='inactive'?'selected':'' ?>>Inactive</option>
-        </select>
-        <small>Inactive staff cannot log in.</small>
-      </div>
-    </div>
+      <form class="create-form-shell" method="post"
+        action="<?= e($B . '/admin/receptionists/edit?id=' . urlencode((string) ($rec['receptionist_id'] ?? ''))) ?>">
+        <section class="create-card">
+          <div class="create-card-header">
+            <i class="fa-solid fa-user-headset"></i>
+            <h2>Receptionist Information</h2>
+          </div>
 
-    <div class="form-actions">
-      <button class="btn-primary" type="submit">
-        <i class="fas fa-save"></i>&nbsp;Save Changes
-      </button>
-      <a class="btn-secondary"
-         href="<?= $B ?>/admin/viewreceptionist">
-        Cancel
-      </a>
+          <div class="create-card-body">
+            <div class="form-grid">
+              <div class="field">
+                <label class="label" for="first_name">First Name</label>
+                <input class="input" id="first_name" name="first_name" required
+                  value="<?= e(oldOrRec('first_name', $rec)) ?>">
+              </div>
+
+              <div class="field">
+                <label class="label" for="last_name">Last Name</label>
+                <input class="input" id="last_name" name="last_name" required
+                  value="<?= e(oldOrRec('last_name', $rec)) ?>">
+              </div>
+
+              <div class="field">
+                <label class="label" for="username">Username</label>
+                <input class="input" id="username" name="username" required
+                  value="<?= e(oldOrRec('username', $rec)) ?>">
+              </div>
+
+              <div class="field">
+                <label class="label" for="email">Email</label>
+                <input class="input" id="email" type="email" name="email" value="<?= e(oldOrRec('email', $rec)) ?>">
+              </div>
+
+              <div class="field">
+                <label class="label" for="phone">Phone</label>
+                <input class="input" id="phone" name="phone" type="tel" inputmode="numeric" pattern="^0[0-9]{9}$"
+                  maxlength="10" placeholder="0712345678" value="<?= e(oldOrRec('phone', $rec)) ?>">
+              </div>
+
+              <div class="field">
+                <label class="label" for="password">New Password (optional)</label>
+                <input class="input" id="password" name="password" type="password"
+                  placeholder="Leave blank to keep current password">
+              </div>
+
+              <div class="field">
+                <label class="label" for="receptionist_code">Receptionist Code</label>
+                <input class="input" id="receptionist_code" name="receptionist_code"
+                  value="<?= e(oldOrRec('receptionist_code', $rec)) ?>">
+              </div>
+
+              <div class="field">
+                <label class="label" for="branch_id">Assigned Branch</label>
+                <?php $currentBranchId = $_POST['branch_id'] ?? $rec['branch_id'] ?? ''; ?>
+                <select class="input" id="branch_id" name="branch_id">
+                  <option value="">-- Select a branch --</option>
+                  <?php foreach (($branches ?? []) as $b): ?>
+                    <option value="<?= (int) $b['branch_id'] ?>" <?= (int) $currentBranchId === (int) $b['branch_id'] ? 'selected' : '' ?>>
+                      <?= e(($b['branch_code'] ?? '') !== '' ? ($b['branch_code'] . ' • ' . ($b['name'] ?? 'Branch')) : ($b['name'] ?? 'Branch')) ?>
+                    </option>
+                  <?php endforeach; ?>
+                </select>
+              </div>
+
+              <div class="field">
+                <label class="label" for="status">Status</label>
+                <?php $st = $_POST['status'] ?? ($rec['status'] ?? 'active'); ?>
+                <select class="input" id="status" name="status">
+                  <option value="active" <?= $st === 'active' ? 'selected' : '' ?>>Active</option>
+                  <option value="inactive" <?= $st === 'inactive' ? 'selected' : '' ?>>Inactive</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <div class="form-actions">
+          <a class="btn-secondary"
+            href="<?= e($B . '/admin/receptionists/show?id=' . urlencode((string) ($rec['receptionist_id'] ?? ''))) ?>">
+            <i class="fa-solid fa-xmark"></i>
+            <span>Cancel</span>
+          </a>
+
+          <button class="btn-primary" type="submit">
+            <i class="fa-solid fa-floppy-disk"></i>
+            <span>Save Changes</span>
+          </button>
+        </div>
+      </form>
     </div>
-  </form>
-</main>
+  </main>
 </body>
+
 </html>

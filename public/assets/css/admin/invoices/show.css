@@ -1,93 +1,55 @@
-.invoice-show-main{
-  margin-left:260px;
-  padding:30px;
-  background:#f3f4f6;
-  min-height:100vh;
+.invoice-show-page {
+  background: #f3f4f6;
+  overflow-x: hidden;
 }
 
-.invoice-subtitle{
-  margin-top:4px;
-  font-size:.9rem;
-  color:#6b7280;
+.invoice-show-shell {
+  width: min(1140px, 100%);
+  margin: 0 auto;
 }
 
-.invoice-card{
-  max-width:900px;
-  background:#fff;
-  border-radius:16px;
-  border:1px solid #e5e7eb;
-  box-shadow:0 4px 14px rgba(15,23,42,.06);
-  overflow:hidden;
+.invoice-show-page .grid-three,
+.invoice-show-page .grid-two {
+  margin-bottom: 16px;
 }
 
-.invoice-topbar{
-  height:4px;
-  background:linear-gradient(90deg,#dc2626,#f97316);
+.invoice-show-page .kpi-icon {
+  background: #fef2f2;
 }
 
-.invoice-inner{
-  padding:18px 20px 6px;
+.invoice-show-page .kpi-icon i {
+  color: #dc2626;
 }
 
-.invoice-grid{
-  display:grid;
-  grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:14px;
+.status-badge.paid {
+  background: #ecfdf5;
+  color: #047857;
 }
 
-.info-block{
-  border:1px solid #f3f4f6;
-  border-radius:14px;
-  padding:14px 14px;
-  background:#fff;
+.status-badge.pending {
+  background: #fff7ed;
+  color: #c2410c;
 }
 
-.info-title{
-  font-size:.78rem;
-  text-transform:uppercase;
-  letter-spacing:.08em;
-  color:#9ca3af;
-  margin-bottom:6px;
+.status-badge.cancelled {
+  background: #fee2e2;
+  color: #b91c1c;
 }
 
-.info-value{
-  font-size:1.02rem;
-  font-weight:700;
-  color:#111827;
-  margin-bottom:6px;
+.summary-box {
+  background: #f8fafc;
+  border-left: 4px solid #dc2626;
+  padding: 12px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #374151;
 }
 
-.info-sub{
-  font-size:.86rem;
-  color:#6b7280;
-  display:flex;
-  align-items:center;
-  gap:8px;
-}
+@media (max-width: 992px) {
 
-.total-block{
-  border-color:#fee2e2;
-  background:linear-gradient(180deg,#fff, #fff7ed);
-}
-
-.total-amount{
-  font-size:1.4rem;
-  font-weight:800;
-  color:#111827;
-  margin:2px 0 6px;
-}
-
-.invoice-actions{
-  padding:14px 20px 18px;
-  border-top:1px solid #f3f4f6;
-  display:flex;
-  justify-content:flex-end;
-  flex-wrap:wrap;
-  gap:10px;
-}
-
-/* small screens */
-@media (max-width: 900px){
-  .invoice-show-main{margin-left:0;padding:18px;}
-  .invoice-grid{grid-template-columns:1fr;}
+  .invoice-show-page .grid-three,
+  .invoice-show-page .grid-two {
+    grid-template-columns: 1fr;
+  }
 }

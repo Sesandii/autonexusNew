@@ -135,6 +135,7 @@ class PackagesController extends Controller
             $pkgModel->replaceItems($packageId, $packageItems);
 
             $pdo->commit();
+            $this->setSuccessToast('Package created successfully.');
             header('Location: ' . rtrim(BASE_URL, '/') . '/admin/services');
             exit;
         } catch (\Throwable $e) {
@@ -260,6 +261,7 @@ class PackagesController extends Controller
             }
 
             $pdo->commit();
+            $this->setSuccessToast('Package updated successfully.');
             header('Location: ' . rtrim(BASE_URL, '/') . '/admin/services');
             exit;
         } catch (\Throwable $e) {
@@ -303,6 +305,7 @@ class PackagesController extends Controller
             $serviceModel->deleteById($id);
 
             $pdo->commit();
+            $this->setSuccessToast('Package deleted successfully.');
             header('Location: ' . rtrim(BASE_URL, '/') . '/admin/services');
             exit;
         } catch (\Throwable $e) {

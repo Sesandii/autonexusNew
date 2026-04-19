@@ -5,9 +5,12 @@
 /** @var string $nextCode */
 $errors = $errors ?? [];
 $old = $old ?? [];
+$managers = $managers ?? [];
 $base = rtrim($base ?? BASE_URL, '/');
 $current = 'branches';
 $nextCode = $nextCode ?? 'BR001';
+$hasManagers = !empty($managers);
+$managerCreateUrl = $base . '/admin/service-managers/create';
 
 function e($value): string
 {
@@ -52,6 +55,22 @@ function e($value): string
         </div>
       <?php endif; ?>
 
+      <?php if (!$hasManagers): ?>
+        <div class="manager-empty-callout" role="status" aria-live="polite">
+          <div class="manager-empty-icon">
+            <i class="fa-solid fa-user-tie"></i>
+          </div>
+          <div class="manager-empty-content">
+            <h3>No available managers</h3>
+            <p>Create a manager first, or free one from another branch to continue.</p>
+            <a href="<?= e($managerCreateUrl) ?>" class="manager-empty-action">
+              <i class="fa-solid fa-user-plus"></i>
+              <span>Create Manager</span>
+            </a>
+          </div>
+        </div>
+      <?php endif; ?>
+
       <form class="create-form-shell" method="post" action="<?= e($base . '/admin/branches') ?>">
         <section class="create-card">
           <div class="create-card-header">
@@ -89,9 +108,9 @@ function e($value): string
 
               <div class="field">
                 <label class="label">Manager</label>
-                <select class="input" name="manager" required>
-                  <option value="">Select a manager</option>
-                  <?php foreach (($managers ?? []) as $m): ?>
+                <select class="input" name="manager" <?= $hasManagers ? 'required' : 'disabled' ?>>
+                  <option value=""><?= $hasManagers ? 'Select a manager' : 'No available managers' ?></option>
+                  <?php foreach ($managers as $m): ?>
                     <?php
                     $id = (int) ($m['manager_id'] ?? 0);
                     $code = (string) ($m['manager_code'] ?? '');
@@ -156,7 +175,7 @@ function e($value): string
             <span>Cancel</span>
           </a>
 
-          <button type="submit" class="btn-primary">
+          <button type="submit" class="btn-primary" <?= $hasManagers ? '' : 'disabled' ?>>
             <i class="fa-solid fa-plus"></i>
             <span>Create Branch</span>
           </button>

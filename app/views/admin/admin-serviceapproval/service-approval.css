@@ -121,14 +121,14 @@ body {
 }
 
 .btn-apply {
-    background: #111827;
+    background: #ff0202;
     color: #fff;
-    border-color: #111827;
+    border-color: #ff0202;
 }
 
 .btn-apply:hover {
-    background: #020617;
-    border-color: #020617;
+    background: #e92d2a;
+    border-color: #e92d2a;
 }
 
 .table-card {
@@ -244,12 +244,12 @@ tbody tr:last-child td {
 }
 
 .chip-btn--approve {
-    background: #166534;
+    background: #0f172a;
     color: #fff;
 }
 
 .chip-btn--approve:hover {
-    background: #14532d;
+    background: #020617;
 }
 
 .chip-btn--reject {
