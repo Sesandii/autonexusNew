@@ -87,8 +87,8 @@ function e($value): string
                     ?>
                     <option value="<?= (int) $b['branch_id'] ?>"
                       data-manager-id="<?= e((string) ($b['manager_id'] ?? '')) ?>"
-                      data-manager-name="<?= e($managerName) ?>"
-                      data-manager-code="<?= e($managerCode) ?>" <?= (isset($old['branch_id']) && (int) $old['branch_id'] === (int) $b['branch_id']) ? 'selected' : '' ?>>
+                      data-manager-name="<?= e($managerName) ?>" data-manager-code="<?= e($managerCode) ?>"
+                      <?= (isset($old['branch_id']) && (int) $old['branch_id'] === (int) $b['branch_id']) ? 'selected' : '' ?>>
                       <?= e(($b['branch_code'] ? $b['branch_code'] . ' • ' : '') . ($b['name'] ?? 'Branch')) ?>
                     </option>
                   <?php endforeach; ?>
@@ -106,19 +106,22 @@ function e($value): string
 
               <div class="field">
                 <label class="label">Password</label>
-                <input class="input" type="password" name="password" value="<?= e($old['password'] ?? 'Supervisor@123') ?>">
+                <input class="input" type="password" name="password"
+                  value="<?= e($old['password'] ?? 'Supervisor@123') ?>">
                 <div class="hint">Default password is Supervisor@123.</div>
               </div>
 
               <div class="field">
                 <label class="label">Branch Manager</label>
-                <input id="manager_name" class="input" type="text" readonly placeholder="Auto-filled from branch selection">
+                <input id="manager_name" class="input" type="text" readonly
+                  placeholder="Auto-filled from branch selection">
                 <input id="manager_id" name="manager_id" type="hidden" value="<?= e($old['manager_id'] ?? '') ?>">
               </div>
 
               <div class="field">
                 <label class="label">Manager Code</label>
-                <input id="manager_code" class="input" type="text" readonly placeholder="Auto-filled from branch selection">
+                <input id="manager_code" class="input" type="text" readonly
+                  placeholder="Auto-filled from branch selection">
               </div>
             </div>
           </div>

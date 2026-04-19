@@ -88,8 +88,7 @@ function e($value): string
                 <select name="branch_id" class="input" required>
                   <option value="">-- Select a branch --</option>
                   <?php foreach (($branches ?? []) as $b): ?>
-                    <option value="<?= (int) $b['branch_id'] ?>"
-                      <?= (($m['branch_id'] ?? '') == $b['branch_id']) ? 'selected' : '' ?>>
+                    <option value="<?= (int) $b['branch_id'] ?>" <?= (($m['branch_id'] ?? '') == $b['branch_id']) ? 'selected' : '' ?>>
                       <?= e(($b['branch_code'] ? $b['branch_code'] . ' • ' : '') . ($b['name'] ?? 'Branch')) ?>
                     </option>
                   <?php endforeach; ?>
@@ -103,23 +102,29 @@ function e($value): string
 
               <div class="field">
                 <label class="label">Experience (years)</label>
-                <input class="input" type="number" min="0" name="experience_years" value="<?= e($m['experience_years'] ?? '0') ?>">
+                <input class="input" type="number" min="0" name="experience_years"
+                  value="<?= e($m['experience_years'] ?? '0') ?>">
               </div>
 
               <div class="field">
                 <label class="label">Mechanic Status</label>
                 <select name="mech_status" class="input">
-                  <option value="active" <?= (($m['mech_status'] ?? 'active') === 'active') ? 'selected' : '' ?>>Active</option>
-                  <option value="inactive" <?= (($m['mech_status'] ?? '') === 'inactive') ? 'selected' : '' ?>>Inactive</option>
+                  <option value="active" <?= (($m['mech_status'] ?? 'active') === 'active') ? 'selected' : '' ?>>Active
+                  </option>
+                  <option value="inactive" <?= (($m['mech_status'] ?? '') === 'inactive') ? 'selected' : '' ?>>Inactive
+                  </option>
                 </select>
               </div>
 
               <div class="field">
                 <label class="label">User Status</label>
                 <select name="user_status" class="input">
-                  <option value="active" <?= (($m['user_status'] ?? 'active') === 'active') ? 'selected' : '' ?>>Active</option>
-                  <option value="inactive" <?= (($m['user_status'] ?? '') === 'inactive') ? 'selected' : '' ?>>Inactive</option>
-                  <option value="pending" <?= (($m['user_status'] ?? '') === 'pending') ? 'selected' : '' ?>>Pending</option>
+                  <option value="active" <?= (($m['user_status'] ?? 'active') === 'active') ? 'selected' : '' ?>>Active
+                  </option>
+                  <option value="inactive" <?= (($m['user_status'] ?? '') === 'inactive') ? 'selected' : '' ?>>Inactive
+                  </option>
+                  <option value="pending" <?= (($m['user_status'] ?? '') === 'pending') ? 'selected' : '' ?>>Pending
+                  </option>
                 </select>
               </div>
 
@@ -132,7 +137,8 @@ function e($value): string
         </section>
 
         <div class="form-actions">
-          <a href="<?= e($B . '/admin/mechanics/' . urlencode((string) ($m['mechanic_id'] ?? ''))) ?>" class="btn-secondary">
+          <a href="<?= e($B . '/admin/mechanics/' . urlencode((string) ($m['mechanic_id'] ?? ''))) ?>"
+            class="btn-secondary">
             <i class="fa-solid fa-xmark"></i>
             <span>Cancel</span>
           </a>

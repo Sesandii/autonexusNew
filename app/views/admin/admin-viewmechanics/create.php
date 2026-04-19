@@ -96,23 +96,29 @@ function e($value): string
 
               <div class="field">
                 <label class="label">Experience (years)</label>
-                <input class="input" type="number" min="0" name="experience_years" value="<?= e($old['experience_years'] ?? '0') ?>">
+                <input class="input" type="number" min="0" name="experience_years"
+                  value="<?= e($old['experience_years'] ?? '0') ?>">
               </div>
 
               <div class="field">
                 <label class="label">Mechanic Status</label>
                 <select name="mech_status" class="input">
-                  <option value="active" <?= (($old['mech_status'] ?? 'active') === 'active') ? 'selected' : '' ?>>Active</option>
-                  <option value="inactive" <?= (($old['mech_status'] ?? '') === 'inactive') ? 'selected' : '' ?>>Inactive</option>
+                  <option value="active" <?= (($old['mech_status'] ?? 'active') === 'active') ? 'selected' : '' ?>>Active
+                  </option>
+                  <option value="inactive" <?= (($old['mech_status'] ?? '') === 'inactive') ? 'selected' : '' ?>>Inactive
+                  </option>
                 </select>
               </div>
 
               <div class="field">
                 <label class="label">User Status</label>
                 <select name="user_status" class="input">
-                  <option value="active" <?= (($old['user_status'] ?? 'active') === 'active') ? 'selected' : '' ?>>Active</option>
-                  <option value="inactive" <?= (($old['user_status'] ?? '') === 'inactive') ? 'selected' : '' ?>>Inactive</option>
-                  <option value="pending" <?= (($old['user_status'] ?? '') === 'pending') ? 'selected' : '' ?>>Pending</option>
+                  <option value="active" <?= (($old['user_status'] ?? 'active') === 'active') ? 'selected' : '' ?>>Active
+                  </option>
+                  <option value="inactive" <?= (($old['user_status'] ?? '') === 'inactive') ? 'selected' : '' ?>>Inactive
+                  </option>
+                  <option value="pending" <?= (($old['user_status'] ?? '') === 'pending') ? 'selected' : '' ?>>Pending
+                  </option>
                 </select>
               </div>
 
@@ -124,7 +130,8 @@ function e($value): string
 
               <div class="field">
                 <label class="label">Mechanic Code</label>
-                <input class="input" name="mechanic_code" value="<?= e($old['mechanic_code'] ?? '') ?>" placeholder="Auto-generated if empty">
+                <input class="input" name="mechanic_code" value="<?= e($old['mechanic_code'] ?? '') ?>"
+                  placeholder="Auto-generated if empty">
               </div>
             </div>
           </div>

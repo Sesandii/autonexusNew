@@ -67,22 +67,26 @@ function e($value): string
             <div class="form-grid">
               <div class="field">
                 <label class="label">First Name</label>
-                <input class="input" name="first_name" value="<?= e($old['first_name'] ?? $row['first_name'] ?? '') ?>" required>
+                <input class="input" name="first_name" value="<?= e($old['first_name'] ?? $row['first_name'] ?? '') ?>"
+                  required>
               </div>
 
               <div class="field">
                 <label class="label">Last Name</label>
-                <input class="input" name="last_name" value="<?= e($old['last_name'] ?? $row['last_name'] ?? '') ?>" required>
+                <input class="input" name="last_name" value="<?= e($old['last_name'] ?? $row['last_name'] ?? '') ?>"
+                  required>
               </div>
 
               <div class="field">
                 <label class="label">Username</label>
-                <input class="input" name="username" value="<?= e($old['username'] ?? $row['username'] ?? '') ?>" required>
+                <input class="input" name="username" value="<?= e($old['username'] ?? $row['username'] ?? '') ?>"
+                  required>
               </div>
 
               <div class="field">
                 <label class="label">Email</label>
-                <input class="input" type="email" name="email" value="<?= e($old['email'] ?? $row['email'] ?? '') ?>" required>
+                <input class="input" type="email" name="email" value="<?= e($old['email'] ?? $row['email'] ?? '') ?>"
+                  required>
               </div>
 
               <div class="field">
@@ -119,7 +123,8 @@ function e($value): string
         </section>
 
         <div class="form-actions">
-          <a href="<?= e($base . '/admin/service-managers/' . urlencode((string) $row['manager_id'])) ?>" class="btn-secondary">
+          <a href="<?= e($base . '/admin/service-managers/' . urlencode((string) $row['manager_id'])) ?>"
+            class="btn-secondary">
             <i class="fa-solid fa-xmark"></i>
             <span>Cancel</span>
           </a>

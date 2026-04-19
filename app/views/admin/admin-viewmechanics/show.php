@@ -70,7 +70,8 @@ function fieldRow(string $icon, string $label, string $value): string
             <span>Back to Mechanics</span>
           </a>
 
-          <a href="<?= e($B . '/admin/mechanics/' . urlencode((string) ($m['mechanic_id'] ?? ''))) ?>/edit" class="btn-primary">
+          <a href="<?= e($B . '/admin/mechanics/' . urlencode((string) ($m['mechanic_id'] ?? ''))) ?>/edit"
+            class="btn-primary">
             <i class="fa-solid fa-pen-to-square"></i>
             <span>Edit Mechanic</span>
           </a>
@@ -81,7 +82,8 @@ function fieldRow(string $icon, string $label, string $value): string
         <div class="kpi-card">
           <div class="kpi-icon"><i class="fa-solid fa-circle-check"></i></div>
           <div class="kpi-label">Status</div>
-          <div class="status-wrap"><span class="status-badge <?= e($mechStatusClass) ?>"><?= e($mechStatusLabel) ?></span></div>
+          <div class="status-wrap"><span
+              class="status-badge <?= e($mechStatusClass) ?>"><?= e($mechStatusLabel) ?></span></div>
         </div>
 
         <div class="kpi-card">

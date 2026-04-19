@@ -71,7 +71,8 @@ function fieldRow(string $icon, string $label, string $value): string
             <span>Back to Managers</span>
           </a>
 
-          <a href="<?= e($base . '/admin/service-managers/' . urlencode((string) $row['manager_id']) . '/edit') ?>" class="btn-primary">
+          <a href="<?= e($base . '/admin/service-managers/' . urlencode((string) $row['manager_id']) . '/edit') ?>"
+            class="btn-primary">
             <i class="fa-solid fa-pen-to-square"></i>
             <span>Edit Manager</span>
           </a>

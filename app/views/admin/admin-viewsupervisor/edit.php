@@ -106,8 +106,7 @@ function e($value): string
                     ?>
                     <option value="<?= (int) $b['branch_id'] ?>"
                       data-manager-id="<?= e((string) ($b['manager_id'] ?? '')) ?>"
-                      data-manager-name="<?= e($managerName) ?>"
-                      data-manager-code="<?= e($managerCode) ?>" <?= $selected ? 'selected' : '' ?>>
+                      data-manager-name="<?= e($managerName) ?>" data-manager-code="<?= e($managerCode) ?>" <?= $selected ? 'selected' : '' ?>>
                       <?= e(($b['branch_code'] ? $b['branch_code'] . ' • ' : '') . ($b['name'] ?? 'Branch')) ?>
                     </option>
                   <?php endforeach; ?>
@@ -138,7 +137,8 @@ function e($value): string
         </section>
 
         <div class="form-actions">
-          <a href="<?= e($base . '/admin/supervisors/' . urlencode($s['supervisor_code'] ?? '')) ?>" class="btn-secondary">
+          <a href="<?= e($base . '/admin/supervisors/' . urlencode($s['supervisor_code'] ?? '')) ?>"
+            class="btn-secondary">
             <i class="fa-solid fa-xmark"></i>
             <span>Cancel</span>
           </a>
@@ -176,18 +176,18 @@ function e($value): string
 </body>
 
 </html>
-            return;
-          }
-          mgrName.value = opt.dataset.managerName || 'Not assigned';
-          mgrCode.value = opt.dataset.managerCode || 'Not assigned';
-          mgrId.value = opt.dataset.managerId || '';
-        }
+return;
+}
+mgrName.value = opt.dataset.managerName || 'Not assigned';
+mgrCode.value = opt.dataset.managerCode || 'Not assigned';
+mgrId.value = opt.dataset.managerId || '';
+}
 
-        sel.addEventListener('change', syncManager);
-        syncManager();
-      })();
-    </script>
-  </main>
+sel.addEventListener('change', syncManager);
+syncManager();
+})();
+</script>
+</main>
 </body>
 
 </html>
