@@ -80,6 +80,7 @@
 
           <div class="vehicles-container">
             <?php foreach ($vehicles as $v): ?>
+              <?php $vehicleStatus = strtolower((string)($v['status'] ?? 'available')); ?>
               <article class="vehicle-card">
                 <h3><?= htmlspecialchars(trim(($v['make'] ?? '') . ' ' . ($v['model'] ?? ''))) ?: 'Vehicle' ?></h3>
 
@@ -87,12 +88,22 @@
                   <div><span>License Plate</span><strong><?= htmlspecialchars($v['license_plate'] ?? '—') ?></strong></div>
                   <div><span><?= htmlspecialchars($v['color'] ?? '—') ?></span></div>
                   <div><span><?= htmlspecialchars($v['year'] ?? '—') ?></span></div>
+                  <div><span>Status</span><strong><?= htmlspecialchars(ucfirst($vehicleStatus)) ?></strong></div>
                 </div>
                 
                 <div class="vehicle-actions">
-                  <a class="btn edit" href="<?= $base ?>/customer/profile/vehicle?id=<?= (int)$v['vehicle_id'] ?>">
-                    <i class="fa fa-pen"></i> Edit
-                  </a>
+                  <?php if ($vehicleStatus !== 'sold'): ?>
+                    <a class="btn edit" href="<?= $base ?>/customer/profile/vehicle?id=<?= (int)$v['vehicle_id'] ?>">
+                      <i class="fa fa-pen"></i> Edit
+                    </a>
+
+                    <form method="post" action="<?= $base ?>/customer/profile/vehicle/sell" onsubmit="return confirm('Mark this vehicle as sold? It will be hidden from future bookings but past history will remain.');">
+                      <input type="hidden" name="vehicle_id" value="<?= (int)$v['vehicle_id'] ?>">
+                      <button type="submit" class="btn yellow" aria-label="Mark vehicle <?= htmlspecialchars($v['license_plate'] ?? '') ?> as sold">
+                        <i class="fa fa-tag"></i> Mark as Sold
+                      </button>
+                    </form>
+                  <?php endif; ?>
 
                   <form method="post" action="<?= $base ?>/customer/profile/vehicle/delete" onsubmit="return confirm('Delete this vehicle? This action cannot be undone.');">
                     <input type="hidden" name="vehicle_id" value="<?= (int)$v['vehicle_id'] ?>">

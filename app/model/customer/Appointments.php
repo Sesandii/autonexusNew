@@ -46,7 +46,12 @@ class Appointments
     /** Verify vehicle belongs to customer */
     private function ownsVehicle(int $customerId, int $vehicleId): bool
     {
-        $sql = "SELECT 1 FROM vehicles WHERE vehicle_id = :v AND customer_id = :c LIMIT 1";
+                $sql = "SELECT 1
+                                    FROM vehicles
+                                 WHERE vehicle_id = :v
+                                     AND customer_id = :c
+                                     AND COALESCE(status, 'available') <> 'sold'
+                                 LIMIT 1";
         $st  = $this->pdo->prepare($sql);
         $st->execute(['v' => $vehicleId, 'c' => $customerId]);
         return (bool)$st->fetchColumn();
