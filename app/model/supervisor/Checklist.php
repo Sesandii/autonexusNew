@@ -12,9 +12,6 @@ class Checklist
         $this->pdo = db();
     }
 
-    /**
-     * Get checklist items for a work order
-     */
     public function getByWorkOrder(int $work_order_id): array
     {
         $sql = "
@@ -29,9 +26,6 @@ class Checklist
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    /**
-     * Add checklist item
-     */
     public function addItem(int $work_order_id, string $item_name): void
     {
         $sql = "
@@ -43,9 +37,7 @@ class Checklist
         $stmt->execute([$work_order_id, $item_name]);
     }
 
-    /**
-     * Update checklist item status
-     */
+
     public function updateStatus(int $id, string $status): void
     {
         $sql = "
@@ -67,9 +59,6 @@ class Checklist
 }
 
 
-    /**
- * Create checklist item (used during work order creation)
- */
 public function create(array $data): void
 {
     $sql = "
@@ -115,9 +104,6 @@ public function deleteById(int $id): void
     $stmt->execute([$id]);
 }
 
-/**
- * Get checklist counts to calculate progress
- */
 public function getProgressCounts(int $workOrderId): array
 {
     $sql = "

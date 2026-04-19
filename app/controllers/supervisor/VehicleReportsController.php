@@ -23,7 +23,6 @@ public function indexp()
     if (session_status() !== PHP_SESSION_ACTIVE) session_start();
     $userId = $_SESSION['user']['user_id'] ?? null;
 
-    // BRIDGE: Get the real supervisor_id
     $db = db();
     $stmt = $db->prepare("SELECT supervisor_id FROM supervisors WHERE user_id = ?");
     $stmt->execute([$userId]);
@@ -35,7 +34,7 @@ public function indexp()
 
     $this->view('supervisor/reports/indexp', [
         'reports' => $reports,
-        'currentSupervisorId' => $realSupervisorId // Pass this to the view!
+        'currentSupervisorId' => $realSupervisorId 
     ]);
 }
 
@@ -142,6 +141,7 @@ if (!empty($_FILES['work_images']['name'][0])) {
         }
     }
 }
+        $this->flash('success', 'Report Created.');
         header('Location: ' . rtrim(BASE_URL, '/') . '/supervisor/reports/indexp');
         exit;
     }
@@ -150,7 +150,7 @@ if (!empty($_FILES['work_images']['name'][0])) {
     {
         $model = new Report();
         $model->delete((int)$id);
-
+        $this->flash('success', 'Report deleted.');
         header('Location: ' . rtrim(BASE_URL, '/') . '/supervisor/reports/indexp');
         exit;
     }
@@ -198,7 +198,6 @@ public function edit(int $id)
     if (session_status() !== PHP_SESSION_ACTIVE) session_start();
     $userId = $_SESSION['user']['user_id'] ?? null;
 
-    // BRIDGE
     $db = db();
     $stmt = $db->prepare("SELECT supervisor_id FROM supervisors WHERE user_id = ?");
     $stmt->execute([$userId]);
@@ -214,7 +213,6 @@ public function edit(int $id)
     }
 
     if ((int)$report['supervisor_id'] !== $realSupervisorId) {
-        // You can add a flash message here
         header('Location: ' . BASE_URL . '/supervisor/reports/indexp');
         exit;
     }
@@ -284,8 +282,8 @@ public function update(int $reportId)
             }
         }
     }
-
-    header('Location: ' . BASE_URL . '/supervisor/reports/view/' . $reportId);
+    $this->flash('success', 'Report Updated.');
+    header('Location: ' . BASE_URL . '/supervisor/reports/indexp');
     exit;
 }
 
@@ -526,6 +524,18 @@ public function exportDaily()
         $dompdf->stream("Daily_Report_$date.pdf", ["Attachment" => true]);
         exit;
     }
+}
+
+private function flash(string $type, string $text): void
+{
+    if (session_status() !== PHP_SESSION_ACTIVE) {
+        session_start();
+    }
+
+    $_SESSION['message'] = [
+        'type' => $type,
+        'text' => $text
+    ];
 }
 
 }

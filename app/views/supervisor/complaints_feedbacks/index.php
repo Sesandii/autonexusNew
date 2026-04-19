@@ -10,6 +10,20 @@
 </head>
 <body>
 <?php include __DIR__ . '/../partials/sidebar.php'; ?>
+<?php 
+if (session_status() !== PHP_SESSION_ACTIVE) session_start();
+if (isset($_SESSION['message'])): 
+    $message = $_SESSION['message'];
+?>
+    <div class="toast-container" id="toast-notification">
+        <div class="toast-message <?= $message['type'] ?>">
+            <span><?= htmlspecialchars($message['text']) ?></span>
+        </div>
+    </div>
+<?php 
+    unset($_SESSION['message']); // Crucial: clear it so it doesn't repeat
+endif; 
+?>
 <main class="main-content">
 <div class="breadcrumb-text">
     Supervisor <span class="sep">&gt;</span> 
@@ -118,7 +132,7 @@
                     <div class="user-info">
                         <h3 class="customer-name"><?= htmlspecialchars($f['customer_name']); ?></h3>
                         <p class="detail-item"><strong>Service:</strong> <?= htmlspecialchars($f['service_name'] ?? 'N/A'); ?></p>
-                        <p class="detail-item"><strong>Branch:</strong> <?= htmlspecialchars($f['name'] ?? 'Colombo'); ?></p>
+                        <p class="detail-item"><strong>Vehicle:</strong> <?= htmlspecialchars($f['vehicle'] ?? '-'); ?></p>
                         <p class="detail-item"><strong>Date:</strong> <?= date('M j, Y', strtotime($f['created_at'])); ?></p>
                     </div>
                     <div class="rating-container">
@@ -299,6 +313,17 @@ document.addEventListener("DOMContentLoaded", function () {
       feedbackCards.forEach(card => card.style.display = "block");
     });
   }
+});
+
+window.addEventListener('DOMContentLoaded', () => {
+    const toast = document.querySelector('.toast');
+    if (toast) {
+        setTimeout(() => {
+            toast.style.transition = 'opacity 0.5s';
+            toast.style.opacity = '0';
+            setTimeout(() => toast.remove(), 500);
+        }, 3000);
+    }
 });
 
 function toggleEdit(id) {

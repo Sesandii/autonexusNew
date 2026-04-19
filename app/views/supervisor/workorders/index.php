@@ -45,15 +45,7 @@ $currentSupervisorId = $currentSupervisorId ?? 0;
   <div class="table-filters">
     <input type="text" id="idFilter" placeholder="Search by Vehicle, Service...." class="filter-input">
 
-    <select id="serviceFilter">
-      <option value="">All Services</option>
-      <?php
-        $services = array_unique(array_column($workOrders, 'service_name'));
-        foreach ($services as $service):
-      ?>
-        <option value="<?= strtolower($service) ?>"><?= htmlspecialchars($service) ?></option>
-      <?php endforeach; ?>
-    </select>
+    <input type="date" id="dateFilter" class="filter-date" title="Filter by Start Date">
 
     <select id="mechanicFilter">
       <option value="">All Mechanics</option>
@@ -117,7 +109,8 @@ $currentSupervisorId = $currentSupervisorId ?? 0;
     data-owner="<?= $isOwner ? 'mine' : 'others' ?>"
     data-vehicle="<?= strtolower($w['vehicle'] ?? '') ?>"
     data-supervisor="<?= strtolower($w['supervisor_code'] ?? '') ?>"
->
+    data-date="<?= !empty($w['started_at']) ? date('Y-m-d', strtotime($w['started_at'])) : '' ?>"
+    >
         <td><?= htmlspecialchars(($w['appointment_date'] ?? '') . ' ' . ($w['appointment_time'] ?? '')) ?></td>
         <td><?= htmlspecialchars($w['service_name'] ?? '') ?></td>
         <td><?= htmlspecialchars($w['vehicle'] ?? '') ?></td>
@@ -224,7 +217,7 @@ updateTimers();
 
 document.addEventListener("DOMContentLoaded", function () {
     const searchInput = document.getElementById("idFilter");
-    const serviceFilter = document.getElementById("serviceFilter");
+    const dateFilter = document.getElementById("dateFilter");
     const mechanicFilter = document.getElementById("mechanicFilter");
     const statusFilter = document.getElementById("statusFilter");
     const ownerFilter = document.getElementById("ownerFilter");
@@ -234,7 +227,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function applyFilters() {
     const searchVal = searchInput.value.trim().toLowerCase();
-    const serviceVal = serviceFilter.value;
+    const dateVal = dateFilter.value;
     const mechanicVal = mechanicFilter.value;
     const statusVal = statusFilter.value; 
     const ownerVal = ownerFilter.value;
@@ -246,6 +239,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const rowOwner = (row.dataset.owner || "").toLowerCase();
         const rowVehicle = (row.dataset.vehicle || "").toLowerCase();
         const rowSupervisor = (row.dataset.supervisor || "").toLowerCase();
+        const rowDate = row.dataset.date || "";
 
         const matchSearch = !searchVal || 
                             rowVehicle.includes(searchVal) || 
@@ -260,23 +254,23 @@ document.addEventListener("DOMContentLoaded", function () {
             matchStatus = rowStatus !== 'completed';
         }
 
-        const matchService = !serviceVal || rowService === serviceVal;
+        const matchDate = !dateVal || rowDate === dateVal;
         const matchMechanic = !mechanicVal || rowMechanic === mechanicVal;
         const matchOwner = !ownerVal || rowOwner === ownerVal;
 
-        row.style.display = (matchSearch && matchService && matchMechanic && matchStatus && matchOwner) ? "" : "none";
+        row.style.display = (matchSearch && matchDate && matchMechanic && matchStatus && matchOwner) ? "" : "none";
     });
 }
 
     searchInput.addEventListener("keyup", applyFilters);
-    serviceFilter.addEventListener("change", applyFilters);
+    dateFilter.addEventListener("change", applyFilters);
     mechanicFilter.addEventListener("change", applyFilters);
     statusFilter.addEventListener("change", applyFilters);
     ownerFilter.addEventListener("change", applyFilters);
 
     resetBtn.addEventListener("click", function () {
         searchInput.value = "";
-        serviceFilter.value = "";
+        dateFilter.value = "";
         mechanicFilter.value = "";
         statusFilter.value = "";
         ownerFilter.value = "";

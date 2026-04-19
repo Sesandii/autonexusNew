@@ -12,7 +12,7 @@ class Complaint
         $this->db = $db;
     }
 
-    public function getAllComplaints()
+    public function getAllComplaints(int $branchId)
 {
     $stmt = $this->db->prepare("
         SELECT 
@@ -46,9 +46,10 @@ class Complaint
         LEFT JOIN users au ON c.assigned_to_user_id = au.user_id
         LEFT JOIN appointments a ON c.appointment_id = a.appointment_id
         LEFT JOIN services s ON a.service_id = s.service_id
+        WHERE b.branch_id = :branch_id
         ORDER BY c.created_at DESC
     ");
-    $stmt->execute();
+    $stmt->execute(['branch_id' => $branchId]);
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 

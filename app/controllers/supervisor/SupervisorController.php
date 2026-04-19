@@ -23,18 +23,15 @@ class SupervisorController extends Controller
     $stmt->execute([$userId]);
     $sup = $stmt->fetch();
     
-    // FIX: Define these variables from the database result
     $supervisor_id = $sup['supervisor_id'] ?? 0;
     $branch_id     = $sup['branch_id'] ?? 0;
     
-    // Update session so other parts of the app know the branch
     $_SESSION['user']['branch_id'] = $branch_id;
     $_SESSION['user']['supervisor_id'] = $supervisor_id;
 
     $model = new Dashboard();
 
     $data = [
-        // Now passing the actual IDs fetched from the DB
         'stats'          => $model->getWorkorderStats((int)$supervisor_id, (int)$branch_id),
         'appointments'   => $model->getTodayAppointments((int)$branch_id), 
         'inProgressJobs' => $model->getInProgressJobs((int)$supervisor_id),
