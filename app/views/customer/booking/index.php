@@ -197,7 +197,7 @@ $prefillRebookId  = (int)($prefill['appointment_id'] ?? 0);
                     <?php foreach ($rows as $r): ?>
                       <?php $sel = ($prefillServiceId && (int)$r['service_id'] === $prefillServiceId) ? 'selected' : ''; ?>
                       <option value="<?= (int)$r['service_id'] ?>" <?= $sel ?>>
-                        <?= htmlspecialchars($r['service_name']) ?> — $<?= number_format((float)$r['default_price'], 2) ?>
+                        <?= htmlspecialchars($r['service_name']) ?> — Rs. <?= number_format((float)$r['default_price'], 2) ?>
                       </option>
                     <?php endforeach; ?>
                   </optgroup>
