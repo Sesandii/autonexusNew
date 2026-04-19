@@ -6,6 +6,7 @@ use PDO;
 class Branch
 {
     private PDO $pdo;
+    private ?bool $managerHasBranchId = null;
 
     public function __construct()
     {
@@ -62,11 +63,25 @@ class Branch
             $data['branch_code'] = $this->nextCode();
         }
 
-        $cols = array_keys($data);
-        $sql = "INSERT INTO branches (" . implode(',', $cols) . ")
-                VALUES (:" . implode(',:', $cols) . ")";
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute($data);
+        $this->pdo->beginTransaction();
+        try {
+            $cols = array_keys($data);
+            $sql = "INSERT INTO branches (" . implode(',', $cols) . ")
+                    VALUES (:" . implode(',:', $cols) . ")";
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute($data);
+
+            $branchId = (int) $this->pdo->lastInsertId();
+            $managerId = isset($data['manager_id']) ? (int) $data['manager_id'] : 0;
+            $this->setManagerBranch($managerId, $branchId);
+
+            $this->pdo->commit();
+        } catch (\Throwable $e) {
+            if ($this->pdo->inTransaction()) {
+                $this->pdo->rollBack();
+            }
+            throw $e;
+        }
     }
 
     public function findByCode(string $code): ?array
@@ -79,6 +94,14 @@ class Branch
 
     public function updateByCode(string $code, array $data): void
     {
+        $current = $this->findByCode($code);
+        if (!$current) {
+            return;
+        }
+
+        $branchId = (int) ($current['branch_id'] ?? 0);
+        $oldManagerId = (int) ($current['manager_id'] ?? 0);
+
         if (array_key_exists('branch_code', $data))
             unset($data['branch_code']);
         $cols = array_keys($data);
@@ -91,14 +114,97 @@ class Branch
         $params = $data;
         $params['where_code'] = $code;
 
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute($params);
+        $this->pdo->beginTransaction();
+        try {
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute($params);
+
+            $newManagerId = array_key_exists('manager_id', $data)
+                ? (int) ($data['manager_id'] ?? 0)
+                : $oldManagerId;
+
+            if ($oldManagerId > 0 && $oldManagerId !== $newManagerId) {
+                $this->clearManagerBranch($oldManagerId, $branchId);
+            }
+            $this->setManagerBranch($newManagerId, $branchId);
+
+            $this->pdo->commit();
+        } catch (\Throwable $e) {
+            if ($this->pdo->inTransaction()) {
+                $this->pdo->rollBack();
+            }
+            throw $e;
+        }
     }
 
     public function deleteByCode(string $code): void
     {
-        $stmt = $this->pdo->prepare("DELETE FROM branches WHERE branch_code = :c");
-        $stmt->execute(['c' => $code]);
+        $current = $this->findByCode($code);
+        if (!$current) {
+            return;
+        }
+
+        $branchId = (int) ($current['branch_id'] ?? 0);
+        $managerId = (int) ($current['manager_id'] ?? 0);
+
+        $this->pdo->beginTransaction();
+        try {
+            $stmt = $this->pdo->prepare("DELETE FROM branches WHERE branch_code = :c");
+            $stmt->execute(['c' => $code]);
+
+            $this->clearManagerBranch($managerId, $branchId);
+
+            $this->pdo->commit();
+        } catch (\Throwable $e) {
+            if ($this->pdo->inTransaction()) {
+                $this->pdo->rollBack();
+            }
+            throw $e;
+        }
+    }
+
+    private function managersHaveBranchId(): bool
+    {
+        if ($this->managerHasBranchId !== null) {
+            return $this->managerHasBranchId;
+        }
+
+        $stmt = $this->pdo->query("SHOW COLUMNS FROM managers LIKE 'branch_id'");
+        $this->managerHasBranchId = (bool) $stmt->fetch(PDO::FETCH_ASSOC);
+        return $this->managerHasBranchId;
+    }
+
+    private function setManagerBranch(int $managerId, int $branchId): void
+    {
+        if ($managerId <= 0 || $branchId <= 0 || !$this->managersHaveBranchId()) {
+            return;
+        }
+
+        $stmt = $this->pdo->prepare(
+            "UPDATE managers SET branch_id = :branch_id WHERE manager_id = :manager_id"
+        );
+        $stmt->execute([
+            'branch_id' => $branchId,
+            'manager_id' => $managerId,
+        ]);
+    }
+
+    private function clearManagerBranch(int $managerId, int $branchId): void
+    {
+        if ($managerId <= 0 || $branchId <= 0 || !$this->managersHaveBranchId()) {
+            return;
+        }
+
+        $stmt = $this->pdo->prepare(
+            "UPDATE managers
+                SET branch_id = NULL
+              WHERE manager_id = :manager_id
+                AND branch_id = :branch_id"
+        );
+        $stmt->execute([
+            'manager_id' => $managerId,
+            'branch_id' => $branchId,
+        ]);
     }
 
     /** Return branches + manager info, with optional search/filter */
