@@ -1,85 +1,69 @@
-// Fallback if backend didn't inject data
-let servicesData = Array.isArray(window.INITIAL_TRACK_DATA) ? window.INITIAL_TRACK_DATA : [];
-
-// Render table
-function renderTable(data) {
-  const tbody = document.querySelector("#servicesTable tbody");
-  if (!tbody) return;
-  tbody.innerHTML = "";
-
-  if (!data.length) {
-    tbody.innerHTML = `
-      <tr>
-        <td colspan="5" style="text-align:center; padding:40px; color:#6B7280;">
-          No services found matching your criteria
-        </td>
-      </tr>
-    `;
+document.addEventListener('DOMContentLoaded', function () {
+  const cardsContainer = document.getElementById('cardsContainer');
+  if (!cardsContainer) {
     return;
   }
 
-  data.forEach(service => {
-    const tr = document.createElement("tr");
-    const statusClass = (service.status || '').replace(/\s+/g, '-').toLowerCase();
-    tr.innerHTML = `
-      <td>${service.type || ''}</td>
-      <td>${service.vehicle || ''}</td>
-      <td>${service.dateBooked || ''}</td>
-      <td><span class="status ${statusClass}">${service.status || ''}</span></td>
-      <td>${service.estCompletion || '-'}</td>
-    `;
-    tbody.appendChild(tr);
-  });
-}
+  const cards = Array.from(cardsContainer.querySelectorAll('.card'));
+  const emptyState = document.getElementById('emptyState');
 
-// Filter (with AJAX if endpoint exists)
-async function filterServices() {
-  const qEl = document.getElementById("searchInput");
-  const sEl = document.getElementById("statusFilter");
-  const q = qEl ? qEl.value.trim() : '';
-  const status = sEl ? sEl.value : 'All';
+  const branchFilter = document.getElementById('branchFilter');
+  const statusFilter = document.getElementById('statusFilter');
+  const timeFilter = document.getElementById('timeFilter');
+  const searchInput = document.getElementById('searchInput');
 
-  // If we have a backend endpoint, use it; else filter locally
-  if (typeof LIST_URL === 'string' && LIST_URL) {
-    const url = `${LIST_URL}?q=${encodeURIComponent(q)}&status=${encodeURIComponent(status)}`;
-    try {
-      const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
-      const json = await res.json();
-      renderTable(Array.isArray(json.data) ? json.data : []);
-      return;
-    } catch (e) {
-      // fallback to local filter
+  const normalize = function (value) {
+    return String(value || '').trim().toLowerCase();
+  };
+
+  const applyFilters = function () {
+    const branchVal = normalize(branchFilter ? branchFilter.value : '');
+    const statusVal = normalize(statusFilter ? statusFilter.value : '');
+    const timeVal = normalize(timeFilter ? timeFilter.value : '');
+    const queryVal = normalize(searchInput ? searchInput.value : '');
+
+    let visibleCount = 0;
+
+    cards.forEach(function (card) {
+      const cardBranch = normalize(card.getAttribute('data-branch'));
+      const cardStatus = normalize(card.getAttribute('data-status'));
+      const cardTime = normalize(card.getAttribute('data-time'));
+      const searchText = normalize(card.getAttribute('data-search'));
+
+      const matchesBranch = !branchVal || cardBranch === branchVal;
+      const matchesStatus = !statusVal || cardStatus === statusVal;
+      const matchesTime = !timeVal || cardTime.indexOf(timeVal) === 0;
+      const matchesQuery = !queryVal || searchText.indexOf(queryVal) !== -1;
+
+      const visible = matchesBranch && matchesStatus && matchesTime && matchesQuery;
+      card.style.display = visible ? '' : 'none';
+
+      if (visible) {
+        visibleCount += 1;
+      }
+    });
+
+    if (emptyState) {
+      if (visibleCount === 0) {
+        emptyState.removeAttribute('hidden');
+      } else {
+        emptyState.setAttribute('hidden', 'hidden');
+      }
     }
+  };
+
+  if (branchFilter) {
+    branchFilter.addEventListener('change', applyFilters);
+  }
+  if (statusFilter) {
+    statusFilter.addEventListener('change', applyFilters);
+  }
+  if (timeFilter) {
+    timeFilter.addEventListener('change', applyFilters);
+  }
+  if (searchInput) {
+    searchInput.addEventListener('input', applyFilters);
   }
 
-  // Local (client) filtering fallback
-  const filtered = servicesData.filter(s => {
-    const matchesSearch =
-      (s.type || '').toLowerCase().includes(q.toLowerCase()) ||
-      (s.vehicle || '').toLowerCase().includes(q.toLowerCase()) ||
-      (s.dateBooked || '').includes(q.toLowerCase());
-    const matchesStatus = (status === 'All') || (s.status === status);
-    return matchesSearch && matchesStatus;
-  });
-
-  renderTable(filtered);
-}
-
-
-// Init
-function initTrackServices() {
-  const searchBtn     = document.getElementById("searchBtn");
-  const searchInput   = document.getElementById("searchInput");
-  const statusFilter  = document.getElementById("statusFilter");
-
-  searchBtn && searchBtn.addEventListener("click", filterServices);
-  searchInput && searchInput.addEventListener("keyup", (e) => { if (e.key === "Enter") filterServices(); });
-  statusFilter && statusFilter.addEventListener("change", filterServices);
-
-  // Apply default filter on page load (this will handle initial data loading and rendering)
-  filterServices();
-}
-
-document.readyState === 'loading'
-  ? document.addEventListener('DOMContentLoaded', initTrackServices)
-  : initTrackServices();
+  applyFilters();
+});
