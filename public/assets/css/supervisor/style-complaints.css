@@ -407,6 +407,6 @@ select[name="status"] {
 }
 
 .status-closed { 
-  background-color: #6c757d; /* Gray */
+  background-color: #6c757d; 
   color: white; 
 }

@@ -14,6 +14,9 @@
   <section class="welcome">
     <h1>Welcome, <?= htmlspecialchars(($_SESSION['user']['first_name'] ?? '') . ' ' . ($_SESSION['user']['last_name'] ?? '')) ?></h1>
     <p>Here's an overview of your <span><?= htmlspecialchars($_SESSION['user']['name'] ?? 'Supervisor') ?></span> dashboard</p>
+    <div class="lang-switcher-wrapper">
+        <?php require APP_ROOT . '/views/partials/lang-switcher.php'; ?>
+    </div>
   </section>
   <section class="dashboard-top">
   <div class="stat-cards-container">

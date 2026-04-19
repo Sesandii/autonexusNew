@@ -16,8 +16,8 @@ class WorkOrder
     public function create(array $data): int
 {
     $sql = "INSERT INTO work_orders 
-            (appointment_id, mechanic_id, service_summary, total_cost, status, supervisor_id)
-            VALUES (:appointment_id, :mechanic_id, :service_summary, :total_cost, :status, :supervisor_id)";
+            (appointment_id, mechanic_id, service_summary, total_cost, status, supervisor_id, started_at)
+            VALUES (:appointment_id, :mechanic_id, :service_summary, :total_cost, :status, :supervisor_id, :started_at)";
 
     $stmt = $this->pdo->prepare($sql);
     $stmt->execute([
@@ -26,7 +26,8 @@ class WorkOrder
         'service_summary'=> $data['service_summary'],
         'total_cost'     => $data['total_cost'],
         'status'         => $data['status'],
-        'supervisor_id'  => $data['supervisor_id']
+        'supervisor_id'  => $data['supervisor_id'],
+        'started_at'      => $data['started_at']
     ]);
 
     $workOrderId = (int)$this->pdo->lastInsertId();
@@ -174,13 +175,10 @@ public function getAll(int $branchId): array
             LEFT JOIN appointments a ON w.appointment_id = a.appointment_id
             LEFT JOIN services s ON a.service_id = s.service_id
             LEFT JOIN mechanics m ON w.mechanic_id = m.mechanic_id
-            /* Fix 1: Join using supervisor_id PK, not user_id */
             LEFT JOIN supervisors p ON w.supervisor_id = p.supervisor_id
             LEFT JOIN vehicles v ON a.vehicle_id = v.vehicle_id
             LEFT JOIN customers c ON a.customer_id = c.customer_id
-            /* We join users to get the CUSTOMER'S name */
             LEFT JOIN users u ON c.user_id = u.user_id
-            /* Fix 2: Use the supervisor record we joined above to filter by branch */
             WHERE p.branch_id = :branch_id
             ORDER BY w.work_order_id DESC";
 
@@ -624,7 +622,7 @@ public function updateMechanicStatus(string $mechanicCode): void
     $activeCount = $this->countActiveByMechanicCode($mechanicCode);
 
     if ($currentStatus === 'active' || $currentStatus === 'busy') {
-        $newStatus = ($activeCount >= 5) ? 'busy' : 'active';
+        $newStatus = ($activeCount >= 3) ? 'busy' : 'active';
 
         $sql = "UPDATE mechanics SET status = :status WHERE mechanic_code = :code";
         $stmt = $this->pdo->prepare($sql);

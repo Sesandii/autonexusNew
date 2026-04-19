@@ -10,6 +10,21 @@
 </head>
 <body>
 <?php include __DIR__ . '/../partials/sidebar.php'; ?>
+
+<?php 
+if (session_status() !== PHP_SESSION_ACTIVE) session_start();
+if (isset($_SESSION['message'])): 
+    $message = $_SESSION['message'];
+?>
+    <div class="toast-container" id="toast-notification">
+        <div class="toast-message <?= $message['type'] ?>">
+            <span><?= htmlspecialchars($message['text']) ?></span>
+        </div>
+    </div>
+<?php 
+    unset($_SESSION['message']); 
+endif; 
+?>
 <main class="main-content">
 <div class="breadcrumb-text">
     Supervisor <span class="sep">&gt;</span> 
@@ -121,18 +136,15 @@ document.addEventListener('DOMContentLoaded', function() {
     const mechanicCards = document.querySelectorAll('.mechanic-card');
 
     function filterMechanics() {
-        // We use lowercase and trim to avoid any "Hidden Space" bugs
         const codeVal = codeSelect.value.trim().toLowerCase();
         const specVal = specSelect.value.trim().toLowerCase();
         const statusVal = statusSelect.value.trim().toLowerCase();
 
         mechanicCards.forEach(card => {
-            // Get data attributes and normalize them
             const cardCode = (card.getAttribute('data-code') || "").trim().toLowerCase();
             const cardSpec = (card.getAttribute('data-spec') || "").trim().toLowerCase();
             const cardStatus = (card.getAttribute('data-status') || "").trim().toLowerCase();
 
-            // Check if they match. If the filter is empty, it's a match.
             const matchesCode = !codeVal || cardCode.includes(codeVal);
             const matchesSpec = !specVal || cardSpec === specVal;
             const matchesStatus = !statusVal || cardStatus === statusVal;
@@ -145,7 +157,18 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Attach listeners
+    window.addEventListener('DOMContentLoaded', () => {
+    const toast = document.querySelector('.toast');
+    if (toast) {
+        setTimeout(() => {
+            toast.style.transition = 'opacity 0.5s';
+            toast.style.opacity = '0';
+            setTimeout(() => toast.remove(), 500);
+        }, 3000);
+    }
+});
+
+
     codeSelect.addEventListener('change', filterMechanics);
     specSelect.addEventListener('change', filterMechanics);
     statusSelect.addEventListener('change', filterMechanics);
@@ -157,7 +180,7 @@ document.addEventListener('DOMContentLoaded', function() {
         filterMechanics();
     });
 
-    filterMechanics(); // Run on load
+    filterMechanics();
 });
 </script>
 </body>

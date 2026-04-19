@@ -40,7 +40,6 @@ class Mechanic {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-// FIX: Change $this->db to $this->pdo
 public function getMechanicById($id) {
     $stmt = $this->pdo->prepare("SELECT * FROM mechanics WHERE mechanic_id=?");
     $stmt->execute([$id]);

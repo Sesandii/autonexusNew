@@ -607,3 +607,36 @@ header {
 .btn.small.download:hover {
   background-color: #047857;
 }
+
+.filter-date {
+  height: 34px;
+  min-width: 150px;
+  padding: 6px 12px;
+  font-size: 13px;
+  border: 1px solid #e2e8f0; 
+  border-radius: 8px;        
+  background-color: #ffffff;
+  color: #0b1220;         
+  outline: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  font-family: inherit;
+  transition: all 0.2s ease;
+}
+
+.filter-date:hover {
+  background-color: #f1f5f9;
+  border-color: #cbd5e0;
+}
+
+.filter-date:focus {
+  border-color: var(--accent); 
+  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.1);
+}
+
+.filter-date::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  opacity: 0.6;
+  margin-left: 8px;
+}
