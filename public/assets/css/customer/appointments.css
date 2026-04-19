@@ -54,8 +54,8 @@ body {
 }
 
 .appointments-page .summary-card.is-active {
-  border-color: #b8c5d6;
-  box-shadow: 0 0 0 1px #cbd5e1, 0 10px 22px rgba(15, 23, 42, 0.08);
+  border-color: #f6b9b9;
+  box-shadow: 0 0 0 1px #fecaca, 0 10px 22px rgba(239, 68, 68, 0.14);
 }
 
 .appointments-page .summary-label {
@@ -90,12 +90,12 @@ body {
 }
 
 .appointments-page .summary-upcoming {
-  background: #f8fbff;
+  background: #fff7f7;
 }
 
 .appointments-page .summary-upcoming .summary-icon {
-  background: #dbeafe;
-  color: #1d4ed8;
+  background: #fee2e2;
+  color: #b91c1c;
 }
 
 .appointments-page .summary-completed {
@@ -200,8 +200,8 @@ body {
 }
 
 .appointments-page .table-shell-today {
-  border-left: 4px solid #3b82f6;
-  background: linear-gradient(180deg, #f8fbff 0%, #ffffff 40%);
+  border-left: 4px solid var(--appointments-brand);
+  background: linear-gradient(180deg, #fff7f7 0%, #ffffff 40%);
 }
 
 .appointments-page .section-head {
@@ -303,9 +303,9 @@ body {
 
 .appointments-page .status-upcoming,
 .appointments-page .status-ongoing {
-  background: #dbeafe;
-  color: #1d4ed8;
-  border-color: #bfdbfe;
+  background: #fee2e2;
+  color: #b91c1c;
+  border-color: #fecaca;
 }
 
 .appointments-page .status-completed {
@@ -337,9 +337,9 @@ body {
   justify-content: center;
   height: 32px;
   border-radius: 9px;
-  border: 1px solid #bfdbfe;
-  background: #eff6ff;
-  color: #1d4ed8;
+  border: 1px solid #fecaca;
+  background: #fff1f2;
+  color: #b91c1c;
   font-weight: 700;
   font-size: 13px;
   text-decoration: none;
@@ -350,8 +350,8 @@ body {
 
 .appointments-page .action-btn.view:hover {
   transform: translateY(-1px);
-  box-shadow: 0 6px 12px rgba(29, 78, 216, 0.18);
-  background: #dbeafe;
+  box-shadow: 0 6px 12px rgba(239, 68, 68, 0.2);
+  background: #ffe4e6;
 }
 
 .appointments-page .action-btn.review {
