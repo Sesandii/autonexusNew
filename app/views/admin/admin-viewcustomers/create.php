@@ -1,3 +1,4 @@
+<?php /* Admin view: renders admin-viewcustomers/create page. */ ?>
 <?php $current = 'customers'; ?>
 <!DOCTYPE html>
 <html lang="en">

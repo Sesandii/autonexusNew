@@ -8,11 +8,13 @@ class User
 {
     private PDO $db;
 
+    // Initialize model dependencies and database access.
     public function __construct()
     {
         $this->db = db();
     }
 
+    // Render the form for creating a new record.
     public function create(array $data): int
     {
         $sql = "INSERT INTO users
@@ -35,6 +37,7 @@ class User
         return (int)$this->db->lastInsertId();
     }
 
+    // Validate input and update an existing record.
     public function update(int $id, array $data): void
     {
         $parts = [];
@@ -57,12 +60,14 @@ class User
         $st->execute($params);
     }
 
+    // Delete the selected record.
     public function delete(int $id): void
     {
         $st = $this->db->prepare("DELETE FROM users WHERE user_id = ?");
         $st->execute([$id]);
     }
 
+    // Handle findByEmailOrUsername operation.
     public function findByEmailOrUsername(string $email, string $username): ?array
     {
         $st = $this->db->prepare("SELECT * FROM users WHERE email = ? OR username = ? LIMIT 1");

@@ -15,6 +15,7 @@ class ReceptionistsController extends Controller
     private Receptionist $recModel;
     private Branch $branchModel;
 
+    // Initialize controller dependencies and request context.
     public function __construct(array $config = [])
     {
         parent::__construct($config);

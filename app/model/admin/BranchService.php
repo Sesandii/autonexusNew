@@ -7,11 +7,13 @@ class BranchService
 {
     private PDO $pdo;
 
+    // Initialize model dependencies and database access.
     public function __construct()
     {
         $this->pdo = db();
     }
 
+    // Handle attachToBranches operation.
     public function attachToBranches(int $service_id, array $branch_ids): void
     {
         if (empty($branch_ids)) return;
@@ -28,6 +30,7 @@ class BranchService
         }
     }
 
+    // Handle branchIdsForService operation.
     public function branchIdsForService(int $service_id): array
 {
     $stmt = $this->pdo->prepare("SELECT branch_id FROM branch_services WHERE service_id = :sid");
@@ -35,6 +38,7 @@ class BranchService
     return array_map('intval', $stmt->fetchAll(PDO::FETCH_COLUMN, 0));
 }
 
+// Handle replaceForService operation.
 public function replaceForService(int $service_id, array $branch_ids): void
 {
     $del = $this->pdo->prepare("DELETE FROM branch_services WHERE service_id = :sid");

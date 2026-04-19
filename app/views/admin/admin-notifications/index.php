@@ -1,3 +1,4 @@
+<?php /* Admin view: renders admin-notifications/index page. */ ?>
 <?php
 /** @var string $pageTitle */
 /** @var array $recent */

@@ -9,6 +9,7 @@ class Invoice
 {
     private PDO $db;
 
+    // Initialize model dependencies and database access.
     public function __construct()
     {
         $this->db = db();

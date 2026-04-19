@@ -10,6 +10,7 @@ class ServiceApproval
 {
     private PDO $db;
 
+    // Initialize model dependencies and database access.
     public function __construct()
     {
         $this->db = db();
@@ -87,6 +88,7 @@ class ServiceApproval
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // Handle getBranches operation.
     public function getBranches(): array
     {
         $stmt = $this->db->query("
@@ -98,6 +100,7 @@ class ServiceApproval
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // Handle getServiceTypes operation.
     public function getServiceTypes(): array
     {
         $stmt = $this->db->query("
@@ -150,6 +153,7 @@ class ServiceApproval
         return $row;
     }
 
+    // Handle approve operation.
     public function approve(int $id, int $adminUserId): bool
     {
         $sql = "
@@ -168,6 +172,7 @@ class ServiceApproval
         ]);
     }
 
+    // Handle reject operation.
     public function reject(int $id, int $adminUserId): bool
     {
         // if you add 'rejected' to ENUM use that instead of 'inactive'
@@ -187,6 +192,7 @@ class ServiceApproval
         ]);
     }
 
+    // Handle updateServiceDetails operation.
     public function updateServiceDetails(int $id, array $data): bool
 {
     $sql = "

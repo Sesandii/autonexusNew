@@ -11,12 +11,14 @@ use app\model\admin\Service;
 
 class PackagesController extends Controller
 {
+    // Initialize controller dependencies and request context.
     public function __construct(array $config = [])
     {
         parent::__construct($config);
         $this->requireAdmin();
     }
 
+    // Display the main listing or dashboard page.
     public function index(): void
     {
         $serviceModel = new Service();
@@ -62,6 +64,7 @@ class PackagesController extends Controller
         ]);
     }
 
+    // Render the form for creating a new record.
     public function create(): void
     {
         $serviceModel = new Service();
@@ -80,6 +83,7 @@ class PackagesController extends Controller
         ]);
     }
 
+    // Validate input and save a new record.
     public function store(): void
     {
         $pdo = db();
@@ -140,6 +144,7 @@ class PackagesController extends Controller
         }
     }
 
+    // Render the form for editing an existing record.
     public function edit($id): void
     {
         $id = (int) $id;
@@ -182,6 +187,7 @@ class PackagesController extends Controller
         ]);
     }
 
+    // Validate input and update an existing record.
     public function update($id): void
     {
         $id = (int) $id;
@@ -263,6 +269,7 @@ class PackagesController extends Controller
         }
     }
 
+    // Delete the selected record.
     public function destroy($id): void
     {
         $id = (int) $id;
@@ -305,6 +312,7 @@ class PackagesController extends Controller
         }
     }
 
+    // Handle sanitize operation.
     private function sanitize(array $src): array
     {
         $get = static fn(string $k, string $d = ''): string => trim((string) ($src[$k] ?? $d));
@@ -335,6 +343,7 @@ class PackagesController extends Controller
         ];
     }
 
+    // Handle validate operation.
     private function validate(array $data, array $packageItems): array
     {
         $errors = [];
@@ -358,6 +367,7 @@ class PackagesController extends Controller
         return $errors;
     }
 
+    // Handle normalizePackageItems operation.
     private function normalizePackageItems(array $raw): array
     {
         $items = [];
@@ -379,6 +389,7 @@ class PackagesController extends Controller
         return $items;
     }
 
+    // Handle computePackageTotals operation.
     private function computePackageTotals(array $packageItems, array $availableServices): array
     {
         $serviceMap = [];
@@ -407,6 +418,7 @@ class PackagesController extends Controller
         ];
     }
 
+    // Handle applyPackagePricingRule operation.
     private function applyPackagePricingRule(
         float $baseTotal,
         string $pricingMode,
@@ -430,6 +442,7 @@ class PackagesController extends Controller
         return max(0, round($baseTotal - $discount, 2));
     }
 
+    // Ensure the current session belongs to an admin user.
     private function requireAdmin(): void
     {
         if (session_status() !== PHP_SESSION_ACTIVE) {

@@ -1,3 +1,4 @@
+<?php /* Admin view: renders admin-viewmechanics/create page. */ ?>
 <?php $current = $current ?? 'mechanics';
 $B = rtrim(BASE_URL, '/');
 $old = $old ?? [];

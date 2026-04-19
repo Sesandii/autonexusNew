@@ -10,6 +10,7 @@ class OngoingServicesController extends Controller
 {
     private OngoingService $ongoing;
 
+    // Initialize controller dependencies and request context.
     public function __construct(array $config = [])
     {
         parent::__construct($config);
@@ -78,6 +79,7 @@ class OngoingServicesController extends Controller
         ]);
     }
 
+    // Ensure the current session belongs to an admin user.
     private function requireAdmin(): void
     {
         if (session_status() !== PHP_SESSION_ACTIVE) {

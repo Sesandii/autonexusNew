@@ -10,6 +10,7 @@ class BranchesController extends Controller
     private Branch $Branch;
     private Manager $Manager;
 
+    // Initialize controller dependencies and request context.
     public function __construct(array $config)
     {
         parent::__construct($config);
@@ -224,6 +225,7 @@ class BranchesController extends Controller
         ];
     }
 
+    // Handle validate operation.
     private function validate(array $d, bool $creating, int $currentBranchId = 0): array
     {
         $e = [];
@@ -271,6 +273,7 @@ class BranchesController extends Controller
         return array_values(array_unique($e));
     }
 
+    // Handle availableManagers operation.
     private function availableManagers(int $currentBranchId = 0): array
     {
         $managers = $this->Manager->all();
@@ -293,6 +296,7 @@ class BranchesController extends Controller
         return $available;
     }
 
+    // Handle formValues operation.
     private function formValues(array $data): array
     {
         return [

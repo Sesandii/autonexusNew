@@ -10,6 +10,7 @@ class ServiceManagersController extends Controller
     private Manager $Manager;
     private User $User;
 
+    // Initialize controller dependencies and request context.
     public function __construct(array $config = [])
     {
         parent::__construct($config);
@@ -17,6 +18,7 @@ class ServiceManagersController extends Controller
         $this->User = new User();
     }
 
+    // Display the main listing or dashboard page.
     public function index()
     {
         $q = isset($_GET['q']) ? trim((string) $_GET['q']) : '';
@@ -31,6 +33,7 @@ class ServiceManagersController extends Controller
         ]);
     }
 
+    // Render the form for creating a new record.
     public function create()
     {
         $this->view('admin/admin-viewmanagers/create', [
@@ -41,12 +44,14 @@ class ServiceManagersController extends Controller
         ]);
     }
 
+    // Handle list operation.
     public function list()
     {
         header('Content-Type: application/json; charset=utf-8');
         echo json_encode($this->Manager->all(), JSON_UNESCAPED_UNICODE);
     }
 
+    // Display details for a single record.
     public function show($id)
     {
         $id = (int) $id;
@@ -69,6 +74,7 @@ class ServiceManagersController extends Controller
         ]);
     }
 
+    // Validate input and save a new record.
     public function store()
     {
         $d = $this->sanitize($_POST);
@@ -107,6 +113,7 @@ class ServiceManagersController extends Controller
         }
     }
 
+    // Render the form for editing an existing record.
     public function edit($id)
     {
         $id = (int) $id;
@@ -131,6 +138,7 @@ class ServiceManagersController extends Controller
         ]);
     }
 
+    // Validate input and update an existing record.
     public function update($id)
     {
         $id = (int) $id;
@@ -172,6 +180,7 @@ class ServiceManagersController extends Controller
         exit;
     }
 
+    // Delete the selected record.
     public function destroy($id)
     {
         $row = $this->Manager->find((int) $id);
@@ -185,11 +194,13 @@ class ServiceManagersController extends Controller
         echo "OK";
     }
 
+    // Handle sanitize operation.
     private function sanitize(array $in): array
     {
         return array_map(static fn($v) => is_string($v) ? trim($v) : $v, $in);
     }
 
+    // Handle validateCreate operation.
     private function validateCreate(array $d): array
     {
         $errors = [];
@@ -215,6 +226,7 @@ class ServiceManagersController extends Controller
         return $errors;
     }
 
+    // Handle validateUpdate operation.
     private function validateUpdate(array $d, int $currentUserId): array
     {
         $errors = [];

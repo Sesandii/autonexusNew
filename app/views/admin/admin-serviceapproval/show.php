@@ -1,3 +1,4 @@
+<?php /* Admin view: renders admin-serviceapproval/show page. */ ?>
 <?php
 /** @var array  $service */
 /** @var string $pageTitle */

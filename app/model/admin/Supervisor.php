@@ -5,10 +5,12 @@ use PDO;
 
 class Supervisor
 {
+    // Initialize model dependencies and database access.
     public function __construct(private PDO $db)
     {
     }
 
+    // Handle all operation.
     public function all(string $q = '', string $status = 'all'): array
     {
         $sql = "SELECT s.supervisor_id, s.supervisor_code, s.user_id, s.branch_id, s.manager_id,
@@ -55,6 +57,7 @@ class Supervisor
         return $st->fetchAll();
     }
 
+    // Handle findByCode operation.
     public function findByCode(string $code): ?array
     {
         $st = $this->db->prepare(
@@ -76,6 +79,7 @@ class Supervisor
         return $row ?: null;
     }
 
+    // Handle nextCode operation.
     private function nextCode(): string
     {
         $max = $this->db->query(
@@ -87,6 +91,7 @@ class Supervisor
         return 'SUP' . str_pad((string) $n, 3, '0', STR_PAD_LEFT);
     }
 
+    // Handle branchManagerId operation.
     private function branchManagerId(int $branchId): ?int
     {
         $st = $this->db->prepare("SELECT manager_id FROM branches WHERE branch_id=:b LIMIT 1");
@@ -95,6 +100,7 @@ class Supervisor
         return $val !== false ? (int) $val : null;
     }
 
+    // Handle emailExists operation.
     public function emailExists(string $email, ?int $excludeUserId = null): bool
     {
         $email = trim($email);
@@ -113,6 +119,7 @@ class Supervisor
         return (bool) $st->fetchColumn();
     }
 
+    // Handle phoneExists operation.
     public function phoneExists(string $phone, ?int $excludeUserId = null): bool
     {
         $phone = trim($phone);
@@ -194,6 +201,7 @@ class Supervisor
         }
     }
 
+    // Handle updateByCode operation.
     public function updateByCode(string $code, array $d): void
     {
         $s = $this->findByCode($code);
@@ -259,6 +267,7 @@ class Supervisor
         }
     }
 
+    // Handle deleteByCode operation.
     public function deleteByCode(string $code): void
     {
         $s = $this->findByCode($code);

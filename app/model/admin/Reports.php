@@ -9,11 +9,13 @@ class Reports
 {
     private PDO $pdo;
 
+    // Initialize model dependencies and database access.
     public function __construct(?PDO $pdo = null)
     {
         $this->pdo = $pdo ?? db();
     }
 
+    // Handle stmt operation.
     private function stmt(string $sql, array $params = [])
     {
         $st = $this->pdo->prepare($sql);
@@ -21,6 +23,7 @@ class Reports
         return $st;
     }
 
+    // Handle normalizeFilters operation.
     private function normalizeFilters(array $f): array
     {
         $out = [];
@@ -37,6 +40,7 @@ class Reports
         return $out;
     }
 
+    // Handle branchWhere operation.
     private function branchWhere(array $filters, string $col = 'a.branch_id'): array
     {
         if (!empty($filters['branch_id'])) {
@@ -45,6 +49,7 @@ class Reports
         return ['', []];
     }
 
+    // Handle groupExpr operation.
     private function groupExpr(array $filters, string $col): string
     {
         return $filters['group'] === 'day'
@@ -52,11 +57,13 @@ class Reports
             : "DATE_FORMAT({$col},'%Y-%m')";
     }
 
+    // Handle branches operation.
     public function branches(): array
     {
         return $this->stmt("SELECT branch_id, name FROM branches ORDER BY name")->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // Handle serviceTypes operation.
     public function serviceTypes(): array
     {
         return $this->stmt("SELECT type_id, type_name FROM service_types ORDER BY type_name")->fetchAll(PDO::FETCH_ASSOC);
@@ -90,6 +97,7 @@ class Reports
         ], $bp))->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // Handle serviceTrend operation.
     public function serviceTrend(array $filtersIn): array
     {
         $filters = $this->normalizeFilters($filtersIn);
@@ -113,6 +121,7 @@ class Reports
         ], $bp))->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // Handle serviceTypeDistribution operation.
     public function serviceTypeDistribution(array $filtersIn): array
     {
         $filters = $this->normalizeFilters($filtersIn);
@@ -137,6 +146,7 @@ class Reports
         ], $bp))->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // Handle avgCompletionMinutes operation.
     public function avgCompletionMinutes(array $filtersIn): float
     {
         $filters = $this->normalizeFilters($filtersIn);
@@ -159,6 +169,7 @@ class Reports
         ], $bp))->fetchColumn() ?? 0);
     }
 
+    // Handle serviceDemandByWeekday operation.
     public function serviceDemandByWeekday(array $filtersIn): array
     {
         $filters = $this->normalizeFilters($filtersIn);
@@ -182,6 +193,7 @@ class Reports
         ], $bp))->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // Handle seasonalDemand operation.
     public function seasonalDemand(array $filtersIn): array
     {
         $filters = $this->normalizeFilters($filtersIn);
@@ -204,6 +216,7 @@ class Reports
         ], $bp))->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // Handle averageWaitingTimeBeforeStart operation.
     public function averageWaitingTimeBeforeStart(array $filtersIn): float
     {
         $filters = $this->normalizeFilters($filtersIn);
@@ -230,6 +243,7 @@ class Reports
         ], $bp))->fetchColumn() ?? 0);
     }
 
+    // Handle turnaroundTimeByBranch operation.
     public function turnaroundTimeByBranch(array $filtersIn): array
     {
         $filters = $this->normalizeFilters($filtersIn);
@@ -255,6 +269,7 @@ class Reports
         ])->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // Handle repeatCustomerFrequency operation.
     public function repeatCustomerFrequency(array $filtersIn): array
     {
         $filters = $this->normalizeFilters($filtersIn);
@@ -286,6 +301,7 @@ class Reports
         ], $bp))->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // Handle mostRebookedServices operation.
     public function mostRebookedServices(array $filtersIn): array
     {
         $filters = $this->normalizeFilters($filtersIn);
@@ -339,6 +355,7 @@ class Reports
         ], $bp))->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // Handle costTrend operation.
     public function costTrend(array $filtersIn): array
     {
         $filters = $this->normalizeFilters($filtersIn);
@@ -362,6 +379,7 @@ class Reports
         ], $bp))->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // Handle profitTrend operation.
     public function profitTrend(array $filtersIn): array
     {
         $revenue = $this->revenueTrend($filtersIn);
@@ -384,6 +402,7 @@ class Reports
         return $out;
     }
 
+    // Handle revenueByBranch operation.
     public function revenueByBranch(array $filtersIn): array
     {
         $filters = $this->normalizeFilters($filtersIn);
@@ -406,6 +425,7 @@ class Reports
         ])->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // Handle avgInvoiceValue operation.
     public function avgInvoiceValue(array $filtersIn): float
     {
         $filters = $this->normalizeFilters($filtersIn);
@@ -427,6 +447,7 @@ class Reports
         ], $bp))->fetchColumn() ?? 0);
     }
 
+    // Handle revenueByServiceType operation.
     public function revenueByServiceType(array $filtersIn): array
     {
         $filters = $this->normalizeFilters($filtersIn);
@@ -452,6 +473,7 @@ class Reports
         ], $bp))->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // Handle unpaidInvoiceAging operation.
     public function unpaidInvoiceAging(array $filtersIn): array
     {
         $filters = $this->normalizeFilters($filtersIn);
@@ -483,6 +505,7 @@ class Reports
         ])->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // Handle paymentMethodBreakdown operation.
     public function paymentMethodBreakdown(array $filtersIn): array
     {
         $filters = $this->normalizeFilters($filtersIn);
@@ -509,6 +532,7 @@ class Reports
         ])->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // Handle paymentStatusBreakdown operation.
     public function paymentStatusBreakdown(array $filtersIn): array
     {
         $filters = $this->normalizeFilters($filtersIn);
@@ -535,6 +559,7 @@ class Reports
         ])->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // Handle avgRevenuePerAppointment operation.
     public function avgRevenuePerAppointment(array $filtersIn): float
     {
         $filters = $this->normalizeFilters($filtersIn);
@@ -557,6 +582,7 @@ class Reports
         ])->fetchColumn() ?? 0);
     }
 
+    // Handle avgRevenuePerCustomer operation.
     public function avgRevenuePerCustomer(array $filtersIn): float
     {
         $filters = $this->normalizeFilters($filtersIn);
@@ -579,6 +605,7 @@ class Reports
         ])->fetchColumn() ?? 0);
     }
 
+    // Handle branchPaymentCollectionPerformance operation.
     public function branchPaymentCollectionPerformance(array $filtersIn): array
     {
         $filters = $this->normalizeFilters($filtersIn);
@@ -630,6 +657,7 @@ class Reports
         ], $bp))->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // Handle appointmentsByHour operation.
     public function appointmentsByHour(array $filtersIn): array
     {
         $filters = $this->normalizeFilters($filtersIn);
@@ -650,6 +678,7 @@ class Reports
         ], $bp))->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // Handle appointmentsTrend operation.
     public function appointmentsTrend(array $filtersIn): array
     {
         $filters = $this->normalizeFilters($filtersIn);
@@ -671,6 +700,7 @@ class Reports
         ], $bp))->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // Handle cancellationTrend operation.
     public function cancellationTrend(array $filtersIn): array
     {
         $filters = $this->normalizeFilters($filtersIn);
@@ -719,6 +749,7 @@ class Reports
         ])->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // Handle branchAvgRating operation.
     public function branchAvgRating(array $filtersIn): array
     {
         $filters = $this->normalizeFilters($filtersIn);
@@ -739,6 +770,7 @@ class Reports
         ])->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // Handle branchCapacityUtilization operation.
     public function branchCapacityUtilization(array $filtersIn): array
     {
         $filters = $this->normalizeFilters($filtersIn);
@@ -761,6 +793,7 @@ class Reports
         ])->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // Handle branchStaffingVsWorkload operation.
     public function branchStaffingVsWorkload(array $filtersIn): array
     {
         $filters = $this->normalizeFilters($filtersIn);
@@ -783,6 +816,7 @@ class Reports
         ])->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // Handle branchServiceCoverageMatrix operation.
     public function branchServiceCoverageMatrix(array $filtersIn): array
     {
         $sql = "
@@ -798,6 +832,7 @@ class Reports
         return $this->stmt($sql)->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // Handle branchComplaintRate operation.
     public function branchComplaintRate(array $filtersIn): array
 {
     $filters = $this->normalizeFilters($filtersIn);
@@ -828,6 +863,7 @@ class Reports
     ])->fetchAll(PDO::FETCH_ASSOC);
 }
 
+    // Handle branchApprovalRejectionRate operation.
     public function branchApprovalRejectionRate(array $filtersIn): array
     {
         $filters = $this->normalizeFilters($filtersIn);
@@ -854,6 +890,7 @@ class Reports
         ])->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // Handle branchQualityScore operation.
     public function branchQualityScore(array $filtersIn): array
     {
         $filters = $this->normalizeFilters($filtersIn);
@@ -877,6 +914,7 @@ class Reports
         ])->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // Handle underperformingBranches operation.
     public function underperformingBranches(array $filtersIn): array
 {
     $filters = $this->normalizeFilters($filtersIn);
@@ -943,6 +981,7 @@ class Reports
         ], $bp))->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // Handle servicesSubmittedByManagers operation.
     public function servicesSubmittedByManagers(array $filtersIn): array
     {
         $filters = $this->normalizeFilters($filtersIn);
@@ -965,6 +1004,7 @@ class Reports
         ])->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // Handle managerApprovalDecisions operation.
     public function managerApprovalDecisions(array $filtersIn): array
     {
         $filters = $this->normalizeFilters($filtersIn);
@@ -988,6 +1028,7 @@ class Reports
         ])->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // Handle mechanicQualityOutcomes operation.
     public function mechanicQualityOutcomes(array $filtersIn): array
     {
         $filters = $this->normalizeFilters($filtersIn);
@@ -1016,6 +1057,7 @@ class Reports
         ])->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // Handle staffComplaintAssociation operation.
     public function staffComplaintAssociation(array $filtersIn): array
     {
         $filters = $this->normalizeFilters($filtersIn);
@@ -1041,6 +1083,7 @@ class Reports
         ])->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // Handle avgJobsPerDayPerMechanic operation.
     public function avgJobsPerDayPerMechanic(array $filtersIn): array
     {
         $filters = $this->normalizeFilters($filtersIn);
@@ -1069,6 +1112,7 @@ class Reports
         ])->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // Handle delayedWorkOrdersByMechanic operation.
     public function delayedWorkOrdersByMechanic(array $filtersIn): array
     {
         $filters = $this->normalizeFilters($filtersIn);
@@ -1125,6 +1169,7 @@ class Reports
         ], $bp))->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // Handle feedbackTrend operation.
     public function feedbackTrend(array $filtersIn): array
     {
         $filters = $this->normalizeFilters($filtersIn);
@@ -1147,6 +1192,7 @@ class Reports
         ], $bp))->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // Handle lowestRatedServices operation.
     public function lowestRatedServices(array $filtersIn): array
     {
         $filters = $this->normalizeFilters($filtersIn);
@@ -1171,6 +1217,7 @@ class Reports
         ], $bp))->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // Handle branchRatingTrend operation.
     public function branchRatingTrend(array $filtersIn): array
     {
         $filters = $this->normalizeFilters($filtersIn);
@@ -1196,6 +1243,7 @@ class Reports
         ])->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // Handle ratingByServiceType operation.
     public function ratingByServiceType(array $filtersIn): array
     {
         $filters = $this->normalizeFilters($filtersIn);
@@ -1222,6 +1270,7 @@ class Reports
         ])->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // Handle feedbackResponseTurnaround operation.
     public function feedbackResponseTurnaround(array $filtersIn): float
     {
         $filters = $this->normalizeFilters($filtersIn);
@@ -1243,6 +1292,7 @@ class Reports
         ])->fetchColumn() ?? 0);
     }
 
+    // Handle mostPraisedServices operation.
     public function mostPraisedServices(array $filtersIn): array
     {
         $filters = $this->normalizeFilters($filtersIn);
@@ -1271,6 +1321,7 @@ class Reports
         ])->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // Handle repeatNegativeFeedbackCustomers operation.
     public function repeatNegativeFeedbackCustomers(array $filtersIn): array
     {
         $filters = $this->normalizeFilters($filtersIn);
@@ -1322,6 +1373,7 @@ class Reports
         ])->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // Handle avgApprovalHours operation.
     public function avgApprovalHours(array $filtersIn): float
     {
         $filters = $this->normalizeFilters($filtersIn);
@@ -1365,6 +1417,7 @@ class Reports
         ])->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // Handle complaintResolutionTrend operation.
     public function complaintResolutionTrend(array $filtersIn): array
     {
         $filters = $this->normalizeFilters($filtersIn);
@@ -1389,6 +1442,7 @@ class Reports
         ])->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // Handle complaintClosureRateByBranch operation.
     public function complaintClosureRateByBranch(array $filtersIn): array
     {
         $filters = $this->normalizeFilters($filtersIn);
@@ -1414,6 +1468,7 @@ class Reports
         ])->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // Handle complaintPriorityAnalysis operation.
     public function complaintPriorityAnalysis(array $filtersIn): array
     {
         $filters = $this->normalizeFilters($filtersIn);
@@ -1435,6 +1490,7 @@ class Reports
         ])->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // Handle mostComplainedServices operation.
     public function mostComplainedServices(array $filtersIn): array
     {
         $filters = $this->normalizeFilters($filtersIn);
@@ -1459,6 +1515,7 @@ class Reports
         ])->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // Handle mostComplainedBranches operation.
     public function mostComplainedBranches(array $filtersIn): array
     {
         $filters = $this->normalizeFilters($filtersIn);
@@ -1479,6 +1536,7 @@ class Reports
         ])->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // Handle mostComplainedStaff operation.
     public function mostComplainedStaff(array $filtersIn): array
     {
         $filters = $this->normalizeFilters($filtersIn);
@@ -1504,6 +1562,7 @@ class Reports
         ])->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // Handle slaBreachTrend operation.
     public function slaBreachTrend(array $filtersIn): array
     {
         $filters = $this->normalizeFilters($filtersIn);

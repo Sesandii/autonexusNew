@@ -10,6 +10,7 @@ class NotificationsController extends Controller
 {
     private Notifications $notifications;
 
+    // Initialize controller dependencies and request context.
     public function __construct(array $config = [])
     {
         parent::__construct($config);
@@ -17,6 +18,7 @@ class NotificationsController extends Controller
         $this->notifications = new Notifications();
     }
 
+    // Handle smtp operation.
     private function smtp(): array
     {
         return [
@@ -150,6 +152,7 @@ class NotificationsController extends Controller
         exit;
     }
 
+    // Ensure the current session belongs to an admin user.
     private function requireAdmin(): void
     {
         if (session_status() !== PHP_SESSION_ACTIVE) session_start();

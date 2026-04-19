@@ -8,12 +8,14 @@ class Profile
     private PDO $pdo;
     private ?string $streetCol = null; // street OR street_address
 
+    // Initialize model dependencies and database access.
     public function __construct()
     {
         $this->pdo = db();
         $this->streetCol = $this->detectStreetColumn();
     }
 
+    // Handle detectStreetColumn operation.
     private function detectStreetColumn(): ?string
     {
         // Check which column exists: street or street_address
@@ -24,6 +26,7 @@ class Profile
         return null;
     }
 
+    // Handle getAdminById operation.
     public function getAdminById(int $userId): ?array
     {
         $stmt = $this->pdo->prepare('SELECT * FROM users WHERE user_id = :id AND role = "admin" LIMIT 1');
@@ -32,6 +35,7 @@ class Profile
         return $row ?: null;
     }
 
+    // Handle updateAdmin operation.
     public function updateAdmin(int $userId, array $data): void
     {
         // Discover available columns once

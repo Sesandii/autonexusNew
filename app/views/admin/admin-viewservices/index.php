@@ -1,3 +1,4 @@
+<?php /* Admin view: renders admin-viewservices/index page. */ ?>
 <?php $current = 'services';
 $base = rtrim(BASE_URL, '/'); ?>
 <!DOCTYPE html>

@@ -10,6 +10,7 @@ class Receptionist
 {
     private PDO $db;
 
+    // Initialize model dependencies and database access.
     public function __construct()
     {
         // uses your global db() helper from core/Database.php

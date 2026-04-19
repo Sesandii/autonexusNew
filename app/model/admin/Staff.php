@@ -11,17 +11,20 @@ class Staff
 {
     private PDO $db;
 
+    // Initialize model dependencies and database access.
     public function __construct()
     {
         $this->db = db();
     }
 
+    // Handle getBranches operation.
     public function getBranches(): array
     {
         $sql = "SELECT branch_id, branch_code, name, city, status FROM branches ORDER BY name ASC";
         return $this->db->query($sql)->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // Handle roleCounts operation.
     public function roleCounts(): array
     {
         return [
@@ -32,6 +35,7 @@ class Staff
         ];
     }
 
+    // Handle summaryCards operation.
     public function summaryCards(): array
     {
         $totalUsers = (int)$this->db->query("SELECT COUNT(*) FROM users WHERE role IN ('manager','supervisor','mechanic','receptionist')")->fetchColumn();
@@ -49,6 +53,7 @@ class Staff
         ];
     }
 
+    // Handle all operation.
     public function all(array $filters = []): array
     {
         $sql = "
@@ -227,6 +232,7 @@ class Staff
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // Handle updateStatus operation.
     public function updateStatus(string $role, int $staffId, int $userId, string $status): bool
     {
         $allowed = ['active', 'inactive', 'available', 'busy'];
@@ -299,6 +305,7 @@ class Staff
         }
     }
 
+    // Handle transferBranch operation.
     public function transferBranch(string $role, int $staffId, int $branchId): bool
     {
         $map = [

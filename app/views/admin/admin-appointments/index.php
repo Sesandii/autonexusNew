@@ -1,3 +1,4 @@
+<?php /* Admin view: renders admin-appointments/index page. */ ?>
 <?php
 /** @var array  $appointments */
 /** @var array  $branches */

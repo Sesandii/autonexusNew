@@ -11,6 +11,7 @@ class StaffController extends Controller
 {
     private Staff $staff;
 
+    // Initialize controller dependencies and request context.
     public function __construct(array $config = [])
     {
         parent::__construct($config);
@@ -18,6 +19,7 @@ class StaffController extends Controller
         $this->staff = new Staff();
     }
 
+    // Display the main listing or dashboard page.
     public function index(): void
     {
         $filters = [
@@ -38,6 +40,7 @@ class StaffController extends Controller
         ]);
     }
 
+    // Handle updateStatus operation.
     public function updateStatus(): void
     {
         $role   = trim((string)($_POST['role'] ?? ''));
@@ -57,6 +60,7 @@ class StaffController extends Controller
         exit;
     }
 
+    // Handle transfer operation.
     public function transfer(): void
     {
         $role     = trim((string)($_POST['role'] ?? ''));
@@ -75,6 +79,7 @@ class StaffController extends Controller
         exit;
     }
 
+    // Ensure the current session belongs to an admin user.
     private function requireAdmin(): void
     {
         if (session_status() !== PHP_SESSION_ACTIVE) {

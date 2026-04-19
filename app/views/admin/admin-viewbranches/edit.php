@@ -1,3 +1,4 @@
+<?php /* Admin view: renders admin-viewbranches/edit page. */ ?>
 <?php
 /** @var array $row */
 /** @var array $managers */

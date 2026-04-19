@@ -1,3 +1,4 @@
+<?php /* Admin view: renders admin-viewbranches/index page. */ ?>
 <?php
 /** @var array $branches */
 /** @var string $base */

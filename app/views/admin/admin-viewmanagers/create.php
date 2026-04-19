@@ -1,3 +1,4 @@
+<?php /* Admin view: renders admin-viewmanagers/create page. */ ?>
 <?php
 $base = rtrim($base ?? BASE_URL, '/');
 $current = 'service-managers';

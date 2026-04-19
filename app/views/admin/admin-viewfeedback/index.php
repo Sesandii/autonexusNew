@@ -1,3 +1,4 @@
+<?php /* Admin view: renders admin-viewfeedback/index page. */ ?>
 <?php
 /** @var array       $feedbacks */
 /** @var array       $filters */

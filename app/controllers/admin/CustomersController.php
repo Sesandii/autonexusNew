@@ -8,6 +8,7 @@ class CustomersController extends Controller
 {
     private Customer $Customer;
 
+    // Initialize controller dependencies and request context.
     public function __construct(array $config)
     {
         parent::__construct($config);

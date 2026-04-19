@@ -10,6 +10,7 @@ class ComplaintsController extends Controller
 {
     private Complaints $complaints;
 
+    // Initialize controller dependencies and request context.
     public function __construct(array $config = [])
     {
         parent::__construct($config);
@@ -17,6 +18,7 @@ class ComplaintsController extends Controller
         $this->complaints = new Complaints();
     }
 
+    // Display the main listing or dashboard page.
     public function index(): void
     {
         $filters = [
@@ -48,6 +50,7 @@ class ComplaintsController extends Controller
         ]);
     }
 
+    // Display details for a single record.
     public function show(): void
     {
         $id = (int)($_GET['id'] ?? 0);
@@ -75,6 +78,7 @@ class ComplaintsController extends Controller
         ]);
     }
 
+    // Validate input and update an existing record.
     public function update(): void
     {
         $id = (int)($_POST['complaint_id'] ?? 0);
@@ -119,6 +123,7 @@ class ComplaintsController extends Controller
         exit;
     }
 
+    // Ensure the current session belongs to an admin user.
     private function requireAdmin(): void
     {
         if (session_status() !== PHP_SESSION_ACTIVE) {

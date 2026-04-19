@@ -11,6 +11,7 @@ class PaymentsController extends Controller
 {
     private Payment $payment;
 
+    // Initialize controller dependencies and request context.
     public function __construct(array $config = [])
     {
         parent::__construct($config);
@@ -18,6 +19,7 @@ class PaymentsController extends Controller
         $this->payment = new Payment();
     }
 
+    // Display the main listing or dashboard page.
     public function index(): void
     {
         $filters = [
@@ -36,6 +38,7 @@ class PaymentsController extends Controller
         ]);
     }
 
+    // Validate input and save a new record.
     public function store(): void
     {
         $this->payment->createManualPayment([
@@ -50,6 +53,7 @@ class PaymentsController extends Controller
         exit;
     }
 
+    // Handle cancelInvoice operation.
     public function cancelInvoice(): void
     {
         $invoiceId = (int)($_POST['invoice_id'] ?? 0);
@@ -65,6 +69,7 @@ class PaymentsController extends Controller
         exit;
     }
 
+    // Ensure the current session belongs to an admin user.
     private function requireAdmin(): void
     {
         if (session_status() !== PHP_SESSION_ACTIVE) {

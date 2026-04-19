@@ -1,3 +1,4 @@
+<?php /* Admin view: renders admin-profile/index page. */ ?>
 <?php $current = 'profile'; ?>
 <!DOCTYPE html>
 <html lang="en">

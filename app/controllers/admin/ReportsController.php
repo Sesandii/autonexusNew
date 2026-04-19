@@ -10,6 +10,7 @@ class ReportsController extends Controller
 {
     private Reports $reports;
 
+    // Initialize controller dependencies and request context.
     public function __construct(array $config = [])
     {
         parent::__construct($config);
@@ -17,6 +18,7 @@ class ReportsController extends Controller
         $this->reports = new Reports();
     }
 
+    // Display the main listing or dashboard page.
     public function index(): void
     {
         $filters = [
@@ -186,6 +188,7 @@ class ReportsController extends Controller
         ]);
     }
 
+    // Handle export operation.
     public function export(): void
     {
         $this->requireAdmin();
@@ -238,6 +241,7 @@ class ReportsController extends Controller
         exit;
     }
 
+    // Handle exportPdf operation.
     public function exportPdf(): void
     {
         $this->requireAdmin();
@@ -289,6 +293,7 @@ class ReportsController extends Controller
         exit;
     }
 
+    // Handle exportAll operation.
     public function exportAll(): void
     {
         $this->requireAdmin();
@@ -308,6 +313,7 @@ class ReportsController extends Controller
         }
     }
 
+    // Handle exportAllCsv operation.
     private function exportAllCsv(array $filters): void
     {
         $reportKeys = [
@@ -373,6 +379,7 @@ class ReportsController extends Controller
         exit;
     }
 
+    // Handle exportAllPdf operation.
     private function exportAllPdf(array $filters): void
     {
         $autoload = BASE_PATH . '/vendor/autoload.php';
@@ -502,6 +509,7 @@ class ReportsController extends Controller
                 exit;
     }
 
+    // Ensure the current session belongs to an admin user.
     private function requireAdmin(): void
     {
         if (session_status() !== PHP_SESSION_ACTIVE) {

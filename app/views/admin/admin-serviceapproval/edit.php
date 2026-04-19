@@ -1,3 +1,4 @@
+<?php /* Admin view: renders admin-serviceapproval/edit page. */ ?>
 <?php
 /** @var array  $service */
 /** @var array  $serviceTypes */

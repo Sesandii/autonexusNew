@@ -1,3 +1,4 @@
+<?php /* Admin view: renders admin-viewreports/index page. */ ?>
 <?php
 $current = 'reports';
 $B = rtrim(BASE_URL, '/');

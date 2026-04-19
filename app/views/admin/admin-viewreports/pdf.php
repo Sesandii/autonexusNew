@@ -1,3 +1,4 @@
+<?php /* Admin view: renders admin-viewreports/pdf page. */ ?>
 <?php
 /** @var string $pdfTitle */
 /** @var string $generatedAt */

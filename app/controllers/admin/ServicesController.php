@@ -12,12 +12,14 @@ use app\model\admin\ServiceType;
 
 class ServicesController extends Controller
 {
+    // Initialize controller dependencies and request context.
     public function __construct(array $config = [])
     {
         parent::__construct($config);
         $this->requireAdmin();
     }
 
+    // Display the main listing or dashboard page.
     public function index(): void
     {
         $serviceModel = new Service();
@@ -67,6 +69,7 @@ class ServicesController extends Controller
         ]);
     }
 
+    // Render the form for creating a new record.
     public function create(): void
     {
         $serviceModel = new Service();
@@ -91,6 +94,7 @@ class ServicesController extends Controller
         ]);
     }
 
+    // Validate input and save a new record.
     public function store(): void
     {
         $pdo = db();
@@ -138,6 +142,7 @@ class ServicesController extends Controller
         }
     }
 
+    // Render the form for editing an existing record.
     public function edit($id): void
     {
         $id = (int) $id;
@@ -186,6 +191,7 @@ class ServicesController extends Controller
         ]);
     }
 
+    // Validate input and update an existing record.
     public function update($id): void
     {
         $id = (int) $id;
@@ -249,6 +255,7 @@ class ServicesController extends Controller
         }
     }
 
+    // Delete the selected record.
     public function destroy($id): void
     {
         $id = (int) $id;
@@ -296,6 +303,7 @@ class ServicesController extends Controller
         }
     }
 
+    // Handle sanitize operation.
     private function sanitize(array $src): array
     {
         $get = static fn(string $k, string $d = ''): string => trim((string) ($src[$k] ?? $d));
@@ -329,6 +337,7 @@ class ServicesController extends Controller
         ];
     }
 
+    // Handle validate operation.
     private function validate(array $data): array
     {
         $errors = [];
@@ -352,6 +361,7 @@ class ServicesController extends Controller
         return $errors;
     }
 
+    // Ensure the current session belongs to an admin user.
     private function requireAdmin(): void
     {
         if (session_status() !== PHP_SESSION_ACTIVE) {

@@ -1,3 +1,4 @@
+<?php /* Admin view: renders admin-viewmechanics/index page. */ ?>
 <?php
 $current = $current ?? 'mechanics';
 $B = rtrim($base ?? BASE_URL, '/');

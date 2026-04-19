@@ -1,3 +1,4 @@
+<?php /* Admin view: renders admin-viewmechanics/show page. */ ?>
 <?php $current = $current ?? 'mechanics'; $B = rtrim(BASE_URL, '/'); $m = $mechanic; ?>
 <!DOCTYPE html>
 <html lang="en">

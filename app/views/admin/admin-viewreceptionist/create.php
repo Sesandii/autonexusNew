@@ -1,3 +1,4 @@
+<?php /* Admin view: renders admin-viewreceptionist/create page. */ ?>
 <?php
 /** @var array $branches */
 /** @var array $errors */

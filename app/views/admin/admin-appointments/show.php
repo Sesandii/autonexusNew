@@ -1,3 +1,4 @@
+<?php /* Admin view: renders admin-appointments/show page. */ ?>
 <?php
 /** @var array  $appointment */
 /** @var string $pageTitle */

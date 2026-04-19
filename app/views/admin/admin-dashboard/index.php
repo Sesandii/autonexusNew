@@ -1,3 +1,4 @@
+<?php /* Admin view: renders admin-dashboard/index page. */ ?>
 <?php
 $current = 'dashboard';
 

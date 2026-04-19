@@ -9,6 +9,7 @@ class Appointment
 {
     private PDO $pdo;
 
+    // Initialize model dependencies and database access.
     public function __construct()
     {
         $this->pdo = db();
@@ -223,6 +224,7 @@ class Appointment
         return $this->pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // Handle getServices operation.
     public function getServices(): array
     {
         $sql = "SELECT service_id, name FROM services WHERE status = 'active' ORDER BY name";

@@ -1,3 +1,4 @@
+<?php /* Admin view: renders admin-viewreceptionist/index page. */ ?>
 <?php
 /** @var array $receptionists */
 $current = 'receptionists';

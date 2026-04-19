@@ -10,6 +10,7 @@ class Dashboard
     private PDO $pdo;
     private string $dbName;
 
+    // Initialize model dependencies and database access.
     public function __construct()
     {
         $this->pdo = db();
@@ -32,6 +33,7 @@ class Dashboard
         return (bool)$st->fetchColumn();
     }
 
+    // Handle columnExists operation.
     private function columnExists(string $table, string $column): bool
     {
         $sql = 'SELECT 1
@@ -49,6 +51,7 @@ class Dashboard
         return (bool)$st->fetchColumn();
     }
 
+    // Handle scalar operation.
     private function scalar(string $sql, array $params = [], $default = 0)
     {
         $st = $this->pdo->prepare($sql);
@@ -62,6 +65,7 @@ class Dashboard
         return is_numeric($v) ? (0 + $v) : $default;
     }
 
+    // Handle fetchAll operation.
     private function fetchAll(string $sql, array $params = []): array
     {
         $st = $this->pdo->prepare($sql);
@@ -85,6 +89,7 @@ class Dashboard
         );
     }
 
+    // Handle totalAppointments operation.
     public function totalAppointments(): int
     {
         if (!$this->tableExists('appointments')) {
@@ -94,6 +99,7 @@ class Dashboard
         return (int)$this->scalar('SELECT COUNT(*) FROM appointments');
     }
 
+    // Handle ongoingWorkOrders operation.
     public function ongoingWorkOrders(): int
     {
         if (!$this->tableExists('work_orders') || !$this->columnExists('work_orders', 'status')) {
@@ -107,6 +113,7 @@ class Dashboard
         );
     }
 
+    // Handle servicesCompleted operation.
     public function servicesCompleted(): int
     {
         if ($this->tableExists('work_orders') && $this->columnExists('work_orders', 'status')) {
@@ -128,6 +135,7 @@ class Dashboard
         return 0;
     }
 
+    // Handle totalRevenue operation.
     public function totalRevenue(): float
     {
         if ($this->tableExists('payments') && $this->columnExists('payments', 'amount')) {
@@ -163,6 +171,7 @@ class Dashboard
         return 0.0;
     }
 
+    // Handle feedbackCount operation.
     public function feedbackCount(): int
     {
         if (!$this->tableExists('feedback')) {
@@ -172,6 +181,7 @@ class Dashboard
         return (int)$this->scalar('SELECT COUNT(*) FROM feedback');
     }
 
+    // Handle metrics operation.
     public function metrics(): array
     {
         return [
@@ -218,6 +228,7 @@ class Dashboard
         return $this->fetchAll($sql);
     }
 
+    // Handle pendingServiceApprovals operation.
     public function pendingServiceApprovals(): int
     {
         if (!$this->tableExists('services') || !$this->columnExists('services', 'status')) {
@@ -231,6 +242,7 @@ class Dashboard
         );
     }
 
+    // Handle overdueWorkOrders operation.
     public function overdueWorkOrders(int $limit = 4): array
     {
         if (
@@ -270,6 +282,7 @@ class Dashboard
         return $this->fetchAll($sql);
     }
 
+    // Handle recentNotifications operation.
     public function recentNotifications(int $limit = 4): array
     {
         if (!$this->tableExists('notifications')) {
@@ -293,6 +306,7 @@ class Dashboard
         return $this->fetchAll($sql);
     }
 
+    // Handle recentComplaints operation.
     public function recentComplaints(int $limit = 4): array
     {
         if (!$this->tableExists('complaints')) {
@@ -319,6 +333,7 @@ class Dashboard
         return $this->fetchAll($sql);
     }
 
+    // Handle recentFeedback operation.
     public function recentFeedback(int $limit = 4): array
     {
         if (!$this->tableExists('feedback') || !$this->tableExists('appointments')) {

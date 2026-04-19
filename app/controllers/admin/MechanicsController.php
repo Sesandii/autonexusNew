@@ -10,6 +10,7 @@ class MechanicsController extends Controller
 {
     private Mechanic $Mechanic;
 
+    // Initialize controller dependencies and request context.
     public function __construct(array $config)
     {
         parent::__construct($config);
@@ -143,6 +144,7 @@ class MechanicsController extends Controller
         return $data;
     }
 
+    // Handle validate operation.
     private function validate(array $d, bool $creating, ?int $currentUserId = null): array
     {
         $errors = [];

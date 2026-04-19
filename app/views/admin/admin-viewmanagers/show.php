@@ -1,3 +1,4 @@
+<?php /* Admin view: renders admin-viewmanagers/show page. */ ?>
 <?php
 /** @var array $row */
 /** @var string $base */

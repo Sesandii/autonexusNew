@@ -1,3 +1,4 @@
+<?php /* Admin view: renders admin-viewcomplaints/helpers page. */ ?>
 <?php
 /**
  * View helpers for Complaints Management

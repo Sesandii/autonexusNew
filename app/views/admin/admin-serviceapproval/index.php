@@ -1,3 +1,4 @@
+<?php /* Admin view: renders admin-serviceapproval/index page. */ ?>
 <?php
 /** @var array  $cards */
 /** @var array  $branches */

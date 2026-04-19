@@ -1,3 +1,4 @@
+<?php /* Admin view: renders admin-viewsupervisor/edit page. */ ?>
 <?php
 $current = 'supervisors';
 $base = rtrim($base ?? BASE_URL, '/');

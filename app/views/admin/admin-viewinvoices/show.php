@@ -1,3 +1,4 @@
+<?php /* Admin view: renders admin-viewinvoices/show page. */ ?>
 <?php
 /** @var array $invoice */
 $B = rtrim(BASE_URL,'/');

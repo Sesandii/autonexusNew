@@ -1,3 +1,4 @@
+<?php /* Admin view: renders admin-viewstaff/index page. */ ?>
 <?php $B = rtrim(BASE_URL, '/'); ?>
 <!DOCTYPE html>
 <html lang="en">

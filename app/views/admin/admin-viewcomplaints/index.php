@@ -1,3 +1,4 @@
+<?php /* Admin view: renders admin-viewcomplaints/index page. */ ?>
 <?php
 $B = rtrim(BASE_URL, '/');
 $current = $current ?? 'complaints';

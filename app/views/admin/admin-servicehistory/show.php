@@ -1,3 +1,4 @@
+<?php /* Admin view: renders admin-servicehistory/show page. */ ?>
 <?php
 /** @var array  $record */
 /** @var string $pageTitle */

@@ -9,11 +9,13 @@ class Service
 {
     private PDO $pdo;
 
+    // Initialize model dependencies and database access.
     public function __construct()
     {
         $this->pdo = db();
     }
 
+    // Handle nextCode operation.
     public function nextCode(): string
     {
         $sql = "
@@ -27,6 +29,7 @@ class Service
         return 'SER' . str_pad((string)$next, 3, '0', STR_PAD_LEFT);
     }
 
+    // Render the form for creating a new record.
     public function create(array $data): int
     {
         $cols = array_keys($data);
@@ -38,6 +41,7 @@ class Service
         return (int)$this->pdo->lastInsertId();
     }
 
+    // Handle updateById operation.
     public function updateById(int $id, array $data): void
     {
         if (isset($data['service_code'])) {
@@ -58,12 +62,14 @@ class Service
         $stmt->execute($params);
     }
 
+    // Handle deleteById operation.
     public function deleteById(int $id): void
     {
         $stmt = $this->pdo->prepare("DELETE FROM services WHERE service_id = :id");
         $stmt->execute(['id' => $id]);
     }
 
+    // Handle findById operation.
     public function findById(int $id): ?array
     {
         $sql = "
@@ -81,6 +87,7 @@ class Service
         return $row ?: null;
     }
 
+    // Handle allWithTypeAndBranches operation.
     public function allWithTypeAndBranches(): array
     {
         $sql = "
@@ -112,6 +119,7 @@ class Service
         return $this->pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // Handle distinctTypesForTabs operation.
     public function distinctTypesForTabs(): array
     {
         $sql = "
@@ -125,6 +133,7 @@ class Service
         return $this->pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // Handle allAtomicServices operation.
     public function allAtomicServices(): array
     {
         $packageTypeId = $this->findPackageTypeId();
@@ -155,6 +164,7 @@ class Service
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // Handle findPackageTypeId operation.
     public function findPackageTypeId(): ?int
     {
         $stmt = $this->pdo->prepare("
@@ -169,6 +179,7 @@ class Service
         return $value !== false ? (int)$value : null;
     }
 
+    // Handle isPackageType operation.
     public function isPackageType(?int $typeId): bool
     {
         if (!$typeId) {
@@ -179,6 +190,7 @@ class Service
         return $packageTypeId !== null && (int)$typeId === $packageTypeId;
     }
 
+    // Handle packageAnalytics operation.
     public function packageAnalytics(): array
     {
         $packageTypeId = $this->findPackageTypeId();
@@ -224,6 +236,7 @@ class Service
         return $map;
     }
 
+    // Handle packageSummary operation.
     public function packageSummary(int $serviceId): array
     {
         $packageId = $this->getPackageIdForService($serviceId);
@@ -253,6 +266,7 @@ class Service
         ];
     }
 
+    // Handle nextPackageCode operation.
     public function nextPackageCode(): string
     {
         $sql = "
@@ -266,6 +280,7 @@ class Service
         return 'PKG' . str_pad((string)$next, 3, '0', STR_PAD_LEFT);
     }
 
+    // Handle createPackageRecord operation.
     public function createPackageRecord(int $serviceId, array $data): int
     {
         $packageCode = $this->nextPackageCode();
@@ -315,6 +330,7 @@ class Service
         return (int)$this->pdo->lastInsertId();
     }
 
+    // Handle updatePackageRecord operation.
     public function updatePackageRecord(int $packageId, int $serviceId, array $data): void
     {
         $sql = "
@@ -345,12 +361,14 @@ class Service
         ]);
     }
 
+    // Handle deletePackageRecord operation.
     public function deletePackageRecord(int $packageId): void
     {
         $stmt = $this->pdo->prepare("DELETE FROM packages WHERE package_id = :package_id");
         $stmt->execute(['package_id' => $packageId]);
     }
 
+    // Handle getPackageIdForService operation.
     public function getPackageIdForService(int $serviceId): ?int
     {
         $stmt = $this->pdo->prepare("
@@ -365,6 +383,7 @@ class Service
         return $value !== false ? (int)$value : null;
     }
 
+    // Handle getPackageCodeForService operation.
     public function getPackageCodeForService(int $serviceId): ?string
     {
         $stmt = $this->pdo->prepare("

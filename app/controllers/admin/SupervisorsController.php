@@ -9,6 +9,7 @@ class SupervisorsController extends Controller
 {
     private Supervisor $Supervisor;
 
+    // Initialize controller dependencies and request context.
     public function __construct()
     {
         $this->Supervisor = new Supervisor(db());
@@ -175,6 +176,7 @@ class SupervisorsController extends Controller
                 $data[$k] = trim($v);
         return $data;
     }
+    // Handle validate operation.
     private function validate(array $d, bool $creating, ?int $currentUserId = null): array
     {
         $e = [];

@@ -1,3 +1,4 @@
+<?php /* Admin view: renders admin-viewinvoices/create page. */ ?>
 <?php $B = rtrim(BASE_URL,'/'); ?>
 <!DOCTYPE html>
 <html lang="en">

@@ -1,3 +1,4 @@
+<?php /* Admin view: renders admin-viewreceptionist/edit page. */ ?>
 <?php
 /** @var array $rec */
 /** @var array $branches */

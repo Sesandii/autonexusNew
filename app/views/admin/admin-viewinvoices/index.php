@@ -1,3 +1,4 @@
+<?php /* Admin view: renders admin-viewinvoices/index page. */ ?>
 <?php $current = 'invoices'; ?>
 <!DOCTYPE html>
 <html lang="en">
