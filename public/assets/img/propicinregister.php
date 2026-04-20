@@ -1,0 +1,512 @@
+// rregisster form- pic
+//register_handler.php
+
+<?php
+// app/controllers/register_handler.php (no CSRF)
+declare(strict_types=1);
+
+require_once CONFIG_PATH . '/config.php';
+require_once APP_ROOT . '/core/Database.php';
+
+if (session_status() !== PHP_SESSION_ACTIVE) {
+    session_start();
+}
+
+$base = rtrim(BASE_URL, '/');
+
+// Only accept POST
+if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
+    $_SESSION['flash'] = 'Please use the registration form.';
+    header('Location: ' . $base . '/register');
+    exit;
+}
+
+/* ---------------- Collect & normalize ---------------- */
+$first_name = trim($_POST['first_name'] ?? '');
+$last_name  = trim($_POST['last_name'] ?? '');
+$email      = strtolower(trim($_POST['email'] ?? ''));
+$phone      = preg_replace('/\D+/', '', $_POST['phone'] ?? '');
+$alt_phone  = preg_replace('/\D+/', '', $_POST['alt_phone'] ?? '');
+$street     = trim($_POST['street'] ?? '');
+$city       = trim($_POST['city'] ?? '');
+$state      = trim($_POST['state'] ?? '');
+$username   = trim($_POST['username'] ?? '');
+$password   = $_POST['password'] ?? '';
+$confirm    = $_POST['confirm_password'] ?? '';
+$profileUpload = $_FILES['profile_picture'] ?? null;
+
+/* ---------------- Validate ---------------- */
+$errors = [];
+$nameRe = "/^[A-Za-z][A-Za-z\s'.-]{1,49}$/";
+
+if ($first_name === '' || $last_name === '') {
+    $errors[] = 'First and last name are required.';
+} else {
+    if (!preg_match($nameRe, $first_name)) $errors[] = 'First name must be 2–50 letters (A–Z), spaces, (.\'-).';
+    if (!preg_match($nameRe, $last_name))  $errors[] = 'Last name must be 2–50 letters (A–Z), spaces, (.\'-).';
+}
+
+if (!filter_var($email, FILTER_VALIDATE_EMAIL) || strlen($email) > 254) {
+    $errors[] = 'Enter a valid email address (≤254 chars).';
+}
+
+if ($phone === '' || !preg_match('/^\d{10}$/', $phone)) {
+    $errors[] = 'Phone number must be exactly 10 digits.';
+}
+if ($alt_phone !== '' && !preg_match('/^\d{10}$/', $alt_phone)) {
+    $errors[] = 'Alternate phone must be exactly 10 digits.';
+}
+
+if (strlen($street) > 120) $errors[] = 'Street is too long (max 120).';
+if (strlen($city)   > 100) $errors[] = 'City is too long (max 100).';
+if (strlen($state)  > 100) $errors[] = 'State is too long (max 100).';
+
+// Username fallback from email local-part, capped 30
+$usernameToUse = $username !== '' ? $username : strtok($email, '@');
+$usernameToUse = substr($usernameToUse, 0, 30);
+if ($usernameToUse === '' || !preg_match('/^[A-Za-z0-9_.]{3,30}$/', $usernameToUse)) {
+    $errors[] = 'Username must be 3–30 chars (letters, numbers, _ or .).';
+}
+
+// Password rules
+if (strlen($password) < 8) {
+    $errors[] = 'Password must be at least 8 characters.';
+} else {
+    $lacks = [];
+    if (!preg_match('/[a-z]/', $password)) $lacks[] = 'lowercase';
+    if (!preg_match('/[A-Z]/', $password)) $lacks[] = 'uppercase';
+    if (!preg_match('/\d/',   $password)) $lacks[] = 'number';
+    if (!preg_match('/[^A-Za-z0-9]/', $password)) $lacks[] = 'symbol';
+    if ($lacks) $errors[] = 'Password must include ' . implode(', ', $lacks) . '.';
+}
+if ($password !== $confirm) {
+    $errors[] = 'Passwords do not match.';
+}
+
+if (is_array($profileUpload) && (($profileUpload['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_NO_FILE)) {
+    $uploadError = (int)($profileUpload['error'] ?? UPLOAD_ERR_NO_FILE);
+    if ($uploadError !== UPLOAD_ERR_OK) {
+        $errors[] = 'Failed to upload profile picture.';
+    } else {
+        $fileName = (string)($profileUpload['name'] ?? '');
+        $tmpName  = (string)($profileUpload['tmp_name'] ?? '');
+        $mimeType = (string)($profileUpload['type'] ?? '');
+        $fileSize = (int)($profileUpload['size'] ?? 0);
+
+        $allowedExts  = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+        $allowedMimes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+        $ext = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+
+        if (!in_array($ext, $allowedExts, true)) {
+            $errors[] = 'Profile picture must be JPG, PNG, GIF, or WEBP.';
+        }
+        if (!in_array($mimeType, $allowedMimes, true)) {
+            $errors[] = 'Invalid profile picture format.';
+        }
+        if ($fileSize <= 0 || $fileSize > 5 * 1024 * 1024) {
+            $errors[] = 'Profile picture must be 5MB or smaller.';
+        }
+        if ($tmpName === '' || !is_uploaded_file($tmpName)) {
+            $errors[] = 'Invalid profile picture upload.';
+        }
+    }
+}
+
+if ($errors) {
+    $_SESSION['flash'] = implode(' ', $errors);
+    header('Location: ' . $base . '/register');
+    exit;
+}
+
+/* ---------------- Persist (schema-aware) ---------------- */
+try {
+    $pdo = db();
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $pdo->beginTransaction();
+
+    // Enforce uniqueness (before insert)
+    $check = $pdo->prepare('SELECT user_id FROM users WHERE email = :email OR username = :username LIMIT 1');
+    $check->execute(['email' => $email, 'username' => $usernameToUse]);
+    if ($check->fetch()) {
+        $pdo->rollBack();
+        $_SESSION['flash'] = 'Email or username already exists.';
+        header('Location: ' . $base . '/register');
+        exit;
+    }
+
+    $hash   = password_hash($password, PASSWORD_DEFAULT);
+    $role   = 'customer';
+    $status = 'active'; // or 'pending' if you need approval
+
+    // Detect users table columns
+    $userCols = $pdo->query("SHOW COLUMNS FROM users")->fetchAll(PDO::FETCH_COLUMN, 0);
+    $hasStreet        = in_array('street', $userCols, true);
+    $hasStreetAddress = in_array('street_address', $userCols, true);
+    $hasCreatedAt     = in_array('created_at', $userCols, true);
+    $hasProfilePicture = in_array('profile_picture', $userCols, true);
+
+    // Build dynamic INSERT for users
+    $insertCols    = ['first_name','last_name','username','email','password_hash','phone','alt_phone','city','state','role','status'];
+    $placeHolders  = [':first_name',':last_name',':username',':email',':password_hash',':phone',':alt_phone',':city',':state',':role',':status'];
+
+    if ($hasStreet) {
+        $insertCols[]   = 'street';
+        $placeHolders[] = ':street';
+    } elseif ($hasStreetAddress) {
+        $insertCols[]   = 'street_address';
+        $placeHolders[] = ':street';
+    }
+
+    if ($hasCreatedAt) {
+        $insertCols[]   = 'created_at';
+        $placeHolders[] = 'NOW()';
+    }
+
+    $sqlUsers = 'INSERT INTO users ('.implode(',', $insertCols).') VALUES ('.implode(',', $placeHolders).')';
+    $insertUser = $pdo->prepare($sqlUsers);
+
+    $params = [
+        'first_name'    => $first_name,
+        'last_name'     => $last_name,
+        'username'      => $usernameToUse,
+        'email'         => $email,
+        'password_hash' => $hash,
+        'phone'         => $phone,
+        'alt_phone'     => $alt_phone !== '' ? $alt_phone : null,
+        'city'          => $city   !== '' ? $city   : null,
+        'state'         => $state  !== '' ? $state  : null,
+        'role'          => $role,
+        'status'        => $status,
+    ];
+    if ($hasStreet || $hasStreetAddress) {
+        $params['street'] = $street !== '' ? $street : null; // maps to whichever col exists
+    }
+
+    $insertUser->execute($params);
+    $userId = (int)$pdo->lastInsertId();
+
+    // Insert into customers (schema-aware)
+    $custCols = $pdo->query("SHOW COLUMNS FROM customers")->fetchAll(PDO::FETCH_COLUMN, 0);
+    $hasCustCreated = in_array('created_at', $custCols, true);
+
+    $customerCode = 'CUS-' . str_pad((string)$userId, 6, '0', STR_PAD_LEFT);
+
+    $cCols = ['user_id','customer_code'];
+    $cVals = [':user_id',':customer_code'];
+    if ($hasCustCreated) {
+        $cCols[] = 'created_at';
+        $cVals[] = 'NOW()';
+    }
+
+    $sqlCust = 'INSERT INTO customers ('.implode(',', $cCols).') VALUES ('.implode(',', $cVals).')';
+    $insertCustomer = $pdo->prepare($sqlCust);
+    $insertCustomer->execute([
+        'user_id'       => $userId,
+        'customer_code' => $customerCode,
+    ]);
+
+    if ($hasProfilePicture && is_array($profileUpload) && (($profileUpload['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_OK)) {
+        $tmpName = (string)($profileUpload['tmp_name'] ?? '');
+        $ext = strtolower(pathinfo((string)($profileUpload['name'] ?? ''), PATHINFO_EXTENSION));
+
+        $uploadDir = dirname(__DIR__, 2) . '/public/assets/img/profile_pictures/';
+        if (!is_dir($uploadDir) && !mkdir($uploadDir, 0777, true) && !is_dir($uploadDir)) {
+            throw new \RuntimeException('Failed to prepare upload directory.');
+        }
+
+        $newFileName = 'profile_' . $userId . '_' . time() . '.' . $ext;
+        $targetPath = $uploadDir . $newFileName;
+
+        if (!move_uploaded_file($tmpName, $targetPath)) {
+            throw new \RuntimeException('Failed to store profile picture.');
+        }
+
+        $relativePath = 'assets/img/profile_pictures/' . $newFileName;
+        $upPic = $pdo->prepare('UPDATE users SET profile_picture = :pic WHERE user_id = :uid');
+        $upPic->execute([
+            'pic' => $relativePath,
+            'uid' => $userId,
+        ]);
+    }
+
+    $pdo->commit();
+
+    $_SESSION['flash'] = 'Account created. Please login.';
+    header('Location: ' . $base . '/login');
+    exit;
+
+} catch (PDOException $e) {
+    if (isset($pdo) && $pdo->inTransaction()) $pdo->rollBack();
+
+    // 23000 = integrity constraint (e.g., duplicate key on unique email/username)
+    if ((int)$e->getCode() === 23000) {
+        $_SESSION['flash'] = 'Email or username already exists.';
+    } else {
+        // Uncomment to log exact DB error in development:
+        // error_log('[register_handler] '.$e->getMessage());
+        $_SESSION['flash'] = 'Server error while creating the account. Please try again.';
+    }
+    header('Location: ' . $base . '/register');
+    exit;
+
+} catch (Throwable $e) {
+    if (isset($pdo) && $pdo->inTransaction()) $pdo->rollBack();
+    // error_log('[register_handler] '.$e->getMessage());
+    $_SESSION['flash'] = 'Server error while creating the account. Please try again.';
+    header('Location: ' . $base . '/register');
+    exit;
+}
+
+//views/register/index.php
+
+<?php
+require_once CONFIG_PATH . '/config.php';
+
+// Don't start session here if it's already started elsewhere.
+if (session_status() !== PHP_SESSION_ACTIVE) {
+    session_start();
+}
+
+$base = rtrim(BASE_URL, '/');
+
+if (isset($_SESSION['flash'])) {
+    echo '<script>alert(' . json_encode($_SESSION['flash']) . ');</script>';
+    unset($_SESSION['flash']);
+}
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AutoNexus — Create Your Account</title>
+  <!-- FIXED: assests → assets, and use $base -->
+  <link rel="stylesheet" href="<?= htmlspecialchars($base) ?>/app/views/register/assests/css/styles.css?v=1" />
+</head>
+<body>
+
+  <!-- Left / Hero (fixed) -->
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="brand-mark" aria-label="AUTONEXUS logo">
+        <span class="brand-accent">AUTO</span><span class="brand-main">NEXUS</span>
+        <div class="brand-sub">VEHICLE SERVICE</div>
+      </div>
+
+      <div class="hero-copy">
+        <h1>Your Trusted Vehicle Service<br/>Partner</h1>
+        <p class="subtitle">
+          Join AutoNexus and experience seamless vehicle
+          service management with our cutting-edge platform.
+        </p>
+
+        <ul class="bullets">
+          <li><span class="num">1</span><h3>Easy appointment scheduling</h3></li>
+          <li><span class="num">2</span><h3>Real-time service updates</h3></li>
+          <li><span class="num">3</span><h3>Comprehensive service history</h3></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Right / Form -->
+  <!-- FIXED: post to /register (router), not register_handler.php -->
+  <section class="panel">
+    <form class="card form" method="post" action="<?= htmlspecialchars($base) ?>/register" enctype="multipart/form-data">
+      <div class="mini-brand" aria-hidden="true">
+        <span class="brand-accent">AUTO</span><span class="brand-main">NEXUS</span>
+      </div>
+      <h2>Create Your Account</h2>
+      <p class="muted">Join AutoNexus to manage your vehicle services</p>
+
+      <div class="grid two">
+        <label class="field with-icon">
+          <span class="icon">👤</span>
+          <input type="text" name="first_name" placeholder="First Name" required/>
+        </label>
+        <label class="field with-icon">
+          <span class="icon">👤</span>
+          <input type="text" name="last_name" placeholder="Last Name" required/>
+        </label>
+      </div>
+
+      <label class="field with-icon">
+        <span class="icon">✉️</span>
+        <input type="email" name="email" placeholder="Email Address" required/>
+      </label>
+
+      <label class="field with-icon">
+        <span class="icon">📞</span>
+        <input type="tel" name="phone" placeholder="Phone Number" required/>
+      </label>
+
+      <label class="field with-icon">
+        <span class="icon">📱</span>
+        <input type="tel" name="alt_phone" placeholder="Alternate Phone Number (Optional)"/>
+      </label>
+
+      <label class="field with-icon">
+        <span class="icon">🖼️</span>
+        <input type="file" name="profile_picture" accept="image/jpeg,image/png,image/gif,image/webp" />
+      </label>
+
+      <label class="field with-icon">
+        <span class="icon">🏠</span>
+        <input type="text" name="street" placeholder="Street/House No."/>
+      </label>
+
+      <div class="grid two">
+        <label class="field with-icon">
+          <span class="icon">🏙️</span>
+          <input type="text" name="city" placeholder="City/Town"/>
+        </label>
+        <label class="field with-icon">
+          <span class="icon">🗺️</span>
+          <input type="text" name="state" placeholder="State/Province"/>
+        </label>
+      </div>
+
+
+      <label class="field with-icon">
+        <span class="icon">👤</span>
+        <input type="text" name="username" placeholder="Username (if not using email)"/>
+      </label>
+
+      <label class="field with-icon">
+        <span class="icon">🔒</span>
+        <input type="password" name="password" placeholder="Password" required/>
+      </label>
+
+      <label class="field with-icon">
+        <span class="icon">🔒</span>
+        <input type="password" name="confirm_password" placeholder="Confirm Password" required/>
+      </label>
+
+      <button class="btn primary" type="submit">Sign Up</button>
+
+      <!-- FIXED: login link to route -->
+      <p class="footnote">Already have an account?
+        <a href="<?= htmlspecialchars($base) ?>/login">Login</a>
+      </p>
+    </form>
+  </section>
+
+  <script src="<?= htmlspecialchars($base) ?>/app/views/register/assests/js/script.js"></script>
+
+</body>
+</html>
+
+//pro pic in css - app/views/register/assests/css/styles.css
+
+:root{
+  --bg-dark:#0b0b0c;
+  --bg-panel:#ffffff;
+  --text:#0f1115;
+  --muted:#6b7280;
+  --red:#e11d2e;
+  --input:#f3f4f6;
+  --ring:#e5e7eb;
+}
+
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{
+  font:16px/1.4 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,Arial;
+  color:var(--text);
+  background:var(--bg-panel);
+}
+
+/* LEFT: fixed hero (non-scrollable) */
+.hero{
+  position:fixed;
+  inset:0 auto 0 0;      /* top:0; right:auto; bottom:0; left:0 */
+  width:50vw;            /* exact left half */
+  background:var(--bg-dark);
+  color:#e5e7eb;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:48px 32px;
+  overflow:hidden;       /* disable scroll on this side */
+}
+.hero-inner{max-width:520px;width:90%}
+.brand-mark{
+  width:260px; aspect-ratio:3 / 1.2;
+  border:1px solid #191b1f; border-radius:10px;
+  display:grid; place-content:center;
+  margin:0 0 28px 0;
+  background:linear-gradient(180deg,#0f1114,#0a0a0b);
+  text-align:center;
+}
+.brand-accent{color:var(--red);font-weight:800;letter-spacing:.5px}
+.brand-main{color:#e5e7eb;font-weight:800;margin-left:2px}
+.brand-sub{font-size:10px;color:#9ca3af;margin-top:2px;letter-spacing:.25em}
+
+.hero-copy h1{margin:0 0 10px;color:#f5f7fa;font-size:28px}
+.subtitle{margin:0 0 28px;color:#c7cbd3}
+.bullets{list-style:none;padding:0;margin:0;display:grid;gap:14px}
+.bullets li{display:flex;align-items:center;gap:12px}
+.num{width:36px;height:36px;border-radius:50%;background:var(--red);display:grid;place-content:center;font-weight:700;color:#fff}
+.bullets h3{margin:0;color:#e5e7eb;font-weight:500;font-size:16px}
+
+/* RIGHT: scrollable white panel locked to the right half */
+.panel{
+  position:relative;
+  margin-left:50vw;      /* start where the fixed hero ends */
+  width:50vw;            /* occupy the right half only */
+  min-height:100vh;
+  padding:48px 24px;
+  overflow-y:auto;       /* only this side scrolls */
+  display:flex;
+  align-items:flex-start;
+  justify-content:center;
+  background:#fff;       /* keep it white even if body changes */
+}
+
+.card{
+  width:min(640px, 94%);
+  background:#fff;
+  border:1px solid var(--ring);
+  border-radius:14px;
+  padding:28px 24px 22px;
+  box-shadow:0 10px 24px rgba(2,6,23,.06);
+}
+
+.form h2{margin:8px 0 4px;text-align:center}
+.form .muted{color:var(--muted);text-align:center;margin:0 0 22px;font-size:14px}
+.mini-brand{text-align:center;margin-bottom:8px}
+.mini-brand .brand-accent{color:var(--red);font-weight:800}
+.mini-brand .brand-main{font-weight:800}
+
+.grid.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+
+.field{display:block;position:relative;margin-bottom:12px}
+.field input{
+  width:100%;height:44px;border-radius:10px;border:1px solid var(--ring);
+  background:var(--input);padding:0 14px 0 42px;outline:none;
+}
+.field input:focus{border-color:var(--red);background:#fff;box-shadow:0 0 0 3px rgba(225,29,46,.1)}
+.with-icon .icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);opacity:.75}
+
+.field input[type="file"]{
+  height:auto;
+  min-height:44px;
+  padding:10px 14px 10px 42px;
+  line-height:1.2;
+}
+
+.btn{width:100%;height:44px;border:0;border-radius:10px;cursor:pointer;font-weight:700}
+.btn.primary{background:var(--red);color:#fff;margin-top:6px}
+.btn.primary:hover{filter:brightness(.98)}
+
+.footnote{margin:14px 0 0;text-align:center;color:var(--muted);font-size:14px}
+.footnote a{color:var(--red);text-decoration:none}
+.footnote a:hover{text-decoration:underline}
+
+/* Responsive: collapse to single column on small screens */
+@media (max-width: 980px){
+  .hero{position:relative;width:100%;min-height:300px}
+  .panel{margin-left:0;width:100%}
+  .grid.two{grid-template-columns:1fr}
+}
+
