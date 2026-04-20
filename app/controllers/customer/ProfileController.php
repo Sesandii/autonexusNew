@@ -269,6 +269,7 @@ class ProfileController extends Controller
                         'sold' => 'Vehicle marked as sold. Past service history is preserved.',
                         'already_sold' => 'This vehicle is already marked as sold.',
                         'has_active_appointments' => 'Cannot mark as sold while active appointments exist. Cancel or complete them first.',
+                    'schema_missing_sold_status' => 'Unable to mark as sold because the database schema does not allow the sold status.',
                         'not_found' => 'Vehicle not found or access denied.',
                         default => 'Failed to mark vehicle as sold.',
                 };

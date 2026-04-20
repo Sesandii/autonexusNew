@@ -11,6 +11,36 @@ class Profile
     private PDO $pdo;
     public function __construct() { $this->pdo = db(); }
 
+    private function ensureVehicleSoldStatusSupported(): bool
+    {
+        $stmt = $this->pdo->query("SHOW COLUMNS FROM vehicles LIKE 'status'");
+        $col = $stmt->fetch(PDO::FETCH_ASSOC);
+        if (!$col) {
+            return false;
+        }
+
+        $type = (string)($col['Type'] ?? '');
+        if ($type === '' || stripos($type, 'enum(') !== 0) {
+            return false;
+        }
+
+        preg_match_all("/'([^']*)'/", $type, $matches);
+        $values = $matches[1] ?? [];
+        if (in_array('sold', $values, true)) {
+            return true;
+        }
+
+        $values[] = 'sold';
+        $quoted = array_map(fn(string $v): string => $this->pdo->quote($v), $values);
+        $enumSql = implode(',', $quoted);
+
+        // Keep default as available to preserve existing inserts/behavior.
+        $sql = "ALTER TABLE vehicles MODIFY COLUMN status ENUM($enumSql) NOT NULL DEFAULT 'available'";
+        $ok = $this->pdo->exec($sql);
+
+        return $ok !== false;
+    }
+
      /* NEW: generate next VEH code like VEH001 */
     private function nextVehicleCode(): string
     {
@@ -254,7 +284,7 @@ class Profile
             return 'not_found';
         }
 
-        if (strtolower((string)$status) === 'sold') {
+        if (strtolower(trim((string)$status)) === 'sold') {
             return 'already_sold';
         }
 
@@ -263,12 +293,16 @@ class Profile
                FROM appointments
               WHERE vehicle_id = :vid
                 AND customer_id = :cid
-                AND status IN ('requested','pending','confirmed','ongoing','in_service')"
+                AND COALESCE(LOWER(TRIM(status)), 'requested') NOT IN ('cancelled','completed')"
         );
         $activeCheck->execute(['vid' => $vehicleId, 'cid' => $cid]);
 
         if ((int)$activeCheck->fetchColumn() > 0) {
             return 'has_active_appointments';
+        }
+
+        if (!$this->ensureVehicleSoldStatusSupported()) {
+            return 'schema_missing_sold_status';
         }
 
         $upd = $this->pdo->prepare(
@@ -283,7 +317,22 @@ class Profile
             return 'failed';
         }
 
-        return $upd->rowCount() > 0 ? 'sold' : 'failed';
+        if ($upd->rowCount() > 0) {
+            return 'sold';
+        }
+
+        // Some drivers can report 0 affected rows even when the value is unchanged.
+        $verify = $this->pdo->prepare(
+            "SELECT status
+               FROM vehicles
+              WHERE vehicle_id = :vid
+                AND customer_id = :cid
+              LIMIT 1"
+        );
+        $verify->execute(['vid' => $vehicleId, 'cid' => $cid]);
+        $newStatus = $verify->fetchColumn();
+
+        return strtolower(trim((string)$newStatus)) === 'sold' ? 'sold' : 'failed';
     }
 
 
