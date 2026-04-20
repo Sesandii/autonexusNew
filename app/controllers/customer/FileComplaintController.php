@@ -130,4 +130,80 @@ class FileComplaintController extends Controller {
             'complaints' => $complaints
         ]);
     }
+
+    /**
+     * Show edit form for a complaint owned by current customer.
+     */
+    public function edit(int $id) {
+        $this->requireCustomer();
+
+        $user_id = $this->userId();
+        $complaint = $this->complaintModel->getByIdForUser($id, $user_id);
+
+        if (!$complaint) {
+            $_SESSION['complaint_error'] = 'Complaint not found.';
+            header('Location: ' . BASE_URL . '/customer/complaints/history');
+            exit;
+        }
+
+        if (strtolower((string)($complaint['status'] ?? '')) !== 'open') {
+            $_SESSION['complaint_error'] = 'Only open complaints can be edited.';
+            header('Location: ' . BASE_URL . '/customer/complaints/history');
+            exit;
+        }
+
+        $this->view('customer/complaints/edit', [
+            'complaint' => $complaint
+        ]);
+    }
+
+    /**
+     * Handle customer complaint update.
+     */
+    public function update(int $id) {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: ' . BASE_URL . '/customer/complaints/history');
+            exit;
+        }
+
+        $this->requireCustomer();
+        $user_id = $this->userId();
+
+        $complaint = $this->complaintModel->getByIdForUser($id, $user_id);
+        if (!$complaint) {
+            $_SESSION['complaint_error'] = 'Complaint not found.';
+            header('Location: ' . BASE_URL . '/customer/complaints/history');
+            exit;
+        }
+
+        if (strtolower((string)($complaint['status'] ?? '')) !== 'open') {
+            $_SESSION['complaint_error'] = 'Only open complaints can be edited.';
+            header('Location: ' . BASE_URL . '/customer/complaints/history');
+            exit;
+        }
+
+        $description = trim($_POST['complaint'] ?? '');
+        $allowedPriorities = ['Low', 'Medium', 'High'];
+        $priority = $_POST['priority'] ?? 'Medium';
+
+        if (!in_array($priority, $allowedPriorities, true)) {
+            $priority = 'Medium';
+        }
+
+        if (strlen($description) < 10) {
+            $_SESSION['complaint_error'] = 'Please provide a detailed description (at least 10 characters).';
+            header('Location: ' . BASE_URL . '/customer/complaints/edit/' . (int)$id);
+            exit;
+        }
+
+        $ok = $this->complaintModel->updateDetails($id, $description, $priority);
+        if ($ok) {
+            $_SESSION['complaint_success'] = 'Complaint updated successfully.';
+        } else {
+            $_SESSION['complaint_error'] = 'Failed to update complaint. Please try again.';
+        }
+
+        header('Location: ' . BASE_URL . '/customer/complaints/history');
+        exit;
+    }
 }

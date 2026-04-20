@@ -135,3 +135,14 @@ ON table_name(name);
         <input type="radio" name="sex" value="male" placeholder="Male"/>
         <input type="radio" name="sex" value="female" placeholder="Female"/>
       </label>
+
+
+
+      SELECT COUNT(*) 
+FROM appointments 
+WHERE customer_id = :cid 
+AND appointment_date = :d
+
+
+'percentage' => ($count / $cap) * 100
+
