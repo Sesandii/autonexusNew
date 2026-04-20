@@ -5,6 +5,9 @@ namespace app\model\customer;
 
 use PDO;
 
+/**
+ * Computes customer vehicle service reminder data and mileage updates.
+ */
 class ServiceReminder
 {
     private PDO $pdo;

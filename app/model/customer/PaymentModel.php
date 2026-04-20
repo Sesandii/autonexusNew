@@ -5,6 +5,9 @@ namespace app\model\customer;
 
 use PDO;
 
+/**
+ * Handles customer invoice lookups and payment persistence after checkout.
+ */
 class PaymentModel
 {
     private PDO $db;
@@ -14,6 +17,9 @@ class PaymentModel
         $this->db = db();
     }
 
+    /**
+     * List invoice rows visible to a customer user account.
+     */
     public function getInvoicesByCustomerUserId(int $userId): array
     {
         $sql = "
@@ -52,6 +58,9 @@ class PaymentModel
         return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
     }
 
+    /**
+     * Load one invoice and customer email for Stripe checkout creation.
+     */
     public function getInvoiceForCheckout(int $invoiceId, int $userId): ?array
     {
         $sql = "
@@ -82,6 +91,9 @@ class PaymentModel
         return $row ?: null;
     }
 
+    /**
+     * Fetch one invoice by primary key.
+     */
     public function getInvoiceById(int $invoiceId): ?array
     {
         $stmt = $this->db->prepare("
@@ -96,6 +108,9 @@ class PaymentModel
         return $row ?: null;
     }
 
+    /**
+     * Check idempotency by payment reference.
+     */
     public function paymentReferenceExists(string $referenceNo): bool
     {
         $stmt = $this->db->prepare("
@@ -109,6 +124,9 @@ class PaymentModel
         return (bool)$stmt->fetchColumn();
     }
 
+    /**
+     * Mark invoice paid and create payment record atomically.
+     */
     public function markInvoicePaid(
         int $invoiceId,
         float $amount,

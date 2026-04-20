@@ -5,6 +5,9 @@ use app\core\Controller;
 use app\model\customer\Complaint;
 use app\model\customer\Appointments;
 
+/**
+ * Handles complaint submission and history actions for customers.
+ */
 class FileComplaintController extends Controller {
 
     private $complaintModel;

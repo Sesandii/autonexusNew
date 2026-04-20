@@ -6,8 +6,14 @@ namespace app\controllers\customer;
 use app\core\Controller;
 use app\model\customer\Profile;
 
+/**
+ * Handles customer profile and vehicle management actions.
+ */
 class ProfileController extends Controller
 {
+    /**
+     * Show profile overview with owned vehicles.
+     */
     public function index(): void
     {
         $this->requireCustomer();
@@ -28,6 +34,9 @@ class ProfileController extends Controller
 
     /* ---------- Edit Profile (HTML form) ---------- */
 
+    /**
+     * Render profile edit form.
+     */
     public function editForm(): void
     {
         $this->requireCustomer();
@@ -44,6 +53,9 @@ class ProfileController extends Controller
         unset($_SESSION['flash']);
     }
 
+    /**
+     * Persist profile edits including optional profile picture upload.
+     */
     public function updateProfile(): void
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') { http_response_code(405); echo "Method Not Allowed"; return; }
@@ -118,6 +130,9 @@ class ProfileController extends Controller
 
     /* ---------- Vehicle add/edit (HTML forms) ---------- */
 
+    /**
+     * Render vehicle create/edit form for the current customer.
+     */
     public function vehicleForm(): void
     {
         $this->requireCustomer();
@@ -143,6 +158,9 @@ class ProfileController extends Controller
         unset($_SESSION['flash']);
     }
 
+    /**
+     * Create or update a customer-owned vehicle.
+     */
     public function saveVehicle(): void
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') { http_response_code(405); echo "Method Not Allowed"; return; }
@@ -227,7 +245,10 @@ class ProfileController extends Controller
         exit;
     }
 
-   public function deleteVehicle(): void
+    /**
+     * Delete a customer vehicle when there is no appointment history.
+     */
+    public function deleteVehicle(): void
 {
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') { http_response_code(405); echo "Method Not Allowed"; return; }
     $this->requireCustomer();
@@ -254,6 +275,9 @@ class ProfileController extends Controller
     exit;
 }
 
+        /**
+         * Mark a vehicle as sold while preserving service history.
+         */
         public function sellVehicle(): void
         {
                 if ($_SERVER['REQUEST_METHOD'] !== 'POST') { http_response_code(405); echo "Method Not Allowed"; return; }

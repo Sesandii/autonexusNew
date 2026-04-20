@@ -4,6 +4,9 @@ namespace app\model\customer;
 use app\core\Model;
 use PDO;
 
+/**
+ * Data access for customer complaints and complaint status updates.
+ */
 class Complaint extends Model {
 
     protected PDO $pdo;

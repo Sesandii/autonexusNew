@@ -8,8 +8,14 @@ use app\model\customer\Appointments;
 use app\model\customer\Profile;
 use app\model\customer\ServiceHistory;
 
+/**
+ * Builds summary widgets shown on the customer dashboard.
+ */
 class DashboardController extends Controller
 {
+    /**
+     * Render dashboard cards for appointments, tracking, feedback, and history.
+     */
     public function index(): void
     {
         if (method_exists($this, 'requireCustomer')) {

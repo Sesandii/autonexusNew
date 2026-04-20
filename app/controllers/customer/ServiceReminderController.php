@@ -6,6 +6,9 @@ namespace app\controllers\customer;
 use app\core\Controller;
 use app\model\customer\ServiceReminder;
 
+/**
+ * Presents service reminder cards and mileage updates for customer vehicles.
+ */
 class ServiceReminderController extends Controller
 {
     private ServiceReminder $model;

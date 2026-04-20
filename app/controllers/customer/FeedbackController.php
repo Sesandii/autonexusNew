@@ -6,9 +6,15 @@ namespace app\controllers\customer;
 use app\core\Controller;
 use app\model\customer\Appointments;
 
+/**
+ * Handles customer feedback submission for completed services.
+ */
 class FeedbackController extends Controller
 {
-   public function index(): void
+/**
+ * Show completed appointments that still need customer feedback.
+ */
+public function index(): void
 {
     if (method_exists($this, 'requireCustomer')) {
         $this->requireCustomer();
@@ -29,6 +35,9 @@ class FeedbackController extends Controller
     ]);
 }
 
+/**
+ * Persist customer rating and comment for a completed appointment.
+ */
 public function store(): void
 {
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {

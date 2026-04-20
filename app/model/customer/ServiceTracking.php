@@ -5,6 +5,9 @@ namespace app\model\customer;
 
 use PDO;
 
+/**
+ * Provides searchable customer service-tracking rows for list and JSON APIs.
+ */
 class ServiceTracking
 {
     private PDO $pdo;

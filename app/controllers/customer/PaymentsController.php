@@ -11,6 +11,9 @@ use Stripe\Stripe;
 use Stripe\Webhook;
 use UnexpectedValueException;
 
+/**
+ * Handles customer invoice listing and Stripe payment lifecycle endpoints.
+ */
 class PaymentsController extends Controller
 {
     private PaymentModel $payments;
@@ -21,6 +24,9 @@ class PaymentsController extends Controller
         $this->payments = new PaymentModel();
     }
 
+    /**
+     * Render all invoices/payments visible to the logged-in customer.
+     */
     public function index(): void
     {
         $this->requireCustomer();
@@ -33,6 +39,9 @@ class PaymentsController extends Controller
         ]);
     }
 
+    /**
+     * Create Stripe Checkout session for a selected customer invoice.
+     */
     public function checkout(int $id): void
     {
         $this->requireCustomer();
@@ -79,6 +88,9 @@ class PaymentsController extends Controller
         exit;
     }
 
+    /**
+     * Render post-payment success page.
+     */
     public function success(): void
     {
         $this->requireCustomer();
@@ -92,6 +104,9 @@ class PaymentsController extends Controller
         ]);
     }
 
+    /**
+     * Render post-payment cancellation page.
+     */
     public function cancel(): void
     {
         $this->requireCustomer();
@@ -105,6 +120,9 @@ class PaymentsController extends Controller
         ]);
     }
 
+    /**
+     * Process Stripe webhook events and mark invoice as paid.
+     */
     public function webhook(): void
     {
         $payload = @file_get_contents('php://input');

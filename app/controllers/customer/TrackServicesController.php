@@ -6,8 +6,14 @@ namespace app\controllers\customer;
 use app\core\Controller;
 use app\model\customer\ServiceTracking;
 
+/**
+ * Provides customer service tracking list page and JSON data endpoint.
+ */
 class TrackServicesController extends Controller
 {
+    /**
+     * Render the tracking page with optional query/status filters.
+     */
     public function index(): void
     {
         if (method_exists($this, 'requireCustomer')) {
@@ -28,6 +34,9 @@ class TrackServicesController extends Controller
         ]);
     }
 
+    /**
+     * Return filtered tracking records as JSON for client-side updates.
+     */
     // JSON endpoint used by JS to filter without full page reload
     public function list(): void
     {

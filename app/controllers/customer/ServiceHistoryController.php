@@ -8,8 +8,14 @@ use app\model\customer\ServiceHistory;
 use Dompdf\Dompdf;
 use Dompdf\Options;
 
+/**
+ * Handles service history browsing and downloadable final reports.
+ */
 class ServiceHistoryController extends Controller
 {
+    /**
+     * Render completed service history for the current customer.
+     */
     public function index(): void
     {
         // Allow only logged-in customers
@@ -34,6 +40,9 @@ class ServiceHistoryController extends Controller
         ]);
     }
 
+    /**
+     * Show full details for a specific completed work order.
+     */
     public function show(int $id): void
     {
         $this->requireCustomer();
@@ -79,6 +88,9 @@ class ServiceHistoryController extends Controller
         ]);
     }
 
+    /**
+     * Generate and stream a PDF for a submitted final service report.
+     */
     public function downloadPdf(int $id): void
     {
         $this->requireCustomer();
@@ -135,6 +147,9 @@ class ServiceHistoryController extends Controller
         $dompdf->stream($filename, ['Attachment' => true]);
     }
 
+    /**
+     * Build printable HTML used by the PDF renderer.
+     */
     private function generatePdfHtml(array $service, array $serviceTasks = []): string
     {
         $date = !empty($service['date'])

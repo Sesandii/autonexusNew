@@ -5,6 +5,9 @@ namespace app\model\customer;
 
 use PDO;
 
+/**
+ * Provides customer-facing access to completed work order history and report assets.
+ */
 class ServiceHistory
 {
     private PDO $pdo;
@@ -172,6 +175,9 @@ class ServiceHistory
         return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
     }
 
+    /**
+     * Get checklist items associated with a work order.
+     */
     public function getServiceTasks(int $workOrderId): array
     {
         if ($workOrderId <= 0) return [];
@@ -195,6 +201,9 @@ class ServiceHistory
         }
     }
 
+    /**
+     * Get photo records associated with a submitted report.
+     */
     public function getReportPhotos(int $reportId): array
     {
         if ($reportId <= 0) return [];

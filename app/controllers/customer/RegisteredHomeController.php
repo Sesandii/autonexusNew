@@ -7,8 +7,14 @@ namespace app\controllers\customer;
 use app\core\Controller;
 use app\model\public\BranchPublic;
 
+/**
+ * Renders the registered customer home page and active branches.
+ */
 class RegisteredHomeController extends Controller
 {
+    /**
+     * Show customer home with branch quick-access cards.
+     */
     public function index(): void
     {
         if (method_exists($this, 'requireLogin')) {

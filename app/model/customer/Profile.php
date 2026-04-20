@@ -6,11 +6,17 @@ namespace app\model\customer;
 
 use PDO;
 
+/**
+ * Data access for customer profile details and vehicle ownership operations.
+ */
 class Profile
 {
     private PDO $pdo;
     public function __construct() { $this->pdo = db(); }
 
+    /**
+     * Ensure vehicles.status enum supports the 'sold' value.
+     */
     private function ensureVehicleSoldStatusSupported(): bool
     {
         $stmt = $this->pdo->query("SHOW COLUMNS FROM vehicles LIKE 'status'");
@@ -41,7 +47,9 @@ class Profile
         return $ok !== false;
     }
 
-     /* NEW: generate next VEH code like VEH001 */
+    /**
+     * Generate next vehicle code in the format VEH001.
+     */
     private function nextVehicleCode(): string
     {
         $sql = "SELECT MAX(CAST(SUBSTRING(vehicle_code,4) AS UNSIGNED)) AS maxn
@@ -74,7 +82,9 @@ class Profile
         return $st->fetch(PDO::FETCH_ASSOC) ?: [];
     }
 
-    // update with more fields
+    /**
+     * Update profile core fields and optional profile image path.
+     */
     public function updateProfileFull(
         int $userId,
         string $first,
@@ -136,6 +146,9 @@ class Profile
         return $st->fetchAll(PDO::FETCH_ASSOC) ?: [];
     }
 
+    /**
+     * Get one vehicle only if it belongs to the given customer user.
+     */
     public function getVehicleByIdForUser(int $userId, int $vehicleId): ?array
     {
         $cid = $this->customerIdByUserId($userId);
@@ -163,6 +176,9 @@ class Profile
         return (bool)$st->fetchColumn();
     }
 
+    /**
+     * Insert a new vehicle or update an existing customer-owned vehicle.
+     */
     public function saveVehicle(int $userId, array $data): bool
     {
         $cid = $this->customerIdByUserId($userId);
@@ -213,6 +229,9 @@ class Profile
         }
     }
 
+    /**
+     * Check whether a license plate exists (optionally excluding one vehicle id).
+     */
     public function licensePlateExists(string $licensePlate, ?int $excludeVehicleId = null): bool
     {
         $sql = "SELECT COUNT(*)
@@ -231,6 +250,9 @@ class Profile
         return (int)$st->fetchColumn() > 0;
     }
 
+    /**
+     * Delete a vehicle only when it belongs to the user and has no appointments.
+     */
     public function deleteVehicleOwnedBy(int $userId, int $vehicleId): bool
     {
         $cid = $this->customerIdByUserId($userId);
@@ -263,6 +285,9 @@ class Profile
         return $ok && $st->rowCount() > 0;
     }
 
+    /**
+     * Mark customer vehicle as sold after ownership and active-job checks.
+     */
     public function markVehicleSold(int $userId, int $vehicleId): string
     {
         $cid = $this->customerIdByUserId($userId);

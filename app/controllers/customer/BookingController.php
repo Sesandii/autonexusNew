@@ -9,8 +9,14 @@ use app\model\public\ServicePublic;
 use app\model\customer\Vehicles;
 use app\model\customer\Appointments;
 
+/**
+ * Handles customer booking flows, including re-booking and slot checks.
+ */
 class BookingController extends Controller
 {
+    /**
+     * Render the booking form with branch/services/vehicle context.
+     */
     public function index(): void
     {
         if (method_exists($this, 'requireLogin')) $this->requireLogin();
@@ -88,6 +94,9 @@ class BookingController extends Controller
         unset($_SESSION['flash']);
     }
 
+    /**
+     * Create one or more appointments from booking form input.
+     */
     public function create(): void
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') { http_response_code(405); echo 'Method Not Allowed'; return; }

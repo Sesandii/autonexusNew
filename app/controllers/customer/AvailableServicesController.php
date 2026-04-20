@@ -8,8 +8,14 @@ use app\core\Controller;
 use app\model\public\BranchPublic;
 use app\model\public\ServicePublic;
 
+/**
+ * Shows branch-specific services available for customer booking.
+ */
 class AvailableServicesController extends Controller
 {
+    /**
+     * Render available services for a selected branch code.
+     */
     public function index(): void
     {
         if (method_exists($this, 'requireLogin')) {

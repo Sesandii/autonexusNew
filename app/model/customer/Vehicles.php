@@ -6,11 +6,17 @@ namespace app\model\customer;
 
 use PDO;
 
+/**
+ * Provides lightweight vehicle lookups for customer booking flows.
+ */
 class Vehicles
 {
     private PDO $pdo;
     public function __construct() { $this->pdo = db(); }
 
+    /**
+     * Resolve customer id for a given user id.
+     */
     private function customerIdByUserId(int $userId): ?int
     {
         $sql = "SELECT customer_id FROM customers WHERE user_id = :uid LIMIT 1";

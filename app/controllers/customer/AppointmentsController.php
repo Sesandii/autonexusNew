@@ -6,8 +6,14 @@ namespace app\controllers\customer;
 use app\core\Controller;
 use app\model\customer\Appointments;
 
+/**
+ * Handles appointment listing, details, and cancellations for customer accounts.
+ */
 class AppointmentsController extends Controller
 {
+    /**
+     * Render the customer's appointments page.
+     */
     public function index(): void
     {
         if (method_exists($this, 'requireCustomer')) {
@@ -51,6 +57,9 @@ class AppointmentsController extends Controller
         ]);
     }
 
+    /**
+     * Return customer appointments as JSON.
+     */
     public function list(): void
     {
         if (method_exists($this, 'requireCustomer')) {
@@ -66,6 +75,9 @@ class AppointmentsController extends Controller
         echo json_encode(['data' => $rows], JSON_UNESCAPED_UNICODE);
     }
 
+    /**
+     * Cancel a customer-owned appointment.
+     */
     public function cancel(): void
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -93,6 +105,9 @@ class AppointmentsController extends Controller
         header("Location: {$base}/customer/appointments");
     }
 
+    /**
+     * Show details for a single customer appointment.
+     */
     public function show(int $id): void
     {
         if (method_exists($this, 'requireCustomer')) {

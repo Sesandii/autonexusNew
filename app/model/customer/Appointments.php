@@ -7,11 +7,17 @@ namespace app\model\customer;
 use PDO;
 use PDOException;
 
+/**
+ * Data access for customer appointments, booking creation, and ownership checks.
+ */
 class Appointments
 {
     private PDO $pdo;
     public function __construct() { $this->pdo = db(); }
 
+    /**
+     * Normalize user-provided time to HH:MM:SS format.
+     */
     private function normalizeTime(string $time): string
     {
         if (preg_match('/^\d{2}:\d{2}(:\d{2})?$/', $time)) {
@@ -57,7 +63,9 @@ class Appointments
         return (bool)$st->fetchColumn();
     }
 
-    /** How many bookings exist for a branch at date+time */
+    /**
+     * Count active bookings in a branch/date/time slot.
+     */
     private function countAtSlot(int $branchId, string $dateYmd, string $time): int
     {
         $sql = "SELECT COUNT(*) 
@@ -242,7 +250,9 @@ class Appointments
         return $st->fetchAll(PDO::FETCH_ASSOC) ?: [];
     }
 
-    /** Completed appointments for a given user */
+/**
+ * Return completed appointments for a customer user.
+ */
 public function completedByUser(int $userId): array
 {
     $cid = $this->customerIdByUserId($userId);
@@ -263,7 +273,9 @@ public function completedByUser(int $userId): array
     return $st->fetchAll(\PDO::FETCH_ASSOC) ?: [];
 }
 
-/** Completed appointments for user that DON'T have feedback yet */
+/**
+ * Return completed appointments that are still awaiting feedback.
+ */
 public function completedWithoutFeedbackByUser(int $userId): array
 {
     $cid = $this->customerIdByUserId($userId);
@@ -293,7 +305,9 @@ public function completedWithoutFeedbackByUser(int $userId): array
     return $st->fetchAll(\PDO::FETCH_ASSOC) ?: [];
 }
 
-    /** Quick ownership check used before accepting feedback */
+/**
+ * Verify a completed appointment belongs to the given user.
+ */
 public function appointmentBelongsToUserAndCompleted(int $userId, int $appointmentId): bool
 {
     $cid = $this->customerIdByUserId($userId);
@@ -309,7 +323,9 @@ public function appointmentBelongsToUserAndCompleted(int $userId, int $appointme
     return (bool)$st->fetchColumn();
 }
 
-/** Get a single appointment by ID */
+/**
+ * Fetch one appointment by id without customer ownership checks.
+ */
 public function getById(int $appointmentId): ?array
 {
     $sql = "SELECT a.*, 
@@ -330,7 +346,9 @@ public function getById(int $appointmentId): ?array
     return $result ?: null;
 }
 
-/** Get a single appointment by ID for a specific user (ownership check) */
+/**
+ * Fetch one appointment only if it belongs to the given customer user.
+ */
     public function getAppointmentById(int $userId, int $appointmentId): ?array
 {
     $cid = $this->customerIdByUserId($userId);
