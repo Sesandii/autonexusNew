@@ -28,7 +28,7 @@ class PaymentsController extends Controller
         $invoices = $this->payments->getInvoicesByCustomerUserId($this->userId());
 
         $this->view('customer/payments/index', [
-            'title'    => 'My Payments',
+            'title' => 'My Payments',
             'invoices' => $invoices,
         ]);
     }
@@ -56,22 +56,24 @@ class PaymentsController extends Controller
 
         $session = Session::create([
             'mode' => 'payment',
-            'success_url' => $baseAppUrl . '/customer/payments/success?invoice_id=' . (int)$invoice['invoice_id'] . '&session_id={CHECKOUT_SESSION_ID}',
-            'cancel_url'  => $baseAppUrl . '/customer/payments/cancel?invoice_id=' . (int)$invoice['invoice_id'],
+            'success_url' => $baseAppUrl . '/customer/payments/success?invoice_id=' . (int) $invoice['invoice_id'] . '&session_id={CHECKOUT_SESSION_ID}',
+            'cancel_url' => $baseAppUrl . '/customer/payments/cancel?invoice_id=' . (int) $invoice['invoice_id'],
             'customer_email' => $invoice['email'],
-            'line_items' => [[
-                'price_data' => [
-                    'currency' => 'lkr',
-                    'product_data' => [
-                        'name' => 'AutoNexus Invoice ' . $invoice['invoice_no'],
+            'line_items' => [
+                [
+                    'price_data' => [
+                        'currency' => 'lkr',
+                        'product_data' => [
+                            'name' => 'AutoNexus Invoice ' . $invoice['invoice_no'],
+                        ],
+                        'unit_amount' => (int) round(((float) $invoice['grand_total']) * 100),
                     ],
-                    'unit_amount' => (int) round(((float)$invoice['grand_total']) * 100),
-                ],
-                'quantity' => 1,
-            ]],
+                    'quantity' => 1,
+                ]
+            ],
             'metadata' => [
-                'invoice_id' => (string)$invoice['invoice_id'],
-                'invoice_no' => (string)$invoice['invoice_no'],
+                'invoice_id' => (string) $invoice['invoice_id'],
+                'invoice_no' => (string) $invoice['invoice_no'],
             ],
         ]);
 
@@ -83,11 +85,40 @@ class PaymentsController extends Controller
     {
         $this->requireCustomer();
 
-        $invoiceId = (int)($_GET['invoice_id'] ?? 0);
+        $invoiceId = (int) ($_GET['invoice_id'] ?? 0);
+        $sessionId = trim((string) ($_GET['session_id'] ?? ''));
+
+        if ($invoiceId > 0 && $sessionId !== '') {
+            try {
+                Stripe::setApiKey(STRIPE_SECRET_KEY);
+                $checkoutSession = Session::retrieve($sessionId, []);
+
+                $sessionInvoiceId = (int) ($checkoutSession->metadata->invoice_id ?? 0);
+                $paymentStatus = (string) ($checkoutSession->payment_status ?? '');
+
+                if ($sessionInvoiceId === $invoiceId && $paymentStatus === 'paid') {
+                    $amount = isset($checkoutSession->amount_total)
+                        ? ((float) $checkoutSession->amount_total) / 100
+                        : 0.0;
+
+                    $referenceNo = '';
+                    if (!empty($checkoutSession->payment_intent)) {
+                        $referenceNo = (string) $checkoutSession->payment_intent;
+                    } else {
+                        $referenceNo = $sessionId;
+                    }
+
+                    $this->payments->markInvoicePaid($invoiceId, $amount, $referenceNo);
+                }
+            } catch (\Throwable $e) {
+                // Keep the success page working even if Stripe verification fails.
+            }
+        }
+
         $invoice = $invoiceId > 0 ? $this->payments->getInvoiceById($invoiceId) : null;
 
         $this->view('customer/payments/success', [
-            'title'   => 'Payment Success',
+            'title' => 'Payment Success',
             'invoice' => $invoice,
         ]);
     }
@@ -96,11 +127,11 @@ class PaymentsController extends Controller
     {
         $this->requireCustomer();
 
-        $invoiceId = (int)($_GET['invoice_id'] ?? 0);
+        $invoiceId = (int) ($_GET['invoice_id'] ?? 0);
         $invoice = $invoiceId > 0 ? $this->payments->getInvoiceById($invoiceId) : null;
 
         $this->view('customer/payments/cancel', [
-            'title'   => 'Payment Cancelled',
+            'title' => 'Payment Cancelled',
             'invoice' => $invoice,
         ]);
     }
@@ -128,18 +159,18 @@ class PaymentsController extends Controller
             if ($event->type === 'checkout.session.completed') {
                 $session = $event->data->object;
 
-                $invoiceId = (int)($session->metadata->invoice_id ?? 0);
+                $invoiceId = (int) ($session->metadata->invoice_id ?? 0);
 
                 $referenceNo = '';
                 if (!empty($session->payment_intent)) {
-                    $referenceNo = (string)$session->payment_intent;
+                    $referenceNo = (string) $session->payment_intent;
                 } elseif (!empty($session->id)) {
-                    $referenceNo = (string)$session->id;
+                    $referenceNo = (string) $session->id;
                 }
 
                 $amount = 0.00;
                 if (isset($session->amount_total)) {
-                    $amount = ((float)$session->amount_total) / 100;
+                    $amount = ((float) $session->amount_total) / 100;
                 }
 
                 if ($invoiceId > 0 && $referenceNo !== '') {

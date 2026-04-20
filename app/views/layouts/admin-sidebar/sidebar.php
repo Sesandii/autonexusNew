@@ -186,12 +186,22 @@ if ($adminToast !== null) {
 
     <!-- Logout -->
     <li class="menu-item <?= $current === 'logout' ? 'active' : '' ?>">
-      <a href="<?= $B ?>/logout">
-        <i class="fa-solid fa-right-from-bracket"></i>
-        <span>Log Out</span>
-      </a>
+      <a href="<?= BASE_URL ?>/logout" id="logout-link">
+        <i class="fa-solid fa-right-from-bracket"></i> 
+        <span class="link-text">Sign Out</span>
+    </a>
     </li>
   </ul>
+ <div id="logout-modal" class="modal hidden">
+  <div class="modal-content">
+    <h3>Confirm Logout</h3>
+    <p>Are you sure you want to log out?</p>
+    <div class="modal-buttons">
+      <button id="cancel-logout" class="btn btn-cancel">Cancel</button>
+      <button id="confirm-logout" class="btn btn-confirm">Log Out</button>
+    </div>
+  </div>
+</div>
 </aside>
 
 <script>
@@ -249,4 +259,30 @@ if ($adminToast !== null) {
       show: function (msg, type) { openToast(msg, type || 'info'); }
     };
   });
+
+  document.addEventListener('DOMContentLoaded', function() {
+  const logoutLink = document.getElementById('logout-link');
+  const modal = document.getElementById('logout-modal');
+  const cancelBtn = document.getElementById('cancel-logout');
+  const confirmBtn = document.getElementById('confirm-logout');
+
+  logoutLink.addEventListener('click', function(e) {
+    e.preventDefault();
+    modal.classList.remove('hidden');
+  });
+
+  cancelBtn.addEventListener('click', function() {
+    modal.classList.add('hidden');
+  });
+
+  confirmBtn.addEventListener('click', function() {
+    window.location.href = logoutLink.href;
+  });
+
+  modal.addEventListener('click', function(e) {
+    if (e.target === modal) {
+      modal.classList.add('hidden');
+    }
+  });
+});
 </script>
