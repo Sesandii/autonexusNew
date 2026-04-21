@@ -1,0 +1,248 @@
+\
+
+//track service calendar
+
+
+app/views/index 
+
+
+
+
+<?php
+$base = rtrim(BASE_URL, '/');
+$initial = is_array($services ?? null) ? array_values($services) : [];
+$trackCssVersion = @filemtime(dirname(APP_ROOT) . '/public/assets/css/customer/track-services.css') ?: time();
+$trackJsVersion = @filemtime(dirname(APP_ROOT) . '/public/assets/js/customer/track-services-v2.js') ?: time();
+
+$branches = [];
+foreach ($initial as $service) {
+    $branch = trim((string)($service['branch'] ?? ''));
+    if ($branch !== '') {
+        $branches[$branch] = true;
+    }
+}
+$branchNames = array_keys($branches);
+sort($branchNames);
+
+$currentDateText = date('l, d M Y');
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><?= htmlspecialchars($title ?? 'Track Services', ENT_QUOTES, 'UTF-8') ?> - AutoNexus</title>
+
+  <link rel="stylesheet" href="<?= $base ?>/public/assets/css/customer/sidebar.css">
+  <link rel="stylesheet" href="<?= $base ?>/public/assets/css/customer/track-services.css?v=<?= (int)$trackCssVersion ?>">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <?php include APP_ROOT . '/views/layouts/customer-sidebar.php'; ?>
+
+  <main class="main-content customer-layout-main">
+    <h2>Track Service</h2>
+    <div class="date-label"><?= htmlspecialchars($currentDateText, ENT_QUOTES, 'UTF-8') ?></div>
+
+    <section class="filters" aria-label="Filters">
+      <select id="branchFilter" aria-label="Filter by branch">
+        <option value="">All Branches</option>
+        <?php foreach ($branchNames as $branchName): ?>
+          <option value="<?= htmlspecialchars($branchName, ENT_QUOTES, 'UTF-8') ?>">
+            <?= htmlspecialchars($branchName, ENT_QUOTES, 'UTF-8') ?>
+          </option>
+        <?php endforeach; ?>
+      </select>
+
+      <select id="statusFilter" aria-label="Filter by status">
+        <option value="">All Status</option>
+        <option value="Pending">Pending</option>
+        <option value="In Progress">In Progress</option>
+        <option value="Completed">Completed</option>
+        <option value="Cancelled">Cancelled</option>
+      </select>
+
+      <input id="dateFilter" type="date" aria-label="Filter by appointment date">
+
+      <input id="searchInput" type="search" placeholder="Search by service or license plate" aria-label="Search services">
+    </section>
+
+    <section class="cards" id="cardsContainer">
+      <?php foreach ($initial as $service): ?>
+        <?php
+          $statusText = (string)($service['status'] ?? 'Pending');
+          $statusLower = strtolower($statusText);
+          $badgeClass = $statusLower === 'completed'
+              ? 'completed'
+              : ($statusLower === 'in progress' ? 'in-service' : ($statusLower === 'cancelled' ? 'cancelled' : 'received'));
+
+          $stepReceived = in_array($statusLower, ['pending', 'in progress', 'completed'], true);
+          $stepProgress = in_array($statusLower, ['in progress', 'completed'], true);
+          $stepCompleted = ($statusLower === 'completed');
+
+          $type = (string)($service['type'] ?? 'Service');
+          $vehicle = trim((string)($service['vehicle'] ?? '')) ?: '-';
+          $branch = trim((string)($service['branch'] ?? '')) ?: 'Unknown Branch';
+          $duration = (int)($service['durationMinutes'] ?? 0);
+          $time24 = (string)($service['time24'] ?? '');
+          $timeDisplay = (string)($service['timeDisplay'] ?? '-');
+          $appointmentDate = (string)($service['appointmentDate'] ?? '');
+          $appointmentId = (int)($service['appointmentId'] ?? 0);
+          $detailsUrl = $appointmentId > 0 ? ($base . '/customer/appointments/' . $appointmentId) : '';
+        ?>
+        <article
+          class="card"
+          data-branch="<?= htmlspecialchars($branch, ENT_QUOTES, 'UTF-8') ?>"
+          data-status="<?= htmlspecialchars($statusText, ENT_QUOTES, 'UTF-8') ?>"
+          data-date="<?= htmlspecialchars($appointmentDate, ENT_QUOTES, 'UTF-8') ?>"
+          data-time="<?= htmlspecialchars($time24, ENT_QUOTES, 'UTF-8') ?>"
+          data-search="<?= htmlspecialchars(strtolower($type . ' ' . $vehicle), ENT_QUOTES, 'UTF-8') ?>"
+        >
+          <div class="card-header">
+            <div>
+              <h3><?= htmlspecialchars($type, ENT_QUOTES, 'UTF-8') ?></h3>
+              <div class="status-wrap">
+                <span class="status-badge <?= $badgeClass ?>"><?= htmlspecialchars($statusText, ENT_QUOTES, 'UTF-8') ?></span>
+              </div>
+            </div>
+            <div class="duration-pill"><?= $duration ?> min</div>
+          </div>
+
+          <p><strong>Vehicle:</strong> <?= htmlspecialchars($vehicle, ENT_QUOTES, 'UTF-8') ?></p>
+          <p><strong>Branch:</strong> <?= htmlspecialchars($branch, ENT_QUOTES, 'UTF-8') ?></p>
+          <p><strong>Appointment Date:</strong> <?= htmlspecialchars($appointmentDate, ENT_QUOTES, 'UTF-8') ?></p>
+          <p><strong>Appointment Time:</strong> <?= htmlspecialchars($timeDisplay, ENT_QUOTES, 'UTF-8') ?></p>
+
+          <div class="progress-bar">
+            <div class="progress-steps">
+              <span class="step <?= $stepReceived ? 'active' : '' ?>">Received</span>
+              <span class="step <?= $stepProgress ? 'active' : '' ?>">In Service</span>
+              <span class="step <?= $stepCompleted ? 'active' : '' ?>">Completed</span>
+            </div>
+            <div class="bar">
+              <div class="progress <?= $badgeClass ?>"></div>
+            </div>
+          </div>
+
+          <?php if ($detailsUrl !== ''): ?>
+            <div class="card-footer">
+              <a class="btn-view" href="<?= htmlspecialchars($detailsUrl, ENT_QUOTES, 'UTF-8') ?>">
+                <i class="fa-regular fa-eye" aria-hidden="true"></i>
+                View
+              </a>
+            </div>
+          <?php endif; ?>
+        </article>
+      <?php endforeach; ?>
+    </section>
+
+    <div id="emptyState" class="empty-state" <?= !empty($initial) ? 'hidden' : '' ?>>
+      No services found for the selected filters.
+    </div>
+  </main>
+
+  <script>
+    window.TRACK_SERVICES_CONFIG = {
+      listUrl: "<?= $base ?>/customer/track-services/list",
+      initialData: <?= json_encode($initial, JSON_UNESCAPED_UNICODE) ?>
+    };
+  </script>
+  <script src="<?= $base ?>/public/assets/js/customer/track-services-v2.js?v=<?= (int)$trackJsVersion ?>"></script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+//public/assests/js/customer/track-services-v2.js
+
+
+
+
+
+
+
+
+document.addEventListener('DOMContentLoaded', function () {
+  const cardsContainer = document.getElementById('cardsContainer');
+  if (!cardsContainer) {
+    return;
+  }
+
+  const cards = Array.from(cardsContainer.querySelectorAll('.card'));
+  const emptyState = document.getElementById('emptyState');
+
+  const branchFilter = document.getElementById('branchFilter');
+  const statusFilter = document.getElementById('statusFilter');
+  const dateFilter = document.getElementById('dateFilter');
+  const timeFilter = document.getElementById('timeFilter');
+  const searchInput = document.getElementById('searchInput');
+
+  const normalize = function (value) {
+    return String(value || '').trim().toLowerCase();
+  };
+
+  const applyFilters = function () {
+    const branchVal = normalize(branchFilter ? branchFilter.value : '');
+    const statusVal = normalize(statusFilter ? statusFilter.value : '');
+    const dateVal = normalize(dateFilter ? dateFilter.value : '');
+    const timeVal = normalize(timeFilter ? timeFilter.value : '');
+    const queryVal = normalize(searchInput ? searchInput.value : '');
+
+    let visibleCount = 0;
+
+    cards.forEach(function (card) {
+      const cardBranch = normalize(card.getAttribute('data-branch'));
+      const cardStatus = normalize(card.getAttribute('data-status'));
+      const cardDate = normalize(card.getAttribute('data-date'));
+      const cardTime = normalize(card.getAttribute('data-time'));
+      const searchText = normalize(card.getAttribute('data-search'));
+
+      const matchesBranch = !branchVal || cardBranch === branchVal;
+      const matchesStatus = !statusVal || cardStatus === statusVal;
+      const matchesDate = !dateVal || cardDate === dateVal;
+      const matchesTime = !timeVal || cardTime.indexOf(timeVal) === 0;
+      const matchesQuery = !queryVal || searchText.indexOf(queryVal) !== -1;
+
+      const visible = matchesBranch && matchesStatus && matchesDate && matchesTime && matchesQuery;
+      card.style.display = visible ? '' : 'none';
+
+      if (visible) {
+        visibleCount += 1;
+      }
+    });
+
+    if (emptyState) {
+      if (visibleCount === 0) {
+        emptyState.removeAttribute('hidden');
+      } else {
+        emptyState.setAttribute('hidden', 'hidden');
+      }
+    }
+  };
+
+  if (branchFilter) {
+    branchFilter.addEventListener('change', applyFilters);
+  }
+  if (statusFilter) {
+    statusFilter.addEventListener('change', applyFilters);
+  }
+  if (dateFilter) {
+    dateFilter.addEventListener('change', applyFilters);
+  }
+  if (timeFilter) {
+    timeFilter.addEventListener('change', applyFilters);
+  }
+  if (searchInput) {
+    searchInput.addEventListener('input', applyFilters);
+  }
+
+  applyFilters();
+});
+
+
+
