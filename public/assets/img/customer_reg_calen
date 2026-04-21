@@ -1,0 +1,661 @@
+
+//customer register b day - cal
+
+ALTER TABLE users
+ADD COLUMN date_of_birth DATE NULL AFTER last_name;
+
+SELECT user_id, first_name, last_name, date_of_birth, age
+FROM users
+ORDER BY user_id DESC
+LIMIT 10;
+
+// register_handler
+
+
+<?php
+// app/controllers/register_handler.php (no CSRF)
+declare(strict_types=1);
+
+require_once CONFIG_PATH . '/config.php';
+require_once APP_ROOT . '/core/Database.php';
+
+if (session_status() !== PHP_SESSION_ACTIVE) {
+    session_start();
+}
+
+$base = rtrim(BASE_URL, '/');
+
+// Only accept POST
+if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
+    $_SESSION['flash'] = 'Please use the registration form.';
+    header('Location: ' . $base . '/register');
+    exit;
+}
+
+/* ---------------- Collect & normalize ---------------- */
+$first_name = trim($_POST['first_name'] ?? '');
+$last_name  = trim($_POST['last_name'] ?? '');
+$email      = strtolower(trim($_POST['email'] ?? ''));
+$phone      = preg_replace('/\D+/', '', $_POST['phone'] ?? '');
+$alt_phone  = preg_replace('/\D+/', '', $_POST['alt_phone'] ?? '');
+$birthdayRaw = trim($_POST['birthday'] ?? '');
+$street     = trim($_POST['street'] ?? '');
+$city       = trim($_POST['city'] ?? '');
+$state      = trim($_POST['state'] ?? '');
+$username   = trim($_POST['username'] ?? '');
+$password   = $_POST['password'] ?? '';
+$confirm    = $_POST['confirm_password'] ?? '';
+
+/* ---------------- Validate ---------------- */
+$errors = [];
+$nameRe = "/^[A-Za-z][A-Za-z\s'.-]{1,49}$/";
+
+if ($first_name === '' || $last_name === '') {
+    $errors[] = 'First and last name are required.';
+} else {
+    if (!preg_match($nameRe, $first_name)) $errors[] = 'First name must be 2–50 letters (A–Z), spaces, (.\'-).';
+    if (!preg_match($nameRe, $last_name))  $errors[] = 'Last name must be 2–50 letters (A–Z), spaces, (.\'-).';
+}
+
+if (!filter_var($email, FILTER_VALIDATE_EMAIL) || strlen($email) > 254) {
+    $errors[] = 'Enter a valid email address (≤254 chars).';
+}
+
+if ($phone === '' || !preg_match('/^\d{10}$/', $phone)) {
+    $errors[] = 'Phone number must be exactly 10 digits.';
+}
+if ($alt_phone !== '' && !preg_match('/^\d{10}$/', $alt_phone)) {
+    $errors[] = 'Alternate phone must be exactly 10 digits.';
+}
+
+$birthday = null;
+$birthdayDt = null;
+if ($birthdayRaw === '') {
+    $errors[] = 'Birthday is required.';
+} else {
+    $birthdayDt = DateTimeImmutable::createFromFormat('Y-m-d', $birthdayRaw);
+    $dateErrors = DateTimeImmutable::getLastErrors();
+    if (
+        !$birthdayDt ||
+        ($dateErrors !== false && ($dateErrors['warning_count'] > 0 || $dateErrors['error_count'] > 0)) ||
+        $birthdayDt->format('Y-m-d') !== $birthdayRaw
+    ) {
+        $errors[] = 'Birthday must be a valid date.';
+    } else {
+        $today = new DateTimeImmutable('today');
+        if ($birthdayDt > $today) {
+            $errors[] = 'Birthday cannot be in the future.';
+        } else {
+            $birthday = $birthdayDt->format('Y-m-d');
+        }
+    }
+}
+
+if (strlen($street) > 120) $errors[] = 'Street is too long (max 120).';
+if (strlen($city)   > 100) $errors[] = 'City is too long (max 100).';
+if (strlen($state)  > 100) $errors[] = 'State is too long (max 100).';
+
+// Username fallback from email local-part, capped 30
+$usernameToUse = $username !== '' ? $username : strtok($email, '@');
+$usernameToUse = substr($usernameToUse, 0, 30);
+if ($usernameToUse === '' || !preg_match('/^[A-Za-z0-9_.]{3,30}$/', $usernameToUse)) {
+    $errors[] = 'Username must be 3–30 chars (letters, numbers, _ or .).';
+}
+
+// Password rules
+if (strlen($password) < 8) {
+    $errors[] = 'Password must be at least 8 characters.';
+} else {
+    $lacks = [];
+    if (!preg_match('/[a-z]/', $password)) $lacks[] = 'lowercase';
+    if (!preg_match('/[A-Z]/', $password)) $lacks[] = 'uppercase';
+    if (!preg_match('/\d/',   $password)) $lacks[] = 'number';
+    if (!preg_match('/[^A-Za-z0-9]/', $password)) $lacks[] = 'symbol';
+    if ($lacks) $errors[] = 'Password must include ' . implode(', ', $lacks) . '.';
+}
+if ($password !== $confirm) {
+    $errors[] = 'Passwords do not match.';
+}
+
+if ($errors) {
+    $_SESSION['flash'] = implode(' ', $errors);
+    header('Location: ' . $base . '/register');
+    exit;
+}
+
+/* ---------------- Persist (schema-aware) ---------------- */
+try {
+    $pdo = db();
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $pdo->beginTransaction();
+
+    // Enforce uniqueness (before insert)
+    $check = $pdo->prepare('SELECT user_id FROM users WHERE email = :email OR username = :username LIMIT 1');
+    $check->execute(['email' => $email, 'username' => $usernameToUse]);
+    if ($check->fetch()) {
+        $pdo->rollBack();
+        $_SESSION['flash'] = 'Email or username already exists.';
+        header('Location: ' . $base . '/register');
+        exit;
+    }
+
+    $hash   = password_hash($password, PASSWORD_DEFAULT);
+    $role   = 'customer';
+    $status = 'active'; // or 'pending' if you need approval
+
+    // Detect users table columns
+    $userCols = $pdo->query("SHOW COLUMNS FROM users")->fetchAll(PDO::FETCH_COLUMN, 0);
+    $hasStreet        = in_array('street', $userCols, true);
+    $hasStreetAddress = in_array('street_address', $userCols, true);
+    $hasCreatedAt     = in_array('created_at', $userCols, true);
+    $hasBirthday      = in_array('birthday', $userCols, true);
+    $hasBirthDate     = in_array('birth_date', $userCols, true);
+    $hasDateOfBirth   = in_array('date_of_birth', $userCols, true);
+    $hasDob           = in_array('dob', $userCols, true);
+    $hasAge           = in_array('age', $userCols, true);
+
+    // Build dynamic INSERT for users
+    $insertCols    = ['first_name','last_name','username','email','password_hash','phone','alt_phone','city','state','role','status'];
+    $placeHolders  = [':first_name',':last_name',':username',':email',':password_hash',':phone',':alt_phone',':city',':state',':role',':status'];
+
+    if ($hasStreet) {
+        $insertCols[]   = 'street';
+        $placeHolders[] = ':street';
+    } elseif ($hasStreetAddress) {
+        $insertCols[]   = 'street_address';
+        $placeHolders[] = ':street';
+    }
+
+    if ($hasCreatedAt) {
+        $insertCols[]   = 'created_at';
+        $placeHolders[] = 'NOW()';
+    }
+
+    if ($hasDateOfBirth) {
+        $insertCols[]   = 'date_of_birth';
+        $placeHolders[] = ':birthday';
+    } elseif ($hasBirthDate) {
+        $insertCols[]   = 'birth_date';
+        $placeHolders[] = ':birthday';
+    } elseif ($hasBirthday) {
+        $insertCols[]   = 'birthday';
+        $placeHolders[] = ':birthday';
+    } elseif ($hasDob) {
+        $insertCols[]   = 'dob';
+        $placeHolders[] = ':birthday';
+    } elseif ($hasAge && $birthdayDt instanceof DateTimeImmutable) {
+        $insertCols[]   = 'age';
+        $placeHolders[] = ':age';
+    }
+
+    $sqlUsers = 'INSERT INTO users ('.implode(',', $insertCols).') VALUES ('.implode(',', $placeHolders).')';
+    $insertUser = $pdo->prepare($sqlUsers);
+
+    $params = [
+        'first_name'    => $first_name,
+        'last_name'     => $last_name,
+        'username'      => $usernameToUse,
+        'email'         => $email,
+        'password_hash' => $hash,
+        'phone'         => $phone,
+        'alt_phone'     => $alt_phone !== '' ? $alt_phone : null,
+        'city'          => $city   !== '' ? $city   : null,
+        'state'         => $state  !== '' ? $state  : null,
+        'role'          => $role,
+        'status'        => $status,
+    ];
+
+    if (($hasDateOfBirth || $hasBirthDate || $hasBirthday || $hasDob) && $birthday !== null) {
+        $params['birthday'] = $birthday;
+    } elseif ($hasAge && $birthdayDt instanceof DateTimeImmutable) {
+        $params['age'] = (int)$birthdayDt->diff(new DateTimeImmutable('today'))->y;
+    }
+
+    if ($hasStreet || $hasStreetAddress) {
+        $params['street'] = $street !== '' ? $street : null; // maps to whichever col exists
+    }
+
+    $insertUser->execute($params);
+    $userId = (int)$pdo->lastInsertId();
+
+    // Insert into customers (schema-aware)
+    $custCols = $pdo->query("SHOW COLUMNS FROM customers")->fetchAll(PDO::FETCH_COLUMN, 0);
+    $hasCustCreated = in_array('created_at', $custCols, true);
+
+    $customerCode = 'CUS-' . str_pad((string)$userId, 6, '0', STR_PAD_LEFT);
+
+    $cCols = ['user_id','customer_code'];
+    $cVals = [':user_id',':customer_code'];
+    if ($hasCustCreated) {
+        $cCols[] = 'created_at';
+        $cVals[] = 'NOW()';
+    }
+
+    $sqlCust = 'INSERT INTO customers ('.implode(',', $cCols).') VALUES ('.implode(',', $cVals).')';
+    $insertCustomer = $pdo->prepare($sqlCust);
+    $insertCustomer->execute([
+        'user_id'       => $userId,
+        'customer_code' => $customerCode,
+    ]);
+
+    $pdo->commit();
+
+    $_SESSION['flash'] = 'Account created. Please login.';
+    header('Location: ' . $base . '/login');
+    exit;
+
+} catch (PDOException $e) {
+    if (isset($pdo) && $pdo->inTransaction()) $pdo->rollBack();
+
+    // 23000 = integrity constraint (e.g., duplicate key on unique email/username)
+    if ((int)$e->getCode() === 23000) {
+        $_SESSION['flash'] = 'Email or username already exists.';
+    } else {
+        // Uncomment to log exact DB error in development:
+        // error_log('[register_handler] '.$e->getMessage());
+        $_SESSION['flash'] = 'Server error while creating the account. Please try again.';
+    }
+    header('Location: ' . $base . '/register');
+    exit;
+
+} catch (Throwable $e) {
+    if (isset($pdo) && $pdo->inTransaction()) $pdo->rollBack();
+    // error_log('[register_handler] '.$e->getMessage());
+    $_SESSION['flash'] = 'Server error while creating the account. Please try again.';
+    header('Location: ' . $base . '/register');
+    exit;
+}
+
+
+
+
+
+
+
+//customer_register_view
+
+
+<?php
+require_once CONFIG_PATH . '/config.php';
+
+// Don't start session here if it's already started elsewhere.
+if (session_status() !== PHP_SESSION_ACTIVE) {
+    session_start();
+}
+
+$base = rtrim(BASE_URL, '/');
+
+if (isset($_SESSION['flash'])) {
+    echo '<script>alert(' . json_encode($_SESSION['flash']) . ');</script>';
+    unset($_SESSION['flash']);
+}
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AutoNexus — Create Your Account</title>
+  <!-- FIXED: assests → assets, and use $base -->
+  <link rel="stylesheet" href="<?= htmlspecialchars($base) ?>/app/views/register/assests/css/styles.css?v=1" />
+</head>
+<body>
+
+  <!-- Left / Hero (fixed) -->
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="brand-mark" aria-label="AUTONEXUS logo">
+        <span class="brand-accent">AUTO</span><span class="brand-main">NEXUS</span>
+        <div class="brand-sub">VEHICLE SERVICE</div>
+      </div>
+
+      <div class="hero-copy">
+        <h1>Your Trusted Vehicle Service<br/>Partner</h1>
+        <p class="subtitle">
+          Join AutoNexus and experience seamless vehicle
+          service management with our cutting-edge platform.
+        </p>
+
+        <ul class="bullets">
+          <li><span class="num">1</span><h3>Easy appointment scheduling</h3></li>
+          <li><span class="num">2</span><h3>Real-time service updates</h3></li>
+          <li><span class="num">3</span><h3>Comprehensive service history</h3></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Right / Form -->
+  <!-- FIXED: post to /register (router), not register_handler.php -->
+  <section class="panel">
+    <form class="card form" method="post" action="<?= htmlspecialchars($base) ?>/register">
+      <div class="mini-brand" aria-hidden="true">
+        <span class="brand-accent">AUTO</span><span class="brand-main">NEXUS</span>
+      </div>
+      <h2>Create Your Account</h2>
+      <p class="muted">Join AutoNexus to manage your vehicle services</p>
+
+      <div class="grid two">
+        <label class="field with-icon">
+          <span class="icon">👤</span>
+          <input type="text" name="first_name" placeholder="First Name" required/>
+        </label>
+        <label class="field with-icon">
+          <span class="icon">👤</span>
+          <input type="text" name="last_name" placeholder="Last Name" required/>
+        </label>
+      </div>
+
+      <label class="field with-icon">
+        <span class="icon">✉️</span>
+        <input type="email" name="email" placeholder="Email Address" required/>
+      </label>
+
+      <label class="field with-icon">
+        <span class="icon">📞</span>
+        <input type="tel" name="phone" placeholder="Phone Number" required/>
+      </label>
+
+      <label class="field with-icon">
+        <span class="icon">📱</span>
+        <input type="tel" name="alt_phone" placeholder="Alternate Phone Number (Optional)"/>
+      </label>
+
+      <label class="field with-icon">
+        <span class="icon">🎂</span>
+        <input type="date" name="birthday" max="<?= date('Y-m-d') ?>" required/>
+      </label>
+
+      <label class="field with-icon">
+        <span class="icon">🏠</span>
+        <input type="text" name="street" placeholder="Street/House No."/>
+      </label>
+
+      <div class="grid two">
+        <label class="field with-icon">
+          <span class="icon">🏙️</span>
+          <input type="text" name="city" placeholder="City/Town"/>
+        </label>
+        <label class="field with-icon">
+          <span class="icon">🗺️</span>
+          <input type="text" name="state" placeholder="State/Province"/>
+        </label>
+      </div>
+
+
+      <label class="field with-icon">
+        <span class="icon">👤</span>
+        <input type="text" name="username" placeholder="Username (if not using email)"/>
+      </label>
+
+      <label class="field with-icon">
+        <span class="icon">🔒</span>
+        <input type="password" name="password" placeholder="Password" required/>
+      </label>
+
+      <label class="field with-icon">
+        <span class="icon">🔒</span>
+        <input type="password" name="confirm_password" placeholder="Confirm Password" required/>
+      </label>
+
+      <button class="btn primary" type="submit">Sign Up</button>
+
+      <!-- FIXED: login link to route -->
+      <p class="footnote">Already have an account?
+        <a href="<?= htmlspecialchars($base) ?>/login">Login</a>
+      </p>
+    </form>
+  </section>
+
+  <script src="<?= htmlspecialchars($base) ?>/app/views/register/assests/js/script.js"></script>
+
+</body>
+</html>
+
+
+
+
+
+
+// customer_regis_calen
+/app/views/register/assets/js/script.js
+
+/* AutoNexus - Register form client-side validation */
+(function () {
+  'use strict';
+
+  document.addEventListener('DOMContentLoaded', function () {
+    const form = document.querySelector('form.form');
+    if (!form) return;
+
+    // Keep our own messages; disable native bubbles
+    form.setAttribute('novalidate', 'novalidate');
+
+    // Minimal styles for error messages (inject once)
+    if (!document.getElementById('reg-validate-style')) {
+      const style = document.createElement('style');
+      style.id = 'reg-validate-style';
+      style.textContent = `
+        .field.invalid input { border-color: #e53e3e !important; }
+        .field.valid   input { border-color: #38a169 !important; }
+        .error-text {
+          color:#e53e3e; font-size:.85rem; margin-top:.35rem;
+          line-height:1.2; animation: fadeIn .15s ease;
+        }
+        @keyframes fadeIn { from{opacity:0;transform:translateY(-2px)} to{opacity:1;transform:none} }
+      `;
+      document.head.appendChild(style);
+    }
+
+    // Inputs
+    const els = {
+      first_name: form.querySelector('input[name="first_name"]'),
+      last_name: form.querySelector('input[name="last_name"]'),
+      email: form.querySelector('input[name="email"]'),
+      phone: form.querySelector('input[name="phone"]'),
+      alt_phone: form.querySelector('input[name="alt_phone"]'),
+      birthday: form.querySelector('input[name="birthday"]'),
+      street: form.querySelector('input[name="street"]'),
+      city: form.querySelector('input[name="city"]'),
+      state: form.querySelector('input[name="state"]'),
+      username: form.querySelector('input[name="username"]'),
+      password: form.querySelector('input[name="password"]'),
+      confirm_password: form.querySelector('input[name="confirm_password"]')
+    };
+
+    // Helpers
+    function showError(input, msg) {
+      const field = input.closest('.field') || input.parentElement;
+      field.classList.add('invalid');
+      field.classList.remove('valid');
+
+      let err = field.querySelector('.error-text');
+      if (!err) {
+        err = document.createElement('div');
+        err.className = 'error-text';
+        field.appendChild(err);
+      }
+      err.textContent = msg;
+    }
+
+    function clearError(input) {
+      const field = input.closest('.field') || input.parentElement;
+      field.classList.remove('invalid');
+      const err = field.querySelector('.error-text');
+      if (err) err.remove();
+
+      const required = input.hasAttribute('required');
+      if ((required && input.value.trim() !== '') || !required) {
+        field.classList.add('valid');
+      } else {
+        field.classList.remove('valid');
+      }
+    }
+
+    // Rules
+    const nameRe = /^[A-Za-z][A-Za-z\s'.-]{1,49}$/; // 2–50, letters + space/.'-
+    const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+    const phoneRe = /^[+()\s\-.\d]{7,20}$/;        // digits + common symbols
+    const usernameRe = /^[A-Za-z0-9_.]{3,30}$/;
+
+    function vFirstName() {
+      const v = els.first_name.value.trim();
+      if (!v) return 'First name is required';
+      if (!nameRe.test(v)) return 'Use 2–50 letters (A–Z), spaces, (.\'-)';
+      return '';
+    }
+
+    function vLastName() {
+      const v = els.last_name.value.trim();
+      if (!v) return 'Last name is required';
+      if (!nameRe.test(v)) return 'Use 2–50 letters (A–Z), spaces, (.\'-)';
+      return '';
+    }
+
+    function vEmail() {
+      const v = els.email.value.trim();
+      if (!v) return 'Email is required';
+      if (v.length > 254) return 'Email is too long';
+      if (!emailRe.test(v)) return 'Enter a valid email address';
+      return '';
+    }
+
+    function vPhone() {
+        const v = els.phone.value.trim();
+        if (!v) return 'Phone number is required';
+        if (!/^\d{10}$/.test(v)) return 'Phone number must be exactly 10 digits';
+        return '';
+    }
+
+    function vAltPhone() {
+      const v = els.alt_phone.value.trim();
+      if (!v) return '';
+      if (!phoneRe.test(v)) return 'Alternate phone is invalid';
+      return '';
+    }
+
+    function vBirthday() {
+      const v = els.birthday.value;
+      if (!v) return 'Birthday is required';
+
+      const picked = new Date(v + 'T00:00:00');
+      const now = new Date();
+      now.setHours(0, 0, 0, 0);
+
+      if (Number.isNaN(picked.getTime())) return 'Select a valid date';
+      if (picked > now) return 'Birthday cannot be in the future';
+      return '';
+    }
+
+    function vStreet() {
+      const v = els.street.value.trim();
+      if (v.length > 120) return 'Street is too long (max 120)';
+      return '';
+    }
+
+    function vCity() {
+      const v = els.city.value.trim();
+      if (v.length > 100) return 'City is too long (max 100)';
+      return '';
+    }
+
+    function vState() {
+      const v = els.state.value.trim();
+      if (v.length > 100) return 'State is too long (max 100)';
+      return '';
+    }
+
+    function vUsername() {
+      const v = els.username.value.trim();
+      if (!v) return ''; // optional
+      if (!usernameRe.test(v)) return '3–30 chars: letters, numbers, _ or .';
+      return '';
+    }
+
+    function vPassword() {
+      const v = els.password.value;
+      if (!v) return 'Password is required';
+      if (v.length < 6) return 'Use at least 6 characters';
+      const lacks = [];
+      if (!/[a-z]/.test(v)) lacks.push('lowercase');
+      if (!/[A-Z]/.test(v)) lacks.push('uppercase');
+      if (!/\d/.test(v))     lacks.push('number');
+      if (!/[^A-Za-z0-9]/.test(v)) lacks.push('symbol');
+      if (lacks.length) return 'Include ' + lacks.join(', ');
+      return '';
+    }
+
+    function vConfirm() {
+      const a = els.password.value;
+      const b = els.confirm_password.value;
+      if (!b) return 'Please confirm your password';
+      if (a !== b) return 'Passwords do not match';
+      return '';
+    }
+
+    const validators = [
+      [els.first_name, vFirstName],
+      [els.last_name,  vLastName],
+      [els.email,      vEmail],
+      [els.phone,      vPhone],
+      [els.alt_phone,  vAltPhone],
+      [els.birthday,   vBirthday],
+      [els.street,     vStreet],
+      [els.city,       vCity],
+      [els.state,      vState],
+      [els.username,   vUsername],
+      [els.password,   vPassword],
+      [els.confirm_password, vConfirm],
+    ];
+
+    // Live validation
+    validators.forEach(([input, fn]) => {
+      if (!input) return;
+
+      input.addEventListener('blur', () => {
+        const msg = fn();
+        if (msg) showError(input, msg);
+        else clearError(input);
+      });
+
+      input.addEventListener('input', () => {
+        if (input === els.password || input === els.confirm_password) {
+          const msg = (input === els.password ? vPassword() : vConfirm());
+          if (msg) showError(input, msg); else clearError(input);
+        } else {
+          clearError(input);
+        }
+      });
+    });
+
+    // Submit gate
+    form.addEventListener('submit', function (e) {
+      let firstInvalid = null;
+
+      validators.forEach(([input, fn]) => {
+        if (!input) return;
+        const msg = fn();
+        if (msg) {
+          showError(input, msg);
+          if (!firstInvalid) firstInvalid = input;
+        } else {
+          clearError(input);
+        }
+      });
+
+      // Trim common text fields before submit
+      ['first_name','last_name','email','phone','alt_phone','street','city','state','username','birthday']
+        .forEach((n) => { if (els[n]) els[n].value = els[n].value.trim(); });
+
+      if (firstInvalid) {
+        e.preventDefault();
+        firstInvalid.focus();
+      }
+    });
+  });
+})();
+
+
+
+
+
