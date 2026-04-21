@@ -1,5 +1,10 @@
-// rregisster form- pic
-//register_handler.php
+//gender checkboxes in register page
+
+
+ALTER TABLE users
+ADD COLUMN sex ENUM('male','female') NULL AFTER last_name;
+
+//handler
 
 <?php
 // app/controllers/register_handler.php (no CSRF)
@@ -31,9 +36,10 @@ $street     = trim($_POST['street'] ?? '');
 $city       = trim($_POST['city'] ?? '');
 $state      = trim($_POST['state'] ?? '');
 $username   = trim($_POST['username'] ?? '');
+$sexRaw     = $_POST['sex'] ?? '';
+$sex        = is_array($sexRaw) ? strtolower(trim((string)($sexRaw[0] ?? ''))) : strtolower(trim((string)$sexRaw));
 $password   = $_POST['password'] ?? '';
 $confirm    = $_POST['confirm_password'] ?? '';
-$profileUpload = $_FILES['profile_picture'] ?? null;
 
 /* ---------------- Validate ---------------- */
 $errors = [];
@@ -61,6 +67,10 @@ if (strlen($street) > 120) $errors[] = 'Street is too long (max 120).';
 if (strlen($city)   > 100) $errors[] = 'City is too long (max 100).';
 if (strlen($state)  > 100) $errors[] = 'State is too long (max 100).';
 
+if (!in_array($sex, ['male', 'female'], true)) {
+    $errors[] = 'Please select a gender.';
+}
+
 // Username fallback from email local-part, capped 30
 $usernameToUse = $username !== '' ? $username : strtok($email, '@');
 $usernameToUse = substr($usernameToUse, 0, 30);
@@ -81,35 +91,6 @@ if (strlen($password) < 8) {
 }
 if ($password !== $confirm) {
     $errors[] = 'Passwords do not match.';
-}
-
-if (is_array($profileUpload) && (($profileUpload['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_NO_FILE)) {
-    $uploadError = (int)($profileUpload['error'] ?? UPLOAD_ERR_NO_FILE);
-    if ($uploadError !== UPLOAD_ERR_OK) {
-        $errors[] = 'Failed to upload profile picture.';
-    } else {
-        $fileName = (string)($profileUpload['name'] ?? '');
-        $tmpName  = (string)($profileUpload['tmp_name'] ?? '');
-        $mimeType = (string)($profileUpload['type'] ?? '');
-        $fileSize = (int)($profileUpload['size'] ?? 0);
-
-        $allowedExts  = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
-        $allowedMimes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-        $ext = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
-
-        if (!in_array($ext, $allowedExts, true)) {
-            $errors[] = 'Profile picture must be JPG, PNG, GIF, or WEBP.';
-        }
-        if (!in_array($mimeType, $allowedMimes, true)) {
-            $errors[] = 'Invalid profile picture format.';
-        }
-        if ($fileSize <= 0 || $fileSize > 5 * 1024 * 1024) {
-            $errors[] = 'Profile picture must be 5MB or smaller.';
-        }
-        if ($tmpName === '' || !is_uploaded_file($tmpName)) {
-            $errors[] = 'Invalid profile picture upload.';
-        }
-    }
 }
 
 if ($errors) {
@@ -142,8 +123,8 @@ try {
     $userCols = $pdo->query("SHOW COLUMNS FROM users")->fetchAll(PDO::FETCH_COLUMN, 0);
     $hasStreet        = in_array('street', $userCols, true);
     $hasStreetAddress = in_array('street_address', $userCols, true);
+    $hasSex           = in_array('sex', $userCols, true);
     $hasCreatedAt     = in_array('created_at', $userCols, true);
-    $hasProfilePicture = in_array('profile_picture', $userCols, true);
 
     // Build dynamic INSERT for users
     $insertCols    = ['first_name','last_name','username','email','password_hash','phone','alt_phone','city','state','role','status'];
@@ -155,6 +136,11 @@ try {
     } elseif ($hasStreetAddress) {
         $insertCols[]   = 'street_address';
         $placeHolders[] = ':street';
+    }
+
+    if ($hasSex) {
+        $insertCols[]   = 'sex';
+        $placeHolders[] = ':sex';
     }
 
     if ($hasCreatedAt) {
@@ -181,6 +167,9 @@ try {
     if ($hasStreet || $hasStreetAddress) {
         $params['street'] = $street !== '' ? $street : null; // maps to whichever col exists
     }
+    if ($hasSex) {
+        $params['sex'] = $sex;
+    }
 
     $insertUser->execute($params);
     $userId = (int)$pdo->lastInsertId();
@@ -204,30 +193,6 @@ try {
         'user_id'       => $userId,
         'customer_code' => $customerCode,
     ]);
-
-    if ($hasProfilePicture && is_array($profileUpload) && (($profileUpload['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_OK)) {
-        $tmpName = (string)($profileUpload['tmp_name'] ?? '');
-        $ext = strtolower(pathinfo((string)($profileUpload['name'] ?? ''), PATHINFO_EXTENSION));
-
-        $uploadDir = dirname(__DIR__, 2) . '/public/assets/img/profile_pictures/';
-        if (!is_dir($uploadDir) && !mkdir($uploadDir, 0777, true) && !is_dir($uploadDir)) {
-            throw new \RuntimeException('Failed to prepare upload directory.');
-        }
-
-        $newFileName = 'profile_' . $userId . '_' . time() . '.' . $ext;
-        $targetPath = $uploadDir . $newFileName;
-
-        if (!move_uploaded_file($tmpName, $targetPath)) {
-            throw new \RuntimeException('Failed to store profile picture.');
-        }
-
-        $relativePath = 'assets/img/profile_pictures/' . $newFileName;
-        $upPic = $pdo->prepare('UPDATE users SET profile_picture = :pic WHERE user_id = :uid');
-        $upPic->execute([
-            'pic' => $relativePath,
-            'uid' => $userId,
-        ]);
-    }
 
     $pdo->commit();
 
@@ -257,7 +222,9 @@ try {
     exit;
 }
 
-//views/register/index.php
+
+
+//app/views/register/index
 
 <?php
 require_once CONFIG_PATH . '/config.php';
@@ -312,7 +279,7 @@ if (isset($_SESSION['flash'])) {
   <!-- Right / Form -->
   <!-- FIXED: post to /register (router), not register_handler.php -->
   <section class="panel">
-    <form class="card form" method="post" action="<?= htmlspecialchars($base) ?>/register" enctype="multipart/form-data">
+    <form class="card form" method="post" action="<?= htmlspecialchars($base) ?>/register">
       <div class="mini-brand" aria-hidden="true">
         <span class="brand-accent">AUTO</span><span class="brand-main">NEXUS</span>
       </div>
@@ -340,14 +307,21 @@ if (isset($_SESSION['flash'])) {
         <input type="tel" name="phone" placeholder="Phone Number" required/>
       </label>
 
+      <div class="field">
+        <span style="display:block; margin-bottom:8px; font-weight:600;">Gender</span>
+        <label style="margin-right:16px; display:inline-flex; align-items:center; gap:6px;">
+          <input type="checkbox" name="sex" value="male" required>
+          Male
+        </label>
+        <label style="display:inline-flex; align-items:center; gap:6px;">
+          <input type="checkbox" name="sex" value="female" required>
+          Female
+        </label>
+      </div>
+
       <label class="field with-icon">
         <span class="icon">📱</span>
         <input type="tel" name="alt_phone" placeholder="Alternate Phone Number (Optional)"/>
-      </label>
-
-      <label class="field with-icon">
-        <span class="icon">🖼️</span>
-        <input type="file" name="profile_picture" accept="image/jpeg,image/png,image/gif,image/webp" />
       </label>
 
       <label class="field with-icon">
@@ -392,122 +366,28 @@ if (isset($_SESSION['flash'])) {
   </section>
 
   <script src="<?= htmlspecialchars($base) ?>/app/views/register/assests/js/script.js"></script>
+  <script>
+    // Keep checkbox UX but allow only one gender selection.
+    document.addEventListener('DOMContentLoaded', function () {
+      var boxes = Array.from(document.querySelectorAll('input[name="sex"]'));
+      boxes.forEach(function (box) {
+        box.addEventListener('change', function () {
+          if (box.checked) {
+            boxes.forEach(function (other) {
+              if (other !== box) other.checked = false;
+            });
+          }
+          var anyChecked = boxes.some(function (b) { return b.checked; });
+          boxes.forEach(function (b) { b.required = !anyChecked; });
+        });
+      });
+    });
+  </script>
 
 </body>
 </html>
 
 
-//pro pic in css - app/views/register/assests/css/styles.css
 
-:root{
-  --bg-dark:#0b0b0c;
-  --bg-panel:#ffffff;
-  --text:#0f1115;
-  --muted:#6b7280;
-  --red:#e11d2e;
-  --input:#f3f4f6;
-  --ring:#e5e7eb;
-}
-
-*{box-sizing:border-box}
-html,body{height:100%;margin:0}
-body{
-  font:16px/1.4 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,Arial;
-  color:var(--text);
-  background:var(--bg-panel);
-}
-
-/* LEFT: fixed hero (non-scrollable) */
-.hero{
-  position:fixed;
-  inset:0 auto 0 0;      /* top:0; right:auto; bottom:0; left:0 */
-  width:50vw;            /* exact left half */
-  background:var(--bg-dark);
-  color:#e5e7eb;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:48px 32px;
-  overflow:hidden;       /* disable scroll on this side */
-}
-.hero-inner{max-width:520px;width:90%}
-.brand-mark{
-  width:260px; aspect-ratio:3 / 1.2;
-  border:1px solid #191b1f; border-radius:10px;
-  display:grid; place-content:center;
-  margin:0 0 28px 0;
-  background:linear-gradient(180deg,#0f1114,#0a0a0b);
-  text-align:center;
-}
-.brand-accent{color:var(--red);font-weight:800;letter-spacing:.5px}
-.brand-main{color:#e5e7eb;font-weight:800;margin-left:2px}
-.brand-sub{font-size:10px;color:#9ca3af;margin-top:2px;letter-spacing:.25em}
-
-.hero-copy h1{margin:0 0 10px;color:#f5f7fa;font-size:28px}
-.subtitle{margin:0 0 28px;color:#c7cbd3}
-.bullets{list-style:none;padding:0;margin:0;display:grid;gap:14px}
-.bullets li{display:flex;align-items:center;gap:12px}
-.num{width:36px;height:36px;border-radius:50%;background:var(--red);display:grid;place-content:center;font-weight:700;color:#fff}
-.bullets h3{margin:0;color:#e5e7eb;font-weight:500;font-size:16px}
-
-/* RIGHT: scrollable white panel locked to the right half */
-.panel{
-  position:relative;
-  margin-left:50vw;      /* start where the fixed hero ends */
-  width:50vw;            /* occupy the right half only */
-  min-height:100vh;
-  padding:48px 24px;
-  overflow-y:auto;       /* only this side scrolls */
-  display:flex;
-  align-items:flex-start;
-  justify-content:center;
-  background:#fff;       /* keep it white even if body changes */
-}
-
-.card{
-  width:min(640px, 94%);
-  background:#fff;
-  border:1px solid var(--ring);
-  border-radius:14px;
-  padding:28px 24px 22px;
-  box-shadow:0 10px 24px rgba(2,6,23,.06);
-}
-
-.form h2{margin:8px 0 4px;text-align:center}
-.form .muted{color:var(--muted);text-align:center;margin:0 0 22px;font-size:14px}
-.mini-brand{text-align:center;margin-bottom:8px}
-.mini-brand .brand-accent{color:var(--red);font-weight:800}
-.mini-brand .brand-main{font-weight:800}
-
-.grid.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-
-.field{display:block;position:relative;margin-bottom:12px}
-.field input{
-  width:100%;height:44px;border-radius:10px;border:1px solid var(--ring);
-  background:var(--input);padding:0 14px 0 42px;outline:none;
-}
-.field input:focus{border-color:var(--red);background:#fff;box-shadow:0 0 0 3px rgba(225,29,46,.1)}
-.with-icon .icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);opacity:.75}
-
-.field input[type="file"]{
-  height:auto;
-  min-height:44px;
-  padding:10px 14px 10px 42px;
-  line-height:1.2;
-}
-
-.btn{width:100%;height:44px;border:0;border-radius:10px;cursor:pointer;font-weight:700}
-.btn.primary{background:var(--red);color:#fff;margin-top:6px}
-.btn.primary:hover{filter:brightness(.98)}
-
-.footnote{margin:14px 0 0;text-align:center;color:var(--muted);font-size:14px}
-.footnote a{color:var(--red);text-decoration:none}
-.footnote a:hover{text-decoration:underline}
-
-/* Responsive: collapse to single column on small screens */
-@media (max-width: 980px){
-  .hero{position:relative;width:100%;min-height:300px}
-  .panel{margin-left:0;width:100%}
-  .grid.two{grid-template-columns:1fr}
-}
+//
 
